@@ -1,6 +1,6 @@
 service.name = soft-drinks-industry-levy-returns-frontend
 
-test.test = Test
+test.test = Test data
 
 site.back = Back
 site.remove = Remove
