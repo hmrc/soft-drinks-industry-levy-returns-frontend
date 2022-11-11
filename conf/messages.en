@@ -1,5 +1,7 @@
 service.name = soft-drinks-industry-levy-returns-frontend
 
+test.test = Test
+
 site.back = Back
 site.remove = Remove
 site.change = Change
