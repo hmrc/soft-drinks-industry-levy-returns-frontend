@@ -16,12 +16,21 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading()
+        @if("$hintText$".equals("Yes")) {
+            @govukRadios(
+                RadiosViewModel.yesNo(
+                    field = form("value"),
+                    legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading(),
+                    hint =  Some(Hint(content = Text(messages("$className;format="decap"$.hint"))) ) )
             )
-        )
+        } else {
+            @govukRadios(
+                RadiosViewModel.yesNo(
+                    field = form("value"),
+                    legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading(),
+                    hint =  None)
+            )
+        }
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
