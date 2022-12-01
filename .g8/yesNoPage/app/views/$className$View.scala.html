@@ -1,9 +1,10 @@
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton,
+        govukDetails: GovukDetails
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -16,20 +17,23 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @if("$hintText$".equals("Yes")) {
-            @govukRadios(
-                RadiosViewModel.yesNo(
-                    field = form("value"),
-                    legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading(),
-                    hint =  Some(Hint(content = Text(messages("$className;format="decap"$.hint"))) ) )
-            )
-        } else {
-            @govukRadios(
-                RadiosViewModel.yesNo(
-                    field = form("value"),
-                    legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading(),
-                    hint =  None)
-            )
+        <h1 class="govuk-heading-l">@messages("$className;format="decap"$.heading")</h1>
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = if("$textBeforeRadios$".equals("Yes"))
+                    LegendViewModel(messages("$className;format="decap"$.subHeading"))
+        else LegendViewModel(messages("$className;format="decap"$.subHeading")).withCssClass("govuk-visually-hidden"),
+        hint =  if("$hintText$".equals("Yes"))
+            Some(Hint(content = Text(messages("$className;format="decap"$.hint"))))
+        else None
+        ))
+
+        @if("$detailsSection$".equals("Yes")) {
+            @govukDetails(Details(
+                summary = Text(messages("$className;format="decap"$.detailsLink")),
+            content = Text(messages("$className;format="decap"$.detailsContent"))
+            ))
         }
 
         @govukButton(
