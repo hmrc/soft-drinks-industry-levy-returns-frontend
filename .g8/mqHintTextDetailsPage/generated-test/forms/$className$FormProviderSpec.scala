@@ -3,7 +3,7 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class $className$FormProviderSpec extends StringFieldBehaviours {
+class $className$FormProviderSpec extends DoubleFieldBehaviour {
 
   val form = new $className$FormProvider()()
 
@@ -11,20 +11,30 @@ class $className$FormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "$field1Name$"
     val requiredKey = "$className;format="decap"$.error.$field1Name$.required"
-    val lengthKey = "$className;format="decap"$.error.$field1Name$.length"
-    val maxLength = $field1MaxLength$
+    val numberKey = "$className;format="decap"$.error.$field1Name$.nonNumeric"
+    val negativeNumberKey = "$className;format="decap"$.error.$field1Name$.negative"
+    val maxValueKey = "$className;format="decap"$.error.$field1Name$.outOfMaxVal"
+    val maxValue = $field1Maximum$
+    val validDataGenerator = doubleInRangeWithCommas(0, maxValue)
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validDataGenerator
     )
 
-    behave like fieldWithMaxLength(
+    behave like doubleField(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      nonNumericError  = FormError(fieldName, numberKey),
+      negativeNumberError = FormError(fieldName, negativeNumberKey)
+    )
+
+    behave like doubleFieldWithMaximum(
+      form,
+      fieldName,
+      maxLength = maxValue,
+      lengthError = FormError(fieldName, maxValueKey, Seq(maxValue))
     )
 
     behave like mandatoryField(
@@ -38,20 +48,30 @@ class $className$FormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "$field2Name$"
     val requiredKey = "$className;format="decap"$.error.$field2Name$.required"
-    val lengthKey = "$className;format="decap"$.error.$field2Name$.length"
-    val maxLength = $field2MaxLength$
+    val numberKey = "$className;format="decap"$.error.$field2Name$.nonNumeric"
+    val negativeNumberKey = "$className;format="decap"$.error.$field2Name$.negative"
+    val maxValueKey = "$className;format="decap"$.error.$field2Name$.outOfMaxVal"
+    val maxValue = $field2Maximum$
+    val validDataGenerator = doubleInRangeWithCommas(0, maxValue)
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validDataGenerator
     )
 
-    behave like fieldWithMaxLength(
+    behave like doubleField(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      nonNumericError  = FormError(fieldName, numberKey),
+      negativeNumberError = FormError(fieldName, negativeNumberKey)
+    )
+
+    behave like doubleFieldWithMaximum(
+      form,
+      fieldName,
+      maxLength = maxValue,
+      lengthError = FormError(fieldName, maxValueKey, Seq(maxValue))
     )
 
     behave like mandatoryField(

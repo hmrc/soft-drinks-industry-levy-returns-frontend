@@ -35,6 +35,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     genIntersperseString(numberGen, ",")
   }
 
+  def doubleInRangeWithCommas(min: Double, max: Double): Gen[String] = {
+    val numberGen = choose[Double](min, max).map(_.toString)
+    genIntersperseString(numberGen, ",")
+  }
+
   def intsLargerThanMaxValue: Gen[BigInt] =
     arbitrary[BigInt] suchThat(x => x > Int.MaxValue)
 
@@ -43,6 +48,10 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def nonNumerics: Gen[String] =
     alphaStr suchThat(_.size > 0)
+
+  def negativeNumbers: Gen[Double] =
+    arbitrary[Double]
+      .suchThat(_.abs < 0)
 
   def decimals: Gen[String] =
     arbitrary[BigDecimal]
@@ -55,6 +64,9 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def intsAboveValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat(_ > value)
+
+  def doubleAboveValue(value: Double): Gen[Double] =
+    arbitrary[Double] suchThat(_ > value)
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
     arbitrary[Int] suchThat(x => x < min || x > max)

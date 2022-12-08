@@ -78,6 +78,30 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
+  private[mappings] def doubleFormatter(requiredKey: String, negativeNumber: String, nonNumericKey: String, args: Seq[String] = Seq.empty): Formatter[Double] =
+    new Formatter[Double] {
+
+      val negativeRegexp = """^-?(\d*\d*)$"""
+
+      private val baseFormatter = stringFormatter(requiredKey, args)
+
+      override def bind(key: String, data: Map[String, String]) =
+        baseFormatter
+          .bind(key, data)
+          .right.map(_.replace(",", ""))
+          .right.flatMap {
+          case s if s.matches(negativeRegexp) =>
+            Left(Seq(FormError(key, negativeNumber, args)))
+          case s =>
+            nonFatalCatch
+              .either(s.toDouble)
+              .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
+        }
+
+      override def unbind(key: String, value: Double) =
+        baseFormatter.unbind(key, value.toString)
+    }
+
 
   private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty)(implicit ev: Enumerable[A]): Formatter[A] =
     new Formatter[A] {

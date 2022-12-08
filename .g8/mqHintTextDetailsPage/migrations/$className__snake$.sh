@@ -16,13 +16,22 @@ echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
 echo "$className;format="decap"$.title = $className;format="decap"$" >> ../conf/messages.en
 echo "$className;format="decap"$.heading = $className;format="decap"$" >> ../conf/messages.en
+echo "$className;format="decap"$.subtext = $className;format="decap"$" >> ../conf/messages.en
 echo "$className;format="decap"$.$field1Name$ = $field1Name$" >> ../conf/messages.en
+echo "$className;format="decap"$.hint1 = Hint for field 1" >> ../conf/messages.en
 echo "$className;format="decap"$.$field2Name$ = $field2Name$" >> ../conf/messages.en
+echo "$className;format="decap"$.hint2 = Hint for field 2" >> ../conf/messages.en
+echo "$className;format="decap"$.detailsLink = Details Summary" >> ../conf/messages.en
+echo "$className;format="decap"$.detailsContent = Details Contents" >> ../conf/messages.en
 echo "$className;format="decap"$.checkYourAnswersLabel = $className$" >> ../conf/messages.en
 echo "$className;format="decap"$.error.$field1Name$.required = Enter $field1Name$" >> ../conf/messages.en
 echo "$className;format="decap"$.error.$field2Name$.required = Enter $field2Name$" >> ../conf/messages.en
-echo "$className;format="decap"$.error.$field1Name$.length = $field1Name$ must be $field1MaxLength$ characters or less" >> ../conf/messages.en
-echo "$className;format="decap"$.error.$field2Name$.length = $field2Name$ must be $field2MaxLength$ characters or less" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field1Name$.nonNumeric = $field1Name$ must be numeric" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field2Name$.nonNumeric = $field2Name$ must be numeric" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field1Name$.negative = $field1Name$ must be a positive number" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field2Name$.negative = $field2Name$ must be positive number" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field1Name$.outOfMaxVal = $field1Name$ must be $field1MaxLength$ or less" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field2Name$.outOfMaxVal = $field2Name$ must be $field2MaxLength$ or less" >> ../conf/messages.en
 echo "$className;format="decap"$.$field1Name$.change.hidden = $field1Name$" >> ../conf/messages.en
 echo "$className;format="decap"$.$field2Name$.change.hidden = $field2Name$" >> ../conf/messages.en
 

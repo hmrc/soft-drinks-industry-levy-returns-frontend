@@ -19,11 +19,13 @@
         }
 
         <h1 class="govuk-heading-xl">@messages("$className;format="decap"$.heading")</h1>
+        <p class="govuk-body">@messages("$className;format="decap"$.subtext")</p>
 
         @govukInput(
             InputViewModel(
                 field = form("$field1Name$"),
-                label = LabelViewModel(messages("$className;format="decap"$.$field1Name$"))
+                label = LabelViewModel(messages("$className;format="decap"$.$field1Name$")),
+                hint =  Some(Hint(content = Text(messages("$className;format="decap"$.hint1"))) )
             )
             .withWidth(Full)
         )
@@ -31,10 +33,16 @@
         @govukInput(
             InputViewModel(
                 field = form("$field2Name$"),
-                label = LabelViewModel(messages("$className;format="decap"$.$field2Name$"))
+                label = LabelViewModel(messages("$className;format="decap"$.$field2Name$")),
+                hint =  Some(Hint(content = Text(messages("$className;format="decap"$.hint2"))) )
             )
             .withWidth(Full)
         )
+
+        @govukDetails(Details(
+            summary = Text(messages("$className;format="decap"$.detailsLink")),
+        content = Text(messages("$className;format="decap"$.detailsContent"))
+        ))
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
