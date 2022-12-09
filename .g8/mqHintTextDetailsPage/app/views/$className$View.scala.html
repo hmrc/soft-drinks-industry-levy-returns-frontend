@@ -5,7 +5,8 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+   govukDetails: GovukDetails
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -24,19 +25,19 @@
         @govukInput(
             InputViewModel(
                 field = form("$field1Name$"),
-                label = LabelViewModel(messages("$className;format="decap"$.$field1Name$")),
-                hint =  Some(Hint(content = Text(messages("$className;format="decap"$.hint1"))) )
+                label = LabelViewModel(messages("$className;format="decap"$.$field1Name$"))
             )
-            .withWidth(Full)
+            .withWidth(Fixed10)
+                .withHint(Hint(content = Text(messages("$className;format="decap"$.hint1"))))
         )
 
         @govukInput(
             InputViewModel(
                 field = form("$field2Name$"),
-                label = LabelViewModel(messages("$className;format="decap"$.$field2Name$")),
-                hint =  Some(Hint(content = Text(messages("$className;format="decap"$.hint2"))) )
+                label = LabelViewModel(messages("$className;format="decap"$.$field2Name$"))
             )
-            .withWidth(Full)
+            .withWidth(Fixed10)
+                .withHint(Hint(content = Text(messages("$className;format="decap"$.hint2"))))
         )
 
         @govukDetails(Details(
@@ -45,7 +46,7 @@
         ))
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.saveContinue"))
         )
     }
 }

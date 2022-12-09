@@ -50,7 +50,7 @@ trait Constraints {
 
         import ev._
 
-        if (input <= maximum) {
+        if (input < maximum) {
           Valid
         } else {
           Invalid(errorKey, maximum)

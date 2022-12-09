@@ -30,8 +30,10 @@ echo "$className;format="decap"$.error.$field1Name$.nonNumeric = $field1Name$ mu
 echo "$className;format="decap"$.error.$field2Name$.nonNumeric = $field2Name$ must be numeric" >> ../conf/messages.en
 echo "$className;format="decap"$.error.$field1Name$.negative = $field1Name$ must be a positive number" >> ../conf/messages.en
 echo "$className;format="decap"$.error.$field2Name$.negative = $field2Name$ must be positive number" >> ../conf/messages.en
-echo "$className;format="decap"$.error.$field1Name$.outOfMaxVal = $field1Name$ must be $field1MaxLength$ or less" >> ../conf/messages.en
-echo "$className;format="decap"$.error.$field2Name$.outOfMaxVal = $field2Name$ must be $field2MaxLength$ or less" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field1Name$.wholeNumber = $field1Name$ must be a whole number" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field2Name$.wholeNumber = $field2Name$ must be a whole number" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field1Name$.outOfMaxVal = $field1Name$ must be less than $field1Maximum$" >> ../conf/messages.en
+echo "$className;format="decap"$.error.$field2Name$.outOfMaxVal = $field2Name$ must be less than $field2Maximum$" >> ../conf/messages.en
 echo "$className;format="decap"$.$field1Name$.change.hidden = $field1Name$" >> ../conf/messages.en
 echo "$className;format="decap"$.$field2Name$.change.hidden = $field2Name$" >> ../conf/messages.en
 

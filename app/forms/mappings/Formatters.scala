@@ -78,11 +78,14 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
-  private[mappings] def doubleFormatter(requiredKey: String, negativeNumber: String, nonNumericKey: String, args: Seq[String] = Seq.empty): Formatter[Double] =
+  private[mappings] def doubleFormatter(requiredKey: String,
+                                        negativeNumber: String,
+                                        nonNumericKey: String,
+                                        wholeNumberKey: String,
+                                        args: Seq[String] = Seq.empty): Formatter[Double] =
     new Formatter[Double] {
 
-      val negativeRegexp = """^-?(\d*\d*)$"""
-
+      val decimalRegexp = """^-?(\d*\.\d*)$"""
       private val baseFormatter = stringFormatter(requiredKey, args)
 
       override def bind(key: String, data: Map[String, String]) =
@@ -90,8 +93,10 @@ trait Formatters {
           .bind(key, data)
           .right.map(_.replace(",", ""))
           .right.flatMap {
-          case s if s.matches(negativeRegexp) =>
+          case s if s.startsWith("-") =>
             Left(Seq(FormError(key, negativeNumber, args)))
+          case s if s.matches(decimalRegexp) =>
+            Left(Seq(FormError(key, wholeNumberKey, args)))
           case s =>
             nonFatalCatch
               .either(s.toDouble)

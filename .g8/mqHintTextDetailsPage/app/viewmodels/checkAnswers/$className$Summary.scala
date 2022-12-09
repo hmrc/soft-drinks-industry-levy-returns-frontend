@@ -16,7 +16,7 @@ object $className$Summary  {
     answers.get($className$Page).map {
       answer =>
 
-      val value = HtmlFormat.escape(answer.$field1Name$).toString + "<br/>" + HtmlFormat.escape(answer.$field2Name$).toString
+      val value = HtmlFormat.escape(answer.$field1Name$.toString).toString + "<br/>" + HtmlFormat.escape(answer.$field2Name$.toString).toString
 
         SummaryListRowViewModel(
           key     = "$className;format="decap"$.checkYourAnswersLabel",

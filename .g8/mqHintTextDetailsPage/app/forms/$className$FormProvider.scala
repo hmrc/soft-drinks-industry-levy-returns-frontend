@@ -14,13 +14,15 @@ class $className$FormProvider @Inject() extends Mappings {
       "$field1Name$" -> double(
         "$className;format="decap"$.error.$field1Name$.required",
                     "$className;format="decap"$.error.$field1Name$.negative",
-                    "$className;format="decap"$.error.$field1Name$.nonNumeric")
-  .verifying(maximumValue($maximum$, "$className;format="decap"$.error.$field1Name$.outOfMaxVal")),
+                    "$className;format="decap"$.error.$field1Name$.nonNumeric",
+                    "$className;format="decap"$.error.$field1Name$.wholeNumber")
+  .verifying(maximumValue($field1Maximum$, "$className;format="decap"$.error.$field1Name$.outOfMaxVal")),
         "$field2Name$" -> double(
         "$className;format="decap"$.error.$field2Name$.required",
                     "$className;format="decap"$.error.$field2Name$.negative",
-                    "$className;format="decap"$.error.$field2Name$.nonNumeric")
-  .verifying(maximumValue($maximum$, "$className;format="decap"$.error.$field2Name$.outOfMaxVal"))
+                    "$className;format="decap"$.error.$field2Name$.nonNumeric",
+                    "$className;format="decap"$.error.$field2Name$.wholeNumber")
+  .verifying(maximumValue($field2Maximum$, "$className;format="decap"$.error.$field2Name$.outOfMaxVal"))
     )($className$.apply)($className$.unapply)
    )
  }
