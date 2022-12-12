@@ -53,12 +53,10 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def decimalsOps: Gen[String] =
     arbitrary[BigDecimal]
-      .suchThat(_.abs < decimalMax)
+      . suchThat(x => x > 0 && x < decimalMax)
+      .suchThat(!_.isValidInt)
       .map(_.formatted("%f"))
 
-  def negativeNumbers: Gen[Double] =
-    arbitrary[Double]
-      .suchThat(_.abs < 0)
 
   def decimals: Gen[String] =
     arbitrary[BigDecimal]

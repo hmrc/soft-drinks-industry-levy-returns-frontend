@@ -63,7 +63,7 @@ class $className$FormProviderSpec extends DoubleFieldBehaviour {
       validDataGenerator
     )
 
-    behave like doubleField(
+    behave like longField(
       form,
       fieldName,
       nonNumericError  = FormError(fieldName, numberKey),
