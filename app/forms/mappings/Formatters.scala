@@ -78,12 +78,12 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
-  private[mappings] def doubleFormatter(requiredKey: String,
-                                        negativeNumber: String,
-                                        nonNumericKey: String,
-                                        wholeNumberKey: String,
-                                        args: Seq[String] = Seq.empty): Formatter[Double] =
-    new Formatter[Double] {
+  private[mappings] def longFormatter(requiredKey: String,
+                                      negativeNumber: String,
+                                      nonNumericKey: String,
+                                      wholeNumberKey: String,
+                                      args: Seq[String] = Seq.empty): Formatter[Long] =
+    new Formatter[Long] {
 
       val decimalRegexp = """^-?(\d*\.\d*)$"""
       private val baseFormatter = stringFormatter(requiredKey, args)
@@ -99,11 +99,11 @@ trait Formatters {
             Left(Seq(FormError(key, wholeNumberKey, args)))
           case s =>
             nonFatalCatch
-              .either(s.toDouble)
+              .either(s.toLong)
               .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
         }
 
-      override def unbind(key: String, value: Double) =
+      override def unbind(key: String, value: Long) =
         baseFormatter.unbind(key, value.toString)
     }
 

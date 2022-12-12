@@ -9,6 +9,8 @@ import org.scalacheck.{Gen, Shrink}
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
+  val decimalMax = 100000000000000L
+
 
   def genIntersperseString(gen: Gen[String],
                            value: String,
@@ -35,8 +37,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     genIntersperseString(numberGen, ",")
   }
 
-  def doubleInRangeWithCommas(min: Double, max: Double): Gen[String] = {
-    val numberGen = choose[Double](min, max).map(_.toString)
+  def longInRangeWithCommas(min: Long, max: Long): Gen[String] = {
+    val numberGen = choose[Long](min, max).map(_.toString)
     genIntersperseString(numberGen, ",")
   }
 
@@ -48,6 +50,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def nonNumerics: Gen[String] =
     alphaStr suchThat(_.size > 0)
+
+  def decimalsOps: Gen[String] =
+    arbitrary[BigDecimal]
+      .suchThat(_.abs < decimalMax)
+      .map(_.formatted("%f"))
 
   def negativeNumbers: Gen[Double] =
     arbitrary[Double]
@@ -65,8 +72,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def intsAboveValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat(_ > value)
 
-  def doubleAboveValue(value: Double): Gen[Double] =
-    arbitrary[Double] suchThat(_ > value)
+  def longAboveValue(value: Long): Gen[Long] =
+    arbitrary[Long] suchThat(_ >= value)
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
     arbitrary[Int] suchThat(x => x < min || x > max)

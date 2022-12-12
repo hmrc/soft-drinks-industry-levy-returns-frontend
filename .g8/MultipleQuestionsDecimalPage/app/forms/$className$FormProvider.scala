@@ -11,13 +11,13 @@ class $className$FormProvider @Inject() extends Mappings {
 
    def apply(): Form[$className$] = Form(
      mapping(
-      "$field1Name$" -> double(
+      "$field1Name$" -> long(
         "$className;format="decap"$.error.$field1Name$.required",
                     "$className;format="decap"$.error.$field1Name$.negative",
                     "$className;format="decap"$.error.$field1Name$.nonNumeric",
                     "$className;format="decap"$.error.$field1Name$.wholeNumber")
   .verifying(maximumValue($field1Maximum$, "$className;format="decap"$.error.$field1Name$.outOfMaxVal")),
-        "$field2Name$" -> double(
+        "$field2Name$" -> long(
         "$className;format="decap"$.error.$field2Name$.required",
                     "$className;format="decap"$.error.$field2Name$.negative",
                     "$className;format="decap"$.error.$field2Name$.nonNumeric",

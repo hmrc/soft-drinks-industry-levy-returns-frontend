@@ -14,8 +14,9 @@ class $className$FormProviderSpec extends DoubleFieldBehaviour {
     val numberKey = "$className;format="decap"$.error.$field1Name$.nonNumeric"
     val negativeNumberKey = "$className;format="decap"$.error.$field1Name$.negative"
     val maxValueKey = "$className;format="decap"$.error.$field1Name$.outOfMaxVal"
+    val wholeNumberKey = "$className;format="decap"$.error.$field1Name$.wholeNumber"
     val maxValue = $field1Maximum$
-    val validDataGenerator = doubleInRangeWithCommas(0, maxValue)
+    val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
     behave like fieldThatBindsValidData(
       form,
@@ -27,7 +28,8 @@ class $className$FormProviderSpec extends DoubleFieldBehaviour {
       form,
       fieldName,
       nonNumericError  = FormError(fieldName, numberKey),
-      negativeNumberError = FormError(fieldName, negativeNumberKey)
+      negativeNumberError = FormError(fieldName, negativeNumberKey),
+      wholeNumberError = FormError(fieldName, wholeNumberKey)
     )
 
     behave like doubleFieldWithMaximum(
@@ -51,8 +53,9 @@ class $className$FormProviderSpec extends DoubleFieldBehaviour {
     val numberKey = "$className;format="decap"$.error.$field2Name$.nonNumeric"
     val negativeNumberKey = "$className;format="decap"$.error.$field2Name$.negative"
     val maxValueKey = "$className;format="decap"$.error.$field2Name$.outOfMaxVal"
+    val wholeNumberKey = "$className;format="decap"$.error.$field2Name$.wholeNumber"
     val maxValue = $field2Maximum$
-    val validDataGenerator = doubleInRangeWithCommas(0, maxValue)
+    val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
     behave like fieldThatBindsValidData(
       form,
@@ -64,7 +67,8 @@ class $className$FormProviderSpec extends DoubleFieldBehaviour {
       form,
       fieldName,
       nonNumericError  = FormError(fieldName, numberKey),
-      negativeNumberError = FormError(fieldName, negativeNumberKey)
+      negativeNumberError = FormError(fieldName, negativeNumberKey),
+      wholeNumberError = FormError(fieldName, wholeNumberKey)
     )
 
     behave like doubleFieldWithMaximum(

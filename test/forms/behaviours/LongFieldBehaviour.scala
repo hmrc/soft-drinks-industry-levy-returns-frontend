@@ -2,17 +2,27 @@ package forms.behaviours
 
 import play.api.data.{Form, FormError}
 
-class DoubleFieldBehaviour extends FieldBehaviours {
-  def doubleField(form: Form[_],
-                  fieldName: String,
-                  nonNumericError: FormError,
-                  negativeNumberError: FormError): Unit = {
+class LongFieldBehaviour extends FieldBehaviours {
+  def longField(form: Form[_],
+                fieldName: String,
+                nonNumericError: FormError,
+                negativeNumberError: FormError,
+                wholeNumberError: FormError): Unit = {
     "not bind non-numeric numbers" in {
 
       forAll(nonNumerics -> "nonNumeric") {
         nonNumeric =>
           val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
           result.errors must contain only nonNumericError
+      }
+    }
+
+    "not bind decimals" in {
+
+      forAll(decimalsOps -> "decimal") {
+        decimal =>
+          val result = form.bind(Map(fieldName -> decimal)).apply(fieldName)
+          result.errors must contain only wholeNumberError
       }
     }
 
@@ -28,13 +38,13 @@ class DoubleFieldBehaviour extends FieldBehaviours {
 
   def doubleFieldWithMaximum(form: Form[_],
                           fieldName: String,
-                          maximum: Double,
+                          maximum: Long,
                           expectedError: FormError): Unit = {
 
-    s"not bind integers above $maximum" in {
+    s"not bind long above $maximum" in {
 
-      forAll(doubleAboveValue(maximum) -> "outOfMaxVal") {
-        number: Double =>
+      forAll(longAboveValue(maximum) -> "outOfMaxVal") {
+        number: Long =>
           val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
           result.errors must contain only expectedError
       }
