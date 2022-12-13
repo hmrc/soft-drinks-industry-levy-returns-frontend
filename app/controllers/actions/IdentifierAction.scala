@@ -19,6 +19,7 @@ package controllers.actions
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
+import services.SubscriptionService
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -32,11 +33,25 @@ import scala.concurrent.{ExecutionContext, Future}
 trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject()(
-                                               override val authConnector: AuthConnector,
-                                               config: FrontendAppConfig,
-                                               val parser: BodyParsers.Default
-                                             )
-                                             (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions {
+  override val authConnector: AuthConnector,
+  config: FrontendAppConfig,
+  val parser: BodyParsers.Default,
+  subscriptionService :SubscriptionService)
+  (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions {
+
+  private def authoriseSubscription[A](
+    sdilNumber: String,
+    identifierType: String,
+    enrolments: Enrolments,
+    block: IdentifierRequest[A] => Future[Result])
+    (implicit request: Request[A], hc: HeaderCarrier) = {
+
+    subscriptionService.authenticateSubscription(sdilNumber, identifierType) flatMap {
+      case Right(subscription) =>
+        block(IdentifierRequest(request, AgentUser(internalId, enrolments, arn)))
+      case Left(redirect: Result) => Future.successful(redirect)
+    }
+  }
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 

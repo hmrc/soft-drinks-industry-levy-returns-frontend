@@ -17,31 +17,32 @@
 package connectors
 
 import play.api.Configuration
-import play.api.libs.json.JsObject
-import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw, _}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import models.backend.Subscription
 import models.retrieved.RetrievedSubscription
-import models._
+import play.api.i18n.Lang.logger
+import play.api.libs.json.Json
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
-                                                 http: HttpClient,
-                                                 val configuration: Configuration
-                                               )(implicit ec: ExecutionContext)
+    http: HttpClient,
+    val configuration: Configuration
+  )(implicit ec: ExecutionContext)
   extends ServicesConfig(configuration) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
-  //Returns
-  def retrieveSubscription(sdilNumber: String, identifierType: String = "sdil")(
-    implicit hc: HeaderCarrier): Option[RetrievedSubscription] =
-        http.GET[Option[RetrievedSubscription]](s"$sdilUrl/subscription/$identifierType/$sdilNumber").flatMap {
-          case Some(a) => Future(Some(a))
-          case _ => Future.successful(None)
-  }
 
+  private def getSubscriptionUrl( sdilNumber: String,identifierType: String = "sdil"): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
+
+  def retrieveSubscription(
+    sdilNumber: String,
+    identifierType: String
+  )(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
+  http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).flatMap {
+    case Some(a) => Future(Some(a))
+    case _ => Future.successful(None)
+  }
 }

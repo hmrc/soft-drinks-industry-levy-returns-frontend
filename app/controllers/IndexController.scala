@@ -20,16 +20,18 @@ import controllers.actions.IdentifierAction
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import controllers.actions.Actions
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
 
 class IndexController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
-                                 identify: IdentifierAction,
+                                 actions: Actions,
                                  view: IndexView
                                ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Ok(view())
+  def onPageLoad: Action[AnyContent] = actions.auth.async {
+    implicit request =>
+      initialise(Redirect(controllers.routes.UTRController.onPageLoad()))
   }
 }

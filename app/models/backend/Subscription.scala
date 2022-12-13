@@ -32,40 +32,4 @@ case class Subscription(
 
 object Subscription {
   implicit val format: Format[Subscription] = Json.format[Subscription]
-
-  def fromFormData(formData: RegistrationFormData): Option[Subscription] =
-    for {
-      orgType  <- formData.organisationType
-      producer <- formData.producer
-      startDate = formData.startDate.getOrElse(LocalDate.now)
-      productionSites = formData.productionSites.getOrElse(Nil)
-      secondaryWarehouses = formData.secondaryWarehouses.getOrElse(Nil)
-      contactDetails <- formData.contactDetails
-    } yield {
-      Subscription(
-        utr = formData.utr,
-        orgName = formData.rosmData.organisationName,
-        orgType = toEnum(orgType),
-        address = UkAddress.fromAddress(formData.primaryAddress),
-        activity = Activity(
-          formData.volumeForOwnBrand,
-          formData.importVolume,
-          formData.volumeForCustomerBrands,
-          formData.usesCopacker.collect { case true => Litreage(1, 1) },
-          producer.isLarge.contains(true)
-        ),
-        liabilityDate = startDate,
-        productionSites = productionSites,
-        warehouseSites = secondaryWarehouses,
-        contact = Contact(
-          name = Some(contactDetails.fullName),
-          positionInCompany = Some(contactDetails.position),
-          phoneNumber = contactDetails.phoneNumber,
-          email = contactDetails.email
-        )
-      )
-    }
-
-  def desify(subscription: Subscription): Subscription =
-    subscription.copy(orgType = toEnum(subscription.orgType))
 }
