@@ -18,14 +18,15 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.routes
-import services.SubscriptionService
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
+import uk.gov.hmrc.http.{HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,31 +37,37 @@ class AuthenticatedIdentifierAction @Inject()(
   override val authConnector: AuthConnector,
   config: FrontendAppConfig,
   val parser: BodyParsers.Default,
-  subscriptionService :SubscriptionService)
-  (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions {
+  sdilConnector: SoftDrinksIndustryLevyConnector)
+  (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions with ActionHelpers {
 
-  private def authoriseSubscription[A](
-    sdilNumber: String,
-    identifierType: String,
-    enrolments: Enrolments,
-    block: IdentifierRequest[A] => Future[Result])
-    (implicit request: Request[A], hc: HeaderCarrier) = {
-
-    subscriptionService.authenticateSubscription(sdilNumber, identifierType) flatMap {
-      case Right(subscription) =>
-        block(IdentifierRequest(request, AgentUser(internalId, enrolments, arn)))
-      case Left(redirect: Result) => Future.successful(redirect)
-    }
-  }
+//  private def authoriseSubscription[A](
+//    sdilNumber: String,
+//    identifierType: String,
+//    enrolments: Enrolments,
+//    block: IdentifierRequest[A] => Future[Result])
+//    (implicit request: Request[A], hc: HeaderCarrier) = {
+//
+//    subscriptionService.authenticateSubscription(sdilNumber, identifierType) flatMap {
+//      case Right(subscription) =>
+//        block(IdentifierRequest(request, AgentUser(internalId, enrolments, arn)))
+//      case Left(redirect: Result) => Future.successful(redirect)
+//    }
+//  }
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised().retrieve(Retrievals.internalId) {
-      _.map {
-        internalId => block(IdentifierRequest(request, internalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
+    authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
+      (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
+        case (Some(e), _) => block(IdentifierRequest(request, e.value))
+        case (None, Some(utr)) =>  sdilConnector.retrieveSubscription(utr, "utr").flatMap {
+          case Some(subscription) =>
+            block(IdentifierRequest(request, EnrolmentIdentifier("sdil", subscription.sdilRef).value))
+          case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+        }
+        case _ => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+      }
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))

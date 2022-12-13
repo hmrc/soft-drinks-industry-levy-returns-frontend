@@ -21,8 +21,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.retrieved.RetrievedSubscription
-import play.api.i18n.Lang.logger
-import play.api.libs.json.Json
+
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
