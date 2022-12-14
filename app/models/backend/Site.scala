@@ -18,7 +18,6 @@ package models.backend
 
 import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
-import models.{Address, Warehouse}
 
 case class Site(
                  address: UkAddress,
@@ -34,10 +33,4 @@ case class Site(
 
 object Site {
   implicit val format: Format[Site] = Json.format[Site]
-
-  def fromAddress(address: Address): Site =
-    Site(UkAddress.fromAddress(address), None, None, None)
-
-  def fromWarehouse(warehouse: Warehouse): Site =
-    Site(UkAddress.fromAddress(warehouse.address), None, Some(warehouse.tradingName), None)
 }

@@ -40,8 +40,8 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     sdilNumber: String,
     identifierType: String
   )(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
-  http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).flatMap {
-    case Some(a) => Future(Some(a))
-    case _ => Future.successful(None)
+  http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).map {
+    case Some(a) => Some(a)
+    case _ => None
   }
 }

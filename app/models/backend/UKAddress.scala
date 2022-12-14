@@ -17,7 +17,6 @@
 package models.backend
 
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
-import models.Address
 
 trait RetrievedAddress {
   def lines: List[String]
@@ -45,12 +44,6 @@ case class UkAddress(lines: List[String], postCode: String) extends RetrievedAdd
 
 object UkAddress {
   implicit val ukAddressFormat: Format[UkAddress] = Json.format[UkAddress]
-
-  def fromAddress(address: Address): UkAddress =
-    UkAddress(
-      List(address.line1, address.line2, address.line3, address.line4).filter(_.nonEmpty),
-      address.postcode
-    )
 }
 
 case class ForeignAddress(lines: List[String], country: String) extends RetrievedAddress
