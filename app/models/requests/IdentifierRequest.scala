@@ -17,6 +17,5 @@
 package models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.EnrolmentIdentifier
 
 case class IdentifierRequest[A] (request: Request[A], sdilEnrolment: String) extends WrappedRequest[A](request)

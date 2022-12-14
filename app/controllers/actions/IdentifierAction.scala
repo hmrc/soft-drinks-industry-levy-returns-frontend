@@ -40,20 +40,6 @@ class AuthenticatedIdentifierAction @Inject()(
   sdilConnector: SoftDrinksIndustryLevyConnector)
   (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions with ActionHelpers {
 
-//  private def authoriseSubscription[A](
-//    sdilNumber: String,
-//    identifierType: String,
-//    enrolments: Enrolments,
-//    block: IdentifierRequest[A] => Future[Result])
-//    (implicit request: Request[A], hc: HeaderCarrier) = {
-//
-//    subscriptionService.authenticateSubscription(sdilNumber, identifierType) flatMap {
-//      case Right(subscription) =>
-//        block(IdentifierRequest(request, AgentUser(internalId, enrolments, arn)))
-//      case Left(redirect: Result) => Future.successful(redirect)
-//    }
-//  }
-
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)

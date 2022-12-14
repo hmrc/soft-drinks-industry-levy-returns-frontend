@@ -27,7 +27,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
-    http: HttpClient,
+    val http: HttpClient,
     val configuration: Configuration
   )(implicit ec: ExecutionContext)
   extends ServicesConfig(configuration) {

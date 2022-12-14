@@ -16,14 +16,15 @@
 
 package connectors
 
-import base.SpecBase
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.mockito.ArgumentMatchers.{any, anyString, matches}
+import org.mockito.ArgumentMatchersSugar.eqTo
 
-import scala.concurrent.duration._
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -31,12 +32,9 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 
-class SoftDrinksIndustryLevyConnectorSpec extends SpecBase {
+class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar with ScalaFutures with IntegrationPatience  {
 
-  val http = mock[HttpClient]
-  val configuration = mock[Configuration]
-
-  lazy val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http, configuration)
+  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http = mock[HttpClient], configuration = mock[Configuration])
 
   val aSubscription = RetrievedSubscription(
     "0000000022",
@@ -79,18 +77,21 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase {
 
   implicit val hc = HeaderCarrier()
 
-  "SoftDrinksIndustryLevyConnector" - {
+  "SoftDrinksIndustryLevyConnector" must {
 
     "return a subscription Successfully" in {
 
-    lazy val sdilUrl: String = "soft-drinks-industry-levy"
-    lazy val identifierType: String = "0000000022"
-    lazy val sdilNumber: String = "XKSDIL000000022"
+     lazy val sdilUrl: String = ("soft-drinks-industry-levy")
 
-    when(http.GET[Option[RetrievedSubscription]](any(), any())(any(), any(), any())) thenReturn Future.successful(Some(aSubscription))
+     val identifierType: String = "0000000022"
+     val sdilNumber: String = "XKSDIL000000022"
+      val getUrl: String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
-     whenReady(softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType)){
-       _ mustBe Some(aSubscription)
+    when{softDrinksIndustryLevyConnector.http.GET[Option[RetrievedSubscription]](any(), any())(any(), any(), any())
+    } thenReturn Future.successful(Some(aSubscription))
+
+     whenReady(softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType).map(result => println(s"${ result.get}"))){
+       _ mustBe  Some(aSubscription)
      }
     }
   }
