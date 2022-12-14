@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
+import play.api.libs.json.JsPath
 
-trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+case object PackagedContractPackerPage extends QuestionPage[Boolean] {
 
-  implicit lazy val arbitraryackagedContractPackerUserAnswersEntry: Arbitrary[(PackagedContractPackerPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[PackagedContractPackerPage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "ackagedContractPacker"
 }

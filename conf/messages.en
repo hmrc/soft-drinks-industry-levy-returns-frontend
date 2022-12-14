@@ -58,3 +58,12 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+ackagedContractPacker.title = ackagedContractPacker
+ackagedContractPacker.heading = ackagedContractPacker
+ackagedContractPacker.subHeading = ackagedContractPacker
+ackagedContractPacker.detailsLink = ackagedContractPacker
+ackagedContractPacker.detailsContent = ackagedContractPacker
+ackagedContractPacker.checkYourAnswersLabel = ackagedContractPacker
+ackagedContractPacker.error.required = Select yes if ackagedContractPacker
+ackagedContractPacker.change.hidden = ackagedContractPacker

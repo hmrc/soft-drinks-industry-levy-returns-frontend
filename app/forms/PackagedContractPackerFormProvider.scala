@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
+import javax.inject.Inject
 
-trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  implicit lazy val arbitraryackagedContractPackerUserAnswersEntry: Arbitrary[(PackagedContractPackerPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[PackagedContractPackerPage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
+class PackagedContractPackerFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("ackagedContractPacker.error.required")
+    )
 }
