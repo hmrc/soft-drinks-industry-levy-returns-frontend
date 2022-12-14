@@ -20,14 +20,14 @@ import controllers.actions._
 import forms.PackagedContractPackerFormProvider
 
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.PackagedContractPackerPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{PackagedContractPackerView}
+import views.html.PackagedContractPackerView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,16 +56,16 @@ class PackagedContractPackerController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-
+      val answers = request.userAnswers.getOrElse(UserAnswers(request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagedContractPackerPage, value))
+            updatedAnswers <- Future.fromTry(answers.set(PackagedContractPackerPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(PackagedContractPackerPage, mode, updatedAnswers))
       )
