@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package models.requests
+package controllers.actions
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import com.google.inject.Inject
+import play.api.mvc.{ActionBuilder, AnyContent}
+import models.requests.IdentifierRequest
 
-case class OptionalDataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
-
-case class DataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+class Actions @Inject()(
+                         identify: IdentifierAction,
+                       ) {
+    def auth : ActionBuilder[IdentifierRequest, AnyContent] = identify
+}

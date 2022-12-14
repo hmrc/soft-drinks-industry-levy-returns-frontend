@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.utilities
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import java.time.format.DateTimeFormatter
+import scala.language.implicitConversions
 
-case class OptionalDataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+object utility {
+  implicit class MoneyFormat(in: BigDecimal) {
+    def pounds: String = f"£$in%,.2f".replace("£-", "-£")
+  }
 
-case class DataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+  implicit def stringToFormatter(in: String): DateTimeFormatter =
+    DateTimeFormatter.ofPattern(in)
+}

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.backend
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import play.api.libs.json.{Format, Json}
 
-case class OptionalDataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+case class Contact(name: Option[String], positionInCompany: Option[String], phoneNumber: String, email: String)
 
-case class DataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+object Contact {
+  implicit val format: Format[Contact] = Json.format[Contact]
+}

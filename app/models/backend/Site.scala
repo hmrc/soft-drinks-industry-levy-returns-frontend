@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.backend
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import java.time.LocalDate
+import play.api.libs.json.{Format, Json}
 
-case class OptionalDataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+case class Site(
+                 address: UkAddress,
+                 ref: Option[String],
+                 tradingName: Option[String],
+                 closureDate: Option[LocalDate]
+               ) {
+  def getLines: List[String] =
+    tradingName.fold(address.lines :+ address.postCode) { x =>
+      (x :: address.lines) :+ address.postCode
+    }
+}
 
-case class DataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+object Site {
+  implicit val format: Format[Site] = Json.format[Site]
+}
