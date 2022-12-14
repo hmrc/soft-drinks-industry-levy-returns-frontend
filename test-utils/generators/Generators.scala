@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package generators
 
 import java.time.{Instant, LocalDate, ZoneOffset}
@@ -9,6 +25,8 @@ import org.scalacheck.{Gen, Shrink}
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
+  val decimalMax = 100000000000000L
+
 
   def genIntersperseString(gen: Gen[String],
                            value: String,
@@ -35,6 +53,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     genIntersperseString(numberGen, ",")
   }
 
+  def longInRangeWithCommas(min: Long, max: Long): Gen[String] = {
+    val numberGen = choose[Long](min, max).map(_.toString)
+    genIntersperseString(numberGen, ",")
+  }
+
   def intsLargerThanMaxValue: Gen[BigInt] =
     arbitrary[BigInt] suchThat(x => x > Int.MaxValue)
 
@@ -43,6 +66,13 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def nonNumerics: Gen[String] =
     alphaStr suchThat(_.size > 0)
+
+  def decimalsOps: Gen[String] =
+    arbitrary[BigDecimal]
+      . suchThat(x => x > 0 && x < decimalMax)
+      .suchThat(!_.isValidInt)
+      .map(_.formatted("%f"))
+
 
   def decimals: Gen[String] =
     arbitrary[BigDecimal]
@@ -55,6 +85,9 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def intsAboveValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat(_ > value)
+
+  def longAboveValue(value: Long): Gen[Long] =
+    arbitrary[Long] suchThat(_ >= value)
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
     arbitrary[Int] suchThat(x => x < min || x > max)
