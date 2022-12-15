@@ -40,11 +40,6 @@
                 .withHint(Hint(content = Text(messages("brandsPackagedAtOwnSites.hint2"))))
         )
 
-        @govukDetails(Details(
-            summary = Text(messages("brandsPackagedAtOwnSites.detailsLink")),
-        content = Text(messages("brandsPackagedAtOwnSites.detailsContent"))
-        ))
-
         @govukButton(
             ButtonViewModel(messages("site.saveContinue"))
         )
