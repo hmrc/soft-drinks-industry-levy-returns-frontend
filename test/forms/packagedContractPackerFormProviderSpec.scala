@@ -5,7 +5,7 @@ import play.api.data.FormError
 
 class packagedContractPackerFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "ackagedContractPacker.error.required"
+  val requiredKey = "packagedContractPacker.error.required"
   val invalidKey = "error.boolean"
 
   val form = new PackagedContractPackerFormProvider()()

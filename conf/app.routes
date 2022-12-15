@@ -20,7 +20,7 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
-GET        /packagedContractPacker                        controllers.PackagedContractPackerController.onPageLoad(mode: Mode = NormalMode)
-POST       /packagedContractPacker                        controllers.PackagedContractPackerController.onSubmit(mode: Mode = NormalMode)
-GET        /pchangeackagedContractPacker                  controllers.PackagedContractPackerController.onPageLoad(mode: Mode = CheckMode)
-POST       /pchangeackagedContractPacker                  controllers.PackagedContractPackerController.onSubmit(mode: Mode = CheckMode)
+GET        /packaged-as-contract-packer                  controllers.PackagedContractPackerController.onPageLoad(mode: Mode = NormalMode)
+POST       /packaged-as-contract-packer                  controllers.PackagedContractPackerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-packaged-as-contract-packer           controllers.PackagedContractPackerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-packaged-as-contract-packer           controllers.PackagedContractPackerController.onSubmit(mode: Mode = CheckMode)

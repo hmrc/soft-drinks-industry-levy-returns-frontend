@@ -25,6 +25,6 @@ class PackagedContractPackerFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("ackagedContractPacker.error.required")
+      "value" -> boolean("packagedContractPacker.error.required")
     )
 }
