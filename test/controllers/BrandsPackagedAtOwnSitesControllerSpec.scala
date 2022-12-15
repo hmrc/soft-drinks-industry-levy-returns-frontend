@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  * Copyright 2022 HM Revenue & Customs
  *
@@ -15,8 +14,6 @@
  * limitations under the License.
  */
 
-=======
->>>>>>> 37e938d (DLS-6607 initial commit)
 package controllers
 
 import base.SpecBase
@@ -113,11 +110,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
       running(application) {
         val request =
           FakeRequest(POST, brandsPackagedAtOwnSitesRoute)
-<<<<<<< HEAD
             .withFormUrlEncodedBody(("lowBandLitres", value1.toString), ("highBandLitres", value2.toString))
-=======
-            .withFormUrlEncodedBody(("lowBandLitres", value1.toString), ("highBandLitres", value2.toStringalue))
->>>>>>> 37e938d (DLS-6607 initial commit)
 
         val result = route(application, request).value
 
