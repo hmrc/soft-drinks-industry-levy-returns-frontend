@@ -58,7 +58,6 @@ class BrandsPackagedAtOwnSitesController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -68,7 +67,7 @@ class BrandsPackagedAtOwnSitesController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(answers.set(BrandsPackagedAtOwnSitesPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BrandsPackagedAtOwnSitesPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(, mode, updatedAnswers))
       )
   }
 }
