@@ -67,7 +67,7 @@ class BrandsPackagedAtOwnSitesController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(answers.set(BrandsPackagedAtOwnSitesPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BrandsPackagedAtOwnSitesPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(, mode, updatedAnswers))
       )
   }
 }
