@@ -16,6 +16,11 @@
 
 package generators
 
+import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary._
+import pages.PackagedContractPackerPage
+import play.api.libs.json.{JsValue, Json}
+
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
