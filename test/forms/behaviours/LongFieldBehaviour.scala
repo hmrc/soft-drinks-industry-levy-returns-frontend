@@ -51,7 +51,7 @@ class LongFieldBehaviour extends FieldBehaviours {
     }
   }
 
-  def doubleFieldWithMaximum(form: Form[_],
+  def longFieldWithMaximum(form: Form[_],
                           fieldName: String,
                           maximum: Long,
                           expectedError: FormError): Unit = {

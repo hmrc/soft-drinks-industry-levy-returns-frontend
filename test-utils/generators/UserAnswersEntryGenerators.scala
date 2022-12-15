@@ -52,7 +52,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[BrandsPackagedAtOwnSitesPage.type]
         value <- arbitrary[BrandsPackagedAtOwnSites].map(Json.toJson(_))
-
       } yield (page, value)
     }
 }

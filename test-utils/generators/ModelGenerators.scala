@@ -16,6 +16,10 @@
 
 package generators
 
+import models.BrandsPackagedAtOwnSites
+import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary._
+
 
 trait ModelGenerators {
 
