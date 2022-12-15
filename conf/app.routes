@@ -25,7 +25,14 @@ POST       /packaged-as-contract-packer                  controllers.PackagedCon
 GET        /change-packaged-as-contract-packer           controllers.PackagedContractPackerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-packaged-as-contract-packer           controllers.PackagedContractPackerController.onSubmit(mode: Mode = CheckMode)
 
+
 GET        /own-brands-packaged-at-own-sites                        controllers.OwnBrandsController.onPageLoad(mode: Mode = NormalMode)
 POST       /own-brands-packaged-at-own-sites                        controllers.OwnBrandsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-own-brands-packaged-at-own-sites                  controllers.OwnBrandsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-own-brands-packaged-at-own-sites                  controllers.OwnBrandsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /brandsPackagedAtOwnSites                        controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = NormalMode)
+POST       /brandsPackagedAtOwnSites                        controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = NormalMode)
+GET        /changeBrandsPackagedAtOwnSites                  controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeBrandsPackagedAtOwnSites                  controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = CheckMode)
+

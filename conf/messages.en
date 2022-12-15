@@ -71,6 +71,7 @@ packagedContractPacker.checkYourAnswersLabel = packagedContractPacker
 packagedContractPacker.error.required = Select yes if you are reporting liable drink you have packaged as a third party or contract packer at UK sites you operate
 packagedContractPacker.change.hidden = packagedContractPacker
 
+
 ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.heading = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
@@ -78,4 +79,28 @@ ownBrands.checkYourAnswersLabel = ownBrands
 ownBrands.error.required = Select yes if you are reporting your own brands of \
                              liable drink you have packaged at UK sites you operate
 ownBrands.change.hidden = OwnBrands
+
+brandsPackagedAtOwnSites.title = brandsPackagedAtOwnSites
+brandsPackagedAtOwnSites.heading = brandsPackagedAtOwnSites
+brandsPackagedAtOwnSites.subtext = brandsPackagedAtOwnSites
+brandsPackagedAtOwnSites.lowBandLitres = lowBandLitres
+brandsPackagedAtOwnSites.hint1 = Hint for field 1
+brandsPackagedAtOwnSites.highBandLitres = highBandLitres
+brandsPackagedAtOwnSites.hint2 = Hint for field 2
+brandsPackagedAtOwnSites.detailsLink = Details Summary
+brandsPackagedAtOwnSites.detailsContent = Details Contents
+brandsPackagedAtOwnSites.checkYourAnswersLabel = BrandsPackagedAtOwnSites
+brandsPackagedAtOwnSites.error.lowBandLitres.required = Enter lowBandLitres
+brandsPackagedAtOwnSites.error.highBandLitres.required = Enter highBandLitres
+brandsPackagedAtOwnSites.error.lowBandLitres.nonNumeric = lowBandLitres must be numeric
+brandsPackagedAtOwnSites.error.highBandLitres.nonNumeric = highBandLitres must be numeric
+brandsPackagedAtOwnSites.error.lowBandLitres.negative = lowBandLitres must be a positive number
+brandsPackagedAtOwnSites.error.highBandLitres.negative = highBandLitres must be positive number
+brandsPackagedAtOwnSites.error.lowBandLitres.wholeNumber = lowBandLitres must be a whole number
+brandsPackagedAtOwnSites.error.highBandLitres.wholeNumber = highBandLitres must be a whole number
+brandsPackagedAtOwnSites.error.lowBandLitres.outOfMaxVal = lowBandLitres must be less than 100000000000000L
+brandsPackagedAtOwnSites.error.highBandLitres.outOfMaxVal = highBandLitres must be less than 100000000000000L
+brandsPackagedAtOwnSites.lowBandLitres.change.hidden = lowBandLitres
+brandsPackagedAtOwnSites.highBandLitres.change.hidden = highBandLitres
+
 

@@ -1,0 +1,52 @@
+@import viewmodels.InputWidth._
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukButton: GovukButton,
+   govukDetails: GovukDetails
+)
+
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("brandsPackagedAtOwnSites.title"))) {
+
+    @formHelper(action = routes.BrandsPackagedAtOwnSitesController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        <h1 class="govuk-heading-xl">@messages("brandsPackagedAtOwnSites.heading")</h1>
+        <p class="govuk-body">@messages("brandsPackagedAtOwnSites.subtext")</p>
+
+        @govukInput(
+            InputViewModel(
+                field = form("lowBandLitres"),
+                label = LabelViewModel(messages("brandsPackagedAtOwnSites.lowBandLitres"))
+            )
+            .withWidth(Fixed10)
+                .withHint(Hint(content = Text(messages("brandsPackagedAtOwnSites.hint1"))))
+        )
+
+        @govukInput(
+            InputViewModel(
+                field = form("highBandLitres"),
+                label = LabelViewModel(messages("brandsPackagedAtOwnSites.highBandLitres"))
+            )
+            .withWidth(Fixed10)
+                .withHint(Hint(content = Text(messages("brandsPackagedAtOwnSites.hint2"))))
+        )
+
+        @govukDetails(Details(
+            summary = Text(messages("brandsPackagedAtOwnSites.detailsLink")),
+        content = Text(messages("brandsPackagedAtOwnSites.detailsContent"))
+        ))
+
+        @govukButton(
+            ButtonViewModel(messages("site.saveContinue"))
+        )
+    }
+}

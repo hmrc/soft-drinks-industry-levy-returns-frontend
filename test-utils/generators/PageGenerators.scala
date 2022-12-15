@@ -27,4 +27,8 @@ trait PageGenerators {
   implicit lazy val arbitraryOwnBrandsPage: Arbitrary[OwnBrandsPage.type] =
     Arbitrary(OwnBrandsPage)
 
+  implicit lazy val arbitraryBrandsPackagedAtOwnSitesPage: Arbitrary[BrandsPackagedAtOwnSitesPage.type] =
+    Arbitrary(BrandsPackagedAtOwnSitesPage)
+
+
 }

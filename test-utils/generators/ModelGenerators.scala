@@ -18,4 +18,12 @@ package generators
 
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryBrandsPackagedAtOwnSites: Arbitrary[BrandsPackagedAtOwnSites] =
+    Arbitrary {
+      for {
+        lowBandLitres <- arbitrary[Long]
+        highBandLitres <- arbitrary[Long]
+      } yield BrandsPackagedAtOwnSites(lowBandLitres, highBandLitres)
+    }
 }
