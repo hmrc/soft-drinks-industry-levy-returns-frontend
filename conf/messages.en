@@ -100,5 +100,11 @@ brandsPackagedAtOwnSites.error.highBandLitres.outOfMaxVal = Number of litres in 
 brandsPackagedAtOwnSites.lowBandLitres.change.hidden = Litres in the low band
 brandsPackagedAtOwnSites.highBandLitres.change.hidden = Litres in the high band
 
-
+exemptionsForSmallProducers.title = exemptionsForSmallProducers
+exemptionsForSmallProducers.heading = Do you need to claim an exemption for any of the liable drink you have packaged for registered small producers?
+exemptionsForSmallProducers.detailsLink = What is a small producer?
+exemptionsForSmallProducers.detailsContent1 = A business is a small producer if it:
+exemptionsForSmallProducers.detailsContent2 = has had less than 1 million litres iof its own brands of liable drinks packaged globally in the past 12 months
+exemptionsForSmallProducers.detailsContent3 = will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days
+exemptionsForSmallProducers.error.required = Select yes if you need to claim an exemption for any of the liable drink you have packaged for registered small producers
 

@@ -30,5 +30,6 @@ trait PageGenerators {
   implicit lazy val arbitraryBrandsPackagedAtOwnSitesPage: Arbitrary[BrandsPackagedAtOwnSitesPage.type] =
     Arbitrary(BrandsPackagedAtOwnSitesPage)
 
-
+  implicit lazy val arbitraryExemptionsForSmallProducersPage: Arbitrary[ExemptionsForSmallProducersPage.type] =
+    Arbitrary(ExemptionsForSmallProducersPage)
 }
