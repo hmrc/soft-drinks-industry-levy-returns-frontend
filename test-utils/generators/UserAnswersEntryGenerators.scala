@@ -23,6 +23,7 @@ import pages.OwnBrandsPage
 import play.api.libs.json.{JsValue, Json}
 
 
+
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
 
