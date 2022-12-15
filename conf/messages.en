@@ -75,6 +75,7 @@ ownBrands.title = Are you reporting your own brands of liable drinks packaged at
 ownBrands.heading = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
 ownBrands.checkYourAnswersLabel = ownBrands
-ownBrands.error.required = Select yes if ownBrands
+ownBrands.error.required = Select yes if you are reporting your own brands of \
+                             liable drink you have packaged at UK sites you operate
 ownBrands.change.hidden = OwnBrands
 
