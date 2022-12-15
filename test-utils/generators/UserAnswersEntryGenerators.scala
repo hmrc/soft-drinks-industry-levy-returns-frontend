@@ -16,6 +16,19 @@
 
 package generators
 
+import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary._
+import pages.PackagedContractPackerPage
+import play.api.libs.json.{JsValue, Json}
+
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryackagedContractPackerUserAnswersEntry: Arbitrary[(PackagedContractPackerPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[PackagedContractPackerPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 }

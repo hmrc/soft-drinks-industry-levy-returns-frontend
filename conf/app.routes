@@ -19,3 +19,8 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
+
+GET        /packaged-as-contract-packer                  controllers.PackagedContractPackerController.onPageLoad(mode: Mode = NormalMode)
+POST       /packaged-as-contract-packer                  controllers.PackagedContractPackerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-packaged-as-contract-packer           controllers.PackagedContractPackerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-packaged-as-contract-packer           controllers.PackagedContractPackerController.onSubmit(mode: Mode = CheckMode)
