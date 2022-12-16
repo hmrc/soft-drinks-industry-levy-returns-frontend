@@ -17,7 +17,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-l">@messages("$className;format="decap"$.heading")</h1>
+        <h1 class="govuk-heading-m">@messages("$className;format="decap"$.heading")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),

@@ -29,3 +29,15 @@ GET        /own-brands-packaged-at-own-sites                        controllers.
 POST       /own-brands-packaged-at-own-sites                        controllers.OwnBrandsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-own-brands-packaged-at-own-sites                  controllers.OwnBrandsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-own-brands-packaged-at-own-sites                  controllers.OwnBrandsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /brandsPackagedAtOwnSites                        controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = NormalMode)
+POST       /brandsPackagedAtOwnSites                        controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = NormalMode)
+GET        /changeBrandsPackagedAtOwnSites                  controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeBrandsPackagedAtOwnSites                  controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /how-many-own-brands-packaged-at-own-sites            controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-own-brands-packaged-at-own-sites           controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-own-brands-packaged-at-own-sites     controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-own-brands-packaged-at-own-sites     controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = CheckMode)
+
+

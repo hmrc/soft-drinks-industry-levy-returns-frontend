@@ -3,7 +3,7 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class $className$FormProviderSpec extends DoubleFieldBehaviour {
+class $className$FormProviderSpec extends LongFieldBehaviour {
 
   val form = new $className$FormProvider()()
 
@@ -24,7 +24,7 @@ class $className$FormProviderSpec extends DoubleFieldBehaviour {
       validDataGenerator
     )
 
-    behave like doubleField(
+    behave like longField(
       form,
       fieldName,
       nonNumericError  = FormError(fieldName, numberKey),
@@ -32,7 +32,7 @@ class $className$FormProviderSpec extends DoubleFieldBehaviour {
       wholeNumberError = FormError(fieldName, wholeNumberKey)
     )
 
-    behave like doubleFieldWithMaximum(
+    behave like longFieldWithMaximum(
       form,
       fieldName,
       maxLength = maxValue,
@@ -71,7 +71,7 @@ class $className$FormProviderSpec extends DoubleFieldBehaviour {
       wholeNumberError = FormError(fieldName, wholeNumberKey)
     )
 
-    behave like doubleFieldWithMaximum(
+    behave like longFieldWithMaximum(
       form,
       fieldName,
       maxLength = maxValue,

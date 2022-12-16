@@ -79,3 +79,26 @@ ownBrands.error.required = Select yes if you are reporting your own brands of \
                              liable drink you have packaged at UK sites you operate
 ownBrands.change.hidden = OwnBrands
 
+brandsPackagedAtOwnSites.title = How many litres of liable drinks have you packaged at UK sites you operate?
+brandsPackagedAtOwnSites.heading = How many litres of liable drinks have you packaged at UK sites you operate?
+brandsPackagedAtOwnSites.subtext = This includes brands you own or have the rights to manufacture.
+brandsPackagedAtOwnSites.lowBandLitres = Litres in the low band
+brandsPackagedAtOwnSites.hint1 = At least 5 grams of sugar per 100 millilitres
+brandsPackagedAtOwnSites.highBandLitres = Litres in the high band
+brandsPackagedAtOwnSites.hint2 = At least 8 grams of sugar per 100 millilitres
+brandsPackagedAtOwnSites.checkYourAnswersLabel = How many litres of liable drinks have you packaged at UK sites you operate?
+brandsPackagedAtOwnSites.error.lowBandLitres.required = Enter the number of litres in the low band
+brandsPackagedAtOwnSites.error.highBandLitres.required = Enter the number of litres in the high band
+brandsPackagedAtOwnSites.error.lowBandLitres.nonNumeric = Number of litres in the low band must be numeric
+brandsPackagedAtOwnSites.error.highBandLitres.nonNumeric = Number of litres in the high band must be numeric
+brandsPackagedAtOwnSites.error.lowBandLitres.negative = Number of litres in the low band must be a positive number
+brandsPackagedAtOwnSites.error.highBandLitres.negative = Number of litres in the high band must be positive number
+brandsPackagedAtOwnSites.error.lowBandLitres.wholeNumber = Number of litres in the low band must be a whole number
+brandsPackagedAtOwnSites.error.highBandLitres.wholeNumber = Number of litres in the high band must be a whole number
+brandsPackagedAtOwnSites.error.lowBandLitres.outOfMaxVal = Number of litres in the low band must be less than 100,000,000,000,000
+brandsPackagedAtOwnSites.error.highBandLitres.outOfMaxVal = Number of litres in the high band must be less than 100,000,000,000,000
+brandsPackagedAtOwnSites.lowBandLitres.change.hidden = Litres in the low band
+brandsPackagedAtOwnSites.highBandLitres.change.hidden = Litres in the high band
+
+
+

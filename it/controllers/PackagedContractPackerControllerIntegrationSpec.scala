@@ -1,6 +1,6 @@
-package controllers.testSupport
+package controllers
 
-import play.api.libs.ws.DefaultWSCookie
+import controllers.testSupport.{Specifications, TestConfiguration}
 import play.api.test.WsTestClient
 
 class PackagedContractPackerControllerIntegrationSpec extends Specifications with TestConfiguration {

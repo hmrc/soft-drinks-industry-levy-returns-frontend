@@ -16,6 +16,18 @@
 
 package generators
 
+import models.BrandsPackagedAtOwnSites
+import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary._
+
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryBrandsPackagedAtOwnSites: Arbitrary[BrandsPackagedAtOwnSites] =
+    Arbitrary {
+      for {
+        lowBandLitres <- arbitrary[Long]
+        highBandLitres <- arbitrary[Long]
+      } yield BrandsPackagedAtOwnSites(lowBandLitres, highBandLitres)
+    }
 }

@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package generators
+package models
 
-import org.scalacheck.Arbitrary
-import pages._
+import play.api.libs.json._
 
-trait PageGenerators {
+case class BrandsPackagedAtOwnSites (lowBandLitres: Long, highBandLitres: Long)
 
-  implicit lazy val arbitraryPackagedContractPackerPage: Arbitrary[PackagedContractPackerPage.type] =
-    Arbitrary(PackagedContractPackerPage)
-
-  implicit lazy val arbitraryOwnBrandsPage: Arbitrary[OwnBrandsPage.type] =
-    Arbitrary(OwnBrandsPage)
-
-  implicit lazy val arbitraryBrandsPackagedAtOwnSitesPage: Arbitrary[BrandsPackagedAtOwnSitesPage.type] =
-    Arbitrary(BrandsPackagedAtOwnSitesPage)
-
-
+object BrandsPackagedAtOwnSites {
+  implicit val format = Json.format[BrandsPackagedAtOwnSites]
 }
