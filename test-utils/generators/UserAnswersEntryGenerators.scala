@@ -33,7 +33,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryowManyBoughtIntoUkUserAnswersEntry: Arbitrary[(HowManyBoughtIntoUkPage.type, JsValue)] =
+  implicit lazy val arbitraryHowManyBoughtIntoUkUserAnswersEntry: Arbitrary[(HowManyBoughtIntoUkPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[HowManyBoughtIntoUkPage.type]

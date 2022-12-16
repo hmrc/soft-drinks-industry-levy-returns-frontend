@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import base.SpecBase
@@ -14,7 +30,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.owManyBoughtIntoUkView
+import views.html.HowManyBoughtIntoUkView
 
 import scala.concurrent.Future
 
@@ -31,7 +47,7 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
   val value2max: Long = 100000000000000L
   val value2 = value2max - 1
 
-  lazy val owManyBoughtIntoUkRoute = routes.owManyBoughtIntoUkController.onPageLoad(NormalMode).url
+  lazy val owManyBoughtIntoUkRoute = routes.HowManyBoughtIntoUkController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
     userAnswersId,
@@ -52,7 +68,7 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request = FakeRequest(GET, owManyBoughtIntoUkRoute)
 
-        val view = application.injector.instanceOf[owManyBoughtIntoUkView]
+        val view = application.injector.instanceOf[HowManyBoughtIntoUkView]
 
         val result = route(application, request).value
 
@@ -68,7 +84,7 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request = FakeRequest(GET, owManyBoughtIntoUkRoute)
 
-        val view = application.injector.instanceOf[owManyBoughtIntoUkView]
+        val view = application.injector.instanceOf[HowManyBoughtIntoUkView]
 
         val result = route(application, request).value
 
@@ -94,7 +110,7 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, owManyBoughtIntoUkRoute)
-            .withFormUrlEncodedBody(("lowBandLitres", value1.toString), ("highBandLitres", value2.toStringalue))
+            .withFormUrlEncodedBody(("lowBandLitres", value1.toString), ("highBandLitres", value2.toString))
 
         val result = route(application, request).value
 
@@ -114,7 +130,7 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[owManyBoughtIntoUkView]
+        val view = application.injector.instanceOf[HowManyBoughtIntoUkView]
 
         val result = route(application, request).value
 
