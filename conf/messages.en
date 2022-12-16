@@ -71,8 +71,6 @@ packagedContractPacker.checkYourAnswersLabel = packagedContractPacker
 packagedContractPacker.error.required = Select yes if you are reporting liable drink you have packaged as a third party or contract packer at UK sites you operate
 packagedContractPacker.change.hidden = packagedContractPacker
 
-<<<<<<< HEAD
-
 ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.heading = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
