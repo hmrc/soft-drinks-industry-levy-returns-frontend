@@ -49,7 +49,6 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val owManyBoughtIntoUkRoute = routes.HowManyBoughtIntoUkController.onPageLoad(NormalMode).url
 
-
   val userAnswers = UserAnswers(
     userAnswersId,
     Json.obj(
@@ -112,7 +111,6 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, owManyBoughtIntoUkRoute)
             .withFormUrlEncodedBody(("lowBandLitres", value1.toString), ("highBandLitres", value2.toString))
-
 
         val result = route(application, request).value
 
