@@ -40,4 +40,7 @@ POST       /how-many-own-brands-packaged-at-own-sites           controllers.Bran
 GET        /change-how-many-own-brands-packaged-at-own-sites     controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-own-brands-packaged-at-own-sites     controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = CheckMode)
 
-
+GET        /how-many-packaged-as-contract-packer                        controllers.HowManyAsAContractPackerController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-packaged-as-contract-packer                        controllers.HowManyAsAContractPackerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-packaged-as-contract-packer                  controllers.HowManyAsAContractPackerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-packaged-as-contract-packer                  controllers.HowManyAsAContractPackerController.onSubmit(mode: Mode = CheckMode)
