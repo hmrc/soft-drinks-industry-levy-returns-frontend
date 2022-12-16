@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
-import pages._
+import javax.inject.Inject
 
-trait PageGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  implicit lazy val arbitraryPackagedContractPackerPage: Arbitrary[PackagedContractPackerPage.type] =
-    Arbitrary(PackagedContractPackerPage)
+class OwnBrandsFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryOwnBrandsPage: Arbitrary[OwnBrandsPage.type] =
-    Arbitrary(OwnBrandsPage)
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("ownBrands.error.required")
+    )
 }

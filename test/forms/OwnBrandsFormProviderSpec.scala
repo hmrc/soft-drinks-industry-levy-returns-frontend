@@ -14,17 +14,32 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
-import pages._
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-trait PageGenerators {
+class OwnBrandsFormProviderSpec extends BooleanFieldBehaviours {
 
-  implicit lazy val arbitraryPackagedContractPackerPage: Arbitrary[PackagedContractPackerPage.type] =
-    Arbitrary(PackagedContractPackerPage)
+  val requiredKey = "ownBrands.error.required"
+  val invalidKey = "error.boolean"
 
-  implicit lazy val arbitraryOwnBrandsPage: Arbitrary[OwnBrandsPage.type] =
-    Arbitrary(OwnBrandsPage)
+  val form = new OwnBrandsFormProvider()()
 
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

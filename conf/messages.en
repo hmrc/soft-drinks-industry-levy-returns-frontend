@@ -59,6 +59,7 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
+
 packagedContractPacker.title = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
 packagedContractPacker.heading = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
 packagedContractPacker.subHeading = Do not include liable drinks you have packaged for registered small producers.
@@ -69,3 +70,12 @@ packagedContractPacker.detailsContent3 = will not have more than 1 million litre
 packagedContractPacker.checkYourAnswersLabel = packagedContractPacker
 packagedContractPacker.error.required = Select yes if you are reporting liable drink you have packaged as a third party or contract packer at UK sites you operate
 packagedContractPacker.change.hidden = packagedContractPacker
+
+ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
+ownBrands.heading = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
+ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
+ownBrands.checkYourAnswersLabel = ownBrands
+ownBrands.error.required = Select yes if you are reporting your own brands of \
+                             liable drink you have packaged at UK sites you operate
+ownBrands.change.hidden = OwnBrands
+
