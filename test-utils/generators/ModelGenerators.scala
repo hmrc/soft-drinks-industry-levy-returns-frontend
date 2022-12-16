@@ -24,6 +24,14 @@ import models.{HowManyAsAContractPacker,BrandsPackagedAtOwnSites}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryowManyBoughtIntoUk: Arbitrary[owManyBoughtIntoUk] =
+    Arbitrary {
+      for {
+        owBandLitres <- arbitrary[Long]
+        highBandLitres <- arbitrary[Long]
+      } yield owManyBoughtIntoUk(owBandLitres, highBandLitres)
+    }
+
   implicit lazy val arbitraryBrandsPackagedAtOwnSites: Arbitrary[BrandsPackagedAtOwnSites] =
     Arbitrary {
       for {

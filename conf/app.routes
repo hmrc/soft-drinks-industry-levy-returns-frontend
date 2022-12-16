@@ -44,3 +44,9 @@ GET        /how-many-packaged-as-contract-packer                        controll
 POST       /how-many-packaged-as-contract-packer                        controllers.HowManyAsAContractPackerController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-packaged-as-contract-packer                  controllers.HowManyAsAContractPackerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-packaged-as-contract-packer                  controllers.HowManyAsAContractPackerController.onSubmit(mode: Mode = CheckMode)
+
+GET        /owManyBoughtIntoUk                        controllers.HowManyBoughtIntoUkController.onPageLoad(mode: Mode = NormalMode)
+POST       /owManyBoughtIntoUk                        controllers.HowManyBoughtIntoUkController.onSubmit(mode: Mode = NormalMode)
+GET        /changeowManyBoughtIntoUk                  controllers.HowManyBoughtIntoUkController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeowManyBoughtIntoUk                  controllers.HowManyBoughtIntoUkController.onSubmit(mode: Mode = CheckMode)
+

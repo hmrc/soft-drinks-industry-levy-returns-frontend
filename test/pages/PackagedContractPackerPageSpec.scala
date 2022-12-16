@@ -18,7 +18,7 @@ package pages
 
 import pages.behaviours.PageBehaviours
 
-class packagedContractPackerPageSpec extends PageBehaviours {
+class PackagedContractPackerPageSpec extends PageBehaviours {
 
   "ackagedContractPackerPage" - {
 
