@@ -48,6 +48,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+
   implicit lazy val arbitraryPackagedContractPackerUserAnswersEntry: Arbitrary[(PackagedContractPackerPage.type, JsValue)] =
     Arbitrary {
       for {

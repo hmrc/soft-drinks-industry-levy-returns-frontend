@@ -26,6 +26,7 @@
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+
 @htmlContent = {
         <p class ="govuk-body">@messages("howManyBoughtIntoUk.detailsContent1")</p>
         <ul class="govuk-list govuk-list--bullet">
@@ -45,6 +46,7 @@
         <h1 class="govuk-heading-m">@messages("howManyBoughtIntoUk.heading")</h1>
         <p class="govuk-body">@messages("howManyBoughtIntoUk.subtext")</p>
 
+
         @govukInput(
             InputViewModel(
                 field = form("lowBandLitres"),
@@ -52,6 +54,7 @@
             )
             .withWidth(Fixed10)
                 .withHint(Hint(content = Text(messages("howManyBoughtIntoUk.hint1"))))
+
         )
 
         @govukInput(
