@@ -1,6 +1,6 @@
 package forms
 
-import forms.behaviours.StringFieldBehaviours
+import forms.behaviours.LongFieldBehaviour
 import play.api.data.FormError
 
 class $className$FormProviderSpec extends LongFieldBehaviour {
@@ -35,8 +35,8 @@ class $className$FormProviderSpec extends LongFieldBehaviour {
     behave like longFieldWithMaximum(
       form,
       fieldName,
-      maxLength = maxValue,
-      lengthError = FormError(fieldName, maxValueKey, Seq(maxValue))
+      maxValue,
+       FormError(fieldName, maxValueKey, Seq(maxValue))
     )
 
     behave like mandatoryField(
@@ -74,8 +74,8 @@ class $className$FormProviderSpec extends LongFieldBehaviour {
     behave like longFieldWithMaximum(
       form,
       fieldName,
-      maxLength = maxValue,
-      lengthError = FormError(fieldName, maxValueKey, Seq(maxValue))
+      maxValue,
+      FormError(fieldName, maxValueKey, Seq(maxValue))
     )
 
     behave like mandatoryField(
