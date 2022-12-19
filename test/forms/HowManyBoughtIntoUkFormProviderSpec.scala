@@ -26,11 +26,11 @@ class HowManyBoughtIntoUkFormProviderSpec extends LongFieldBehaviour {
   ".lowBandLitres" - {
 
     val fieldName = "lowBandLitres"
-    val requiredKey = "HowManyBoughtIntoUk.error.lowBandLitres.required"
-    val numberKey = "HowManyBoughtIntoUk.error.lowBandLitres.nonNumeric"
-    val negativeNumberKey = "HowManyBoughtIntoUk.error.lowBandLitres.negative"
-    val maxValueKey = "HowManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal"
-    val wholeNumberKey = "HowManyBoughtIntoUk.error.lowBandLitres.wholeNumber"
+    val requiredKey = "howManyBoughtIntoUk.error.lowBandLitres.required"
+    val numberKey = "howManyBoughtIntoUk.error.lowBandLitres.nonNumeric"
+    val negativeNumberKey = "howManyBoughtIntoUk.error.lowBandLitres.negative"
+    val maxValueKey = "howManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal"
+    val wholeNumberKey = "howManyBoughtIntoUk.error.lowBandLitres.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -65,11 +65,11 @@ class HowManyBoughtIntoUkFormProviderSpec extends LongFieldBehaviour {
   ".highBandLitres" - {
 
     val fieldName = "highBandLitres"
-    val requiredKey = "HowManyBoughtIntoUk.error.highBandLitres.required"
-    val numberKey = "HowManyBoughtIntoUk.error.highBandLitres.nonNumeric"
-    val negativeNumberKey = "HowManyBoughtIntoUk.error.highBandLitres.negative"
-    val maxValueKey = "HowManyBoughtIntoUk.error.highBandLitres.outOfMaxVal"
-    val wholeNumberKey = "HowManyBoughtIntoUk.error.highBandLitres.wholeNumber"
+    val requiredKey = "howManyBoughtIntoUk.error.highBandLitres.required"
+    val numberKey = "howManyBoughtIntoUk.error.highBandLitres.nonNumeric"
+    val negativeNumberKey = "howManyBoughtIntoUk.error.highBandLitres.negative"
+    val maxValueKey = "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal"
+    val wholeNumberKey = "howManyBoughtIntoUk.error.highBandLitres.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
