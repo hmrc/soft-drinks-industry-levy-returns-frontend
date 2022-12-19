@@ -17,30 +17,30 @@
 package controllers
 
 import controllers.actions._
-import forms.BrandsPackagedAtOwnSitesFormProvider
+import forms.HowManyBoughtIntoUkFormProvider
 
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.BrandsPackagedAtOwnSitesPage
+import pages.HowManyBoughtIntoUkPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.BrandsPackagedAtOwnSitesView
+import views.html.HowManyBoughtIntoUkView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BrandsPackagedAtOwnSitesController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      sessionRepository: SessionRepository,
-                                      navigator: Navigator,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      formProvider: BrandsPackagedAtOwnSitesFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      view: BrandsPackagedAtOwnSitesView
+class HowManyBoughtIntoUkController @Inject()(
+                                               override val messagesApi: MessagesApi,
+                                               sessionRepository: SessionRepository,
+                                               navigator: Navigator,
+                                               identify: IdentifierAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: HowManyBoughtIntoUkFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               view: HowManyBoughtIntoUkView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -48,7 +48,7 @@ class BrandsPackagedAtOwnSitesController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(BrandsPackagedAtOwnSitesPage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(HowManyBoughtIntoUkPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -58,16 +58,18 @@ class BrandsPackagedAtOwnSitesController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(BrandsPackagedAtOwnSitesPage, value))
+            updatedAnswers <- Future.fromTry(answers.set(HowManyBoughtIntoUkPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BrandsPackagedAtOwnSitesPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HowManyBoughtIntoUkPage, mode, updatedAnswers))
       )
   }
 }

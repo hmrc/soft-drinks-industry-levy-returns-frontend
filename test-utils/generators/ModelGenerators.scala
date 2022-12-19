@@ -16,13 +16,20 @@
 
 package generators
 
+import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
 
-import models.{HowManyAsAContractPacker,BrandsPackagedAtOwnSites}
-
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryowManyBoughtIntoUk: Arbitrary[HowManyBoughtIntoUk] =
+    Arbitrary {
+      for {
+        owBandLitres <- arbitrary[Long]
+        highBandLitres <- arbitrary[Long]
+      } yield HowManyBoughtIntoUk(owBandLitres, highBandLitres)
+    }
 
   implicit lazy val arbitraryBrandsPackagedAtOwnSites: Arbitrary[BrandsPackagedAtOwnSites] =
     Arbitrary {

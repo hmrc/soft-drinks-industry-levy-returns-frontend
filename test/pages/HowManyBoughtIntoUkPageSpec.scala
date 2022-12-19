@@ -16,16 +16,17 @@
 
 package pages
 
+import models.HowManyBoughtIntoUk
 import pages.behaviours.PageBehaviours
 
-class packagedContractPackerPageSpec extends PageBehaviours {
+class HowManyBoughtIntoUkPageSpec extends PageBehaviours {
 
-  "ackagedContractPackerPage" - {
+  "HowManyBoughtIntoUkPage" - {
 
-    beRetrievable[Boolean](PackagedContractPackerPage)
+    beRetrievable[HowManyBoughtIntoUk](HowManyBoughtIntoUkPage)
 
-    beSettable[Boolean](PackagedContractPackerPage)
+    beSettable[HowManyBoughtIntoUk](HowManyBoughtIntoUkPage)
 
-    beRemovable[Boolean](PackagedContractPackerPage)
+    beRemovable[HowManyBoughtIntoUk](HowManyBoughtIntoUkPage)
   }
 }
