@@ -33,6 +33,9 @@ trait PageGenerators {
   implicit lazy val arbitraryClaimCreditsForLostDamagedPage: Arbitrary[ClaimCreditsForLostDamagedPage.type] =
     Arbitrary(ClaimCreditsForLostDamagedPage)
 
+  implicit lazy val arbitraryHowManyBroughtIntoTheUKFromSmallProducersPage: Arbitrary[HowManyBroughtIntoTheUKFromSmallProducersPage.type] =
+    Arbitrary(HowManyBroughtIntoTheUKFromSmallProducersPage)
+
   implicit lazy val arbitraryHowManyAsAContractPackerPage: Arbitrary[HowManyAsAContractPackerPage.type] =
     Arbitrary(HowManyAsAContractPackerPage)
 

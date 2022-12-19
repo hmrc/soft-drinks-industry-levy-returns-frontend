@@ -47,6 +47,14 @@ trait ModelGenerators {
       } yield HowManyCreditsForExport(lowBandLitres, highBandLitres)
     }
 
+  implicit lazy val arbitraryHowManyBroughtIntoTheUKFromSmallProducers: Arbitrary[HowManyBroughtIntoTheUKFromSmallProducers] =
+    Arbitrary {
+      for {
+        lowBand <- arbitrary[Long]
+        highBand <- arbitrary[Long]
+      } yield HowManyBroughtIntoTheUKFromSmallProducers(lowBand, highBand)
+    }
+
   implicit lazy val arbitraryBrandsPackagedAtOwnSites: Arbitrary[BrandsPackagedAtOwnSites] =
     Arbitrary {
       for {
