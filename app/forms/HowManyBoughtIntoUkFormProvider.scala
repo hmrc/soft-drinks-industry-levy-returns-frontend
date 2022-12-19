@@ -28,17 +28,17 @@ class HowManyBoughtIntoUkFormProvider @Inject() extends Mappings {
    def apply(): Form[HowManyBoughtIntoUk] = Form(
      mapping(
       "lowBandLitres" -> long(
-        "HowManyBoughtIntoUk.error.lowBandLitres.required",
-                    "HowManyBoughtIntoUk.error.lowBandLitres.negative",
-                    "HowManyBoughtIntoUk.error.lowBandLitres.nonNumeric",
-                    "HowManyBoughtIntoUk.error.lowBandLitres.wholeNumber")
-  .verifying(maximumValueNotEqual(100000000000000L, "HowManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal")),
+        "howManyBoughtIntoUk.error.lowBandLitres.required",
+                    "howManyBoughtIntoUk.error.lowBandLitres.negative",
+                    "howManyBoughtIntoUk.error.lowBandLitres.nonNumeric",
+                    "howManyBoughtIntoUk.error.lowBandLitres.wholeNumber")
+  .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal")),
         "highBandLitres" -> long(
-        "HowManyBoughtIntoUk.error.highBandLitres.required",
-                    "HowManyBoughtIntoUk.error.highBandLitres.negative",
-                    "HowManyBoughtIntoUk.error.highBandLitres.nonNumeric",
-                    "HowManyBoughtIntoUk.error.highBandLitres.wholeNumber")
-  .verifying(maximumValueNotEqual(100000000000000L, "HowManyBoughtIntoUk.error.highBandLitres.outOfMaxVal"))
+        "howManyBoughtIntoUk.error.highBandLitres.required",
+                    "howManyBoughtIntoUk.error.highBandLitres.negative",
+                    "howManyBoughtIntoUk.error.highBandLitres.nonNumeric",
+                    "howManyBoughtIntoUk.error.highBandLitres.wholeNumber")
+  .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal"))
     )(HowManyBoughtIntoUk.apply)(HowManyBoughtIntoUk.unapply)
    )
  }

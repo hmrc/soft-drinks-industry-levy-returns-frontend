@@ -26,8 +26,15 @@
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@htmlContent = {
+        <p class ="govuk-body">@messages("howManyBoughtIntoUk.detailsContent1")</p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
+            <li >@messages("howManyBoughtIntoUk.detailsContent2")</li>
+            <li>@messages("howManyBoughtIntoUk.detailsContent3")</li>
+        </ul>
+    }
 
-@layout(pageTitle = title(form, messages("HowManyBoughtIntoUk.title"))) {
+@layout(pageTitle = title(form, messages("howManyBoughtIntoUk.title"))) {
 
     @formHelper(action = routes.HowManyBoughtIntoUkController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -35,30 +42,30 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("HowManyBoughtIntoUk.heading")</h1>
-        <p class="govuk-body">@messages("HowManyBoughtIntoUk.subtext")</p>
+        <h1 class="govuk-heading-m">@messages("howManyBoughtIntoUk.heading")</h1>
+        <p class="govuk-body">@messages("howManyBoughtIntoUk.subtext")</p>
 
         @govukInput(
             InputViewModel(
                 field = form("lowBandLitres"),
-                label = LabelViewModel(messages("HowManyBoughtIntoUk.lowBandLitres"))
+                label = LabelViewModel(messages("howManyBoughtIntoUk.lowBandLitres"))
             )
             .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("HowManyBoughtIntoUk.hint1"))))
+                .withHint(Hint(content = Text(messages("howManyBoughtIntoUk.hint1"))))
         )
 
         @govukInput(
             InputViewModel(
                 field = form("highBandLitres"),
-                label = LabelViewModel(messages("HowManyBoughtIntoUk.highBandLitres"))
+                label = LabelViewModel(messages("howManyBoughtIntoUk.highBandLitres"))
             )
             .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("HowManyBoughtIntoUk.hint2"))))
+                .withHint(Hint(content = Text(messages("howManyBoughtIntoUk.hint2"))))
         )
 
         @govukDetails(Details(
-            summary = Text(messages("HowManyBoughtIntoUk.detailsLink")),
-        content = Text(messages("HowManyBoughtIntoUk.detailsContent"))
+            summary = Text(messages("howManyBoughtIntoUk.detailsLink")),
+            content = HtmlContent(htmlContent)
         ))
 
         @govukButton(
