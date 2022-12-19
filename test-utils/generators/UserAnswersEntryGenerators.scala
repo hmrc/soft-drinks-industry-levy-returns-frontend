@@ -24,6 +24,14 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryHowManyCreditsForLostDamagedUserAnswersEntry: Arbitrary[(HowManyCreditsForLostDamagedPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[HowManyCreditsForLostDamagedPage.type]
+        value <- arbitrary[HowManyCreditsForLostDamaged].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryHowManyCreditsForExportUserAnswersEntry: Arbitrary[(HowManyCreditsForExportPage.type, JsValue)] =
     Arbitrary {
       for {

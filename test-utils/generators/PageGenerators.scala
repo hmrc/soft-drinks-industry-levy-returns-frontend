@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryHowManyCreditsForLostDamagedPage: Arbitrary[HowManyCreditsForLostDamagedPage.type] =
+    Arbitrary(HowManyCreditsForLostDamagedPage)
+
   implicit lazy val arbitraryHowManyCreditsForExportPage: Arbitrary[HowManyCreditsForExportPage.type] =
     Arbitrary(HowManyCreditsForExportPage)
 

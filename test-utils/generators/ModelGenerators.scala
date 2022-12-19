@@ -23,6 +23,14 @@ import org.scalacheck.Arbitrary._
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryHowManyCreditsForLostDamaged: Arbitrary[HowManyCreditsForLostDamaged] =
+    Arbitrary {
+      for {
+        lowBand <- arbitrary[Long]
+        highBand <- arbitrary[Long]
+      } yield HowManyCreditsForLostDamaged(lowBand, highBand)
+    }
+
   implicit lazy val arbitraryHowManyBoughtIntoUk: Arbitrary[HowManyBoughtIntoUk] =
     Arbitrary {
       for {
