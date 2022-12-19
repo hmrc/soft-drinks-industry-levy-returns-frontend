@@ -30,11 +30,6 @@ POST       /own-brands-packaged-at-own-sites                        controllers.
 GET        /change-own-brands-packaged-at-own-sites                  controllers.OwnBrandsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-own-brands-packaged-at-own-sites                  controllers.OwnBrandsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /brandsPackagedAtOwnSites                        controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = NormalMode)
-POST       /brandsPackagedAtOwnSites                        controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = NormalMode)
-GET        /changeBrandsPackagedAtOwnSites                  controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeBrandsPackagedAtOwnSites                  controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = CheckMode)
-
 GET        /how-many-own-brands-packaged-at-own-sites            controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = NormalMode)
 POST       /how-many-own-brands-packaged-at-own-sites           controllers.BrandsPackagedAtOwnSitesController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-own-brands-packaged-at-own-sites     controllers.BrandsPackagedAtOwnSitesController.onPageLoad(mode: Mode = CheckMode)
@@ -45,3 +40,7 @@ POST       /exemptions-for-small-producers                        controllers.Ex
 GET        /change-exemptions-for-small-producers                  controllers.ExemptionsForSmallProducersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-exemptions-for-small-producers                  controllers.ExemptionsForSmallProducersController.onSubmit(mode: Mode = CheckMode)
 
+GET        /how-many-packaged-as-contract-packer                        controllers.HowManyAsAContractPackerController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-packaged-as-contract-packer                        controllers.HowManyAsAContractPackerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-packaged-as-contract-packer                  controllers.HowManyAsAContractPackerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-packaged-as-contract-packer                  controllers.HowManyAsAContractPackerController.onSubmit(mode: Mode = CheckMode)

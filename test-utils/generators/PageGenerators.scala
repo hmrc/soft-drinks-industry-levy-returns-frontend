@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryHowManyAsAContractPackerPage: Arbitrary[HowManyAsAContractPackerPage.type] =
+    Arbitrary(HowManyAsAContractPackerPage)
+
   implicit lazy val arbitraryPackagedContractPackerPage: Arbitrary[PackagedContractPackerPage.type] =
     Arbitrary(PackagedContractPackerPage)
 
