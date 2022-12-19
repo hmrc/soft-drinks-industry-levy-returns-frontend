@@ -24,10 +24,13 @@ trait PageGenerators {
   implicit lazy val arbitraryHowManyCreditsForExportPage: Arbitrary[HowManyCreditsForExportPage.type] =
     Arbitrary(HowManyCreditsForExportPage)
 
+  implicit lazy val arbitraryBoughtIntoUKPage: Arbitrary[BroughtIntoUKPage.type] =
+    Arbitrary(BroughtIntoUKPage)
+
   implicit lazy val arbitraryHowManyAsAContractPackerPage: Arbitrary[HowManyAsAContractPackerPage.type] =
     Arbitrary(HowManyAsAContractPackerPage)
 
-  implicit lazy val arbitraryowManyBoughtIntoUkPage: Arbitrary[HowManyBoughtIntoUkPage.type] =
+  implicit lazy val arbitraryHowManyBroughtIntoUkPage: Arbitrary[HowManyBoughtIntoUkPage.type] =
     Arbitrary(HowManyBoughtIntoUkPage)
 
 
