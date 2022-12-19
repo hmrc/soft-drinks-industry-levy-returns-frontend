@@ -1,6 +1,7 @@
-package controllers.testSupport
+package controllers
 
 import controllers.testSupport.{Specifications, TestConfiguration}
+import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
 class HowManyAsAContractPackerIntergrationSpec extends Specifications with TestConfiguration {
@@ -13,7 +14,7 @@ class HowManyAsAContractPackerIntergrationSpec extends Specifications with TestC
       WsTestClient.withClient { client ⇒
         val result1 = client.url(s"$baseUrl/how-many-packaged-as-contract-packer")
           .withFollowRedirects(false)
-          //..addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
         whenReady(result1) { res ⇒

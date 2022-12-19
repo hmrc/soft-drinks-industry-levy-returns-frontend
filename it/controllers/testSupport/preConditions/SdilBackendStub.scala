@@ -11,13 +11,13 @@ case class SdilBackendStub()
                            (implicit builder: PreconditionBuilder)
 {
   val aSubscription = RetrievedSubscription(
-    "0000000022",
-    "XKSDIL000000022",
-    "Super Lemonade Plc",
-    UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    RetrievedActivity(false, true, false, false, false),
-    LocalDate.of(2018, 4, 19),
-    List(
+    utr = "0000000022",
+    sdilRef = "XKSDIL000000022",
+    orgName = "Super Lemonade Plc",
+    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    activity = RetrievedActivity(false, true, false, false, false),
+    liabilityDate = LocalDate.of(2018, 4, 19),
+    productionSites = List(
       Site(
         UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
         Some("88"),
@@ -44,21 +44,18 @@ case class SdilBackendStub()
         Some("Star Products Ltd"),
         Some(LocalDate.of(2017, 2, 11)))
     ),
-    List(),
-    Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    None
+    warehouseSites = List(),
+    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+    deregDate = None
   )
 
 
-  def retrieveSubscription(identifierType: String, sdilNumber: String) = {
+  def retrieveSubscription() = {
     stubFor(
-      put(urlPathEqualTo(
-        s"/subscription/$identifierType/$sdilNumber")
-      )
-        .willReturn(ok(
-          Json.toJson(aSubscription).toString()
-        ))
-    )
+      get(
+        urlPathMatching("/subscription/utr/0000001611"))
+        .willReturn(
+          ok(Json.toJson(aSubscription).toString())))
     builder
   }
 }
