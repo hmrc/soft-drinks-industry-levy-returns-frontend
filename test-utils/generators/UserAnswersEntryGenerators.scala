@@ -19,9 +19,11 @@ package generators
 import models.{BrandsPackagedAtOwnSites, HowManyAsAContractPacker}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
+import pages.{BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage, OwnBrandsPage, PackagedContractPackerPage}
 import pages.PackagedContractPackerPage
 import pages.OwnBrandsPage
 import pages.{BrandsPackagedAtOwnSitesPage, PackagedContractPackerPage,HowManyAsAContractPackerPage}
+
 
 import play.api.libs.json.{JsValue, Json}
 
@@ -60,6 +62,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[BrandsPackagedAtOwnSitesPage.type]
         value <- arbitrary[BrandsPackagedAtOwnSites].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryExemptionsForSmallProducersUserAnswersEntry: Arbitrary[(ExemptionsForSmallProducersPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExemptionsForSmallProducersPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 }
