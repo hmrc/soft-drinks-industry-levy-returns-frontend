@@ -1,6 +1,7 @@
 package controllers
 
 import controllers.testSupport.{Specifications, TestConfiguration}
+import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
 class ClaimCreditsForLostDamagedControllerIntergrationSpec extends Specifications with TestConfiguration {
@@ -13,7 +14,7 @@ class ClaimCreditsForLostDamagedControllerIntergrationSpec extends Specification
       WsTestClient.withClient { client ⇒
         val result1 = client.url(s"$baseUrl/claim-credits-for-lost-damaged")
           .withFollowRedirects(false)
-          //..addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
         whenReady(result1) { res ⇒

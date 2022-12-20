@@ -1,5 +1,6 @@
-package controllers.testSupport
+package controllers
 
+import controllers.testSupport.{Specifications, TestConfiguration}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
@@ -17,7 +18,7 @@ class OwnBrandsControllerIntergrationSpec extends Specifications with TestConfig
           .get()
 
         whenReady(result1) { res ⇒
-          res.status mustBe 303
+          res.status mustBe 200
         }
 
       }
