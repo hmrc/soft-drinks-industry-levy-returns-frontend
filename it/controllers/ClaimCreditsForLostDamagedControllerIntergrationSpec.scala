@@ -23,3 +23,4 @@ class ClaimCreditsForLostDamagedControllerIntergrationSpec extends Specification
       }
     }
   }
+}
