@@ -27,7 +27,7 @@ class HowManyAsAContractPackerFormProvider @Inject() extends Mappings {
 
    def apply(): Form[HowManyAsAContractPacker] = Form(
      mapping(
-      "lowBand" -> long1(
+      "lowBand" -> long(
         "howManyAsAContractPacker.error.lowBand.required",
                     "howManyAsAContractPacker.error.lowBand.negative",
                     "howManyAsAContractPacker.error.lowBand.nonNumeric",
@@ -38,7 +38,8 @@ class HowManyAsAContractPackerFormProvider @Inject() extends Mappings {
         "howManyAsAContractPacker.error.highBand.required",
                     "howManyAsAContractPacker.error.highBand.negative",
                     "howManyAsAContractPacker.error.highBand.nonNumeric",
-                    "howManyAsAContractPacker.error.highBand.wholeNumber")
+                    "howManyAsAContractPacker.error.highBand.wholeNumber",
+          "howManyAsAContractPacker.error.highBand.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyAsAContractPacker.error.highBand.outOfMaxVal"))
     )(HowManyAsAContractPacker.apply)(HowManyAsAContractPacker.unapply)
    )
