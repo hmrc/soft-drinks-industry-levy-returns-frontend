@@ -1,6 +1,7 @@
 package controllers.testSupport
 
 import controllers.testSupport.{Specifications, TestConfiguration}
+import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
 class HowManyCreditsForLostDamagedIntergrationSpec extends Specifications with TestConfiguration {
@@ -13,11 +14,11 @@ class HowManyCreditsForLostDamagedIntergrationSpec extends Specifications with T
       WsTestClient.withClient { client ⇒
         val result1 = client.url(s"$baseUrl/how-many-credits-for-lost-damaged")
           .withFollowRedirects(false)
-          //..addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
         whenReady(result1) { res ⇒
-          res.status mustBe 303
+          res.status mustBe 200
         }
 
       }
