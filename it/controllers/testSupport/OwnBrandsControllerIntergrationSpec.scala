@@ -13,7 +13,6 @@ class OwnBrandsControllerIntergrationSpec extends Specifications with TestConfig
       WsTestClient.withClient { client ⇒
         val result1 = client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
           .withFollowRedirects(false)
-          //..addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
         whenReady(result1) { res ⇒
