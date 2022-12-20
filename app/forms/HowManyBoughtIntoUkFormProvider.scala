@@ -21,11 +21,11 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.HowManyBoughtIntoUk
+import models.HowManyBroughtIntoUk
 
 class HowManyBoughtIntoUkFormProvider @Inject() extends Mappings {
 
-   def apply(): Form[HowManyBoughtIntoUk] = Form(
+   def apply(): Form[HowManyBroughtIntoUk] = Form(
      mapping(
       "lowBandLitres" -> long(
         "howManyBoughtIntoUk.error.lowBandLitres.required",
@@ -41,6 +41,6 @@ class HowManyBoughtIntoUkFormProvider @Inject() extends Mappings {
                     "howManyBoughtIntoUk.error.highBandLitres.wholeNumber",
           "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal"))
-    )(HowManyBoughtIntoUk.apply)(HowManyBoughtIntoUk.unapply)
+    )(HowManyBroughtIntoUk.apply)(HowManyBroughtIntoUk.unapply)
    )
  }

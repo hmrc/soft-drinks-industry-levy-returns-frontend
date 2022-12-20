@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json._
+import models.HowManyBroughtIntoUk
+import play.api.libs.json.JsPath
 
-case class HowManyBoughtIntoUk(lowBandLitres: Long, highBandLitres: Long)
+case object HowManyBroughtIntoUkPage extends QuestionPage[HowManyBroughtIntoUk] {
 
-object HowManyBoughtIntoUk {
-  implicit val format = Json.format[HowManyBoughtIntoUk]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "HowManyBroughtIntoUk"
 }

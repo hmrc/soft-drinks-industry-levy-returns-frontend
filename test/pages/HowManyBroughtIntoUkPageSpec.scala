@@ -16,12 +16,17 @@
 
 package pages
 
-import models.HowManyBoughtIntoUk
-import play.api.libs.json.JsPath
+import models.HowManyBroughtIntoUk
+import pages.behaviours.PageBehaviours
 
-case object HowManyBoughtIntoUkPage extends QuestionPage[HowManyBoughtIntoUk] {
+class HowManyBroughtIntoUkPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "HowManyBroughtIntoUkPage" - {
 
-  override def toString: String = "HowManyBoughtIntoUk"
+    beRetrievable[HowManyBroughtIntoUk](HowManyBroughtIntoUkPage)
+
+    beSettable[HowManyBroughtIntoUk](HowManyBroughtIntoUkPage)
+
+    beRemovable[HowManyBroughtIntoUk](HowManyBroughtIntoUkPage)
+  }
 }

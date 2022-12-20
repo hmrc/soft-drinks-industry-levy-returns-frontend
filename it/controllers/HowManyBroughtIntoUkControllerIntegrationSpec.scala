@@ -4,8 +4,8 @@ import controllers.testSupport.{Specifications, TestConfiguration}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
-class HowManyBoughtIntoUkControllerIntegrationSpec extends Specifications with TestConfiguration {
-  "HowManyBoughtIntoUkController" should {
+class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with TestConfiguration {
+  "HowManyBroughtIntoUkController" should {
     "Ask for how many liable drinks brought in UK" in {
       given
         .commonPrecondition

@@ -18,7 +18,7 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.HowManyBoughtIntoUkPage
+import pages.HowManyBroughtIntoUkPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -26,20 +26,20 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object HowManyBoughtIntoUkSummary  {
+object HowManyBroughtIntoUkSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HowManyBoughtIntoUkPage).map {
+    answers.get(HowManyBroughtIntoUkPage).map {
       answer =>
 
       val value = HtmlFormat.escape(answer.lowBandLitres.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBandLitres.toString).toString
 
         SummaryListRowViewModel(
-          key     = "HowManyBoughtIntoUk.checkYourAnswersLabel",
+          key     = "HowManyBroughtIntoUk.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(value)),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.HowManyBoughtIntoUkController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("HowManyBoughtIntoUk.change.hidden"))
+            ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("HowManyBroughtIntoUk.change.hidden"))
           )
         )
     }

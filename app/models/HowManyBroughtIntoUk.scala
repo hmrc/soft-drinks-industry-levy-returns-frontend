@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.HowManyBoughtIntoUk
-import pages.behaviours.PageBehaviours
+import play.api.libs.json._
 
-class HowManyBoughtIntoUkPageSpec extends PageBehaviours {
+case class HowManyBroughtIntoUk(lowBandLitres: Long, highBandLitres: Long)
 
-  "HowManyBoughtIntoUkPage" - {
-
-    beRetrievable[HowManyBoughtIntoUk](HowManyBoughtIntoUkPage)
-
-    beSettable[HowManyBoughtIntoUk](HowManyBoughtIntoUkPage)
-
-    beRemovable[HowManyBoughtIntoUk](HowManyBoughtIntoUkPage)
-  }
+object HowManyBroughtIntoUk {
+  implicit val format = Json.format[HowManyBroughtIntoUk]
 }
