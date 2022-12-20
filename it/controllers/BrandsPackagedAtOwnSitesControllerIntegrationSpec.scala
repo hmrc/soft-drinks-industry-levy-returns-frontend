@@ -18,7 +18,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
           .get()
 
         whenReady(result1) { res ⇒
-          res.status mustBe 303
+          res.status mustBe 200
         }
 
       }

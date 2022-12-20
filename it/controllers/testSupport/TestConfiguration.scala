@@ -61,7 +61,7 @@ trait TestConfiguration
     .configure(replaceWithWiremock(Seq(
       "auth",
       "auth.bas-gateway",
-      "sdil"
+      "soft-drinks-industry-levy"
     )))
     .build()
   app.injector.instanceOf[HealthController]

@@ -6,7 +6,7 @@ trait PreconditionHelpers {
   def commonPrecondition = {
     builder
       .user.isAuthorisedAndEnrolled
-      .sdilBackend.retrieveSubscription()
+      .sdilBackend.retrieveSubscription("utr","0000001611")
 
   }
 

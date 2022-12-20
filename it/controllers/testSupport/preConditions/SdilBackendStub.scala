@@ -50,10 +50,10 @@ case class SdilBackendStub()
   )
 
 
-  def retrieveSubscription() = {
+  def retrieveSubscription(identifier: String, refNum: String) = {
     stubFor(
       get(
-        urlPathMatching("/subscription/utr/0000001611"))
+        urlPathMatching(s"/subscription/$identifier/$refNum"))
         .willReturn(
           ok(Json.toJson(aSubscription).toString())))
     builder
