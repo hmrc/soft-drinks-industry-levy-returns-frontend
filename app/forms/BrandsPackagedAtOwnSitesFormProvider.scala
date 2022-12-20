@@ -27,11 +27,12 @@ class BrandsPackagedAtOwnSitesFormProvider @Inject() extends Mappings {
 
    def apply(): Form[BrandsPackagedAtOwnSites] = Form(
      mapping(
-      "lowBandLitres" -> long(
+      "lowBandLitres" -> long1(
         "brandsPackagedAtOwnSites.error.lowBandLitres.required",
                     "brandsPackagedAtOwnSites.error.lowBandLitres.negative",
                     "brandsPackagedAtOwnSites.error.lowBandLitres.nonNumeric",
-                    "brandsPackagedAtOwnSites.error.lowBandLitres.wholeNumber")
+                    "brandsPackagedAtOwnSites.error.lowBandLitres.wholeNumber",
+        "brandsPackagedAtOwnSites.error.lowBandLitres.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "brandsPackagedAtOwnSites.error.lowBandLitres.outOfMaxVal")),
         "highBandLitres" -> long(
         "brandsPackagedAtOwnSites.error.highBandLitres.required",
