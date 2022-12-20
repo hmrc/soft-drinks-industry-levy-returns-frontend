@@ -17,36 +17,37 @@
 package controllers
 
 import controllers.actions._
-import forms.ExemptionsForSmallProducersFormProvider
+import forms.ClaimCreditsForLostDamagedFormProvider
+
+import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.ExemptionsForSmallProducersPage
+import pages.ClaimCreditsForLostDamagedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ExemptionsForSmallProducersView
+import views.html.ClaimCreditsForLostDamagedView
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExemptionsForSmallProducersController @Inject()(
+class ClaimCreditsForLostDamagedController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
-                                         formProvider: ExemptionsForSmallProducersFormProvider,
+                                         formProvider: ClaimCreditsForLostDamagedFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: ExemptionsForSmallProducersView
+                                         view: ClaimCreditsForLostDamagedView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData ) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(ExemptionsForSmallProducersPage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(ClaimCreditsForLostDamagedPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -54,7 +55,7 @@ class ExemptionsForSmallProducersController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData ).async {
     implicit request =>
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
@@ -63,10 +64,9 @@ class ExemptionsForSmallProducersController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(ExemptionsForSmallProducersPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
+            updatedAnswers <- Future.fromTry(answers.set(ClaimCreditsForLostDamagedPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers))
       )
   }
-
 }
