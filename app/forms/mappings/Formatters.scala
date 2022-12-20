@@ -86,7 +86,6 @@ trait Formatters {
     new Formatter[Long] {
 
       val decimalRegexp = """^-?(\d*\.\d*)$"""
-      val numberRegexp = """.*\\d+.*"""
       private val baseFormatter = stringFormatter(requiredKey, args)
 
       override def bind(key: String, data: Map[String, String]) =
@@ -126,7 +125,9 @@ trait Formatters {
           .right.map(_.replace(",", ""))
           .right.flatMap {
           case s if s.matches(numberRegexp) =>
-            Left(Seq(FormError(key, outOfRangeKey, args)))
+            nonFatalCatch
+              .either(s.toLong)
+              .left.map(_ => Seq(FormError(key, outOfRangeKey, args)))
           case s if s.startsWith("-") =>
             Left(Seq(FormError(key, negativeNumber, args)))
           case s if s.matches(decimalRegexp) =>
