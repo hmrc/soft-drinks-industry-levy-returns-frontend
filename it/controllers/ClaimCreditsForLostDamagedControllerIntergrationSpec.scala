@@ -4,14 +4,15 @@ import controllers.testSupport.{Specifications, TestConfiguration}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
-class HowManyBoughtIntoUkControllerIntegrationSpec extends Specifications with TestConfiguration {
-  "HowManyBoughtIntoUkController" should {
-    "Ask for how many liable drinks brought in UK" in {
+class ClaimCreditsForLostDamagedControllerIntergrationSpec extends Specifications with TestConfiguration {
+  "PackagedContractPackerController" should {
+    "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
+
       given
         .commonPrecondition
 
       WsTestClient.withClient { client ⇒
-        val result1 = client.url(s"$baseUrl/how-many-brought-into-uk")
+        val result1 = client.url(s"$baseUrl/claim-credits-for-lost-damaged")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -23,5 +24,4 @@ class HowManyBoughtIntoUkControllerIntegrationSpec extends Specifications with T
       }
     }
   }
-
 }

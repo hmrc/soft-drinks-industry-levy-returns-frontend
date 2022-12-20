@@ -103,7 +103,7 @@ brandsPackagedAtOwnSites.lowBandLitres.change.hidden = Litres in the low band
 brandsPackagedAtOwnSites.highBandLitres.change.hidden = Litres in the high band
 
 
-exemptionsForSmallProducers.title = exemptionsForSmallProducers
+exemptionsForSmallProducers.title = Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers?
 exemptionsForSmallProducers.heading = Do you need to claim an exemption for any of the liable drink you have packaged for registered small producers?
 exemptionsForSmallProducers.detailsLink = What is a small producer?
 exemptionsForSmallProducers.detailsContent1 = A business is a small producer if it:
@@ -228,3 +228,21 @@ howManyCreditsForExport.error.highBandLitres.outOfMaxVal = Number of litres in t
 howManyCreditsForExport.lowBandLitres.change.hidden = lowBandLitres
 howManyCreditsForExport.highBandLitres.change.hidden = highBandLitres
 
+
+claimCreditsForLostDamaged.title = Do you want to claim a credit for liable drinks which have been lost or destroyed?
+claimCreditsForLostDamaged.heading1 = Lost or destroyed drinks
+claimCreditsForLostDamaged.heading2 = Do you want to claim a credit for liable drinks which have been lost or destroyed?
+claimCreditsForLostDamaged.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
+claimCreditsForLostDamaged.warning = You can only claim credit if you've registered for the levy and paid it directly to HMRC. Claiming credits you're not entitled to is a criminal offence.
+claimCreditsForLostDamaged.detailsLink = What can I claim a credit for?
+claimCreditsForLostDamaged.detailsContent1 = You can claim a credit for liable drinks that have been:
+claimCreditsForLostDamaged.detailsContent2 = lost
+claimCreditsForLostDamaged.detailsContent3 = destroyed
+claimCreditsForLostDamaged.detailsContent4 = disposed of as waste
+claimCreditsForLostDamaged.detailsContent5 = reprocessed
+claimCreditsForLostDamaged.detailsContent6 = lost
+claimCreditsForLostDamaged.detailsContent7 = spilled and can't be used
+claimCreditsForLostDamaged.detailsContent8 = To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.
+claimCreditsForLostDamaged.checkYourAnswersLabel = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
+claimCreditsForLostDamaged.error.required = Select yes if you want to claim a credit for any liable drink that has been lost or destroyed
+claimCreditsForLostDamaged.change.hidden = ClaimCreditsForLostDamaged

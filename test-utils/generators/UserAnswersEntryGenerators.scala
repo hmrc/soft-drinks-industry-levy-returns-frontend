@@ -40,6 +40,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryClaimCreditsForLostDamagedUserAnswersEntry: Arbitrary[(ClaimCreditsForLostDamagedPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ClaimCreditsForLostDamagedPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryHowManyAsAContractPackerUserAnswersEntry: Arbitrary[(HowManyAsAContractPackerPage.type, JsValue)] =
     Arbitrary {
       for {
