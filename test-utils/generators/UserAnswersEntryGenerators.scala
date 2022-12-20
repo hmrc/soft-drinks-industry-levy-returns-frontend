@@ -19,11 +19,18 @@ package generators
 import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
-import pages.OwnBrandsPage
 import pages._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryHowManyCreditsForExportUserAnswersEntry: Arbitrary[(HowManyCreditsForExportPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[HowManyCreditsForExportPage.type]
+        value <- arbitrary[HowManyCreditsForExport].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryHowManyAsAContractPackerUserAnswersEntry: Arbitrary[(HowManyAsAContractPackerPage.type, JsValue)] =
     Arbitrary {

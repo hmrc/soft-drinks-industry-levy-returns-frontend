@@ -23,12 +23,20 @@ import org.scalacheck.Arbitrary._
 
 trait ModelGenerators {
 
-  implicit lazy val arbitraryowManyBoughtIntoUk: Arbitrary[HowManyBoughtIntoUk] =
+  implicit lazy val arbitraryHowManyBoughtIntoUk: Arbitrary[HowManyBoughtIntoUk] =
     Arbitrary {
       for {
         owBandLitres <- arbitrary[Long]
         highBandLitres <- arbitrary[Long]
       } yield HowManyBoughtIntoUk(owBandLitres, highBandLitres)
+    }
+
+  implicit lazy val arbitraryHowManyCreditsForExport: Arbitrary[HowManyCreditsForExport] =
+    Arbitrary {
+      for {
+        lowBandLitres <- arbitrary[Long]
+        highBandLitres <- arbitrary[Long]
+      } yield HowManyCreditsForExport(lowBandLitres, highBandLitres)
     }
 
   implicit lazy val arbitraryBrandsPackagedAtOwnSites: Arbitrary[BrandsPackagedAtOwnSites] =

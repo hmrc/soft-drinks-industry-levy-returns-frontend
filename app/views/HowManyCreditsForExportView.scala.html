@@ -1,0 +1,78 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels.InputWidth._
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukButton: GovukButton,
+   govukDetails: GovukDetails
+)
+
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@htmlContent = {
+        <p class ="govuk-body">@messages("howManyCreditsForExport.detailsContent1")</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li >@messages("howManyCreditsForExport.detailsContent2")</li>
+            <li>@messages("howManyCreditsForExport.detailsContent3")</li>
+            <li>@messages("howManyCreditsForExport.detailsContent4")</li>
+            <li>@messages("howManyCreditsForExport.detailsContent5")</li>
+        </ul>
+    <p class ="govuk-body">@messages("howManyCreditsForExport.detailsContent6")</p>
+    }
+
+@layout(pageTitle = title(form, messages("howManyCreditsForExport.title"))) {
+
+    @formHelper(action = routes.HowManyCreditsForExportController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        <h1 class="govuk-heading-m">@messages("howManyCreditsForExport.heading")</h1>
+        <p class="govuk-body">@messages("howManyCreditsForExport.subtext")</p>
+
+        @govukInput(
+            InputViewModel(
+                field = form("lowBandLitres"),
+                label = LabelViewModel(messages("howManyCreditsForExport.lowBandLitres"))
+            )
+            .withWidth(Fixed10)
+                .withHint(Hint(content = Text(messages("howManyCreditsForExport.hint1"))))
+        )
+
+        @govukInput(
+            InputViewModel(
+                field = form("highBandLitres"),
+                label = LabelViewModel(messages("howManyCreditsForExport.highBandLitres"))
+            )
+            .withWidth(Fixed10)
+                .withHint(Hint(content = Text(messages("howManyCreditsForExport.hint2"))))
+        )
+
+        @govukDetails(Details(
+            summary = Text(messages("howManyCreditsForExport.detailsLink")),
+        content = HtmlContent(htmlContent)
+        ))
+
+        @govukButton(
+            ButtonViewModel(messages("site.saveContinue"))
+        )
+    }
+}
