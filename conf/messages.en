@@ -128,12 +128,11 @@ howManyAsAContractPacker.checkYourAnswersLabel = HowManyAsAContractPacker
 howManyAsAContractPacker.error.lowBand.required = Enter the number of litres in the low band
 howManyAsAContractPacker.error.highBand.required = Enter the number of litres in the high band
 howManyAsAContractPacker.error.lowBand.nonNumeric = Number of litres in the low band must be numeric
-howManyAsAContractPacker.error.highBand.nonNumeric = Number of litres in the low band must be numeric
-howManyAsAContractPacker.error.lowBand.negative = Number of litres must be a positive number
-howManyAsAContractPacker.error.highBand.negative = Number of litres must be a positive number
-howManyAsAContractPacker.error.lowBand.wholeNumber = Number of litres must be a whole number
-howManyAsAContractPacker.error.highBand.wholeNumber = Number of litres must be a whole number
-
+howManyAsAContractPacker.error.highBand.nonNumeric = Number of litres in the high band must be numeric
+howManyAsAContractPacker.error.lowBand.negative = Number of litres in the low band must be a positive number
+howManyAsAContractPacker.error.highBand.negative = Number of litres in the high band must be a positive number
+howManyAsAContractPacker.error.lowBand.wholeNumber = Number of litres in the low band must be a whole number
+howManyAsAContractPacker.error.highBand.wholeNumber = Number of litres in the low band must be a whole number
 howManyAsAContractPacker.error.lowBand.outOfMaxVal = Number of litres in the low band must be less than 100,000,000,000,000
 howManyAsAContractPacker.error.highBand.outOfMaxVal = Number of litres in the high band must be less than 100,000,000,000,000
 howManyAsAContractPacker.lowBand.change.hidden = lowBand
