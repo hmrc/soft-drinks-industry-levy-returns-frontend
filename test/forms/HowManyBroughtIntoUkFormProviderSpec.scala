@@ -19,7 +19,7 @@ package forms
 import forms.behaviours.{LongFieldBehaviour}
 import play.api.data.FormError
 
-class HowManyBoughtIntoUkFormProviderSpec extends LongFieldBehaviour {
+class HowManyBroughtIntoUkFormProviderSpec extends LongFieldBehaviour {
 
   val form = new HowManyBoughtIntoUkFormProvider()()
 

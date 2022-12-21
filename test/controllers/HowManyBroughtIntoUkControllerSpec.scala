@@ -18,12 +18,12 @@ package controllers
 
 import base.SpecBase
 import forms.HowManyBoughtIntoUkFormProvider
-import models.{NormalMode, HowManyBoughtIntoUk, UserAnswers}
+import models.{NormalMode, HowManyBroughtIntoUk, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HowManyBoughtIntoUkPage
+import pages.HowManyBroughtIntoUkPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -34,7 +34,7 @@ import views.html.HowManyBoughtIntoUkView
 
 import scala.concurrent.Future
 
-class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
+class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -47,19 +47,19 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
   val value2max: Long = 100000000000000L
   val value2 = value2max - 1
 
-  lazy val owManyBoughtIntoUkRoute = routes.HowManyBoughtIntoUkController.onPageLoad(NormalMode).url
+  lazy val owManyBoughtIntoUkRoute = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
     userAnswersId,
     Json.obj(
-      HowManyBoughtIntoUkPage.toString -> Json.obj(
+      HowManyBroughtIntoUkPage.toString -> Json.obj(
         "lowBandLitres" -> value1,
         "highBandLitres" -> value2
       )
     )
   )
 
-  "HowManyBoughtIntoUk Controller" - {
+  "HowManyBroughtIntoUk Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -89,7 +89,7 @@ class HowManyBoughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(HowManyBoughtIntoUk(value1, value2)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(HowManyBroughtIntoUk(value1, value2)), NormalMode)(request, messages(application)).toString
       }
     }
 

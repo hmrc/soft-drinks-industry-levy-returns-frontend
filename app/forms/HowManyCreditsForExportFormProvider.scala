@@ -31,13 +31,15 @@ class HowManyCreditsForExportFormProvider @Inject() extends Mappings {
         "howManyCreditsForExport.error.lowBandLitres.required",
                     "howManyCreditsForExport.error.lowBandLitres.negative",
                     "howManyCreditsForExport.error.lowBandLitres.nonNumeric",
-                    "howManyCreditsForExport.error.lowBandLitres.wholeNumber")
+                    "howManyCreditsForExport.error.lowBandLitres.wholeNumber",
+        "howManyCreditsForExport.error.lowBandLitres.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForExport.error.lowBandLitres.outOfMaxVal")),
         "highBandLitres" -> long(
         "howManyCreditsForExport.error.highBandLitres.required",
                     "howManyCreditsForExport.error.highBandLitres.negative",
                     "howManyCreditsForExport.error.highBandLitres.nonNumeric",
-                    "howManyCreditsForExport.error.highBandLitres.wholeNumber")
+                    "howManyCreditsForExport.error.highBandLitres.wholeNumber",
+          "howManyCreditsForExport.error.highBandLitres.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForExport.error.highBandLitres.outOfMaxVal"))
     )(HowManyCreditsForExport.apply)(HowManyCreditsForExport.unapply)
    )

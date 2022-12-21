@@ -33,12 +33,14 @@ trait Mappings extends Formatters with Constraints {
                     args: Seq[String] = Seq.empty): FieldMapping[Int] =
     of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, args))
 
+
   protected def long(requiredKey: String = "error.required",
-                           negativeNumber: String = "error.negative",
-                           nonNumericKey: String = "error.nonNumeric",
-                           wholeNumberKey: String = "error.wholeNumber",
-                          args: Seq[String] = Seq.empty): FieldMapping[Long] =
-    of(longFormatter(requiredKey, negativeNumber, nonNumericKey, wholeNumberKey, args))
+                     negativeNumber: String = "error.negative",
+                     nonNumericKey: String = "error.nonNumeric",
+                     wholeNumberKey: String = "error.wholeNumber",
+                     outOfRangeKey: String = "error.outOfMaxVal",
+                     args: Seq[String] = Seq.empty): FieldMapping[Long] =
+    of(longFormatter(requiredKey, negativeNumber, nonNumericKey, wholeNumberKey,outOfRangeKey, args))
 
   protected def boolean(requiredKey: String = "error.required",
                         invalidKey: String = "error.boolean",

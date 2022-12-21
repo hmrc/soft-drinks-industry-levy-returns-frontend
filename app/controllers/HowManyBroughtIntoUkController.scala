@@ -22,7 +22,7 @@ import forms.HowManyBoughtIntoUkFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.HowManyBoughtIntoUkPage
+import pages.HowManyBroughtIntoUkPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -31,7 +31,7 @@ import views.html.HowManyBoughtIntoUkView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HowManyBoughtIntoUkController @Inject()(
+class HowManyBroughtIntoUkController @Inject()(
                                                override val messagesApi: MessagesApi,
                                                sessionRepository: SessionRepository,
                                                navigator: Navigator,
@@ -48,7 +48,7 @@ class HowManyBoughtIntoUkController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(HowManyBoughtIntoUkPage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(HowManyBroughtIntoUkPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -67,9 +67,9 @@ class HowManyBoughtIntoUkController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(HowManyBoughtIntoUkPage, value))
+            updatedAnswers <- Future.fromTry(answers.set(HowManyBroughtIntoUkPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HowManyBoughtIntoUkPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HowManyBroughtIntoUkPage, mode, updatedAnswers))
       )
   }
 }

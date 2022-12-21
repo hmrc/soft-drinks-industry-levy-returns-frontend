@@ -31,13 +31,15 @@ class BrandsPackagedAtOwnSitesFormProvider @Inject() extends Mappings {
         "brandsPackagedAtOwnSites.error.lowBandLitres.required",
                     "brandsPackagedAtOwnSites.error.lowBandLitres.negative",
                     "brandsPackagedAtOwnSites.error.lowBandLitres.nonNumeric",
-                    "brandsPackagedAtOwnSites.error.lowBandLitres.wholeNumber")
+                    "brandsPackagedAtOwnSites.error.lowBandLitres.wholeNumber",
+        "brandsPackagedAtOwnSites.error.lowBandLitres.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "brandsPackagedAtOwnSites.error.lowBandLitres.outOfMaxVal")),
         "highBandLitres" -> long(
         "brandsPackagedAtOwnSites.error.highBandLitres.required",
                     "brandsPackagedAtOwnSites.error.highBandLitres.negative",
                     "brandsPackagedAtOwnSites.error.highBandLitres.nonNumeric",
-                    "brandsPackagedAtOwnSites.error.highBandLitres.wholeNumber")
+                    "brandsPackagedAtOwnSites.error.highBandLitres.wholeNumber",
+          "brandsPackagedAtOwnSites.error.highBandLitres.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "brandsPackagedAtOwnSites.error.highBandLitres.outOfMaxVal"))
     )(BrandsPackagedAtOwnSites.apply)(BrandsPackagedAtOwnSites.unapply)
    )

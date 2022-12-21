@@ -21,24 +21,26 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.HowManyBoughtIntoUk
+import models.HowManyBroughtIntoUk
 
 class HowManyBoughtIntoUkFormProvider @Inject() extends Mappings {
 
-   def apply(): Form[HowManyBoughtIntoUk] = Form(
+   def apply(): Form[HowManyBroughtIntoUk] = Form(
      mapping(
       "lowBandLitres" -> long(
         "howManyBoughtIntoUk.error.lowBandLitres.required",
                     "howManyBoughtIntoUk.error.lowBandLitres.negative",
                     "howManyBoughtIntoUk.error.lowBandLitres.nonNumeric",
-                    "howManyBoughtIntoUk.error.lowBandLitres.wholeNumber")
+                    "howManyBoughtIntoUk.error.lowBandLitres.wholeNumber",
+        "howManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal")),
         "highBandLitres" -> long(
         "howManyBoughtIntoUk.error.highBandLitres.required",
                     "howManyBoughtIntoUk.error.highBandLitres.negative",
                     "howManyBoughtIntoUk.error.highBandLitres.nonNumeric",
-                    "howManyBoughtIntoUk.error.highBandLitres.wholeNumber")
+                    "howManyBoughtIntoUk.error.highBandLitres.wholeNumber",
+          "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal"))
-    )(HowManyBoughtIntoUk.apply)(HowManyBoughtIntoUk.unapply)
+    )(HowManyBroughtIntoUk.apply)(HowManyBroughtIntoUk.unapply)
    )
  }

@@ -64,5 +64,18 @@ class LongFieldBehaviour extends FieldBehaviours {
           result.errors must contain only expectedError
       }
     }
+    s"not bind long above $maximum when value entered is more then Long range" in {
+
+          val result = form.bind(Map(fieldName -> "9223372036854775808")).apply(fieldName)
+          result.errors.head.key mustBe  expectedError.key
+
+    }
+
+    s"not bind long above $maximum when value entered is more then Long range and decimal" in {
+
+      val result = form.bind(Map(fieldName -> "92233720368547758089.6767")).apply(fieldName)
+      result.errors.head.key mustBe  expectedError.key
+
+    }
   }
 }

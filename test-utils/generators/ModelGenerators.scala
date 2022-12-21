@@ -31,12 +31,13 @@ trait ModelGenerators {
       } yield HowManyCreditsForLostDamaged(lowBand, highBand)
     }
 
-  implicit lazy val arbitraryHowManyBoughtIntoUk: Arbitrary[HowManyBoughtIntoUk] =
+  implicit lazy val arbitraryHowManyBoughtIntoUk: Arbitrary[HowManyBroughtIntoUk] =
+
     Arbitrary {
       for {
         owBandLitres <- arbitrary[Long]
         highBandLitres <- arbitrary[Long]
-      } yield HowManyBoughtIntoUk(owBandLitres, highBandLitres)
+      } yield HowManyBroughtIntoUk(owBandLitres, highBandLitres)
     }
 
   implicit lazy val arbitraryHowManyCreditsForExport: Arbitrary[HowManyCreditsForExport] =
