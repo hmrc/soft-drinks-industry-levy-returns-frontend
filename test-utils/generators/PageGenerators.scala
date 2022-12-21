@@ -21,6 +21,8 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryClaimCreditsForExportsPage: Arbitrary[ClaimCreditsForExportsPage.type] =
+    Arbitrary(ClaimCreditsForExportsPage)
 
   implicit lazy val arbitraryBroughtIntoUkFromSmallProducersPage: Arbitrary[BroughtIntoUkFromSmallProducersPage.type] =
     Arbitrary(BroughtIntoUkFromSmallProducersPage)

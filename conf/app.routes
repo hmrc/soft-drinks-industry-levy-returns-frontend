@@ -85,3 +85,9 @@ POST       /ask-secondary-warehouses-in-return                        controller
 GET        /change-ask-secondary-warehouses-in-return                  controllers.AskSecondaryWarehouseInReturnController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-ask-secondary-warehouses-in-return                 controllers.AskSecondaryWarehouseInReturnController.onSubmit(mode: Mode = CheckMode)
 
+
+
+GET        /claim-credits-for-exports                        controllers.ClaimCreditsForExportsController.onPageLoad(mode: Mode = NormalMode)
+POST       /claim-credits-for-exports                        controllers.ClaimCreditsForExportsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-claim-credits-for-exports                  controllers.ClaimCreditsForExportsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-claim-credits-for-exports                  controllers.ClaimCreditsForExportsController.onSubmit(mode: Mode = CheckMode)
