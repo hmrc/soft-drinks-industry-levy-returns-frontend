@@ -80,3 +80,8 @@ POST       /brought-into-uk-from-small-producers                       controlle
 GET        /change-brought-into-uk-from-small-producers                controllers.BroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-brought-into-uk-from-small-producers                controllers.BroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
 
+GET        /ask-secondary-warehouses-in-return                        controllers.AskSecondaryWarehouseInReturnController.onPageLoad(mode: Mode = NormalMode)
+POST       /ask-secondary-warehouses-in-return                        controllers.AskSecondaryWarehouseInReturnController.onSubmit(mode: Mode = NormalMode)
+GET        /change-ask-secondary-warehouses-in-return                  controllers.AskSecondaryWarehouseInReturnController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-ask-secondary-warehouses-in-return                 controllers.AskSecondaryWarehouseInReturnController.onSubmit(mode: Mode = CheckMode)
+
