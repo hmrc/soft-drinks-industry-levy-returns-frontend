@@ -277,6 +277,7 @@ howManyCreditsForLostDamaged.error.highBand.outOfMaxVal = Number of litres in th
 howManyCreditsForLostDamaged.lowBand.change.hidden = lowBand
 howManyCreditsForLostDamaged.highBand.change.hidden = highBand
 
+
 howManyBroughtIntoTheUKFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
 howManyBroughtIntoTheUKFromSmallProducers.heading = How many litres of liable drinks have you brought into the UK from small producers?
 howManyBroughtIntoTheUKFromSmallProducers.subtext = Include your own brands of liable drinks produced outside of the UK.
@@ -304,3 +305,17 @@ howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.outOfMaxVal = Number of 
 howManyBroughtIntoTheUKFromSmallProducers.error.highBand.outOfMaxVal = Number of litres in the high band must be less than 100,000,000,000,000
 howManyBroughtIntoTheUKFromSmallProducers.lowBand.change.hidden = lowBand
 howManyBroughtIntoTheUKFromSmallProducers.highBand.change.hidden = highBand
+
+broughtIntoUkFromSmallProducers.title = Are you reporting liable drinks you have brought into the UK from small producers?
+broughtIntoUkFromSmallProducers.heading = Are you reporting liable drinks you have brought into the UK from small producers?
+broughtIntoUkFromSmallProducers.subHeading = Include your own brands of liable drinks produced outside of the UK.
+broughtIntoUkFromSmallProducers.detailsLink = Liable drinks from small producers
+broughtIntoUkFromSmallProducers.detailsContent1 = If you are a registered small producer and you bring your own brand of liable drinks into the UK, you still need to report them but you will not pay the levy on them.
+broughtIntoUkFromSmallProducers.detailsContent2 = If you bring liable drinks into the UK from someone else who would be considered a small producer, you need to get evidence of the:
+broughtIntoUkFromSmallProducers.detailsContent3 = contact details, EU VAT number (if they have one) and website of the business
+broughtIntoUkFromSmallProducers.detailsContent4 = amount of litres of liable drinks packaged globally for brands the business owns in the past 12 months
+broughtIntoUkFromSmallProducers.detailsContent5 = signature of someone from the business, their position and the date of the signature
+broughtIntoUkFromSmallProducers.checkYourAnswersLabel = broughtIntoUkFromSmallProducers
+broughtIntoUkFromSmallProducers.error.required = Select yes if you are reporting liable drinks you have brought into the UK from small producers
+broughtIntoUkFromSmallProducers.change.hidden = BroughtIntoUkFromSmallProducers
+

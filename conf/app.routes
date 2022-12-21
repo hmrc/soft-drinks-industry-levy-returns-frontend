@@ -74,3 +74,9 @@ GET        /how-many-into-uk-small-producers                        controllers.
 POST       /how-many-into-uk-small-producers                        controllers.HowManyBroughtIntoTheUKFromSmallProducersController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-into-uk-small-producers                 controllers.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-into-uk-small-producers                  controllers.HowManyBroughtIntoTheUKFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /brought-into-uk-from-small-producers                       controllers.BroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = NormalMode)
+POST       /brought-into-uk-from-small-producers                       controllers.BroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-brought-into-uk-from-small-producers                controllers.BroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-brought-into-uk-from-small-producers                controllers.BroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
+
