@@ -32,6 +32,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(HowManyCreditsForExportPage.type, JsValue)] ::
     arbitrary[(BroughtIntoUKPage.type, JsValue)] ::
     arbitrary[(ClaimCreditsForLostDamagedPage.type, JsValue)] ::
+    arbitrary[(HowManyBroughtIntoTheUKFromSmallProducersPage.type, JsValue)] ::
     arbitrary[(HowManyAsAContractPackerPage.type, JsValue)] ::
     arbitrary[(HowManyBoughtIntoUkPage.type, JsValue)] ::
     arbitrary[(PackagedContractPackerPage.type, JsValue)] ::

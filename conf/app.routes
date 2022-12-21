@@ -60,7 +60,6 @@ POST       /how-many-credits-for-exports                        controllers.HowM
 GET        /change-how-many-credits-for-exports                  controllers.HowManyCreditsForExportController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-credits-for-exports                  controllers.HowManyCreditsForExportController.onSubmit(mode: Mode = CheckMode)
 
-
 GET        /claim-credits-for-lost-damaged                        controllers.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = NormalMode)
 POST       /claim-credits-for-lost-damaged                        controllers.ClaimCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)
 GET        /change-claim-credits-for-lost-damaged                  controllers.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = CheckMode)
@@ -70,3 +69,8 @@ GET        /how-many-credits-for-lost-damaged                      controllers.H
 POST       /how-many-credits-for-lost-damaged                      controllers.HowManyCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-credits-for-lost-damaged               controllers.HowManyCreditsForLostDamagedController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-credits-for-lost-damaged               controllers.HowManyCreditsForLostDamagedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /how-many-into-uk-small-producers                        controllers.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-into-uk-small-producers                        controllers.HowManyBroughtIntoTheUKFromSmallProducersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-into-uk-small-producers                 controllers.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-into-uk-small-producers                  controllers.HowManyBroughtIntoTheUKFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
