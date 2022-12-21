@@ -65,3 +65,8 @@ GET        /claim-credits-for-lost-damaged                        controllers.Cl
 POST       /claim-credits-for-lost-damaged                        controllers.ClaimCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)
 GET        /change-claim-credits-for-lost-damaged                  controllers.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-claim-credits-for-lost-damaged                  controllers.ClaimCreditsForLostDamagedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /how-many-credits-for-lost-damaged                      controllers.HowManyCreditsForLostDamagedController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-credits-for-lost-damaged                      controllers.HowManyCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-credits-for-lost-damaged               controllers.HowManyCreditsForLostDamagedController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-credits-for-lost-damaged               controllers.HowManyCreditsForLostDamagedController.onSubmit(mode: Mode = CheckMode)
