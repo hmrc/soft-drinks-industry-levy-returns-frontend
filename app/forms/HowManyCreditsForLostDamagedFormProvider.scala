@@ -31,13 +31,15 @@ class HowManyCreditsForLostDamagedFormProvider @Inject() extends Mappings {
         "howManyCreditsForLostDamaged.error.lowBand.required",
                     "howManyCreditsForLostDamaged.error.lowBand.negative",
                     "howManyCreditsForLostDamaged.error.lowBand.nonNumeric",
-                    "howManyCreditsForLostDamaged.error.lowBand.wholeNumber")
+                    "howManyCreditsForLostDamaged.error.lowBand.wholeNumber",
+        "howManyCreditsForLostDamaged.error.lowBand.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForLostDamaged.error.lowBand.outOfMaxVal")),
         "highBand" -> long(
         "howManyCreditsForLostDamaged.error.highBand.required",
                     "howManyCreditsForLostDamaged.error.highBand.negative",
                     "howManyCreditsForLostDamaged.error.highBand.nonNumeric",
-                    "howManyCreditsForLostDamaged.error.highBand.wholeNumber")
+                    "howManyCreditsForLostDamaged.error.highBand.wholeNumber",
+          "howManyCreditsForLostDamaged.error.highBand.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForLostDamaged.error.highBand.outOfMaxVal"))
     )(HowManyCreditsForLostDamaged.apply)(HowManyCreditsForLostDamaged.unapply)
    )
