@@ -21,8 +21,12 @@ import pages._
 
 trait PageGenerators {
 
+
   implicit lazy val arbitraryBroughtIntoUkFromSmallProducersPage: Arbitrary[BroughtIntoUkFromSmallProducersPage.type] =
     Arbitrary(BroughtIntoUkFromSmallProducersPage)
+
+  implicit lazy val arbitraryAskSecondaryWarehouseInReturnPage: Arbitrary[AskSecondaryWarehouseInReturnPage.type] =
+    Arbitrary(AskSecondaryWarehouseInReturnPage)
 
   implicit lazy val arbitraryHowManyCreditsForLostDamagedPage: Arbitrary[HowManyCreditsForLostDamagedPage.type] =
     Arbitrary(HowManyCreditsForLostDamagedPage)
@@ -44,7 +48,6 @@ trait PageGenerators {
 
   implicit lazy val arbitraryHowManyBroughtIntoUkPage: Arbitrary[HowManyBroughtIntoUkPage.type] =
     Arbitrary(HowManyBroughtIntoUkPage)
-
 
   implicit lazy val arbitraryPackagedContractPackerPage: Arbitrary[PackagedContractPackerPage.type] =
     Arbitrary(PackagedContractPackerPage)

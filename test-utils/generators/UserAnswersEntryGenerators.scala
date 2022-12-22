@@ -24,10 +24,19 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+
   implicit lazy val arbitraryBroughtIntoUkFromSmallProducersUserAnswersEntry: Arbitrary[(BroughtIntoUkFromSmallProducersPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[BroughtIntoUkFromSmallProducersPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAskSecondaryWarehouseInReturnUserAnswersEntry: Arbitrary[(AskSecondaryWarehouseInReturnPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AskSecondaryWarehouseInReturnPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -64,7 +73,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryHowManyBroughtIntoTheUKFromSmallProducersUserAnswersEntry: Arbitrary[(HowManyBroughtIntoTheUKFromSmallProducersPage.type, JsValue)] =
+  implicit lazy val arbitraryHowManyBroughtIntoTheUKFromSmallProducersUserAnswersEntry:
+    Arbitrary[(HowManyBroughtIntoTheUKFromSmallProducersPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[HowManyBroughtIntoTheUKFromSmallProducersPage.type]

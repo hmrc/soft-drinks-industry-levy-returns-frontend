@@ -319,3 +319,12 @@ broughtIntoUkFromSmallProducers.checkYourAnswersLabel = broughtIntoUkFromSmallPr
 broughtIntoUkFromSmallProducers.error.required = Select yes if you are reporting liable drinks you have brought into the UK from small producers
 broughtIntoUkFromSmallProducers.change.hidden = BroughtIntoUkFromSmallProducers
 
+askSecondaryWarehouseInReturn.title = Do you want to register any UK warehouses you use to store liable drinks?
+askSecondaryWarehouseInReturn.heading = Do you want to register any UK warehouses you use to store liable drinks?
+askSecondaryWarehouseInReturn.detailsLink = Why should I register a warehouse?
+askSecondaryWarehouseInReturn.detailsContent1 = You can delay when you have to report liable drinks in your quarterly return and pay the levy on them if you register the warehouses you use to store them.
+askSecondaryWarehouseInReturn.detailsContent2 = Because you changed your business activity, you can choose to register any of the UK warehouses you use to store liable drinks.
+askSecondaryWarehouseInReturn.checkYourAnswersLabel = Do you want to register any UK warehouses you use to store liable drinks?
+askSecondaryWarehouseInReturn.error.required = Select yes if you want to register any UK warehouses you use to store liable drinks
+askSecondaryWarehouseInReturn.change.hidden = AskSecondaryWarehouseInReturn
+
