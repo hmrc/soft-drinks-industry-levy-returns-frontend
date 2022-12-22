@@ -329,7 +329,7 @@ askSecondaryWarehouseInReturn.error.required = Select yes if you want to registe
 askSecondaryWarehouseInReturn.change.hidden = AskSecondaryWarehouseInReturn
 
 
-claimCreditsForExports.title = claimCreditsForExports
+claimCreditsForExports.title = Exported drinks
 claimCreditsForExports.heading1 = Exported drinks
 claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
 claimCreditsForExports.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
