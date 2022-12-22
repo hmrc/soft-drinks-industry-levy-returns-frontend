@@ -341,5 +341,5 @@ claimCreditsForExports.detailsContent3 = supplier or consigner
 claimCreditsForExports.detailsContent4 = customer and destination the liable drinks are supplied to
 claimCreditsForExports.detailsContent5 = method of delivery
 claimCreditsForExports.detailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
-claimCreditsForExports.error.required = Select yes if claimCreditsForExports
+claimCreditsForExports.error.required = Select yes if you want to claim a credit for liable drink that has been exported
 claimCreditsForExports.change.hidden = ClaimCreditsForExports

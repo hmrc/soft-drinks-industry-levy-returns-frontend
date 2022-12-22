@@ -5,8 +5,8 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
 class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications with TestConfiguration {
-  "PackagedContractPackerController" should {
-    "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
+  "ClaimCreditsForExportsController" should {
+    "Ask if user is needing to claim a credit for liable drinks that have been exported" in {
 
       given
         .commonPrecondition
