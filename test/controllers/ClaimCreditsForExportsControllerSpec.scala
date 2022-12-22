@@ -17,43 +17,43 @@
 package controllers
 
 import base.SpecBase
-import forms.BroughtIntoUkFromSmallProducersFormProvider
+import forms.ClaimCreditsForExportsFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.BroughtIntoUkFromSmallProducersPage
+import pages.ClaimCreditsForExportsPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.BroughtIntoUkFromSmallProducersView
+import views.html.ClaimCreditsForExportsView
 
 import scala.concurrent.Future
 
-class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with MockitoSugar {
+class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new BroughtIntoUkFromSmallProducersFormProvider()
+  val formProvider = new ClaimCreditsForExportsFormProvider()
   val form = formProvider()
 
-  lazy val broughtIntoUkFromSmallProducersRoute = routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode).url
+  lazy val claimCreditsForExportsRoute = routes.ClaimCreditsForExportsController.onPageLoad(NormalMode).url
 
-  "BroughtIntoUkFromSmallProducers Controller" - {
+  "ClaimCreditsForExports Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, broughtIntoUkFromSmallProducersRoute)
+        val request = FakeRequest(GET, claimCreditsForExportsRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[BroughtIntoUkFromSmallProducersView]
+        val view = application.injector.instanceOf[ClaimCreditsForExportsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -62,14 +62,14 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(BroughtIntoUkFromSmallProducersPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ClaimCreditsForExportsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, broughtIntoUkFromSmallProducersRoute)
+        val request = FakeRequest(GET, claimCreditsForExportsRoute)
 
-        val view = application.injector.instanceOf[BroughtIntoUkFromSmallProducersView]
+        val view = application.injector.instanceOf[ClaimCreditsForExportsView]
 
         val result = route(application, request).value
 
@@ -94,7 +94,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
 
       running(application) {
         val request =
-          FakeRequest(POST, broughtIntoUkFromSmallProducersRoute)
+          FakeRequest(POST, claimCreditsForExportsRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -110,12 +110,12 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
 
       running(application) {
         val request =
-          FakeRequest(POST, broughtIntoUkFromSmallProducersRoute)
+          FakeRequest(POST, claimCreditsForExportsRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[BroughtIntoUkFromSmallProducersView]
+        val view = application.injector.instanceOf[ClaimCreditsForExportsView]
 
         val result = route(application, request).value
 
@@ -123,6 +123,5 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
       }
     }
-
   }
 }

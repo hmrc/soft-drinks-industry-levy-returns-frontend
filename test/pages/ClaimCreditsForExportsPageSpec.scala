@@ -18,14 +18,14 @@ package pages
 
 import pages.behaviours.PageBehaviours
 
-class BroughtIntoUkFromSmallProducersPageSpec extends PageBehaviours {
+class ClaimCreditsForExportsPageSpec extends PageBehaviours {
 
-  "BroughtIntoUkFromSmallProducersPage" - {
+  "ClaimCreditsForExportsPage" - {
 
-    beRetrievable[Boolean](BroughtIntoUkFromSmallProducersPage)
+    beRetrievable[Boolean](ClaimCreditsForExportsPage)
 
-    beSettable[Boolean](BroughtIntoUkFromSmallProducersPage)
+    beSettable[Boolean](ClaimCreditsForExportsPage)
 
-    beRemovable[Boolean](BroughtIntoUkFromSmallProducersPage)
+    beRemovable[Boolean](ClaimCreditsForExportsPage)
   }
 }

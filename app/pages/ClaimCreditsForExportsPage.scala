@@ -16,16 +16,11 @@
 
 package pages
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.JsPath
 
-class BroughtIntoUkFromSmallProducersPageSpec extends PageBehaviours {
+case object ClaimCreditsForExportsPage extends QuestionPage[Boolean] {
 
-  "BroughtIntoUkFromSmallProducersPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Boolean](BroughtIntoUkFromSmallProducersPage)
-
-    beSettable[Boolean](BroughtIntoUkFromSmallProducersPage)
-
-    beRemovable[Boolean](BroughtIntoUkFromSmallProducersPage)
-  }
+  override def toString: String = "claimCreditsForExports"
 }
