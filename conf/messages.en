@@ -14,6 +14,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+sire.updateReg = Update registration
 
 date.day = Day
 date.month = Month
@@ -345,6 +346,7 @@ claimCreditsForExports.detailsContent6 = If you do not have the evidence by the 
 claimCreditsForExports.error.required = Select yes if you want to claim a credit for liable drink that has been exported
 claimCreditsForExports.change.hidden = ClaimCreditsForExports
 
+
 smallProducerDetails.title = Do you want to add another small producer?
 smallProducerDetails.heading1 = You added {0} small producers
 smallProducerDetails.heading2 = Do you want to add another small producer?
@@ -353,3 +355,12 @@ smallProducerDetails.error.required = Select yes if you want to add another smal
 smallProducerDetails.change.hidden = Do you want to add another small producer?
 smallProducerDetails.edit.hidden = Edit small producer
 smallProducerDetails.remove.hidden = remove small producer
+
+
+returnChangeRegistration.title = You changed your soft drinks business activity
+returnChangeRegistration.heading = You changed your soft drinks business activity
+returnChangeRegistration.subtext1 = In this return, you told us that you have packaged liable drinks in the UK.
+returnChangeRegistration.subtext2 = This is different to your registered business activity, so we will update your registration.
+returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
+returnChangeRegistration.subtext4 = If you're happy with the change, select Update Registration.
+
