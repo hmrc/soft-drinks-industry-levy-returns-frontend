@@ -20,20 +20,18 @@ import controllers.actions._
 import forms.SmallProducerDetailsFormProvider
 
 import javax.inject.Inject
-import models.{CheckMode, Mode, SmallProducer, UserAnswers}
+import models.{Mode, SmallProducer, UserAnswers}
 import navigation.Navigator
 import pages.SmallProducerDetailsPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.SmallProducerDetailsSummary
 import views.html.SmallProducerDetailsView
 import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+
 
 import scala.concurrent.{ExecutionContext, Future}
 

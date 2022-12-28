@@ -1,8 +1,24 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import base.SpecBase
 import forms.SmallProducerDetailsFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -13,11 +29,14 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import viewmodels.checkAnswers.SmallProducerDetailsSummary
+import viewmodels.govuk.SummaryListFluency
 import views.html.SmallProducerDetailsView
 
 import scala.concurrent.Future
 
-class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
+class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -28,19 +47,27 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
 
   "SmallProducerDetails Controller" - {
 
+    val smallProducerList = List(SmallProducer("ABC Ltd", "SDIL123456", (1000L, 1000L)),
+      SmallProducer("XYZ Ltd", "SDIL123789", (1000L, 1000L)))
+
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, smallProducerDetailsRoute)
-
+        implicit val request = FakeRequest(GET, smallProducerDetailsRoute)
         val result = route(application, request).value
+        val smallProducersSummaryList: List[SummaryListRow] =
+          SmallProducerDetailsSummary.row2(smallProducerList)(messages(application))
+        val list: SummaryList = SummaryListViewModel(
+          rows = smallProducersSummaryList
+        )
 
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, list)(request, messages(application)).toString
       }
     }
 
@@ -56,9 +83,14 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
         val result = route(application, request).value
+        val smallProducersSummaryList: List[SummaryListRow] =
+          SmallProducerDetailsSummary.row2(smallProducerList)(messages(application))
+        val list: SummaryList = SummaryListViewModel(
+          rows = smallProducersSummaryList
+        )
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, list)(request, messages(application)).toString
       }
     }
 
@@ -102,9 +134,15 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
         val result = route(application, request).value
+        val smallProducersSummaryList: List[SummaryListRow] =
+          SmallProducerDetailsSummary.row2(smallProducerList)(messages(application))
+        val list: SummaryList = SummaryListViewModel(
+          rows = smallProducersSummaryList
+        )
+
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, list)(request, messages(application)).toString
       }
     }
 
