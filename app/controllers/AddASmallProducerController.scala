@@ -43,11 +43,11 @@ class AddASmallProducerController @Inject()(
                                       view: AddASmallProducerView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
-
+      val form = formProvider(sessionRepository)
       val preparedForm = request.userAnswers.flatMap(_.get(AddASmallProducerPage)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -58,6 +58,7 @@ class AddASmallProducerController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+      val form = formProvider(sessionRepository)
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
