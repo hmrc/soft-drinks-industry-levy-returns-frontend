@@ -31,6 +31,14 @@ trait Constraints {
           .getOrElse(Valid)
     }
 
+  protected def referenceNumberSame(referenceNumber: String, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.matches(referenceNumber) =>
+        Invalid(errorKey, referenceNumber)
+      case _ =>
+        Valid
+    }
+
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>
