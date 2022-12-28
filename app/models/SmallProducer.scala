@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-import javax.inject.Inject
+import play.api.libs.json.{Format, Json}
 
-import forms.mappings.Mappings
-import play.api.data.Form
+case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long))
 
-class SmallProducerDetailsFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("smallProducerDetails.error.required")
-    )
+object SmallProducer {
+  implicit val format: Format[SmallProducer] = Json.format[SmallProducer]
 }

@@ -3,6 +3,7 @@ service.name = soft-drinks-industry-levy-returns-frontend
 test.test = Test
 
 site.back = Back
+site.edit = Edit
 site.remove = Remove
 site.change = Change
 site.no = No
@@ -345,7 +346,10 @@ claimCreditsForExports.error.required = Select yes if you want to claim a credit
 claimCreditsForExports.change.hidden = ClaimCreditsForExports
 
 smallProducerDetails.title = Do you want to add another small producer?
-smallProducerDetails.heading = Do you want to add another small producer?
+smallProducerDetails.heading1 = You added {0} small producers
+smallProducerDetails.heading2 = Do you want to add another small producer?
 smallProducerDetails.checkYourAnswersLabel = smallProducerDetails
 smallProducerDetails.error.required = Select yes if you want to add another small producer
 smallProducerDetails.change.hidden = Do you want to add another small producer?
+smallProducerDetails.edit.hidden = Edit small producer
+smallProducerDetails.remove.hidden = remove small producer
