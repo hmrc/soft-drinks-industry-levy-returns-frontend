@@ -364,3 +364,9 @@ returnChangeRegistration.subtext2 = This is different to your registered busines
 returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
 returnChangeRegistration.subtext4 = If you’re happy with the change, select Update Registration.
 
+removeSmallProducerConfirm.title = Are you sure you want to remove this small producer?
+removeSmallProducerConfirm.heading = Are you sure you want to remove this small producer?
+removeSmallProducerConfirm.checkYourAnswersLabel = removeSmallProducerConfirm
+removeSmallProducerConfirm.error.required = Select yes if you want to remove this small producer
+removeSmallProducerConfirm.change.hidden = removeSmallProducerConfirm
+
