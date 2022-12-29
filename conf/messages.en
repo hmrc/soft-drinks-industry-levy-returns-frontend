@@ -14,7 +14,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
-sire.updateReg = Update registration
+site.updateReg = Update registration
 
 date.day = Day
 date.month = Month
@@ -362,5 +362,5 @@ returnChangeRegistration.heading = You changed your soft drinks business activit
 returnChangeRegistration.subtext1 = In this return, you told us that you have packaged liable drinks in the UK.
 returnChangeRegistration.subtext2 = This is different to your registered business activity, so we will update your registration.
 returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
-returnChangeRegistration.subtext4 = If you're happy with the change, select Update Registration.
+returnChangeRegistration.subtext4 = If you’re happy with the change, select Update Registration.
 

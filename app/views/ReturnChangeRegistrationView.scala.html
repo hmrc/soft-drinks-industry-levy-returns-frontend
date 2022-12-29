@@ -28,7 +28,11 @@
         <h1 class="govuk-heading-m">@messages("returnChangeRegistration.heading")</h1>
         <p class="govuk-body">@messages("returnChangeRegistration.subtext1")</p>
         <p class="govuk-body">@messages("returnChangeRegistration.subtext2")</p>
-        <p class="govuk-body">@messages("returnChangeRegistration.subtext3", routes.PackagedContractPackerController.onPageLoad(NormalMode).url)</p>
+        <p class="govuk-body">@Html(messages("returnChangeRegistration.subtext3", routes.PackagedContractPackerController.onPageLoad(NormalMode).url))</p>
         <p class="govuk-body">@messages("returnChangeRegistration.subtext4")</p>
+
+        @govukButton(
+            ButtonViewModel(messages("site.updateReg"))
+        )
     }
 }
