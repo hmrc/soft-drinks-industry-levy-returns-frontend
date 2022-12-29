@@ -91,3 +91,8 @@ GET        /claim-credits-for-exports                        controllers.ClaimCr
 POST       /claim-credits-for-exports                        controllers.ClaimCreditsForExportsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-claim-credits-for-exports                  controllers.ClaimCreditsForExportsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-claim-credits-for-exports                  controllers.ClaimCreditsForExportsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /small-producer-details                        controllers.SmallProducerDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /small-producer-details                        controllers.SmallProducerDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-small-producer-details                 controllers.SmallProducerDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-small-producer-details                  controllers.SmallProducerDetailsController.onSubmit(mode: Mode = CheckMode)
