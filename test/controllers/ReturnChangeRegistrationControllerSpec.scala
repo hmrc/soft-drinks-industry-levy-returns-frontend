@@ -17,13 +17,14 @@
 package controllers
 
 import base.SpecBase
+import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.ReturnChangeRegistrationView
 
-class returnChangeRegistrationControllerSpec extends SpecBase {
+class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
-  "eturnChangeRegistration Controller" - {
+  "ReturnChangeRegistration Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -37,6 +38,7 @@ class returnChangeRegistrationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ReturnChangeRegistrationView]
 
         status(result) mustEqual OK
+        contentAsString(result) must include (routes.PackagedContractPackerController.onPageLoad(NormalMode).url)
         contentAsString(result) mustEqual view()(request, messages(application)).toString
       }
     }
