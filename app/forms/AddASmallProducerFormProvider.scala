@@ -16,32 +16,54 @@
 
 package forms
 
+import connectors.SoftDrinksIndustryLevyConnector
+
 import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.AddASmallProducer
+import models.{AddASmallProducer, ReturnPeriod}
 import models.requests.OptionalDataRequest
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
 
-   def apply(sessionRepository: SessionRepository
+
+   def apply(sessionRepository: SessionRepository,
+             sdilConnector: SoftDrinksIndustryLevyConnector
             )(implicit request: OptionalDataRequest[_]): Form[AddASmallProducer] = {
-     val session = sessionRepository.get(request.sdilEnrolment).map(id=> id.get.id).toString
+
+     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+     def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+       sdilConnector.checkSmallProducerStatus(sdilRef, period)
+
      Form(
        mapping(
          "producerName" -> optional(text(
 
          )
-           .verifying()),
+           .verifying(maxLength(160,"addASmallProducer.error.producerName.maxLength"))),
+
          "referenceNumber" -> text(
            "addASmallProducer.error.referenceNumber.required"
          )
-           .verifying(regexp("^X[A-Z]SDIL000[0-9]{6}$", "addASmallProducer.error.referenceNumber.invalid"),referenceNumberSame(session,"addASmallProducer.error.referenceNumber.same")),
+           .verifying(
+             referenceNumberFormat("^X[A-Z]SDIL000[0-9]{6}$",
+               "addASmallProducer.error.referenceNumber.invalid"),
+             referenceNumberSame(request.sdilEnrolment,
+               "addASmallProducer.error.referenceNumber.same"),
+             referenceNumberExists(List("XHSDIL000000381","XLSDIL000000539"),
+               "addASmallProducer.error.referenceNumber.Exist"),
+             referenceNumberLarge(Await.result(checkSmallProducerStatus(sp.sdilRef, period), 20.seconds).getOrElse(true),"addASmallProducer.error.referenceNumber.Large")),
+
          "lowBand" -> long(
            "addASmallProducer.error.lowBand.required",
            "addASmallProducer.error.lowBand.negative",
@@ -49,6 +71,7 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
            "addASmallProducer.error.lowBand.wholeNumber",
            "addASmallProducer.error.lowBand.outOfMaxVal")
            .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
+
          "highBand" -> long(
            "addASmallProducer.error.highBand.required",
            "addASmallProducer.error.highBand.negative",

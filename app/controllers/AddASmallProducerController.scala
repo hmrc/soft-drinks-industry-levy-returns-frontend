@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.AddASmallProducerFormProvider
 
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddASmallProducerController @Inject()(
                                       override val messagesApi: MessagesApi,
                                       sessionRepository: SessionRepository,
+                                      sdilConnector: SoftDrinksIndustryLevyConnector,
                                       navigator: Navigator,
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
@@ -47,7 +49,7 @@ class AddASmallProducerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
-      val form = formProvider(sessionRepository)
+      val form = formProvider(sessionRepository,sdilConnector)
       val preparedForm = request.userAnswers.flatMap(_.get(AddASmallProducerPage)) match {
         case None => form
         case Some(value) => form.fill(value)

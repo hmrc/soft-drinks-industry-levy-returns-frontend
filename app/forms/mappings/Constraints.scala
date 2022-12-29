@@ -31,9 +31,33 @@ trait Constraints {
           .getOrElse(Valid)
     }
 
-  protected def referenceNumberSame(referenceNumber: String, errorKey: String): Constraint[String] =
+  protected def referenceNumberFormat(regex: String, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.matches(regex) =>
+        Valid
+      case _ =>
+        Invalid(errorKey, regex)
+    }
+
+  protected def referenceNumberExists (referenceNumbers: List[String], errorKey: String): Constraint[String] =
+    Constraint {
+      case str if referenceNumbers.contains(str) =>
+        Invalid(errorKey, referenceNumbers)
+      case _ =>
+        Valid
+    }
+
+  protected def referenceNumberSame (referenceNumber: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.matches(referenceNumber) =>
+        Invalid(errorKey, referenceNumber)
+      case _ =>
+        Valid
+    }
+
+  protected def referenceNumberLarge (referenceNumber: String, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if referenceNumber == true =>
         Invalid(errorKey, referenceNumber)
       case _ =>
         Valid
