@@ -1,8 +1,26 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
-import models.{NormalMode, AddASmallProducer, UserAnswers}
+import models.requests.OptionalDataRequest
+import models.{AddASmallProducer, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -18,18 +36,28 @@ import views.html.AddASmallProducerView
 
 import scala.concurrent.Future
 
-class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
+abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new AddASmallProducerFormProvider()
-  val form = formProvider()
+  val mockSessionRepository = mock[SessionRepository]
+  val application = applicationBuilder(userAnswers = None).build()
+  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
+  implicit val request: OptionalDataRequest[_]
+  val form = formProvider(mockSessionRepository, sdilConnector)
 
-  val value1max: Long = 100000000000000L
-  val value1 = value1max - 1
+  val value1max: Option[String] = Some("Party Drinks Group")
+  val value1 = "Party Drinks Group"
 
-  val value2max: Long = 100000000000000L
-  val value2 = value2max - 1
+  val value2max: String = "XPSDIL000000116"
+  val value2 = "XPSDIL000000116"
+
+  val value3max: Long = 100000000000000L
+  val value3 = value3max - 1
+
+  val value4max: Long = 100000000000000L
+  val value4 = value4max - 1
 
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
 
@@ -37,8 +65,10 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     userAnswersId,
     Json.obj(
       AddASmallProducerPage.toString -> Json.obj(
-        "lowBand" -> value1,
-        "highBand" -> value2
+        "producerName" -> value1,
+        "referenceNumber" -> value2,
+        "lowBand" -> value3,
+        "highBand" -> value4
       )
     )
   )
@@ -73,7 +103,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(AddASmallProducer(value1, value2)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(AddASmallProducer(Some(value1), value2,value3,value4)), NormalMode)(request, messages(application)).toString
       }
     }
 

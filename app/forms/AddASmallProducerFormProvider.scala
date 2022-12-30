@@ -24,11 +24,12 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.{AddASmallProducer, ReturnPeriod}
 import models.requests.OptionalDataRequest
+import play.api.data.validation.{Constraint, Invalid, Valid}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import java.time.LocalDate
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
@@ -45,6 +46,14 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
        sdilConnector.checkSmallProducerStatus(sdilRef, period)
 
+     def referenceNumberLarge (returnPeriod:ReturnPeriod,errorKey: String): Constraint[String] =
+       Constraint {
+         case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)) == false =>
+           Invalid(errorKey)
+         case _ =>
+           Valid
+       }
+
      Form(
        mapping(
          "producerName" -> optional(text(
@@ -60,9 +69,11 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
                "addASmallProducer.error.referenceNumber.invalid"),
              referenceNumberSame(request.sdilEnrolment,
                "addASmallProducer.error.referenceNumber.same"),
+             //TODO Remove Hard Coded Values From List
              referenceNumberExists(List("XHSDIL000000381","XLSDIL000000539"),
                "addASmallProducer.error.referenceNumber.Exist"),
-             referenceNumberLarge(Await.result(checkSmallProducerStatus(sp.sdilRef, period), 20.seconds).getOrElse(true),"addASmallProducer.error.referenceNumber.Large")),
+            //TODO Remove Hard Coded Value Period
+             referenceNumberLarge(ReturnPeriod(LocalDate.of(2018, 4, 15)),"addASmallProducer.error.referenceNumber.Large")),
 
          "lowBand" -> long(
            "addASmallProducer.error.lowBand.required",

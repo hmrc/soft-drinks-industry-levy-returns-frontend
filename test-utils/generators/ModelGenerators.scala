@@ -26,9 +26,11 @@ trait ModelGenerators {
   implicit lazy val arbitraryAddASmallProducer: Arbitrary[AddASmallProducer] =
     Arbitrary {
       for {
+        producerName <- arbitrary [Option[String]]
+        referenceNumber <- arbitrary[String]
         lowBand <- arbitrary[Long]
         highBand <- arbitrary[Long]
-      } yield AddASmallProducer(lowBand, highBand)
+      } yield AddASmallProducer(producerName,referenceNumber,lowBand, highBand)
     }
 
   implicit lazy val arbitraryHowManyCreditsForLostDamaged: Arbitrary[HowManyCreditsForLostDamaged] =

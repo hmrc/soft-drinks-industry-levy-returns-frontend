@@ -17,7 +17,6 @@
 package forms.mappings
 
 import java.time.LocalDate
-
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait Constraints {
@@ -50,14 +49,6 @@ trait Constraints {
   protected def referenceNumberSame (referenceNumber: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.matches(referenceNumber) =>
-        Invalid(errorKey, referenceNumber)
-      case _ =>
-        Valid
-    }
-
-  protected def referenceNumberLarge (referenceNumber: String, errorKey: String): Constraint[String] =
-    Constraint {
-      case str if referenceNumber == true =>
         Invalid(errorKey, referenceNumber)
       case _ =>
         Valid
