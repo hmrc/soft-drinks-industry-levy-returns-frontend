@@ -1,6 +1,7 @@
 package controllers
 
 import controllers.testSupport.{Specifications, TestConfiguration}
+import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -28,14 +29,6 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
 
     "Post the Own brand packaged at own sites " in {
 
-      val declarationData = {
-        """{
-          |
-          |"ownBrands" : false
-          |
-          |}
-        """.stripMargin
-      }
       given
         .commonPrecondition
 
@@ -44,16 +37,15 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
         val result =
           client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "some-id",
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(declarationData)
+            .post(Json.obj("value" -> true))
+
 
         whenReady(result) { res =>
-          println(" res is :;"+res)
           res.status mustBe 303
-          println(" header :;"+res.header(HeaderNames.LOCATION))
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/how-many-own-brands-packaged-at-own-sites")
+          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-own-brands-packaged-at-own-sites")
         }
 
       }
