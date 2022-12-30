@@ -27,6 +27,7 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case OwnBrandsPage => userAnswers => ownBrandPageNavigation(userAnswers)
     case _ => _ => routes.IndexController.onPageLoad
   }
 
@@ -36,10 +37,15 @@ class Navigator @Inject()() {
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     mode match {
-      case NormalMode =>
-        normalRoutes(page)(userAnswers)
-      case CheckMode =>
-        checkRouteMap(page)(userAnswers)
+      case NormalMode => normalRoutes(page)(userAnswers)
+      case CheckMode => checkRouteMap(page)(userAnswers)
     }
+  private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
+    if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
+      routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
+    } else {
+      routes.PackagedContractPackerController.onPageLoad(NormalMode)
+    }
+  }
 
 }

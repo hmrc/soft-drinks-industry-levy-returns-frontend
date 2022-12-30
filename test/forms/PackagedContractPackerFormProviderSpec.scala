@@ -19,12 +19,12 @@ package forms
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class removeSmallProducerConfirmFormProviderSpec extends BooleanFieldBehaviours {
+class PackagedContractPackerFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "removeSmallProducerConfirm.error.required"
+  val requiredKey = "packagedContractPacker.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new RemoveSmallProducerConfirmFormProvider()()
+  val form = new PackagedContractPackerFormProvider()()
 
   ".value" - {
 

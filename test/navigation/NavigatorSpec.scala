@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import pages._
 import models._
+import play.api.libs.json.Json
 
 class NavigatorSpec extends SpecBase {
 
@@ -33,6 +34,29 @@ class NavigatorSpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+      }
+
+      "navigate to correct page " - {
+
+        "When current Page is " - {
+
+          "Own brand packaged at own site page" - {
+
+             def navigate(value: Boolean) = navigator.nextPage(OwnBrandsPage,
+              NormalMode,
+              UserAnswers("id", Json.obj("ownBrands" -> value)))
+
+            "select Yes to navigate to How Many own brands packaged at own sites page" in {
+              val result = navigate(true)
+              result mustBe routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
+            }
+
+            "select No to navigate to packaged as contract packer page" in {
+              val result = navigate(false)
+              result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
+            }
+          }
+        }
       }
     }
 
