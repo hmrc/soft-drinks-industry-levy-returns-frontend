@@ -32,7 +32,6 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
       given
         .commonPrecondition
 
-
       WsTestClient.withClient { client =>
         val result =
           client.url(s"$baseUrl/own-brands-packaged-at-own-sites")

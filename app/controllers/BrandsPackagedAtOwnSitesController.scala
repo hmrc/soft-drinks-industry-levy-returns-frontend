@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.BrandsPackagedAtOwnSitesFormProvider
 
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.BrandsPackagedAtOwnSitesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -45,10 +45,10 @@ class BrandsPackagedAtOwnSitesController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(BrandsPackagedAtOwnSitesPage)) match {
+      val preparedForm = request.userAnswers.get(BrandsPackagedAtOwnSitesPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -56,16 +56,15 @@ class BrandsPackagedAtOwnSitesController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(BrandsPackagedAtOwnSitesPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(BrandsPackagedAtOwnSitesPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(BrandsPackagedAtOwnSitesPage, mode, updatedAnswers))
       )
