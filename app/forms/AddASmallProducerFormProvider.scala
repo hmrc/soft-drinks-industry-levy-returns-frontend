@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,9 +48,10 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 
      def referenceNumberLarge (returnPeriod:ReturnPeriod,errorKey: String): Constraint[String] =
        Constraint {
-         case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)) == false =>
+         case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)).equals(false)  =>
            Invalid(errorKey)
          case _ =>
+           println(s"Request Enrolement${request.sdilEnrolment}")
            Valid
        }
 
