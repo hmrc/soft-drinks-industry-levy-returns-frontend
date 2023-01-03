@@ -85,8 +85,6 @@ POST       /ask-secondary-warehouses-in-return                        controller
 GET        /change-ask-secondary-warehouses-in-return                  controllers.AskSecondaryWarehouseInReturnController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-ask-secondary-warehouses-in-return                 controllers.AskSecondaryWarehouseInReturnController.onSubmit(mode: Mode = CheckMode)
 
-
-
 GET        /claim-credits-for-exports                        controllers.ClaimCreditsForExportsController.onPageLoad(mode: Mode = NormalMode)
 POST       /claim-credits-for-exports                        controllers.ClaimCreditsForExportsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-claim-credits-for-exports                  controllers.ClaimCreditsForExportsController.onPageLoad(mode: Mode = CheckMode)
@@ -104,3 +102,8 @@ GET        /remove-small-producer-confirm                        controllers.Rem
 POST       /remove-small-producer-confirm                        controllers.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode)
 GET        /changee-remove-small-producer-confirm                  controllers.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-remove-small-producer-confirm                  controllers.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = CheckMode)
+
+GET        /secondaryWarehouseDetails                        controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /secondaryWarehouseDetails                        controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeSecondaryWarehouseDetails                  controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeSecondaryWarehouseDetails                  controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
