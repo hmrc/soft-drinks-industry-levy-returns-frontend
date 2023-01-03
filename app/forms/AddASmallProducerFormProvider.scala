@@ -51,7 +51,6 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
          case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)).equals(false)  =>
            Invalid(errorKey)
          case _ =>
-           println(s"Request Enrolement${request.sdilEnrolment}")
            Valid
        }
 
