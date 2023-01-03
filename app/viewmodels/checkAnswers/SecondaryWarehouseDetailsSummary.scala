@@ -17,9 +17,11 @@
 package viewmodels.checkAnswers
 
 import controllers.routes
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, UserAnswers, Warehouse}
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -41,4 +43,25 @@ object SecondaryWarehouseDetailsSummary  {
           )
         )
     }
+
+  def row2(warehouseList: List[Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
+    warehouseList.map {
+      warehouse =>
+        val value = ValueViewModel(
+          HtmlContent(
+            HtmlFormat.escape(warehouse.address.postcode)
+          )
+        )
+        SummaryListRowViewModel(
+          key     = warehouse.tradingName,
+          value   = value,
+          actions = Seq(
+            ActionItemViewModel("site.edit", routes.IndexController.onPageLoad.url)
+              .withVisuallyHiddenText(messages("secondaryWarehouseDetails.edit.hidden")),
+            ActionItemViewModel("site.remove", routes.IndexController.onPageLoad.url)
+              .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
+          )
+        )
+    }
+  }
 }

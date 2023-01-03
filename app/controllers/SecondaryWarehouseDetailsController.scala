@@ -26,8 +26,11 @@ import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
+import viewmodels.govuk.summarylist._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,26 +48,31 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  val spList = List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","","","WR53 7CX")))
+  val spList = List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","","","WR53 7CX")),Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","","","SA13 7CE")))
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
-
+      val warehouseSummaryList: List[SummaryListRow] = SecondaryWarehouseDetailsSummary.row2(spList)
+      val list: SummaryList = SummaryListViewModel(
+        rows = warehouseSummaryList
+      )
       val preparedForm = request.userAnswers.flatMap(_.get(SecondaryWarehouseDetailsPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode,list))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+      val warehouseSummaryList: List[SummaryListRow] = SecondaryWarehouseDetailsSummary.row2(spList)
+      val list: SummaryList = SummaryListViewModel(
+        rows = warehouseSummaryList
+      )
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
+          Future.successful(BadRequest(view(formWithErrors, mode, list))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(answers.set(SecondaryWarehouseDetailsPage, value))
