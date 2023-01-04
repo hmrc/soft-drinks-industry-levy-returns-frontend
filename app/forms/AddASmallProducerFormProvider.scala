@@ -46,10 +46,19 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
        sdilConnector.checkSmallProducerStatus(sdilRef, period)
 
-     def referenceNumberLarge (returnPeriod:ReturnPeriod,errorKey: String): Constraint[String] =
+      def referenceNumberFormat(regex: String, errorKey1: String,
+                                referenceNumber: String, errorKey2: String,
+                                referenceNumberList: List[String], errorKey3: String,
+                                returnPeriod:ReturnPeriod,errorKey4: String): Constraint[String] =
        Constraint {
+         case str if !str.matches(regex) =>
+           Invalid(errorKey1, regex)
+         case str if str.matches(referenceNumber) =>
+           Invalid(errorKey2, referenceNumber)
+         case str if referenceNumberList.contains(str) =>
+           Invalid(errorKey3, referenceNumberList)
          case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)).equals(false)  =>
-           Invalid(errorKey)
+           Invalid(errorKey4)
          case _ =>
            Valid
        }
@@ -66,31 +75,27 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
          )
            .verifying(
              referenceNumberFormat("^X[A-Z]SDIL000[0-9]{6}$",
-               "addASmallProducer.error.referenceNumber.invalid"),
-             referenceNumberSame(request.sdilEnrolment,
-               "addASmallProducer.error.referenceNumber.same"),
-             //TODO Remove Hard Coded Values From List
-             referenceNumberExists(List("XHSDIL000000381","XLSDIL000000539"),
-               "addASmallProducer.error.referenceNumber.Exist"),
-            //TODO Remove Hard Coded Value Period
-             referenceNumberLarge(ReturnPeriod(LocalDate.of(2018, 4, 15)),"addASmallProducer.error.referenceNumber.Large")),
+               "addASmallProducer.error.referenceNumber.invalid",
+               request.sdilEnrolment,"addASmallProducer.error.referenceNumber.same",
+               List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
+               ReturnPeriod(LocalDate.of(2018, 4, 15)),"addASmallProducer.error.referenceNumber.Large")),
 
-         "lowBand" -> long(
-           "addASmallProducer.error.lowBand.required",
-           "addASmallProducer.error.lowBand.negative",
-           "addASmallProducer.error.lowBand.nonNumeric",
-           "addASmallProducer.error.lowBand.wholeNumber",
-           "addASmallProducer.error.lowBand.outOfMaxVal")
-           .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
+"lowBand" -> long(
+  "addASmallProducer.error.lowBand.required",
+  "addASmallProducer.error.lowBand.negative",
+  "addASmallProducer.error.lowBand.nonNumeric",
+  "addASmallProducer.error.lowBand.wholeNumber",
+  "addASmallProducer.error.lowBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
 
-         "highBand" -> long(
-           "addASmallProducer.error.highBand.required",
-           "addASmallProducer.error.highBand.negative",
-           "addASmallProducer.error.highBand.nonNumeric",
-           "addASmallProducer.error.highBand.wholeNumber",
-           "addASmallProducer.error.highBand.outOfMaxVal")
-           .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
-       )(AddASmallProducer.apply)(AddASmallProducer.unapply)
-     )
-   }
- }
+"highBand" -> long(
+  "addASmallProducer.error.highBand.required",
+  "addASmallProducer.error.highBand.negative",
+  "addASmallProducer.error.highBand.nonNumeric",
+  "addASmallProducer.error.highBand.wholeNumber",
+  "addASmallProducer.error.highBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
+)(AddASmallProducer.apply)(AddASmallProducer.unapply)
+)
+}
+}
