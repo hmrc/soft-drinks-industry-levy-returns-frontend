@@ -28,7 +28,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
   lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    sdilNumber,
     Json.obj(
       $className$Page.toString -> Json.obj(
         "$field1Name$" -> "value 1",

@@ -22,5 +22,5 @@ case object PackagedContractPackerPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "ackagedContractPacker"
+  override def toString: String = "packagedContractPacker"
 }

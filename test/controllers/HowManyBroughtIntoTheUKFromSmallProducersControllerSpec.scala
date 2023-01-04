@@ -50,7 +50,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
   lazy val howManyBroughtIntoTheUKFromSmallProducersRoute = routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    sdilNumber,
     Json.obj(
       HowManyBroughtIntoTheUKFromSmallProducersPage.toString -> Json.obj(
         "lowBand" -> value1,

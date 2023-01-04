@@ -50,7 +50,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
   lazy val owManyBoughtIntoUkRoute = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    sdilNumber,
     Json.obj(
       HowManyBroughtIntoUkPage.toString -> Json.obj(
         "lowBandLitres" -> value1,
