@@ -56,6 +56,19 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
           }
+
+          "How many own brands packaged at own sites" - {
+
+            "select save and continue to navigate to packaged as contract packer page" in {
+              val result = navigator.nextPage(BrandsPackagedAtOwnSitesPage,
+                NormalMode,
+                UserAnswers("id", Json.obj("ownBrands" -> true,
+                  "brandsPackagedAtOwnSites" ->
+                    Json.obj("lowBandLitres" -> "100", "highBandLitres" -> "100"))))
+              result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
+            }
+
+          }
         }
       }
     }
