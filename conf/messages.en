@@ -370,3 +370,12 @@ removeSmallProducerConfirm.checkYourAnswersLabel = removeSmallProducerConfirm
 removeSmallProducerConfirm.error.required = Select yes if you want to remove this small producer
 removeSmallProducerConfirm.change.hidden = removeSmallProducerConfirm
 
+
+secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
+secondaryWarehouseDetails.heading1 = You added {0} UK warehouses
+secondaryWarehouseDetails.heading2 = Do you want to add another UK warehouse?
+secondaryWarehouseDetails.checkYourAnswersLabel = secondaryWarehouseDetails
+secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
+secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
+secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
+secondaryWarehouseDetails.remove.hidden = remove UK warehouse

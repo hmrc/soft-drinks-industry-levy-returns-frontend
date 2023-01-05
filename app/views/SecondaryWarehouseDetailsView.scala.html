@@ -1,0 +1,96 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    hmrcListWithActions: HmrcListWithActions,
+    govukTable : GovukTable
+)
+
+@(form: Form[_], mode: Mode, ukWarehouseList: List[Warehouse])(implicit request: Request[_], messages: Messages)
+
+@htmlContent(warehouse:Warehouse) = {
+     <p class="govuk-body govuk-!-margin-0">@if(warehouse.tradingName != ""){
+         @messages(s"${warehouse.tradingName}")<br>}else{}
+         @if(warehouse.address.line1 != ""){
+         @messages(s"${warehouse.address.line1}"),
+         }else{}
+         @if(warehouse.address.line2 != ""){
+         @messages(s"${warehouse.address.line2}"),
+         }else{}
+         @if(warehouse.address.line3 != ""){
+         @messages(s"${warehouse.address.line3}"),
+         }else{}
+         @if(warehouse.address.line4 != ""){
+         @messages(s"${warehouse.address.line4}"),
+         }else{}
+         @messages(s"${warehouse.address.postcode}")
+     </p>
+}
+
+@summary = {
+@ukWarehouseList.map{ warehouse =>
+    @hmrcListWithActions(
+            ListWithActions(
+                items = Seq(
+                    ListWithActionsItem(
+                    name = HtmlContent(htmlContent(warehouse)),
+                    actions = Seq(
+                                ListWithActionsAction(
+                                    content = Text(messages("site.edit")),
+                                    visuallyHiddenText = Some(messages("smallProducerDetails.edit.hidden")),
+                                    href = "/soft-drinks-industry-levy-returns-frontend"
+                                ),
+                                ListWithActionsAction(
+                                content = Text(messages("site.remove")),
+                                visuallyHiddenText = Some(messages("smallProducerDetails.edit.hidden")),
+                                href = "/soft-drinks-industry-levy-returns-frontend"
+                    ))
+                ))
+            ))
+    }
+}
+
+@layout(pageTitle = title(form, messages("secondaryWarehouseDetails.title"))) {
+
+    @formHelper(action = routes.SecondaryWarehouseDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.heading1", ukWarehouseList.length)</h1>
+
+        @summary
+
+        <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.heading2")</h1>
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(""), None
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.saveContinue"))
+        )
+    }
+}

@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitrarySecondaryWarehouseDetailsPage: Arbitrary[SecondaryWarehouseDetailsPage.type] =
+    Arbitrary(SecondaryWarehouseDetailsPage)
+
   implicit lazy val arbitraryRemoveSmallProducerConfirmPage: Arbitrary[RemoveSmallProducerConfirmPage.type] =
     Arbitrary(RemoveSmallProducerConfirmPage)
 
