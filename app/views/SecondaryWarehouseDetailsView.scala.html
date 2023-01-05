@@ -20,7 +20,7 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukSummaryList: GovukSummaryList,
+    hmrcListWithActions: HmrcListWithActions,
     govukTable : GovukTable
 )
 
@@ -44,25 +44,24 @@
          @messages(s"${warehouse.address.postcode}")
      </p>
 }
+
 @summary = {
 @ukWarehouseList.map{ warehouse =>
-    @govukSummaryList(
-            SummaryList(
-                rows = Seq(
-                    SummaryListRow(
-                    key = Key(HtmlContent(htmlContent(warehouse)), "govuk-!-width-full"),
-                    actions = Some(Actions(
-                    items = Seq(
-                        ActionItem(
-                            href = "/soft-drinks-industry-levy-returns-frontend",
-                            content = Text(("Edit")),
-                            visuallyHiddenText = Some(messages("smallProducerDetails.edit.hidden"))
-                        ),
-                        ActionItem(
-                            href = "/soft-drinks-industry-levy-returns-frontend",
-                            content = Text(("Remove")),
-                            visuallyHiddenText = Some(messages("smallProducerDetails.remove.hidden"))
-                        ))
+    @hmrcListWithActions(
+            ListWithActions(
+                items = Seq(
+                    ListWithActionsItem(
+                    name = HtmlContent(htmlContent(warehouse)),
+                    actions = Seq(
+                                ListWithActionsAction(
+                                    content = Text(messages("site.edit")),
+                                    visuallyHiddenText = Some(messages("smallProducerDetails.edit.hidden")),
+                                    href = "/soft-drinks-industry-levy-returns-frontend"
+                                ),
+                                ListWithActionsAction(
+                                content = Text(messages("site.remove")),
+                                visuallyHiddenText = Some(messages("smallProducerDetails.edit.hidden")),
+                                href = "/soft-drinks-industry-levy-returns-frontend"
                     ))
                 ))
             ))
