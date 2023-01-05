@@ -72,7 +72,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(SecondaryWarehouseDetailsPage, true).success.value
+      val userAnswers = UserAnswers(sdilNumber).set(SecondaryWarehouseDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
