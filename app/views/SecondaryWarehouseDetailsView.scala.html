@@ -20,10 +20,54 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukTable : GovukTable
 )
 
-@(form: Form[_], mode: Mode, ukWarehouseList: SummaryList)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, ukWarehouseList: List[Warehouse])(implicit request: Request[_], messages: Messages)
+
+@htmlContent(warehouse:Warehouse) = {
+     <p class="govuk-body govuk-!-margin-0">@if(warehouse.tradingName != ""){
+         @messages(s"${warehouse.tradingName}")<br>}else{}
+         @if(warehouse.address.line1 != ""){
+         @messages(s"${warehouse.address.line1}"),
+         }else{}
+         @if(warehouse.address.line2 != ""){
+         @messages(s"${warehouse.address.line2}"),
+         }else{}
+         @if(warehouse.address.line3 != ""){
+         @messages(s"${warehouse.address.line3}"),
+         }else{}
+         @if(warehouse.address.line4 != ""){
+         @messages(s"${warehouse.address.line4}"),
+         }else{}
+         @messages(s"${warehouse.address.postcode}")
+     </p>
+}
+@summary = {
+@ukWarehouseList.map{ warehouse =>
+    @govukSummaryList(
+            SummaryList(
+                rows = Seq(
+                    SummaryListRow(
+                    key = Key(HtmlContent(htmlContent(warehouse)), "govuk-!-width-full"),
+                    actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = "/soft-drinks-industry-levy-returns-frontend",
+                            content = Text(("Edit")),
+                            visuallyHiddenText = Some(messages("smallProducerDetails.edit.hidden"))
+                        ),
+                        ActionItem(
+                            href = "/soft-drinks-industry-levy-returns-frontend",
+                            content = Text(("Remove")),
+                            visuallyHiddenText = Some(messages("smallProducerDetails.remove.hidden"))
+                        ))
+                    ))
+                ))
+            ))
+    }
+}
 
 @layout(pageTitle = title(form, messages("secondaryWarehouseDetails.title"))) {
 
@@ -33,8 +77,9 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.heading1", ukWarehouseList.rows.size)</h1>
-        @govukSummaryList(ukWarehouseList)
+        <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.heading1", ukWarehouseList.length)</h1>
+
+        @summary
 
         <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.heading2")</h1>
 

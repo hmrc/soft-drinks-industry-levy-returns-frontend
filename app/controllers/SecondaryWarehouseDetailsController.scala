@@ -23,6 +23,7 @@ import javax.inject.Inject
 import models.{Address, Mode, UserAnswers, Warehouse}
 import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
+import play.api.http.Writeable.wByteArray
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -48,14 +49,12 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  val spList = List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","","","WR53 7CX")),Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","","","SA13 7CE")))
+  val spList = List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
       val warehouseSummaryList: List[SummaryListRow] = SecondaryWarehouseDetailsSummary.row2(spList)
-      val list: SummaryList = SummaryListViewModel(
-        rows = warehouseSummaryList
-      )
+      val list: List[Warehouse] = spList
       val preparedForm = request.userAnswers.flatMap(_.get(SecondaryWarehouseDetailsPage)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -66,9 +65,7 @@ class SecondaryWarehouseDetailsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val warehouseSummaryList: List[SummaryListRow] = SecondaryWarehouseDetailsSummary.row2(spList)
-      val list: SummaryList = SummaryListViewModel(
-        rows = warehouseSummaryList
-      )
+      val list: List[Warehouse] = spList
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
