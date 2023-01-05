@@ -64,7 +64,7 @@ class NavigatorSpec extends SpecBase {
                 NormalMode,
                 UserAnswers("id", Json.obj("ownBrands" -> true,
                   "brandsPackagedAtOwnSites" ->
-                    Json.obj("lowBandLitres" -> "100", "highBandLitres" -> "100"))))
+                    Json.obj("lowBand" -> "100", "highBand" -> "100"))))
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
 

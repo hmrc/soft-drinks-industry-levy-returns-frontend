@@ -32,7 +32,7 @@ object HowManyCreditsForExportSummary  {
     answers.get(HowManyCreditsForExportPage).map {
       answer =>
 
-      val value = HtmlFormat.escape(answer.lowBandLitres.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBandLitres.toString).toString
+      val value = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
 
         SummaryListRowViewModel(
           key     = "howManyCreditsForExport.checkYourAnswersLabel",

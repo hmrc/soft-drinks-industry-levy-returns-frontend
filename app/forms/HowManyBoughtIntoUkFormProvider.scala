@@ -27,20 +27,20 @@ class HowManyBoughtIntoUkFormProvider @Inject() extends Mappings {
 
    def apply(): Form[HowManyBroughtIntoUk] = Form(
      mapping(
-      "lowBandLitres" -> long(
-        "howManyBoughtIntoUk.error.lowBandLitres.required",
-                    "howManyBoughtIntoUk.error.lowBandLitres.negative",
-                    "howManyBoughtIntoUk.error.lowBandLitres.nonNumeric",
-                    "howManyBoughtIntoUk.error.lowBandLitres.wholeNumber",
-        "howManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal")),
-        "highBandLitres" -> long(
-        "howManyBoughtIntoUk.error.highBandLitres.required",
-                    "howManyBoughtIntoUk.error.highBandLitres.negative",
-                    "howManyBoughtIntoUk.error.highBandLitres.nonNumeric",
-                    "howManyBoughtIntoUk.error.highBandLitres.wholeNumber",
-          "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal"))
+      "lowBand" -> long(
+        "howManyBoughtIntoUk.error.lowBand.required",
+                    "howManyBoughtIntoUk.error.lowBand.negative",
+                    "howManyBoughtIntoUk.error.lowBand.nonNumeric",
+                    "howManyBoughtIntoUk.error.lowBand.wholeNumber",
+        "howManyBoughtIntoUk.error.lowBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.lowBand.outOfMaxVal")),
+        "highBand" -> long(
+        "howManyBoughtIntoUk.error.highBand.required",
+                    "howManyBoughtIntoUk.error.highBand.negative",
+                    "howManyBoughtIntoUk.error.highBand.nonNumeric",
+                    "howManyBoughtIntoUk.error.highBand.wholeNumber",
+          "howManyBoughtIntoUk.error.highBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.highBand.outOfMaxVal"))
     )(HowManyBroughtIntoUk.apply)(HowManyBroughtIntoUk.unapply)
    )
  }

@@ -50,8 +50,8 @@
 
         @govukInput(
             InputViewModel(
-                field = form("lowBandLitres"),
-                label = LabelViewModel(messages("howManyCreditsForExport.lowBandLitres"))
+                field = form("lowBand"),
+                label = LabelViewModel(messages("howManyCreditsForExport.lowBand"))
             )
             .withWidth(Fixed10)
                 .withHint(Hint(content = Text(messages("howManyCreditsForExport.hint1"))))
@@ -59,8 +59,8 @@
 
         @govukInput(
             InputViewModel(
-                field = form("highBandLitres"),
-                label = LabelViewModel(messages("howManyCreditsForExport.highBandLitres"))
+                field = form("highBand"),
+                label = LabelViewModel(messages("howManyCreditsForExport.highBand"))
             )
             .withWidth(Fixed10)
                 .withHint(Hint(content = Text(messages("howManyCreditsForExport.hint2"))))

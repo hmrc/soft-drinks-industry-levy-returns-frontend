@@ -53,8 +53,8 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
     sdilNumber,
     Json.obj(
       BrandsPackagedAtOwnSitesPage.toString -> Json.obj(
-        "lowBandLitres" -> value1,
-        "highBandLitres" -> value2
+        "lowBand" -> value1,
+        "highBand" -> value2
       )
     )
   )
@@ -110,7 +110,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
       running(application) {
         val request =
           FakeRequest(POST, brandsPackagedAtOwnSitesRoute)
-            .withFormUrlEncodedBody(("lowBandLitres", value1.toString), ("highBandLitres", value2.toString))
+            .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
 
         val result = route(application, request).value
 

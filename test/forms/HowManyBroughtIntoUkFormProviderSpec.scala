@@ -23,14 +23,14 @@ class HowManyBroughtIntoUkFormProviderSpec extends LongFieldBehaviour {
 
   val form = new HowManyBoughtIntoUkFormProvider()()
 
-  ".lowBandLitres" - {
+  ".lowBand" - {
 
-    val fieldName = "lowBandLitres"
-    val requiredKey = "howManyBoughtIntoUk.error.lowBandLitres.required"
-    val numberKey = "howManyBoughtIntoUk.error.lowBandLitres.nonNumeric"
-    val negativeNumberKey = "howManyBoughtIntoUk.error.lowBandLitres.negative"
-    val maxValueKey = "howManyBoughtIntoUk.error.lowBandLitres.outOfMaxVal"
-    val wholeNumberKey = "howManyBoughtIntoUk.error.lowBandLitres.wholeNumber"
+    val fieldName = "lowBand"
+    val requiredKey = "howManyBoughtIntoUk.error.lowBand.required"
+    val numberKey = "howManyBoughtIntoUk.error.lowBand.nonNumeric"
+    val negativeNumberKey = "howManyBoughtIntoUk.error.lowBand.negative"
+    val maxValueKey = "howManyBoughtIntoUk.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "howManyBoughtIntoUk.error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -62,14 +62,14 @@ class HowManyBroughtIntoUkFormProviderSpec extends LongFieldBehaviour {
     )
   }
 
-  ".highBandLitres" - {
+  ".highBand" - {
 
-    val fieldName = "highBandLitres"
-    val requiredKey = "howManyBoughtIntoUk.error.highBandLitres.required"
-    val numberKey = "howManyBoughtIntoUk.error.highBandLitres.nonNumeric"
-    val negativeNumberKey = "howManyBoughtIntoUk.error.highBandLitres.negative"
-    val maxValueKey = "howManyBoughtIntoUk.error.highBandLitres.outOfMaxVal"
-    val wholeNumberKey = "howManyBoughtIntoUk.error.highBandLitres.wholeNumber"
+    val fieldName = "highBand"
+    val requiredKey = "howManyBoughtIntoUk.error.highBand.required"
+    val numberKey = "howManyBoughtIntoUk.error.highBand.nonNumeric"
+    val negativeNumberKey = "howManyBoughtIntoUk.error.highBand.negative"
+    val maxValueKey = "howManyBoughtIntoUk.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "howManyBoughtIntoUk.error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

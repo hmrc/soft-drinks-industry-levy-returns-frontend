@@ -40,8 +40,8 @@
 
         @govukInput(
             InputViewModel(
-                field = form("lowBandLitres"),
-                label = LabelViewModel(messages("brandsPackagedAtOwnSites.lowBandLitres"))
+                field = form("lowBand"),
+                label = LabelViewModel(messages("brandsPackagedAtOwnSites.lowBand"))
             )
             .withWidth(Fixed10)
                 .withHint(Hint(content = Text(messages("brandsPackagedAtOwnSites.hint1"))))
@@ -49,8 +49,8 @@
 
         @govukInput(
             InputViewModel(
-                field = form("highBandLitres"),
-                label = LabelViewModel(messages("brandsPackagedAtOwnSites.highBandLitres"))
+                field = form("highBand"),
+                label = LabelViewModel(messages("brandsPackagedAtOwnSites.highBand"))
             )
             .withWidth(Fixed10)
                 .withHint(Hint(content = Text(messages("brandsPackagedAtOwnSites.hint2"))))

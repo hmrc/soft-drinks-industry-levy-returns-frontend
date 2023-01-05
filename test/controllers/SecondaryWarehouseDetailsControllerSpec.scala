@@ -47,9 +47,6 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
   "SecondaryWarehouseDetails Controller" - {
 
-    val warhouseList = List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","","","WR53 7CX")),
-      Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","","","SA13 7CE")))
-
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

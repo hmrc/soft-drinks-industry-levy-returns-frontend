@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json._
 
-case class HowManyBroughtIntoUk(lowBandLitres: Long, highBandLitres: Long)
+case class HowManyBroughtIntoUk(lowBand: Long, highBand: Long)
 
 object HowManyBroughtIntoUk {
   implicit val format = Json.format[HowManyBroughtIntoUk]

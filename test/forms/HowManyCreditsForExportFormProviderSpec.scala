@@ -23,14 +23,14 @@ class HowManyCreditsForExportFormProviderSpec extends LongFieldBehaviour {
 
   val form = new HowManyCreditsForExportFormProvider()()
 
-  ".lowBandLitres" - {
+  ".lowBand" - {
 
-    val fieldName = "lowBandLitres"
-    val requiredKey = "howManyCreditsForExport.error.lowBandLitres.required"
-    val numberKey = "howManyCreditsForExport.error.lowBandLitres.nonNumeric"
-    val negativeNumberKey = "howManyCreditsForExport.error.lowBandLitres.negative"
-    val maxValueKey = "howManyCreditsForExport.error.lowBandLitres.outOfMaxVal"
-    val wholeNumberKey = "howManyCreditsForExport.error.lowBandLitres.wholeNumber"
+    val fieldName = "lowBand"
+    val requiredKey = "howManyCreditsForExport.error.lowBand.required"
+    val numberKey = "howManyCreditsForExport.error.lowBand.nonNumeric"
+    val negativeNumberKey = "howManyCreditsForExport.error.lowBand.negative"
+    val maxValueKey = "howManyCreditsForExport.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "howManyCreditsForExport.error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -62,14 +62,14 @@ class HowManyCreditsForExportFormProviderSpec extends LongFieldBehaviour {
     )
   }
 
-  ".highBandLitres" - {
+  ".highBand" - {
 
-    val fieldName = "highBandLitres"
-    val requiredKey = "howManyCreditsForExport.error.highBandLitres.required"
-    val numberKey = "howManyCreditsForExport.error.highBandLitres.nonNumeric"
-    val negativeNumberKey = "howManyCreditsForExport.error.highBandLitres.negative"
-    val maxValueKey = "howManyCreditsForExport.error.highBandLitres.outOfMaxVal"
-    val wholeNumberKey = "howManyCreditsForExport.error.highBandLitres.wholeNumber"
+    val fieldName = "highBand"
+    val requiredKey = "howManyCreditsForExport.error.highBand.required"
+    val numberKey = "howManyCreditsForExport.error.highBand.nonNumeric"
+    val negativeNumberKey = "howManyCreditsForExport.error.highBand.negative"
+    val maxValueKey = "howManyCreditsForExport.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "howManyCreditsForExport.error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
