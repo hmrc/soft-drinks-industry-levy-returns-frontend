@@ -58,12 +58,38 @@ abstract class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with
   ".referenceNumber" - {
     val fieldName = "referenceNumber"
     val requiredKey = "addASmallProducer.error.referenceNumber.required"
+    val alreadyExistsKey = "addASmallProducer.error.referenceNumber.Exist"
+    val large = "addASmallProducer.error.referenceNumber.Large"
+    val same = "addASmallProducer.error.referenceNumber.same"
+    val invalid = "Small producer reference number must be 6 letters and 9 numbers"
 
-    behave like mandatoryField(
+    behave like invalidRefNumber(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, invalid)
     )
+
+    behave like sameRefNumber(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, same)
+    )
+
+    behave like ExistingRefNumber(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, alreadyExistsKey)
+    )
+
+    behave like largeRefNumber(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, large)
+    )
+
+
+
+
 
     behave like mandatoryField(
       form,

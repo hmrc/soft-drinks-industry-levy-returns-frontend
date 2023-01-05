@@ -62,7 +62,7 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    sdilNumber,
     Json.obj(
       AddASmallProducerPage.toString -> Json.obj(
         "producerName" -> value1,
