@@ -60,11 +60,10 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
-        val warhouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(warhouseList)(messages(application))
-        val list: SummaryList = SummaryListViewModel(
-          rows = warhouseSummaryList
-        )
+        val list: List[Warehouse] =
+        List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
+             Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, list)(request, messages(application)).toString
@@ -84,11 +83,10 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val result = route(application, request).value
 
-        val warhouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(warhouseList)(messages(application))
-        val list: SummaryList = SummaryListViewModel(
-          rows = warhouseSummaryList
-        )
+        val list: List[Warehouse] =
+          List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
+               Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+
 
 
         status(result) mustEqual OK
@@ -137,11 +135,10 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val result = route(application, request).value
 
-        val warhouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(warhouseList)(messages(application))
-        val list: SummaryList = SummaryListViewModel(
-          rows = warhouseSummaryList
-        )
+        val list: List[Warehouse] =
+          List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
+               Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, list)(request, messages(application)).toString
