@@ -28,6 +28,7 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case HowManyAsAContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    case ExemptionsForSmallProducersPage => userAnswers => ownBrandPageNavigation(userAnswers)
     case BrandsPackagedAtOwnSitesPage => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
     case PackagedContractPackerPage => userAnswers => packagedContractPackerPageNavigation(userAnswers)
     case OwnBrandsPage => userAnswers => ownBrandPageNavigation(userAnswers)
@@ -56,6 +57,14 @@ class Navigator @Inject()() {
       routes.HowManyAsAContractPackerController.onPageLoad(NormalMode)
     } else {
       routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def exemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
+    if(userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
+      routes.AddASmallProducerCOntroller.onPageLoad(NormalMode)
+    } else {
+      routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }
   }
 

@@ -36,6 +36,7 @@ class ExemptionsForSmallProducersController @Inject()(
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
                                          formProvider: ExemptionsForSmallProducersFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ExemptionsForSmallProducersView
@@ -43,10 +44,10 @@ class ExemptionsForSmallProducersController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(ExemptionsForSmallProducersPage)) match {
+      val preparedForm = request.userAnswers.get(ExemptionsForSmallProducersPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -54,16 +55,15 @@ class ExemptionsForSmallProducersController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(ExemptionsForSmallProducersPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptionsForSmallProducersPage, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
       )
