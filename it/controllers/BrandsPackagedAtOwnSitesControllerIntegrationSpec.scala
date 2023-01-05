@@ -46,7 +46,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
             .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj("lowBandLitres" -> "1000", "highBandLitres" -> "10000"))
+            .post(Json.obj("lowBand" -> "1000", "highBand" -> "10000"))
 
 
         whenReady(result) { res =>

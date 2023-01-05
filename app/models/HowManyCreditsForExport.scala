@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json._
 
-case class HowManyCreditsForExport (lowBandLitres: Long, highBandLitres: Long)
+case class HowManyCreditsForExport (lowBand: Long, highBand: Long)
 
 object HowManyCreditsForExport {
   implicit val format = Json.format[HowManyCreditsForExport]

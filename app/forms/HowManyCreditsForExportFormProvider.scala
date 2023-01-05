@@ -27,20 +27,20 @@ class HowManyCreditsForExportFormProvider @Inject() extends Mappings {
 
    def apply(): Form[HowManyCreditsForExport] = Form(
      mapping(
-      "lowBandLitres" -> long(
-        "howManyCreditsForExport.error.lowBandLitres.required",
-                    "howManyCreditsForExport.error.lowBandLitres.negative",
-                    "howManyCreditsForExport.error.lowBandLitres.nonNumeric",
-                    "howManyCreditsForExport.error.lowBandLitres.wholeNumber",
-        "howManyCreditsForExport.error.lowBandLitres.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForExport.error.lowBandLitres.outOfMaxVal")),
-        "highBandLitres" -> long(
-        "howManyCreditsForExport.error.highBandLitres.required",
-                    "howManyCreditsForExport.error.highBandLitres.negative",
-                    "howManyCreditsForExport.error.highBandLitres.nonNumeric",
-                    "howManyCreditsForExport.error.highBandLitres.wholeNumber",
-          "howManyCreditsForExport.error.highBandLitres.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForExport.error.highBandLitres.outOfMaxVal"))
+      "lowBand" -> long(
+        "howManyCreditsForExport.error.lowBand.required",
+                    "howManyCreditsForExport.error.lowBand.negative",
+                    "howManyCreditsForExport.error.lowBand.nonNumeric",
+                    "howManyCreditsForExport.error.lowBand.wholeNumber",
+        "howManyCreditsForExport.error.lowBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForExport.error.lowBand.outOfMaxVal")),
+        "highBand" -> long(
+        "howManyCreditsForExport.error.highBand.required",
+                    "howManyCreditsForExport.error.highBand.negative",
+                    "howManyCreditsForExport.error.highBand.nonNumeric",
+                    "howManyCreditsForExport.error.highBand.wholeNumber",
+          "howManyCreditsForExport.error.highBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForExport.error.highBand.outOfMaxVal"))
     )(HowManyCreditsForExport.apply)(HowManyCreditsForExport.unapply)
    )
  }

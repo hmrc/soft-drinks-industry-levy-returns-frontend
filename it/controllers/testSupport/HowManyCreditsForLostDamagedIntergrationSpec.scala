@@ -1,6 +1,5 @@
 package controllers.testSupport
 
-import controllers.testSupport.{Specifications, TestConfiguration}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 

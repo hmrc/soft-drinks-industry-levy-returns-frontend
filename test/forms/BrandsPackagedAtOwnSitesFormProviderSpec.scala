@@ -23,14 +23,14 @@ class BrandsPackagedAtOwnSitesFormProviderSpec extends LongFieldBehaviour {
 
   val form = new BrandsPackagedAtOwnSitesFormProvider()()
 
-  ".lowBandLitres" - {
+  ".lowBand" - {
 
-    val fieldName = "lowBandLitres"
-    val requiredKey = "brandsPackagedAtOwnSites.error.lowBandLitres.required"
-    val numberKey = "brandsPackagedAtOwnSites.error.lowBandLitres.nonNumeric"
-    val negativeNumberKey = "brandsPackagedAtOwnSites.error.lowBandLitres.negative"
-    val maxValueKey = "brandsPackagedAtOwnSites.error.lowBandLitres.outOfMaxVal"
-    val wholeNumberKey = "brandsPackagedAtOwnSites.error.lowBandLitres.wholeNumber"
+    val fieldName = "lowBand"
+    val requiredKey = "brandsPackagedAtOwnSites.error.lowBand.required"
+    val numberKey = "brandsPackagedAtOwnSites.error.lowBand.nonNumeric"
+    val negativeNumberKey = "brandsPackagedAtOwnSites.error.lowBand.negative"
+    val maxValueKey = "brandsPackagedAtOwnSites.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "brandsPackagedAtOwnSites.error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -62,14 +62,14 @@ class BrandsPackagedAtOwnSitesFormProviderSpec extends LongFieldBehaviour {
     )
   }
 
-  ".highBandLitres" - {
+  ".highBand" - {
 
-    val fieldName = "highBandLitres"
-    val requiredKey = "brandsPackagedAtOwnSites.error.highBandLitres.required"
-    val numberKey = "brandsPackagedAtOwnSites.error.highBandLitres.nonNumeric"
-    val negativeNumberKey = "brandsPackagedAtOwnSites.error.highBandLitres.negative"
-    val maxValueKey = "brandsPackagedAtOwnSites.error.highBandLitres.outOfMaxVal"
-    val wholeNumberKey = "brandsPackagedAtOwnSites.error.highBandLitres.wholeNumber"
+    val fieldName = "highBand"
+    val requiredKey = "brandsPackagedAtOwnSites.error.highBand.required"
+    val numberKey = "brandsPackagedAtOwnSites.error.highBand.nonNumeric"
+    val negativeNumberKey = "brandsPackagedAtOwnSites.error.highBand.negative"
+    val maxValueKey = "brandsPackagedAtOwnSites.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "brandsPackagedAtOwnSites.error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

@@ -1,6 +1,6 @@
 package controllers.testSupport.preConditions
 
-import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, post, put, stubFor, urlEqualTo, urlPathEqualTo, urlPathMatching}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import play.api.libs.json.Json

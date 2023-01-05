@@ -23,15 +23,11 @@ import javax.inject.Inject
 import models.{Address, Mode, UserAnswers, Warehouse}
 import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
-import play.api.http.Writeable.wByteArray
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
-import viewmodels.govuk.summarylist._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,7 +49,6 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
-      val warehouseSummaryList: List[SummaryListRow] = SecondaryWarehouseDetailsSummary.row2(spList)
       val list: List[Warehouse] = spList
       val preparedForm = request.userAnswers.flatMap(_.get(SecondaryWarehouseDetailsPage)) match {
         case None => form
@@ -64,7 +59,6 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-      val warehouseSummaryList: List[SummaryListRow] = SecondaryWarehouseDetailsSummary.row2(spList)
       val list: List[Warehouse] = spList
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
