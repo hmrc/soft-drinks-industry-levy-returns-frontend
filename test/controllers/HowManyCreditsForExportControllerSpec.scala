@@ -50,7 +50,7 @@ class HowManyCreditsForExportControllerSpec extends SpecBase with MockitoSugar {
   lazy val howManyCreditsForExportRoute = routes.HowManyCreditsForExportController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    sdilNumber,
     Json.obj(
       HowManyCreditsForExportPage.toString -> Json.obj(
         "lowBandLitres" -> value1,

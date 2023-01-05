@@ -40,7 +40,7 @@ class PackagedContractPackerControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new PackagedContractPackerFormProvider()
   val form = formProvider()
 
-  lazy val ackagedContractPackerRoute = routes.PackagedContractPackerController.onPageLoad(NormalMode).url
+  lazy val packagedContractPackerRoute = routes.PackagedContractPackerController.onPageLoad(NormalMode).url
 
   "PackagedContractPacker Controller" - {
 
@@ -49,7 +49,7 @@ class PackagedContractPackerControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, ackagedContractPackerRoute)
+        val request = FakeRequest(GET, packagedContractPackerRoute)
 
         val result = route(application, request).value
 
@@ -62,12 +62,12 @@ class PackagedContractPackerControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(PackagedContractPackerPage, true).success.value
+      val userAnswers = UserAnswers(sdilNumber).set(PackagedContractPackerPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, ackagedContractPackerRoute)
+        val request = FakeRequest(GET, packagedContractPackerRoute)
 
         val view = application.injector.instanceOf[PackagedContractPackerView]
 
@@ -94,7 +94,7 @@ class PackagedContractPackerControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, ackagedContractPackerRoute)
+          FakeRequest(POST, packagedContractPackerRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -110,7 +110,7 @@ class PackagedContractPackerControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, ackagedContractPackerRoute)
+          FakeRequest(POST, packagedContractPackerRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
@@ -121,6 +121,36 @@ class PackagedContractPackerControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, packagedContractPackerRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packagedContractPackerRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

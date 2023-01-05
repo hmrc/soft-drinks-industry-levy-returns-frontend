@@ -73,7 +73,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(SmallProducerDetailsPage, true).success.value
+      val userAnswers = UserAnswers(sdilNumber).set(SmallProducerDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

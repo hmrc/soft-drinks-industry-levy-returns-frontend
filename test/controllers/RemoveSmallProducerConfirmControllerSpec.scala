@@ -39,44 +39,44 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
   val formProvider = new RemoveSmallProducerConfirmFormProvider()
   val form = formProvider()
-  val sdilNumber = "SDIL123456"
+  val sdilNum = "SDIL123456"
   val smallProducerName = "ABC ltd"
 
-  lazy val emoveSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode).url
+  lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode).url
 
-  "emoveSmallProducerConfirm Controller" - {
+  "RemoveSmallProducerConfirm Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, emoveSmallProducerConfirmRoute)
+        val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, sdilNumber, smallProducerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, sdilNum, smallProducerName)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(RemoveSmallProducerConfirmPage, true).success.value
+      val userAnswers = UserAnswers(sdilNumber).set(RemoveSmallProducerConfirmPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, emoveSmallProducerConfirmRoute)
+        val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
 
         val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, sdilNumber, smallProducerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, sdilNum, smallProducerName)(request, messages(application)).toString
       }
     }
 
@@ -96,7 +96,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
       running(application) {
         val request =
-          FakeRequest(POST, emoveSmallProducerConfirmRoute)
+          FakeRequest(POST, removeSmallProducerConfirmRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -112,7 +112,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
       running(application) {
         val request =
-          FakeRequest(POST, emoveSmallProducerConfirmRoute)
+          FakeRequest(POST, removeSmallProducerConfirmRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
@@ -122,7 +122,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, sdilNumber, smallProducerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, sdilNum, smallProducerName)(request, messages(application)).toString
       }
     }
 

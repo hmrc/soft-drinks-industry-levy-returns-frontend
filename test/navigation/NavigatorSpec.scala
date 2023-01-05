@@ -69,6 +69,24 @@ class NavigatorSpec extends SpecBase {
             }
 
           }
+
+          "Packaged as a contract packer" - {
+
+            def navigate(value: Boolean) = navigator.nextPage(PackagedContractPackerPage,
+              NormalMode,
+              UserAnswers("id", Json.obj("packagedContractPacker" -> value)))
+
+            "select Yes to navigate to How Many packaged as contract packer" in {
+              val result = navigate(true)
+              result mustBe routes.HowManyAsAContractPackerController.onPageLoad(NormalMode)
+            }
+
+            "select No to navigate to exemptions for small producers page" in {
+              val result = navigate(false)
+              result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+            }
+
+          }
         }
       }
     }

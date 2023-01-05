@@ -45,10 +45,10 @@ class PackagedContractPackerController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(PackagedContractPackerPage)) match {
+      val preparedForm = request.userAnswers.get(PackagedContractPackerPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -56,16 +56,16 @@ class PackagedContractPackerController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(PackagedContractPackerPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagedContractPackerPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(PackagedContractPackerPage, mode, updatedAnswers))
       )

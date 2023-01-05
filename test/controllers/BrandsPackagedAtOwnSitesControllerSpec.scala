@@ -50,7 +50,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
   lazy val brandsPackagedAtOwnSitesRoute = routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    sdilNumber,
     Json.obj(
       BrandsPackagedAtOwnSitesPage.toString -> Json.obj(
         "lowBandLitres" -> value1,

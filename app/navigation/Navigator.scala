@@ -28,6 +28,7 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case BrandsPackagedAtOwnSitesPage => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
+    case PackagedContractPackerPage => userAnswers => packagedContractPackerPageNavigation(userAnswers)
     case OwnBrandsPage => userAnswers => ownBrandPageNavigation(userAnswers)
     case _ => _ => routes.IndexController.onPageLoad
   }
@@ -48,5 +49,15 @@ class Navigator @Inject()() {
       routes.PackagedContractPackerController.onPageLoad(NormalMode)
     }
   }
+
+  private def packagedContractPackerPageNavigation(userAnswers: UserAnswers) = {
+    if(userAnswers.get(page = PackagedContractPackerPage).contains(true)) {
+      routes.HowManyAsAContractPackerController.onPageLoad(NormalMode)
+    } else {
+      routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    }
+  }
+
+
 
 }

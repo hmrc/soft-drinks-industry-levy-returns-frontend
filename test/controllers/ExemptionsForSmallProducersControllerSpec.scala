@@ -62,7 +62,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(ExemptionsForSmallProducersPage, true).success.value
+      val userAnswers = UserAnswers(sdilNumber).set(ExemptionsForSmallProducersPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

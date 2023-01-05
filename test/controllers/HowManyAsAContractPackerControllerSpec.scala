@@ -50,7 +50,7 @@ class HowManyAsAContractPackerControllerSpec extends SpecBase with MockitoSugar 
   lazy val howManyAsAContractPackerRoute = routes.HowManyAsAContractPackerController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    sdilNumber,
     Json.obj(
       HowManyAsAContractPackerPage.toString -> Json.obj(
         "lowBand" -> value1,

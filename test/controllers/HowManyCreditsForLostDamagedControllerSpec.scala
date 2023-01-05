@@ -50,7 +50,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
   lazy val howManyCreditsForLostDamagedRoute = routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
-    userAnswersId,
+    sdilNumber,
     Json.obj(
       HowManyCreditsForLostDamagedPage.toString -> Json.obj(
         "lowBand" -> value1,
