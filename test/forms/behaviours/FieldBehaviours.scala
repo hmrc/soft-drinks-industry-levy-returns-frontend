@@ -90,7 +90,7 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
     }
   }
 
-  def ExistingRefNumber(form: Form[_],
+  def existingRefNumber(form: Form[_],
                     fieldName: String,
                     requiredError: FormError): Unit = {
 

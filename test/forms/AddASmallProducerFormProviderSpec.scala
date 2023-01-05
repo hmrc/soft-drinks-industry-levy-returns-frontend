@@ -75,7 +75,7 @@ abstract class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with
       requiredError = FormError(fieldName, same)
     )
 
-    behave like ExistingRefNumber(
+    behave like existingRefNumber(
       form,
       fieldName,
       requiredError = FormError(fieldName, alreadyExistsKey)

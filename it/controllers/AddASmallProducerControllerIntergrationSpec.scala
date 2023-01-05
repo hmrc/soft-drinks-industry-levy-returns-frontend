@@ -6,13 +6,13 @@ import play.api.test.WsTestClient
 
 class AddASmallProducerControllerIntergrationSpec extends Specifications with TestConfiguration {
   "AddASmallProducerController" should {
-    "Ask for if user wants to register any UK warehouses where user used to store liable drinks" in {
+    "Ask user to input a registered small producer's details" in {
 
       given
         .commonPrecondition
 
       WsTestClient.withClient { client ⇒
-        val result1 = client.url(s"$baseUrl/ask-secondary-warehouses-in-return")
+        val result1 = client.url(s"$baseUrl/add-small-producer")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
