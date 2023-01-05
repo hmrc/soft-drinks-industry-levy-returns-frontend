@@ -371,6 +371,36 @@ removeSmallProducerConfirm.error.required = Select yes if you want to remove thi
 removeSmallProducerConfirm.change.hidden = removeSmallProducerConfirm
 
 
+addASmallProducer.title = Enter the registered small producer’s details
+addASmallProducer.heading = Enter the registered small producer’s details
+addASmallProducer.hint1 = Small producer name (optional)
+addASmallProducer.referenceNumber = Soft Drinks Industry Levy reference number
+addASmallProducer.hint2 = Hint text on SDIL ref. n. format
+addASmallProducer.lowBand = Litres in the low band
+addASmallProducer.hint3 = At least 5 grams of sugar per 100 millilitres
+addASmallProducer.highBand = Litres in the high band
+addASmallProducer.hint4 = At least 8 grams of sugar per 100 millilitres
+addASmallProducer.checkYourAnswersLabel = AddASmallProducer
+addASmallProducer.error.referenceNumber.required = Enter the small producer’s reference number
+addASmallProducer.error.referenceNumber.invalid = Small producer reference number must be 6 letters and 9 numbers
+addASmallProducer.error.referenceNumber.same = Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
+addASmallProducer.error.referenceNumber.Exist = Small producer reference number must be different to a small producer reference number you have already added
+addASmallProducer.error.referenceNumber.Large = Small producer reference number does not match a business that is currently registered as a \
+                                                small producer. Check and try again.
+addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
+addASmallProducer.error.lowBand.required = Enter the number of litres in the low band
+addASmallProducer.error.highBand.required = Enter the number of litres in the high band
+addASmallProducer.error.lowBand.nonNumeric = Number of litres in the low band must be numeric
+addASmallProducer.error.highBand.nonNumeric = Number of litres in the high band must be numeric
+addASmallProducer.error.lowBand.negative = Number of litres in the low band must be a positive number
+addASmallProducer.error.highBand.negative = Number of litres in the high band must be a positive number
+addASmallProducer.error.lowBand.wholeNumber = Number of litres in the low band must be a whole number
+addASmallProducer.error.highBand.wholeNumber = Number of litres in the low band must be a whole number
+addASmallProducer.error.lowBand.outOfMaxVal = Number of litres in the low band must be less than 100,000,000,000,000
+addASmallProducer.error.highBand.outOfMaxVal = Number of litres in the high band must be less than 100,000,000,000,000
+addASmallProducer.lowBand.change.hidden = lowBand
+addASmallProducer.highBand.change.hidden = highBand
+
 secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.heading1 = You added {0} UK warehouses
 secondaryWarehouseDetails.heading2 = Do you want to add another UK warehouse?

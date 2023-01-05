@@ -103,6 +103,11 @@ POST       /remove-small-producer-confirm                        controllers.Rem
 GET        /changee-remove-small-producer-confirm                  controllers.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-remove-small-producer-confirm                  controllers.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = CheckMode)
 
+GET        /add-small-producer                        controllers.AddASmallProducerController.onPageLoad(mode: Mode = NormalMode)
+POST       /add-small-producer                        controllers.AddASmallProducerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-add-small-producer                  controllers.AddASmallProducerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-add-small-producer                 controllers.AddASmallProducerController.onSubmit(mode: Mode = CheckMode)
+
 GET        /secondary-warehouse-details                        controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /secondary-warehouse-details                        controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-secondary-warehouse-details                  controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)

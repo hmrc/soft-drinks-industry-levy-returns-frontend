@@ -16,11 +16,10 @@
 
 package models
 
-case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
+import play.api.libs.json._
 
-  def getNameAndRef: String =
-    if (alias.nonEmpty)
-      alias ++ "</br>" ++ sdilRef
-    else
-      sdilRef
+case class AddASmallProducer (producerName:Option[String],referenceNumber:String,lowBand: Long, highBand: Long)
+
+object AddASmallProducer {
+  implicit val format = Json.format[AddASmallProducer]
 }

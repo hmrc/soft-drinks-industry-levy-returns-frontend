@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
+import models.AddASmallProducer
+import play.api.libs.json.JsPath
 
-  def getNameAndRef: String =
-    if (alias.nonEmpty)
-      alias ++ "</br>" ++ sdilRef
-    else
-      sdilRef
+case object AddASmallProducerPage extends QuestionPage[AddASmallProducer] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "addASmallProducer"
 }

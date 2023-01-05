@@ -16,12 +16,12 @@
 
 package connectors
 
+import models.ReturnPeriod
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.retrieved.RetrievedSubscription
-
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,5 +43,16 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).map {
     case Some(a) => Some(a)
     case _ => None
+  }
+
+  private def smallProducerUrl(sdilRef:String,period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
+
+  def checkSmallProducerStatus(
+                                sdilRef: String,
+                                period: ReturnPeriod
+                              )(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+        http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
+        case Some(a) => Some(a)
+        case _ => None
   }
 }

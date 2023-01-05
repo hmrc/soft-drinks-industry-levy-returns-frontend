@@ -17,7 +17,6 @@
 package forms.mappings
 
 import java.time.LocalDate
-
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait Constraints {
@@ -29,6 +28,14 @@ trait Constraints {
           .map(_.apply(input))
           .find(_ != Valid)
           .getOrElse(Valid)
+    }
+
+  protected def referenceNumberSame (referenceNumber: String, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.matches(referenceNumber) =>
+        Invalid(errorKey, referenceNumber)
+      case _ =>
+        Valid
     }
 
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
