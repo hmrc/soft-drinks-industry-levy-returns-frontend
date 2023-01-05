@@ -27,6 +27,7 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case HowManyAsAContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     case BrandsPackagedAtOwnSitesPage => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
     case PackagedContractPackerPage => userAnswers => packagedContractPackerPageNavigation(userAnswers)
     case OwnBrandsPage => userAnswers => ownBrandPageNavigation(userAnswers)

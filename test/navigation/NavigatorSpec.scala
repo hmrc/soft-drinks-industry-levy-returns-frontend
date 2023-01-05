@@ -87,6 +87,19 @@ class NavigatorSpec extends SpecBase {
             }
 
           }
+
+          "How many packaged as contract packer" - {
+
+            "select save and continue to navigate to exemptions for small producers page" in {
+              val result = navigator.nextPage(HowManyAsAContractPackerPage,
+                NormalMode,
+                UserAnswers(sdilNumber, Json.obj("ownBrands" -> true,
+                  "howManyAsAContractPacker" ->
+                    Json.obj("lowBand" -> "100", "highBand" -> "100"))))
+              result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+            }
+
+          }
         }
       }
     }

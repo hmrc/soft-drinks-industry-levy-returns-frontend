@@ -1,8 +1,8 @@
 package controllers.testSupport
 
-import models.{BrandsPackagedAtOwnSites, UserAnswers}
+import models.{BrandsPackagedAtOwnSites, HowManyAsAContractPacker, UserAnswers}
 import org.scalatest.TryValues
-import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
+import pages.{BrandsPackagedAtOwnSitesPage, HowManyAsAContractPackerPage, OwnBrandsPage, PackagedContractPackerPage}
 import play.api.libs.json.Json
 
 import scala.concurrent.duration.DurationInt
@@ -21,5 +21,18 @@ trait ITCoreTestData extends TryValues {
   def brandPackagedOwnSiteAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L))
+
+  def howManyAsContractPackerFullAnswers = emptyUserAnswers
+    .set(OwnBrandsPage, true).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
+    .set(PackagedContractPackerPage, true).success.value
+    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(1000L, 1000L))
+
+  def howManyAsContractPackerPartialAnswers = emptyUserAnswers
+    .set(OwnBrandsPage, true).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
+    .set(PackagedContractPackerPage, true)
+
+
 
 }
