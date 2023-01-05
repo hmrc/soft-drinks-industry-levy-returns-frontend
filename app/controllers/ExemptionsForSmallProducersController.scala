@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.ExemptionsForSmallProducersFormProvider
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.ExemptionsForSmallProducersPage
 import play.api.i18n.{I18nSupport, MessagesApi}

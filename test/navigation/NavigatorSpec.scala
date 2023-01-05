@@ -100,6 +100,25 @@ class NavigatorSpec extends SpecBase {
             }
 
           }
+
+          "Exemptions for small producers" - {
+
+            def navigate(value: Boolean) = navigator.nextPage(ExemptionsForSmallProducersPage,
+              NormalMode,
+              UserAnswers(sdilNumber, Json.obj("exemptionsForSmallProducers" -> value)))
+
+            "select Yes to navigate to Add small producer pager" in {
+              val result = navigate(true)
+              result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
+            }
+
+            "select No to navigate to brought into uk page" in {
+              val result = navigate(false)
+              result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
+            }
+
+          }
+
         }
       }
     }
