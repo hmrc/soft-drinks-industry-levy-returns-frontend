@@ -27,6 +27,7 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case BroughtIntoUKPage => userAnswers => broughtIntoUkPageNavigation(userAnswers)
     case HowManyAsAContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     case ExemptionsForSmallProducersPage => userAnswers => exemptionForSmallProducersPageNavigation(userAnswers)
     case BrandsPackagedAtOwnSitesPage => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
@@ -65,6 +66,14 @@ class Navigator @Inject()() {
       routes.AddASmallProducerController.onPageLoad(NormalMode)
     } else {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def broughtIntoUkPageNavigation(userAnswers: UserAnswers) = {
+    if(userAnswers.get(page = BroughtIntoUKPage).contains(true)) {
+      routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode)
+    } else {
+      routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
     }
   }
 

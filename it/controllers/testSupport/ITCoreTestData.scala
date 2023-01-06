@@ -2,7 +2,7 @@ package controllers.testSupport
 
 import models.{BrandsPackagedAtOwnSites, HowManyAsAContractPacker, UserAnswers}
 import org.scalatest.TryValues
-import pages.{BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, OwnBrandsPage, PackagedContractPackerPage}
+import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, OwnBrandsPage, PackagedContractPackerPage}
 import play.api.libs.json.Json
 
 import scala.concurrent.duration.DurationInt
@@ -44,6 +44,12 @@ trait ITCoreTestData extends TryValues {
     .set(PackagedContractPackerPage, true).success.value
     .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(1000L, 1000L)).success.value
     .set(ExemptionsForSmallProducersPage, true)
+
+  def broughtIntoUkPartialAnswers = exemptionsForSmallProducersFullAnswers.success.value
+    .set(ExemptionsForSmallProducersPage, false)
+
+  def broughtIntoUkFullAnswers = broughtIntoUkPartialAnswers.success.value
+    .set(BroughtIntoUKPage, true)
 
 
 
