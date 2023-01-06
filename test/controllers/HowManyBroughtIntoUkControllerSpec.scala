@@ -47,7 +47,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
   val value2max: Long = 100000000000000L
   val value2 = value2max - 1
 
-  lazy val owManyBoughtIntoUkRoute = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
+  lazy val howManyBoughtIntoUkRoute = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
     sdilNumber,
@@ -66,7 +66,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, owManyBoughtIntoUkRoute)
+        val request = FakeRequest(GET, howManyBoughtIntoUkRoute)
 
         val view = application.injector.instanceOf[HowManyBoughtIntoUkView]
 
@@ -82,7 +82,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, owManyBoughtIntoUkRoute)
+        val request = FakeRequest(GET, howManyBoughtIntoUkRoute)
 
         val view = application.injector.instanceOf[HowManyBoughtIntoUkView]
 
@@ -109,7 +109,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, owManyBoughtIntoUkRoute)
+          FakeRequest(POST, howManyBoughtIntoUkRoute)
             .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
 
         val result = route(application, request).value
@@ -125,7 +125,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, owManyBoughtIntoUkRoute)
+          FakeRequest(POST, howManyBoughtIntoUkRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
@@ -136,6 +136,36 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, howManyBoughtIntoUkRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, howManyBoughtIntoUkRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

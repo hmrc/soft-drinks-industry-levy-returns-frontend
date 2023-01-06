@@ -1,8 +1,8 @@
 package controllers.testSupport
 
-import models.{BrandsPackagedAtOwnSites, HowManyAsAContractPacker, UserAnswers}
+import models.{BrandsPackagedAtOwnSites, HowManyAsAContractPacker, HowManyBroughtIntoUk, UserAnswers}
 import org.scalatest.TryValues
-import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, OwnBrandsPage, PackagedContractPackerPage}
+import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, OwnBrandsPage, PackagedContractPackerPage}
 import play.api.libs.json.Json
 
 import scala.concurrent.duration.DurationInt
@@ -50,6 +50,12 @@ trait ITCoreTestData extends TryValues {
 
   def broughtIntoUkFullAnswers = broughtIntoUkPartialAnswers.success.value
     .set(BroughtIntoUKPage, true)
+
+  def howManyBroughtIntoUkFullAnswers = broughtIntoUkFullAnswers
+    .success.value
+    .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(1000L, 1000L))
+
+
 
 
 
