@@ -17,10 +17,10 @@
 package controllers
 
 import connectors.SoftDrinksIndustryLevyConnector
-import models.requests.OptionalDataRequest
-
+import models.requests.{DataRequest, OptionalDataRequest}
 import controllers.actions._
 import forms.AddASmallProducerFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -43,15 +43,15 @@ class AddASmallProducerController @Inject()(
                                       requireData: DataRequiredAction,
                                       formProvider: AddASmallProducerFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
-                                      view: AddASmallProducerView
-                                     )(implicit ec: ExecutionContext, request: OptionalDataRequest[_]) extends FrontendBaseController with I18nSupport {
+                                      view: AddASmallProducerView,
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
-  val form = formProvider(sessionRepository,sdilConnector)
+
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
-
+    implicit request: DataRequest[AnyContent] =>
+      val form = formProvider(sessionRepository,sdilConnector)
       val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -62,6 +62,7 @@ class AddASmallProducerController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val form = formProvider(sessionRepository,sdilConnector)
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
