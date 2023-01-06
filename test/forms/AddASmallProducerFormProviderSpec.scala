@@ -19,7 +19,7 @@ package forms
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.behaviours.{LongFieldBehaviour, StringFieldBehaviours}
-import models.requests.OptionalDataRequest
+import models.requests.{DataRequest, OptionalDataRequest}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 import repositories.SessionRepository
@@ -30,7 +30,7 @@ abstract class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with
   val mockSessionRepository = mock[SessionRepository]
   val application = applicationBuilder(userAnswers = None).build()
   val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
-  implicit val request: OptionalDataRequest[_]
+  implicit val request: DataRequest[_]
   val form = formProvider(mockSessionRepository, sdilConnector)
 
   ".producerName" - {

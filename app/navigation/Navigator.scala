@@ -48,6 +48,7 @@ class Navigator @Inject()() {
       case NormalMode => normalRoutes(page)(userAnswers)
       case CheckMode => checkRouteMap(page)(userAnswers)
     }
+
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
       routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)

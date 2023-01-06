@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
-import models.requests.OptionalDataRequest
+import models.requests.{DataRequest, OptionalDataRequest}
 import models.{AddASmallProducer, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -44,7 +44,7 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
   val mockSessionRepository = mock[SessionRepository]
   val application = applicationBuilder(userAnswers = None).build()
   val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
-  implicit val request: OptionalDataRequest[_]
+  implicit val request: DataRequest[_]
   val form = formProvider(mockSessionRepository, sdilConnector)
 
   val value1max: Option[String] = Some("Party Drinks Group")
@@ -150,6 +150,36 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, addASmallProducerRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST,  addASmallProducerRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
