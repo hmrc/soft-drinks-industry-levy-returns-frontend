@@ -119,6 +119,24 @@ class NavigatorSpec extends SpecBase {
 
           }
 
+          "Brought into UK" - {
+
+            def navigate(value: Boolean) = navigator.nextPage(BroughtIntoUKPage,
+              NormalMode,
+              UserAnswers(sdilNumber, Json.obj("broughtIntoUK" -> value)))
+
+            "select Yes to navigate to How many brought into UK pager" in {
+              val result = navigate(true)
+              result mustBe routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode)
+            }
+
+            "select No to navigate to brought into uk page" in {
+              val result = navigate(false)
+              result mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
+            }
+
+          }
+
         }
       }
     }
