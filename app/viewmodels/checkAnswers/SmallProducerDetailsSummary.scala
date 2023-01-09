@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import controllers.routes
-import models.{CheckMode, SmallProducer, UserAnswers}
+import models.{CheckMode, NormalMode, SmallProducer, UserAnswers}
 import pages.SmallProducerDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -57,9 +57,9 @@ object SmallProducerDetailsSummary  {
         key     = smallProducer.sdilRef,
         value   = value,
         actions = Seq(
-          ActionItemViewModel("site.edit", routes.IndexController.onPageLoad.url)
+          ActionItemViewModel("site.edit", routes.AddASmallProducerController.onPageLoad(NormalMode, smallProducer.sdilRef).url)
             .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")),
-          ActionItemViewModel("site.remove", routes.IndexController.onPageLoad.url)
+          ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode).url)
             .withVisuallyHiddenText(messages("smallProducerDetails.remove.hidden"))
         )
       )

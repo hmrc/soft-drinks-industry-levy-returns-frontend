@@ -19,6 +19,6 @@ package models.requests
 import play.api.mvc.{Request, WrappedRequest}
 import models.{SmallProducer, UserAnswers}
 
-case class OptionalDataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: Option[UserAnswers], smallProducerList :List[SmallProducer]) extends WrappedRequest[A](request)
+case class OptionalDataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: Option[UserAnswers], smallProducerList :List[SmallProducer] = List.empty) extends WrappedRequest[A](request)
 
-case class DataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: UserAnswers, smallProducerList :List[SmallProducer]) extends WrappedRequest[A](request)
+case class DataRequest[A] (request: Request[A], sdilEnrolment: String, userAnswers: UserAnswers, smallProducerList :List[SmallProducer] = List.empty) extends WrappedRequest[A](request)
