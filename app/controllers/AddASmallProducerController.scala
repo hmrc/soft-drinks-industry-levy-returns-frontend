@@ -17,11 +17,12 @@
 package controllers
 
 import connectors.SoftDrinksIndustryLevyConnector
+import models.requests.{DataRequest, OptionalDataRequest}
 import controllers.actions._
 import forms.AddASmallProducerFormProvider
 
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.AddASmallProducerPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,10 +48,11 @@ class AddASmallProducerController @Inject()(
 
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
-    implicit request =>
+
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request: DataRequest[AnyContent] =>
       val form = formProvider(sessionRepository,sdilConnector)
-      val preparedForm = request.userAnswers.flatMap(_.get(AddASmallProducerPage)) match {
+      val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -58,17 +60,16 @@ class AddASmallProducerController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val form = formProvider(sessionRepository,sdilConnector)
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(AddASmallProducerPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AddASmallProducerPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswers))
       )

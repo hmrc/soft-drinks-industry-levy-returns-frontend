@@ -23,7 +23,7 @@ import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
 import models.{AddASmallProducer, ReturnPeriod}
-import models.requests.OptionalDataRequest
+import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,7 +39,7 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 
    def apply(sessionRepository: SessionRepository,
              sdilConnector: SoftDrinksIndustryLevyConnector
-            )(implicit request: OptionalDataRequest[_]): Form[AddASmallProducer] = {
+            )(implicit request: DataRequest[_]): Form[AddASmallProducer] = {
 
      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
@@ -78,6 +78,7 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
                "addASmallProducer.error.referenceNumber.invalid",
                request.sdilEnrolment,"addASmallProducer.error.referenceNumber.same",
                List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
+               //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.
                ReturnPeriod(LocalDate.of(2018, 4, 15)),"addASmallProducer.error.referenceNumber.Large")),
 
 "lowBand" -> long(

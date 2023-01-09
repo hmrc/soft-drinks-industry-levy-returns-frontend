@@ -27,6 +27,7 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
     case BroughtIntoUKPage => userAnswers => broughtIntoUkPageNavigation(userAnswers)
@@ -47,6 +48,7 @@ class Navigator @Inject()() {
       case NormalMode => normalRoutes(page)(userAnswers)
       case CheckMode => checkRouteMap(page)(userAnswers)
     }
+
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
       routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)

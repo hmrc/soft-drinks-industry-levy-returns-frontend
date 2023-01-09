@@ -137,6 +137,20 @@ class NavigatorSpec extends SpecBase {
 
           }
 
+          "Add small producer" - {
+
+            "select save and continue to navigate to small producer details page" in {
+              val result = navigator.nextPage(AddASmallProducerPage,
+                NormalMode,
+                UserAnswers("id", Json.obj("ownBrands" -> true,
+                  "addASmallProducer" ->
+                    Json.obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> "100", "highBand" -> "100"))))
+              result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+            }
+
+          }
+
+
           "Brought into UK from small producers" - {
 
             def navigate(value: Boolean) = navigator.nextPage(BroughtIntoUkFromSmallProducersPage,
