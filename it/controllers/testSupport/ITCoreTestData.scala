@@ -56,6 +56,7 @@ trait ITCoreTestData extends TryValues {
     .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(1000L, 1000L))
 
   def addASmallProducerPartialAnswers = exemptionsForSmallProducersFullAnswers.success.value
+    .set(ExemptionsForSmallProducersPage, true)
 
   def addASmallProducerFullAnswers = addASmallProducerPartialAnswers.success.value
       .set(AddASmallProducerPage, AddASmallProducer(Some("Super Cola Ltd"),"XZSDIL000000234",1000L, 1000L))
