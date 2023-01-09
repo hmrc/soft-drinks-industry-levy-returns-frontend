@@ -55,22 +55,10 @@ trait ITCoreTestData extends TryValues {
     .success.value
     .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(1000L, 1000L))
 
+  def addASmallProducerPartialAnswers = exemptionsForSmallProducersFullAnswers.success.value
 
-
-  def addASmallProducerPartialAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(1000L, 1000L)).success.value
-    .set(ExemptionsForSmallProducersPage, true)
-
-  def addASmallProducerFullAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(1000L, 1000L)).success.value
-    .set(ExemptionsForSmallProducersPage, true).success.value
-    .set(AddASmallProducerPage, AddASmallProducer(Some("Super Cola Ltd"),"XZSDIL000000234",1000L, 1000L))
+  def addASmallProducerFullAnswers = addASmallProducerPartialAnswers.success.value
+      .set(AddASmallProducerPage, AddASmallProducer(Some("Super Cola Ltd"),"XZSDIL000000234",1000L, 1000L))
 
 
 

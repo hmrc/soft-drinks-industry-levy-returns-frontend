@@ -43,7 +43,7 @@ class AddASmallProducerController @Inject()(
                                       requireData: DataRequiredAction,
                                       formProvider: AddASmallProducerFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
-                                      view: AddASmallProducerView,
+                                      view: AddASmallProducerView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
