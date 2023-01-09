@@ -45,10 +45,10 @@ class HowManyBroughtIntoUkController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(HowManyBroughtIntoUkPage)) match {
+      val preparedForm = request.userAnswers.get(HowManyBroughtIntoUkPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -56,10 +56,8 @@ class HowManyBroughtIntoUkController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -67,7 +65,7 @@ class HowManyBroughtIntoUkController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(HowManyBroughtIntoUkPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(HowManyBroughtIntoUkPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HowManyBroughtIntoUkPage, mode, updatedAnswers))
       )
