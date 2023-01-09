@@ -38,6 +38,7 @@ class Navigator @Inject()() {
     case BroughtIntoUKPage => userAnswers => _ => _ => broughtIntoUkPageNavigation(userAnswers)
     case HowManyAsAContractPackerPage => _  => _  => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     case ExemptionsForSmallProducersPage => userAnswers => _  => _  => exemptionForSmallProducersPageNavigation(userAnswers)
+    case SmallProducerDetailsPage => userAnswers => _  => _  => smallProducerDetailsPageNavigation(userAnswers)
     case BrandsPackagedAtOwnSitesPage => _ => _ => _  =>  routes.PackagedContractPackerController.onPageLoad(NormalMode)
     case PackagedContractPackerPage => userAnswers => _  => _ => packagedContractPackerPageNavigation(userAnswers)
     case OwnBrandsPage => userAnswers => _  => _ => ownBrandPageNavigation(userAnswers)
@@ -95,6 +96,14 @@ class Navigator @Inject()() {
       routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(NormalMode)
     } else {
       routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def smallProducerDetailsPageNavigation(userAnswers: UserAnswers) = {
+    if(userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
+      routes.AddASmallProducerController.onPageLoad(NormalMode)
+    } else {
+      routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }
   }
 
