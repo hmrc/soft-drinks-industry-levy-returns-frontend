@@ -16,6 +16,7 @@
 
 package models.requests
 
+import models.SmallProducer
 import play.api.mvc.{Request, WrappedRequest}
 
-case class IdentifierRequest[A] (request: Request[A], sdilEnrolment: String) extends WrappedRequest[A](request)
+case class IdentifierRequest[A] (request: Request[A], sdilEnrolment: String, smallProducerList :List[SmallProducer]) extends WrappedRequest[A](request)

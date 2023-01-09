@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.AddASmallProducerFormProvider
 
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SmallProducer}
 import navigation.Navigator
 import pages.AddASmallProducerPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -70,7 +70,7 @@ class AddASmallProducerController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AddASmallProducerPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedList = request.copy(List(SmallProducer( value.producerName.getOrElse(""),value.referenceNumber,(value.lowBand,value.highBand))) ++ request.smallProducerList)
           } yield Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswers))
       )
   }
