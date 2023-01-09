@@ -45,10 +45,10 @@ class BroughtIntoUkFromSmallProducersController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(BroughtIntoUkFromSmallProducersPage)) match {
+      val preparedForm = request.userAnswers.get(BroughtIntoUkFromSmallProducersPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -56,16 +56,15 @@ class BroughtIntoUkFromSmallProducersController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(BroughtIntoUkFromSmallProducersPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(BroughtIntoUkFromSmallProducersPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, updatedAnswers))
       )
