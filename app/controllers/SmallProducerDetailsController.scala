@@ -47,21 +47,20 @@ class SmallProducerDetailsController @Inject()(
 
   val form = formProvider()
 
-
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val spList = request.userAnswers.get(AddASmallProducerPage).map(smallProd =>
-        SmallProducer(smallProd.producerName.getOrElse(None),
+      val spList = requestuserAnswers.get(AddASmallProducerPage).map(smallProd =>
+        SmallProducer(smallProd.producerName.getOrElse(""),
                       smallProd.referenceNumber,
                      (smallProd.lowBand,smallProd.highBand))).toList
+      val smallProducerList:List[SmallProducer] = List() + spList
       val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val smallProducersSummaryList: List[SummaryListRow] = SmallProducerDetailsSummary.row2(spList)
+      val smallProducersSummaryList: List[SummaryListRow] = SmallProducerDetailsSummary.row2(smallProducerList)
       val list: SummaryList = SummaryListViewModel(
         rows = smallProducersSummaryList
       )

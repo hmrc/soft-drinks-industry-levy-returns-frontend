@@ -47,8 +47,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
   "SmallProducerDetails Controller" - {
 
-    val smallProducerList = List(SmallProducer("ABC Ltd", "SDIL123456", (1000L, 1000L)),
-      SmallProducer("XYZ Ltd", "SDIL123789", (1000L, 1000L)))
+    val smallProducerList =
 
     "must return OK and the correct view for a GET" in {
 
