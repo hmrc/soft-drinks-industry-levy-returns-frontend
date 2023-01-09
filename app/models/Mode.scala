@@ -22,6 +22,8 @@ sealed trait Mode
 
 case object CheckMode extends Mode
 case object NormalMode extends Mode
+case object BlankMode extends Mode
+case object EditMode extends Mode
 
 object Mode {
 
@@ -29,6 +31,8 @@ object Mode {
     override def to(value: Mode): String = value match {
       case NormalMode => "NormalMode"
       case CheckMode => "CheckMode"
+      case BlankMode => "BlankMode"
+      case EditMode => "EditMode"
     }
   }
 }

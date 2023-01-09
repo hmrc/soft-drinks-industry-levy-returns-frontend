@@ -20,9 +20,10 @@ import controllers.actions._
 import forms.SmallProducerDetailsFormProvider
 import viewmodels.checkAnswers.SmallProducerDetailsSummary
 import views.html.SmallProducerDetailsView
-import models.{Mode, SmallProducer}
+import models.{BlankMode, Mode, SmallProducer}
 import navigation.Navigator
 import pages.{AddASmallProducerPage, SmallProducerDetailsPage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -49,12 +50,7 @@ class SmallProducerDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-      val spList = requestuserAnswers.get(AddASmallProducerPage).map(smallProd =>
-        SmallProducer(smallProd.producerName.getOrElse(""),
-                      smallProd.referenceNumber,
-                     (smallProd.lowBand,smallProd.highBand))).toList
-      val smallProducerList:List[SmallProducer] = List() + spList
+      val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
       val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -70,7 +66,7 @@ class SmallProducerDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val spList = request.userAnswers.get(AddASmallProducerPage).map(smallProd => SmallProducer(smallProd.producerName.getOrElse(None),smallProd.referenceNumber,(smallProd.lowBand,smallProd.highBand))).toList
+      val spList = request.userAnswers.smallProducerList
       val smallProducersSummaryList: List[SummaryListRow] = SmallProducerDetailsSummary.row2(spList)
       val list: SummaryList = SummaryListViewModel(
         rows = smallProducersSummaryList
