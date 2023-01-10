@@ -185,6 +185,23 @@ class NavigatorSpec extends SpecBase {
             }
           }
 
+          "Claim credits for Lost damaged " - {
+
+            def navigate(value: Boolean) = navigator.nextPage(ClaimCreditsForLostDamagedPage,
+              NormalMode,
+              UserAnswers(sdilNumber, Json.obj("claimCreditsForLostDamaged" -> value)))
+
+            "select Yes to navigate to How many credits for lost damaged page" in {
+              val result = navigate(true)
+              result mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
+            }
+
+            "select No to navigate to return change registration page" in {
+              val result = navigate(false)
+              result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+            }
+          }
+
 
         }
       }

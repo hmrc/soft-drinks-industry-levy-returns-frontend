@@ -37,6 +37,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
                                          formProvider: ClaimCreditsForLostDamagedFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ClaimCreditsForLostDamagedView
@@ -44,10 +45,10 @@ class ClaimCreditsForLostDamagedController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData ) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(ClaimCreditsForLostDamagedPage)) match {
+      val preparedForm = request.userAnswers.get(ClaimCreditsForLostDamagedPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -55,16 +56,16 @@ class ClaimCreditsForLostDamagedController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData ).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(ClaimCreditsForLostDamagedPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForLostDamagedPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers))
       )
