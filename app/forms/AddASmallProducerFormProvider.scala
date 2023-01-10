@@ -42,6 +42,8 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 
      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
+     val smallProducerList = request.userAnswers.smallProducerList.map(sdilRef => sdilRef.sdilRef)
+
      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
        sdilConnector.checkSmallProducerStatus(sdilRef, period)
 
@@ -76,7 +78,7 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
              referenceNumberFormat("^X[A-Z]SDIL000[0-9]{6}$",
                "addASmallProducer.error.referenceNumber.invalid",
                request.sdilEnrolment,"addASmallProducer.error.referenceNumber.same",
-               List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
+               smallProducerList, "addASmallProducer.error.referenceNumber.Exist",
                //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.
                request.returnPeriod.fold(sys.error("Return Period missing"))(identity),"addASmallProducer.error.referenceNumber.Large")),
 
