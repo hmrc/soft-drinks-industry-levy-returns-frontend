@@ -50,14 +50,28 @@ class AddASmallProducerController @Inject()(
 
 
 
-  def onPageLoad(mode: Mode, sdil: String= ""): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
       val form: Form[AddASmallProducer] = formProvider(sessionRepository,sdilConnector)
        mode match {
         case BlankMode => Ok(view(form, NormalMode))
         case _ =>
-          if(!sdil.isEmpty) {
-            val preparedForm = {
+            val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
+              case None => form
+              case Some(value) => form.fill(value)
+            }
+            Ok(view(preparedForm, mode))
+
+
+      }
+
+
+  }
+
+  def onEditPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request: DataRequest[AnyContent] =>
+      val form: Form[AddASmallProducer] = formProvider(sessionRepository,sdilConnector)
+      val preparedForm = {
               val sp = request.userAnswers.smallProducerList.filter(_.sdilRef == sdil).headOption
               val v: AddASmallProducer = sp.fold(sys.error(" no elemet present"))(value =>
                 AddASmallProducer(Some(value.alias), value.sdilRef, value.litreage._1, value.litreage._2))
@@ -65,15 +79,34 @@ class AddASmallProducerController @Inject()(
             }
             Ok(view(preparedForm, mode))
 
-          } else {
-            val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
-              case None => form
-              case Some(value) => form.fill(value)
-            }
-            Ok(view(preparedForm, mode))
-          }
 
-      }
+  }
+
+  def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request =>
+      val form = formProvider(sessionRepository,sdilConnector)
+
+      form.bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(BadRequest(view(formWithErrors, mode))),
+        value => {
+          val smallProducer: SmallProducer =
+            SmallProducer(value.producerName.getOrElse(""),
+              value.referenceNumber,
+              (value.lowBand, value.highBand))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AddASmallProducerPage, value))
+            updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
+            _              <- sessionRepository.set(updatedAnswersFinal)
+          } yield {
+            Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
+
+          }
+        }
+
+      )
+
+
 
 
   }
