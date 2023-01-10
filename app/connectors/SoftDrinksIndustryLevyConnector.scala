@@ -55,4 +55,10 @@ class SoftDrinksIndustryLevyConnector @Inject()(
         case Some(a) => Some(a)
         case _ => None
   }
+
+  def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {
+    val  m = http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+    m.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
+  }
+
 }

@@ -16,6 +16,8 @@
 
 package models
 
+import play.api.libs.json.Json
+
 import java.time.LocalDate
 
 case class ReturnPeriod(year: Int, quarter: Int) {
@@ -37,5 +39,5 @@ object ReturnPeriod {
 
   def apply(date: LocalDate): ReturnPeriod = ReturnPeriod(date.getYear, quarter(date))
   def quarter(date: LocalDate): Int = { date.getMonthValue - 1 } / 3
-
+  implicit val format = Json.format[ReturnPeriod]
 }

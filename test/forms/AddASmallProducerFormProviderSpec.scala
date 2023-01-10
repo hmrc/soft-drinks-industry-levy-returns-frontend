@@ -19,7 +19,7 @@ package forms
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.behaviours.{LongFieldBehaviour, StringFieldBehaviours}
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.{DataRequest}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 import repositories.SessionRepository
@@ -36,7 +36,6 @@ abstract class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with
   ".producerName" - {
 
     val fieldName = "producerName"
-    val requiredKey = "addASmallProducer.error.producerName.required"
     val lengthKey = "addASmallProducer.error.producerName.maxLength"
     val maxLength = 160
 
