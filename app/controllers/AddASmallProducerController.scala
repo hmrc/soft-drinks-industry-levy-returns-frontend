@@ -78,7 +78,7 @@ class AddASmallProducerController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val form = formProvider(sessionRepository,sdilConnector)
 
