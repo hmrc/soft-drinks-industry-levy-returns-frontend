@@ -24,7 +24,7 @@ import forms.AddASmallProducerFormProvider
 import javax.inject.Inject
 import models.{AddASmallProducer, BlankMode, Mode, NormalMode, SmallProducer}
 import navigation.Navigator
-import pages.{AddASmallProducerPage, SmallProducerDetailsPage}
+import pages.AddASmallProducerPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

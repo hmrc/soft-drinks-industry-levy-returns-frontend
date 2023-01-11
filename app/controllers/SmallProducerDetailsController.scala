@@ -20,10 +20,9 @@ import controllers.actions._
 import forms.SmallProducerDetailsFormProvider
 import viewmodels.checkAnswers.SmallProducerDetailsSummary
 import views.html.SmallProducerDetailsView
-import models.{BlankMode, Mode, SmallProducer}
+import models.{Mode, SmallProducer}
 import navigation.Navigator
-import pages.{AddASmallProducerPage, SmallProducerDetailsPage}
-import play.api.data.Form
+import pages.SmallProducerDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
