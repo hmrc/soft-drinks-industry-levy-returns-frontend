@@ -23,13 +23,12 @@ import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
 import models.{AddASmallProducer, ReturnPeriod}
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.DataRequest
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import java.time.LocalDate
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
@@ -79,7 +78,7 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
                request.sdilEnrolment,"addASmallProducer.error.referenceNumber.same",
                List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
                //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.
-               ReturnPeriod(LocalDate.of(2018, 4, 15)),"addASmallProducer.error.referenceNumber.Large")),
+               request.returnPeriod.fold(sys.error("Return Period missing"))(identity),"addASmallProducer.error.referenceNumber.Large")),
 
 "lowBand" -> long(
   "addASmallProducer.error.lowBand.required",

@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.HowManyBoughtIntoUkFormProvider
 
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.HowManyBroughtIntoUkPage
 import play.api.i18n.{I18nSupport, MessagesApi}

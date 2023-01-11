@@ -1,6 +1,7 @@
 package controllers.testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.ReturnPeriod
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import play.api.libs.json.Json
@@ -49,6 +50,8 @@ case class SdilBackendStub()
     deregDate = None
   )
 
+  val returnPeriod = ReturnPeriod(2018, 1)
+
 
   def retrieveSubscription(identifier: String, refNum: String) = {
     stubFor(
@@ -56,6 +59,15 @@ case class SdilBackendStub()
         urlPathMatching(s"/subscription/$identifier/$refNum"))
         .willReturn(
           ok(Json.toJson(aSubscription).toString())))
+    builder
+  }
+
+  def oldestPendingReturnPeriod(utr: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/pending"))
+        .willReturn(
+          ok(Json.toJson(List(returnPeriod)).toString())))
     builder
   }
 }

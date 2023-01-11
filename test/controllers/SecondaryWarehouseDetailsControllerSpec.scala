@@ -29,8 +29,6 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.SecondaryWarehouseDetailsView
 

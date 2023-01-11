@@ -36,7 +36,6 @@ class OwnBrandsController @Inject()(
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
                                          formProvider: OwnBrandsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: OwnBrandsView
