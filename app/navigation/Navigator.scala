@@ -27,6 +27,7 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case HowManyCreditsForExportPage => _ =>routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => claimCreditsForLostDamagedPageNavigation(userAnswers)
     case ClaimCreditsForExportsPage => userAnswers => claimCreditsForExportPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)

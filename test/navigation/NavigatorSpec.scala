@@ -185,6 +185,18 @@ class NavigatorSpec extends SpecBase {
             }
           }
 
+          "How many credit for export" - {
+
+            "select save and continue to navigate to claim credits for lost damaged page" in {
+              val result = navigator.nextPage(ClaimCreditsForExportsPage,
+                NormalMode,
+                UserAnswers(sdilNumber, Json.obj("ownBrands" -> true,
+                  "claimCreditsForExports" ->
+                    Json.obj("lowBand" -> "100", "highBand" -> "100"))))
+              result mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+            }
+          }
+
           "Claim credits for Lost damaged " - {
 
             def navigate(value: Boolean) = navigator.nextPage(ClaimCreditsForLostDamagedPage,
