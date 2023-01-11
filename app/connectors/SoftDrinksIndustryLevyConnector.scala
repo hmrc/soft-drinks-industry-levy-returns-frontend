@@ -34,7 +34,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 
-  private def getSubscriptionUrl( sdilNumber: String,identifierType: String = "sdil"): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
+  private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
   def retrieveSubscription(
     sdilNumber: String,
