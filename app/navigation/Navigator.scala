@@ -50,6 +50,11 @@ class Navigator @Inject()() {
     case _ => _ => routes.CheckYourAnswersController.onPageLoad
   }
 
+  private val EditRouteMap: Page => UserAnswers => Call = {
+    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onSubmit(NormalMode)
+    case _ => _ => sys.error("This case should never reach")
+  }
+
   def nextPage(page: Page,
                mode: Mode,
                userAnswers: UserAnswers,
@@ -58,6 +63,8 @@ class Navigator @Inject()() {
     mode match {
       case NormalMode => normalRoutes(page)(userAnswers)(sdilReturn)(subscription)
       case CheckMode => checkRouteMap(page)(userAnswers)
+      case EditMode => EditRouteMap(page)(userAnswers)
+      case _ => sys.error("Mode should be Normal, Check or Edit")
     }
 
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
