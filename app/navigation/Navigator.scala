@@ -27,6 +27,7 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case ClaimCreditsForLostDamagedPage => userAnswers => claimCreditsForLostDamagedPageNavigation(userAnswers)
     case ClaimCreditsForExportsPage => userAnswers => claimCreditsForExportPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
@@ -95,6 +96,14 @@ class Navigator @Inject()() {
       routes.HowManyCreditsForExportController.onPageLoad(NormalMode)
     } else {
       routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
+    if(userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
+      routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
+    } else {
+      routes.ReturnChangeRegistrationController.onPageLoad()
     }
   }
 
