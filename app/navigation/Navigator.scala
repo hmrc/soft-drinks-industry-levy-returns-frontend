@@ -27,6 +27,7 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case RemoveSmallProducerConfirmPage => userAnswers => removeSmallProducerConfirmPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
@@ -98,6 +99,12 @@ class Navigator @Inject()() {
     }
   }
 
-
+ private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
+   if(userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true)) {
+     routes.AddASmallProducerController.onPageLoad(BlankMode)
+   } else {
+     routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+   }
+ }
 
 }

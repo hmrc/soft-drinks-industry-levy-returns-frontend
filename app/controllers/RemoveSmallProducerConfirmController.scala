@@ -18,11 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms._
+import models.requests.DataRequest
 
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.RemoveSmallProducerConfirmPage
+import pages.{RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,31 +46,30 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   val form = formProvider()
 
-  val sdilNumber = "SDIL123456"
-  val smallProducerName = "ABC ltd"
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(RemoveSmallProducerConfirmPage)) match {
+      val preparedForm = request.userAnswers.get(RemoveSmallProducerConfirmPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, sdilNumber, smallProducerName))
+      //val smallProducerRef = request.userAnswers.smallProducerList.map(producer => producer.sdilRef.filter(_ == sdil))
+      val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
+
+      Ok(view(preparedForm, mode, sdil, smallProducerName))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
-
+      val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, sdilNumber, smallProducerName))),
+          Future.successful(BadRequest(view(formWithErrors, mode, sdil, smallProducerName))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(RemoveSmallProducerConfirmPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, updatedAnswers))
       )

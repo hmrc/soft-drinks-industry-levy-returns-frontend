@@ -22,7 +22,7 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{AddASmallProducer, ReturnPeriod}
+import models.{AddASmallProducer, Mode, NormalMode, ReturnPeriod}
 import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import repositories.SessionRepository

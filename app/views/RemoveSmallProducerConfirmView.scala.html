@@ -37,7 +37,7 @@
 
 @layout(pageTitle = title(form, messages("removeSmallProducerConfirm.title"))) {
 
-    @formHelper(action = routes.RemoveSmallProducerConfirmController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.RemoveSmallProducerConfirmController.onSubmit(sdilNumber), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

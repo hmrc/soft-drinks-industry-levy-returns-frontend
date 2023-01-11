@@ -72,6 +72,7 @@ class AddASmallProducerController @Inject()(
     implicit request: DataRequest[AnyContent] =>
       val form: Form[AddASmallProducer] = formProvider(sessionRepository,sdilConnector)
       val preparedForm = {
+              val existingList = request.smallProducerList.map(producer => producer.sdilRef.find(_ == sdil))
               val sp = request.userAnswers.smallProducerList.filter(_.sdilRef == sdil).headOption
               val v: AddASmallProducer = sp.fold(sys.error(" no elemet present"))(value =>
                 AddASmallProducer(Some(value.alias), value.sdilRef, value.litreage._1, value.litreage._2))
@@ -82,7 +83,7 @@ class AddASmallProducerController @Inject()(
 
   }
 
-  def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val form = formProvider(sessionRepository,sdilConnector)
 
@@ -90,17 +91,19 @@ class AddASmallProducerController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
+
           val smallProducer: SmallProducer =
             SmallProducer(value.producerName.getOrElse(""),
               value.referenceNumber,
               (value.lowBand, value.highBand))
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AddASmallProducerPage, value))
-            updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
+            indexChanging = updatedAnswers.smallProducerList.map(producer => producer.sdilRef.indexOf(sdil))
+            updatedList = updatedAnswers.smallProducerList.filterNot(_ == indexChanging)
+            updatedAnswersFinal = {updatedAnswers.copy(smallProducerList = smallProducer :: updatedList)}
             _              <- sessionRepository.set(updatedAnswersFinal)
           } yield {
             Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
-
           }
         }
 
