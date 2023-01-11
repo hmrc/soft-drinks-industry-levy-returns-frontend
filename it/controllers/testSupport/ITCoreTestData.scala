@@ -2,7 +2,7 @@ package controllers.testSupport
 
 import models.{AddASmallProducer, BrandsPackagedAtOwnSites, HowManyAsAContractPacker, HowManyBroughtIntoUk, UserAnswers}
 import org.scalatest.TryValues
-import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, OwnBrandsPage, PackagedContractPackerPage, SmallProducerDetailsPage}
+import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, OwnBrandsPage, PackagedContractPackerPage, RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
 import play.api.libs.json.Json
 
 import scala.concurrent.duration.DurationInt
@@ -89,5 +89,11 @@ trait ITCoreTestData extends TryValues {
 
   def smallProducerDetaisFullAnswers = addASmallProducerPartialAnswers.success.value
     .set(SmallProducerDetailsPage, true)
+
+  def removeSmallProducerConfirmPartialAnswers = smallProducerDetaisPartialAnswers.success.value
+    .set(SmallProducerDetailsPage, true)
+
+  def removeSmallProducerConfirmFullAnswers = addASmallProducerPartialAnswers.success.value
+    .set(RemoveSmallProducerConfirmPage, true)
 
 }

@@ -59,7 +59,7 @@ object SmallProducerDetailsSummary  {
         actions = Seq(
           ActionItemViewModel("site.edit", routes.AddASmallProducerController.onEditPageLoad(smallProducer.sdilRef).url)
             .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")),
-          ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode).url)
+          ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(smallProducer.sdilRef).url)
             .withVisuallyHiddenText(messages("smallProducerDetails.remove.hidden"))
         )
       )

@@ -28,6 +28,7 @@ import models.retrieved.RetrievedSubscription
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Call = {
+    case RemoveSmallProducerConfirmPage => userAnswers => _  => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt =>
       claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
@@ -106,6 +107,14 @@ class Navigator @Inject()() {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }
   }
+
+ private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
+   if(userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true)) {
+     routes.AddASmallProducerController.onPageLoad(BlankMode)
+   } else {
+     routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+   }
+ }
 
   private def claimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
