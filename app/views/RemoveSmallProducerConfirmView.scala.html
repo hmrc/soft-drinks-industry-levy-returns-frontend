@@ -24,16 +24,8 @@
 )
 
 @(form: Form[_], mode: Mode, sdilNumber: String, smallProducerName: String)(implicit request: Request[_], messages: Messages)
-@html = {
-        <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half">
-            <p class="govuk-body govuk-!-font-weight-bold">@sdilNumber</p>
-        </div>
-        <div class="govuk-grid-column-one-half">
-            <p class="govuk-body">@smallProducerName</p>
-        </div>
-        </div>
-}
+
+@html = @{s"<b>$sdilNumber&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$smallProducerName"}
 
 @layout(pageTitle = title(form, messages("removeSmallProducerConfirm.title"))) {
 
