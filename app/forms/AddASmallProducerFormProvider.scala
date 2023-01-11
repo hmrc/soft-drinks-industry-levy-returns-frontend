@@ -37,12 +37,18 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 
 
    def apply(sessionRepository: SessionRepository,
-             sdilConnector: SoftDrinksIndustryLevyConnector
+             sdilConnector: SoftDrinksIndustryLevyConnector,
+             mode: Option[Mode] = None
             )(implicit request: DataRequest[_]): Form[AddASmallProducer] = {
 
      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
      val smallProducerList = request.userAnswers.smallProducerList.map(sdilRef => sdilRef.sdilRef)
+
+     if(mode == NormalMode) {
+       val smallProducerList = request.userAnswers.smallProducerList.map(sdilRef => sdilRef.sdilRef)
+       println(s"Normal smallProducerList -> ${smallProducerList}")
+
 
      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
        sdilConnector.checkSmallProducerStatus(sdilRef, period)
@@ -99,5 +105,39 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
   .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
 )(AddASmallProducer.apply)(AddASmallProducer.unapply)
 )
+     }else{
+       val smallProducerList = request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == "XJSDIL000000359")
+       println(s"Edit smallProducerList -> ${smallProducerList}")
+
+       Form(
+         mapping(
+           "producerName" -> optional(text(
+
+           )
+             .verifying(maxLength(160,"addASmallProducer.error.producerName.maxLength"))),
+
+           "referenceNumber" -> text(
+             "addASmallProducer.error.referenceNumber.required"
+           )
+             .verifying(),
+
+           "lowBand" -> long(
+             "addASmallProducer.error.lowBand.required",
+             "addASmallProducer.error.lowBand.negative",
+             "addASmallProducer.error.lowBand.nonNumeric",
+             "addASmallProducer.error.lowBand.wholeNumber",
+             "addASmallProducer.error.lowBand.outOfMaxVal")
+             .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
+
+           "highBand" -> long(
+             "addASmallProducer.error.highBand.required",
+             "addASmallProducer.error.highBand.negative",
+             "addASmallProducer.error.highBand.nonNumeric",
+             "addASmallProducer.error.highBand.wholeNumber",
+             "addASmallProducer.error.highBand.outOfMaxVal")
+             .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
+         )(AddASmallProducer.apply)(AddASmallProducer.unapply)
+       )
+     }
 }
 }

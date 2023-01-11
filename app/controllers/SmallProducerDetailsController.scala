@@ -50,6 +50,7 @@ class SmallProducerDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      println(s"Dropped list = ${request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == "XLSDIL000000199")}")
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
       val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
         case None => form
