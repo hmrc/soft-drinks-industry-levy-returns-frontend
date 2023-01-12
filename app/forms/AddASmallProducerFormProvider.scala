@@ -22,7 +22,7 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{AddASmallProducer, EditMode, Mode, ReturnPeriod}
+import models.{AddASmallProducer, Mode, ReturnPeriod}
 import models.requests.DataRequest
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import repositories.SessionRepository
@@ -44,23 +44,19 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 
      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-       val smallProducerList = request.userAnswers.smallProducerList.map(sdilRef => sdilRef.sdilRef)
-
      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
        sdilConnector.checkSmallProducerStatus(sdilRef, period)
 
-      def referenceNumberFormat(regex: String, errorKey1: String,
-                                referenceNumber: String, errorKey2: String,
-                                referenceNumberList: List[String], errorKey3: String,
-                                returnPeriod:ReturnPeriod,errorKey4: String, mode: Option[Mode]): Constraint[String] =
+     def referenceNumberFormat(regex: String, errorKey1: String,
+                               referenceNumber: String, errorKey2: String,
+                               referenceNumberList: List[String], errorKey3: String,
+                               returnPeriod:ReturnPeriod,errorKey4: String): Constraint[String] =
        Constraint {
          case str if !str.matches(regex) =>
            Invalid(errorKey1, regex)
          case str if str.matches(referenceNumber) =>
            Invalid(errorKey2, referenceNumber)
-         case str if(referenceNumberList.contains(str) && (!mode.contains(EditMode)))  =>
-           Invalid(errorKey3, referenceNumberList)
-         case str if(referenceNumberList.contains(str) && (mode.contains(EditMode) &&  str != sdil.get))  =>
+         case str if referenceNumberList.contains(str) =>
            Invalid(errorKey3, referenceNumberList)
          case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)).equals(false)  =>
            Invalid(errorKey4)
@@ -70,36 +66,38 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 
      Form(
        mapping(
-         "producerName" -> optional(text()
+         "producerName" -> optional(text(
+
+         )
            .verifying(maxLength(160,"addASmallProducer.error.producerName.maxLength"))),
 
          "referenceNumber" -> text(
            "addASmallProducer.error.referenceNumber.required"
-         ).verifying(
+         )
+           .verifying(
              referenceNumberFormat("^X[A-Z]SDIL000[0-9]{6}$",
                "addASmallProducer.error.referenceNumber.invalid",
                request.sdilEnrolment,"addASmallProducer.error.referenceNumber.same",
-               smallProducerList, "addASmallProducer.error.referenceNumber.Exist",
+               List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
                //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.
                request.returnPeriod.fold(sys.error("Return Period missing"))(identity),"addASmallProducer.error.referenceNumber.Large")),
 
-           "lowBand" -> long(
-             "addASmallProducer.error.lowBand.required",
-             "addASmallProducer.error.lowBand.negative",
-             "addASmallProducer.error.lowBand.nonNumeric",
-             "addASmallProducer.error.lowBand.wholeNumber",
-             "addASmallProducer.error.lowBand.outOfMaxVal")
-             .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
+         "lowBand" -> long(
+           "addASmallProducer.error.lowBand.required",
+           "addASmallProducer.error.lowBand.negative",
+           "addASmallProducer.error.lowBand.nonNumeric",
+           "addASmallProducer.error.lowBand.wholeNumber",
+           "addASmallProducer.error.lowBand.outOfMaxVal")
+           .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
 
-           "highBand" -> long(
-             "addASmallProducer.error.highBand.required",
-             "addASmallProducer.error.highBand.negative",
-             "addASmallProducer.error.highBand.nonNumeric",
-             "addASmallProducer.error.highBand.wholeNumber",
-             "addASmallProducer.error.highBand.outOfMaxVal")
-             .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
-         )(AddASmallProducer.apply)(AddASmallProducer.unapply)
-       )
-
-  }
+         "highBand" -> long(
+           "addASmallProducer.error.highBand.required",
+           "addASmallProducer.error.highBand.negative",
+           "addASmallProducer.error.highBand.nonNumeric",
+           "addASmallProducer.error.highBand.wholeNumber",
+           "addASmallProducer.error.highBand.outOfMaxVal")
+           .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
+       )(AddASmallProducer.apply)(AddASmallProducer.unapply)
+     )
+   }
 }

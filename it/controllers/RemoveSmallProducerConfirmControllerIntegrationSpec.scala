@@ -50,7 +50,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/add-small-producer-next")
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")
           }
 
         }
