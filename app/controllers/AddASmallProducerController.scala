@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.SoftDrinksIndustryLevyConnector
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.DataRequest
 import controllers.actions._
 import forms.AddASmallProducerFormProvider
 

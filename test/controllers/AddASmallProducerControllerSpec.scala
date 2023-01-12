@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.DataRequest
 import models.{AddASmallProducer, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
