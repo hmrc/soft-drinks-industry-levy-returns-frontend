@@ -19,7 +19,7 @@ package forms
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.behaviours.{LongFieldBehaviour, StringFieldBehaviours}
-import models.requests.{DataRequest}
+import models.requests.DataRequest
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 import repositories.SessionRepository

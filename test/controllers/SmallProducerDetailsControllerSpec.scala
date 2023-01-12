@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.SmallProducerDetailsFormProvider
-import models.{NormalMode, SmallProducer, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -47,7 +47,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
   "SmallProducerDetails Controller" - {
 
-    val smallProducerList =
+    val smallProducerList = List()
 
     "must return OK and the correct view for a GET" in {
 

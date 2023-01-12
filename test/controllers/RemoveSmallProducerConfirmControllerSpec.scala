@@ -25,6 +25,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -39,26 +40,48 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
   val formProvider = new RemoveSmallProducerConfirmFormProvider()
   val form = formProvider()
-  val sdilNum = "SDIL123456"
-  val smallProducerName = "ABC ltd"
 
-  lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode).url
+  val value1 = "Party Drinks Group"
+
+  val value2 = "XPSDIL000000116"
+
+  val value3max: Long = 100000000000000L
+  val value3 = value3max - 1
+
+  val value4max: Long = 100000000000000L
+  val value4 = value4max - 1
+
+  lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$value2").url
+
+  val userAnswers = UserAnswers(
+    sdilNumber,
+    Json.obj(
+      "smallProducerList" -> Json.arr(
+        Json.obj(
+        fields = "producerName" -> value1,
+                "referenceNumber" -> value2,
+                "lowBand" -> value3,
+                "highBand" -> value4)
+        )
+      )
+  )
+
 
   "RemoveSmallProducerConfirm Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
 
-        val result = route(application, request).value
-
         val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
 
+        val result = route(application, request).value
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, sdilNum, smallProducerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, "XPSDIL000000116", "Party Drinks Group")(request, messages(application)).toString
       }
     }
 
@@ -76,7 +99,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, sdilNum, smallProducerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, value2, value1)(request, messages(application)).toString
       }
     }
 
@@ -122,7 +145,37 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, sdilNum, smallProducerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, value2, value1)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, removeSmallProducerConfirmRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
