@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.RemoveSmallProducerConfirmFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -54,16 +54,16 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
   lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$value2").url
 
   val userAnswers = UserAnswers(
-    sdilNumber,
-    Json.obj(
-      "smallProducerList" -> Json.arr(
-        Json.obj(
-        fields = "producerName" -> value1,
-                "referenceNumber" -> value2,
-                "lowBand" -> value3,
-                "highBand" -> value4)
-        )
+    id = sdilNumber,
+    data = Json.obj(
+      RemoveSmallProducerConfirmPage.toString -> Json.obj(
+        "producerName" -> value1,
+        "referenceNumber" -> value2,
+        "lowBand" -> value3,
+        "highBand" -> value4
       )
+    ),
+    smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))
   )
 
 
@@ -81,13 +81,23 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, "XPSDIL000000116", "Party Drinks Group")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, value2, value1)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set(RemoveSmallProducerConfirmPage, true).success.value
+      val userAnswers = UserAnswers(
+        id = value2,
+        data = Json.obj(
+            RemoveSmallProducerConfirmPage.toString -> Json.obj(
+              "producerName" -> value1,
+              "referenceNumber" -> value2,
+              "lowBand" -> value3,
+              "highBand" -> value4
+          )
+        ),
+        smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))).set(RemoveSmallProducerConfirmPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -105,12 +115,24 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must redirect to the next page when valid data is submitted" in {
 
+      val userAnswers = UserAnswers(
+        id = value2,
+        data = Json.obj(
+          RemoveSmallProducerConfirmPage.toString -> Json.obj(
+            "producerName" -> value1,
+            "referenceNumber" -> value2,
+            "lowBand" -> value3,
+            "highBand" -> value4
+          )
+        ),
+        smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))).set(RemoveSmallProducerConfirmPage, true).success.value
+
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -131,7 +153,19 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(
+        id = value2,
+        data = Json.obj(
+          RemoveSmallProducerConfirmPage.toString -> Json.obj(
+            "producerName" -> value1,
+            "referenceNumber" -> value2,
+            "lowBand" -> value3,
+            "highBand" -> value4
+          )
+        ),
+        smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))).set(RemoveSmallProducerConfirmPage, true).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =

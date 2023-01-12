@@ -22,5 +22,5 @@ case object RemoveSmallProducerConfirmPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "emoveSmallProducerConfirm"
+  override def toString: String = "removeSmallProducerConfirm"
 }
