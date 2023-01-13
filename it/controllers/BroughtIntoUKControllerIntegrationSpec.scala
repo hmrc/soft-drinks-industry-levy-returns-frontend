@@ -1,6 +1,7 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import models.UserAnswers
 import org.scalatest.TryValues
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
@@ -36,7 +37,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
         given
           .commonPrecondition
 
-        val userAnswers = broughtIntoUkFullAnswers.success.value
+        val userAnswers: UserAnswers = broughtIntoUkFullAnswers.success.value
         setAnswers(userAnswers)
 
         WsTestClient.withClient { client =>

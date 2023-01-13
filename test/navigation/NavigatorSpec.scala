@@ -199,18 +199,58 @@ class NavigatorSpec extends SpecBase {
 
           "Claim credits for Lost damaged " - {
 
-            def navigate(value: Boolean) = navigator.nextPage(ClaimCreditsForLostDamagedPage,
+            def navigate(value: Boolean, userAnswers: Boolean => UserAnswers, sdilReturn: SdilReturn) =
+              navigator.nextPage(ClaimCreditsForLostDamagedPage,
               NormalMode,
-              UserAnswers(sdilNumber, Json.obj("claimCreditsForLostDamaged" -> value)))
+              userAnswers(value),
+              Some(sdilReturn),
+              Some(aSubscription)
+            )
 
             "select Yes to navigate to How many credits for lost damaged page" in {
-              val result = navigate(true)
+              def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                Json.obj("claimCreditsForLostDamaged" -> value))
+              val result = navigator.nextPage(ClaimCreditsForLostDamagedPage,
+                NormalMode,
+                userAnswers(true)
+              )
               result mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
             }
 
-            "select No to navigate to return change registration page" in {
-              val result = navigate(false)
-              result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+            "select No to navigate to return change registration page" - {
+
+              "when user is a new Importer" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "HowManyBroughtIntoUk" -> HowManyBroughtIntoUk(100L, 100L),
+                    "claimCreditsForLostDamaged" -> value))
+                val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(100L, 100L),(0L,0L),(0L,0L),(0L,0L))
+                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+
+              "when user is a new packer" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "howManyAsAContractPacker" -> HowManyAsAContractPacker(100L, 100L),
+                    "claimCreditsForLostDamaged" -> value))
+                val sdilReturn = SdilReturn((0L,0L),(100L, 100L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
+                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+
+            }
+            //TODO change Index controller page to check your answers page once ready
+            "select No to navigate to Index controller page " - {
+              "when user is a not a new Importer" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+                val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
+                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
+                result mustBe routes.IndexController.onPageLoad //TODO change it to check your answers page once ready
+              }
+
             }
           }
 
