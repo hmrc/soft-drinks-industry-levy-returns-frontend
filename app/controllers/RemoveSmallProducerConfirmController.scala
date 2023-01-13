@@ -54,8 +54,6 @@ class RemoveSmallProducerConfirmController @Inject()(
       }
 
       //val smallProducerRef = request.userAnswers.smallProducerList.map(producer => producer.sdilRef.filter(_ == sdil))
-      println(request.userAnswers.smallProducerList)
-      println(sdil)
       val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
 
       Ok(view(preparedForm, mode, sdil, smallProducerName))
@@ -63,8 +61,6 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      println("Original List ->" + request.userAnswers.smallProducerList)
-      println("Updataed List -> " + request.userAnswers.smallProducerList.filterNot(x => x.sdilRef == sdil))
       val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
       form.bindFromRequest().fold(
         formWithErrors =>

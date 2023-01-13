@@ -185,7 +185,6 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         val result = route(application, request).value
 
-        println("Body Content -> " + contentAsString(result))
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
       }
