@@ -17,38 +17,44 @@
 package navigation
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.mvc.Call
 import controllers.routes
 import pages._
 import models._
+import models.retrieved.RetrievedSubscription
+
 
 @Singleton
 class Navigator @Inject()() {
 
-  private val normalRoutes: Page => UserAnswers => Call = {
-    case HowManyCreditsForExportPage => _ =>routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
-    case ClaimCreditsForLostDamagedPage => userAnswers => claimCreditsForLostDamagedPageNavigation(userAnswers)
-    case ClaimCreditsForExportsPage => userAnswers => claimCreditsForExportPageNavigation(userAnswers)
-    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
-    case BroughtIntoUkFromSmallProducersPage => userAnswers => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
-    case HowManyBroughtIntoUkPage => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
-    case BroughtIntoUKPage => userAnswers => broughtIntoUkPageNavigation(userAnswers)
-    case HowManyAsAContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
-    case ExemptionsForSmallProducersPage => userAnswers => exemptionForSmallProducersPageNavigation(userAnswers)
-    case BrandsPackagedAtOwnSitesPage => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
-    case PackagedContractPackerPage => userAnswers => packagedContractPackerPageNavigation(userAnswers)
-    case OwnBrandsPage => userAnswers => ownBrandPageNavigation(userAnswers)
-    case _ => _ => routes.IndexController.onPageLoad
+  private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Call = {
+    case HowManyCreditsForExportPage => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+    case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt =>
+      claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
+    case ClaimCreditsForExportsPage => userAnswers => _  => _ =>claimCreditsForExportPageNavigation(userAnswers)
+    case AddASmallProducerPage => _  => _  => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => _  => _ => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
+    case HowManyBroughtIntoUkPage => _ => _  => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
+    case BroughtIntoUKPage => userAnswers => _ => _ => broughtIntoUkPageNavigation(userAnswers)
+    case HowManyAsAContractPackerPage => _  => _  => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    case ExemptionsForSmallProducersPage => userAnswers => _  => _  => exemptionForSmallProducersPageNavigation(userAnswers)
+    case BrandsPackagedAtOwnSitesPage => _ => _ => _  =>  routes.PackagedContractPackerController.onPageLoad(NormalMode)
+    case PackagedContractPackerPage => userAnswers => _  => _ => packagedContractPackerPageNavigation(userAnswers)
+    case OwnBrandsPage => userAnswers => _  => _ => ownBrandPageNavigation(userAnswers)
+    case _ => _ => _  => _ => routes.IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ => _ => routes.CheckYourAnswersController.onPageLoad
   }
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+  def nextPage(page: Page,
+               mode: Mode,
+               userAnswers: UserAnswers,
+               sdilReturn: Option[SdilReturn] = None,
+               subscription: Option[RetrievedSubscription] = None): Call =
     mode match {
-      case NormalMode => normalRoutes(page)(userAnswers)
+      case NormalMode => normalRoutes(page)(userAnswers)(sdilReturn)(subscription)
       case CheckMode => checkRouteMap(page)(userAnswers)
     }
 
@@ -100,11 +106,21 @@ class Navigator @Inject()() {
     }
   }
 
-  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
+  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers,
+                                                       sdilReturnOpt: Option[SdilReturn],
+                                                       subscriptionOpt: Option[RetrievedSubscription]) = {
     if(userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
     } else {
-      routes.ReturnChangeRegistrationController.onPageLoad()
+      (sdilReturnOpt, subscriptionOpt)  match {
+        case (Some(sdilReturn), Some(subscription)) =>{
+          val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+          val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
+          if(isNewImporter || isNewPacker) routes.ReturnChangeRegistrationController.onPageLoad else routes.IndexController.onPageLoad
+          //TODO IndexController to be replaced with CYA page
+        }
+        case _ => routes.IndexController.onPageLoad //TODO to be replaced with CYA page
+      }
     }
   }
 

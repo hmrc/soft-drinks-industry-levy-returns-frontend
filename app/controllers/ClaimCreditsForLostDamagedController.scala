@@ -16,11 +16,12 @@
 
 package controllers
 
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.ClaimCreditsForLostDamagedFormProvider
 
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SdilReturn}
 import navigation.Navigator
 import pages.ClaimCreditsForLostDamagedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ClaimCreditsForLostDamagedController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
+                                         sdilConnector: SoftDrinksIndustryLevyConnector,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
@@ -67,7 +69,9 @@ class ClaimCreditsForLostDamagedController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForLostDamagedPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers))
+            sdilReturn = SdilReturn.apply(updatedAnswers)
+            retrievedSubs <- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
+          } yield Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
       )
   }
 }

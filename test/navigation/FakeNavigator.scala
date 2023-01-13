@@ -16,12 +16,15 @@
 
 package navigation
 
+import models.retrieved.RetrievedSubscription
 import play.api.mvc.Call
 import pages._
-import models.{Mode, UserAnswers}
+import models.{Mode, SdilReturn, UserAnswers}
 
 class FakeNavigator(desiredRoute: Call) extends Navigator {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers,
+                        sdilReturn: Option[SdilReturn] = None,
+                        subscription: Option[RetrievedSubscription] = None): Call =
     desiredRoute
 }
