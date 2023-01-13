@@ -63,16 +63,19 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      println("Original List ->" + request.userAnswers.smallProducerList)
+      println("Updataed List -> " + request.userAnswers.smallProducerList.filterNot(x => x.sdilRef == sdil))
       val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, sdil, smallProducerName))),
-
-        value =>
+        value =>{
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, updatedAnswers))
+            updatedList = request.userAnswers.smallProducerList.filterNot(x => x.sdilRef == sdil)
+            updatedAnswersFinal = {updatedAnswers.copy(smallProducerList = updatedList)}
+            _              <- sessionRepository.set(updatedAnswersFinal)
+          } yield Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, updatedAnswersFinal))}
       )
   }
 }

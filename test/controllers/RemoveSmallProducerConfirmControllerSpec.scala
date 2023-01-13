@@ -22,6 +22,7 @@ import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
 import play.api.inject.bind
@@ -32,7 +33,7 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.RemoveSmallProducerConfirmView
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 
 class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSugar {
 
@@ -146,6 +147,45 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         val result = route(application, request).value
 
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must remove small producer when user clicks on remove link" in {
+
+      val userAnswers = UserAnswers(
+        id = value2,
+        data = Json.obj(
+          RemoveSmallProducerConfirmPage.toString -> Json.obj(
+            "producerName" -> value1,
+            "referenceNumber" -> value2,
+            "lowBand" -> value3,
+            "highBand" -> value4
+          )
+        ),
+        smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))).set(RemoveSmallProducerConfirmPage, true).success.value
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, removeSmallProducerConfirmRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        println("Body Content -> " + contentAsString(result))
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
       }
