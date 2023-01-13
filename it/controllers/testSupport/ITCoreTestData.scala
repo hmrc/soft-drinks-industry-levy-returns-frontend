@@ -90,8 +90,8 @@ trait ITCoreTestData extends TryValues {
   def smallProducerDetaisFullAnswers = addASmallProducerPartialAnswers.success.value
     .set(SmallProducerDetailsPage, true)
 
-  def removeSmallProducerConfirmPartialAnswers = smallProducerDetaisPartialAnswers.success.value
-    .set(SmallProducerDetailsPage, true)
+  def removeSmallProducerConfirmPartialAnswers = smallProducerDetaisFullAnswers.success.value
+    .set(SmallProducerDetailsPage, false)
 
   def removeSmallProducerConfirmFullAnswers = addASmallProducerPartialAnswers.success.value
     .set(RemoveSmallProducerConfirmPage, true)

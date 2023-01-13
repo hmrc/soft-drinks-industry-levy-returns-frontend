@@ -1,14 +1,11 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
-import models.NormalMode
 import org.scalatest.TryValues
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
-import play.api.test.Helpers.{POST, contentAsString, route, running, status}
-import play.api.test.{FakeRequest, WsTestClient}
+import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
-import views.html.ExemptionsForSmallProducersView
 
 class SmallProducerDetailsControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
   "SmallProducerDetailsController" should {
