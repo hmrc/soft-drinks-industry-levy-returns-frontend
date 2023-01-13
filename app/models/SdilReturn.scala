@@ -72,13 +72,13 @@ object SdilReturn {
     val lowWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
     val highWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
     SdilReturn(
-      (lowOwnBrand, highOwnBrand),
-      (lowPackLarge, highPackLarge),
-      packSmall,
-      (lowImportLarge, highImportLarge),
-      (lowImportSmall, highImportSmall),
-      (lowExports, highExports),
-      (lowWastage, highWastage)
+      ownBrand = (lowOwnBrand, highOwnBrand),
+      packLarge = (lowPackLarge, highPackLarge),
+      packSmall = packSmall,
+      importLarge = (lowImportLarge, highImportLarge),
+      importSmall = (lowImportSmall, highImportSmall),
+      export = (lowExports, highExports),
+      wastage = (lowWastage, highWastage)
     )
 
   }

@@ -55,7 +55,23 @@ trait ITCoreTestData extends TryValues {
     .set(BroughtIntoUKPage, false).success.value
     .set(BroughtIntoUkFromSmallProducersPage, false)
 
-  def creditsForLostDamagedPartialAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
+  def creditsForLostDamagedPartialAnswers = emptyUserAnswers
+    .set(OwnBrandsPage, true).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
+    .set(PackagedContractPackerPage, true).success.value
+    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(1000L, 1000L)).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(100L, 100L)).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, false)
+
+  def creditsForCopackerDamagedPartialAnswers = emptyUserAnswers
+    .set(OwnBrandsPage, false).success.value
+    .set(PackagedContractPackerPage, false).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, false).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
     .set(ClaimCreditsForExportsPage, false)
 
   def howManyBroughtIntoUkFullAnswers = broughtIntoUkFullAnswers
