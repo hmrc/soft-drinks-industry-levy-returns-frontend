@@ -53,7 +53,6 @@ class RemoveSmallProducerConfirmController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      //val smallProducerRef = request.userAnswers.smallProducerList.map(producer => producer.sdilRef.filter(_ == sdil))
       val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
 
       Ok(view(preparedForm, mode, sdil, smallProducerName))

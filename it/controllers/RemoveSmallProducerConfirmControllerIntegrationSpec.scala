@@ -9,15 +9,16 @@ import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
 class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+
+  val sdilRef = "XZSDIL000000234"
+  val alias = "Party Drinks Group"
+  val smallLiremax: Long = 100000000000000L
+  val smallLire = smallLiremax - 1
+  val largeLiremax: Long = 100000000000000L
+  val largeLire = largeLiremax - 1
+
   "RemoveSmallProducerConfirmController" should {
     "Ask for if user wants to remove this small producer" in {
-
-      val sdilRef = "XZSDIL000000234"
-      val alias = "Party Drinks Group"
-      val smallLiremax: Long = 100000000000000L
-      val smallLire = smallLiremax - 1
-      val largeLiremax: Long = 100000000000000L
-      val largeLire = largeLiremax - 1
 
       val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
       val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$alias",s"$sdilRef",(smallLire,largeLire))))
@@ -45,13 +46,6 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
         given
           .commonPrecondition
 
-        val sdilRef = "XZSDIL000000234"
-        val alias = "Party Drinks Group"
-        val smallLiremax: Long = 100000000000000L
-        val smallLire = smallLiremax - 1
-        val largeLiremax: Long = 100000000000000L
-        val largeLire = largeLiremax - 1
-
         val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
         val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$alias",s"$sdilRef",(smallLire,largeLire))))
 
@@ -77,12 +71,6 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
       }
 
       "user selected no " in {
-        val sdilRef = "XZSDIL000000234"
-        val alias = "Party Drinks Group"
-        val smallLiremax: Long = 100000000000000L
-        val smallLire = smallLiremax - 1
-        val largeLiremax: Long = 100000000000000L
-        val largeLire = largeLiremax - 1
 
         val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
         val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$alias",s"$sdilRef",(smallLire,largeLire))))
