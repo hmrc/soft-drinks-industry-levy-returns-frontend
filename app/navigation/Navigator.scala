@@ -28,6 +28,7 @@ import models.retrieved.RetrievedSubscription
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Call = {
+    case RemoveSmallProducerConfirmPage => userAnswers => _  => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt =>
       claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
@@ -38,6 +39,7 @@ class Navigator @Inject()() {
     case BroughtIntoUKPage => userAnswers => _ => _ => broughtIntoUkPageNavigation(userAnswers)
     case HowManyAsAContractPackerPage => _  => _  => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     case ExemptionsForSmallProducersPage => userAnswers => _  => _  => exemptionForSmallProducersPageNavigation(userAnswers)
+    case SmallProducerDetailsPage => userAnswers => _  => _  => smallProducerDetailsPageNavigation(userAnswers)
     case BrandsPackagedAtOwnSitesPage => _ => _ => _  =>  routes.PackagedContractPackerController.onPageLoad(NormalMode)
     case PackagedContractPackerPage => userAnswers => _  => _ => packagedContractPackerPageNavigation(userAnswers)
     case OwnBrandsPage => userAnswers => _  => _ => ownBrandPageNavigation(userAnswers)
@@ -48,6 +50,11 @@ class Navigator @Inject()() {
     case _ => _ => routes.CheckYourAnswersController.onPageLoad
   }
 
+  private val EditRouteMap: Page => UserAnswers => Call = {
+    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onSubmit(NormalMode)
+    case _ => _ => sys.error("This case should never reach")
+  }
+
   def nextPage(page: Page,
                mode: Mode,
                userAnswers: UserAnswers,
@@ -56,6 +63,8 @@ class Navigator @Inject()() {
     mode match {
       case NormalMode => normalRoutes(page)(userAnswers)(sdilReturn)(subscription)
       case CheckMode => checkRouteMap(page)(userAnswers)
+      case EditMode => EditRouteMap(page)(userAnswers)
+      case _ => sys.error("Mode should be Normal, Check or Edit")
     }
 
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
@@ -97,6 +106,22 @@ class Navigator @Inject()() {
       routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
     }
   }
+
+  private def smallProducerDetailsPageNavigation(userAnswers: UserAnswers) = {
+    if(userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
+      routes.AddASmallProducerController.onPageLoad(BlankMode)
+    } else {
+      routes.BroughtIntoUKController.onPageLoad(NormalMode)
+    }
+  }
+
+ private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
+   if(userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true)) {
+     routes.AddASmallProducerController.onPageLoad(BlankMode)
+   } else {
+     routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+   }
+ }
 
   private def claimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {

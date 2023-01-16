@@ -22,7 +22,7 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{AddASmallProducer, ReturnPeriod}
+import models.{AddASmallProducer, Mode, ReturnPeriod}
 import models.requests.DataRequest
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import repositories.SessionRepository
@@ -37,7 +37,9 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 
 
    def apply(sessionRepository: SessionRepository,
-             sdilConnector: SoftDrinksIndustryLevyConnector
+             sdilConnector: SoftDrinksIndustryLevyConnector,
+             mode: Option[Mode] = None,
+             sdil: Option[String] = None
             )(implicit request: DataRequest[_]): Form[AddASmallProducer] = {
 
      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -45,10 +47,10 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
        sdilConnector.checkSmallProducerStatus(sdilRef, period)
 
-      def referenceNumberFormat(regex: String, errorKey1: String,
-                                referenceNumber: String, errorKey2: String,
-                                referenceNumberList: List[String], errorKey3: String,
-                                returnPeriod:ReturnPeriod,errorKey4: String): Constraint[String] =
+     def referenceNumberFormat(regex: String, errorKey1: String,
+                               referenceNumber: String, errorKey2: String,
+                               referenceNumberList: List[String], errorKey3: String,
+                               returnPeriod:ReturnPeriod,errorKey4: String): Constraint[String] =
        Constraint {
          case str if !str.matches(regex) =>
            Invalid(errorKey1, regex)
@@ -80,22 +82,22 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
                //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.
                request.returnPeriod.fold(sys.error("Return Period missing"))(identity),"addASmallProducer.error.referenceNumber.Large")),
 
-"lowBand" -> long(
-  "addASmallProducer.error.lowBand.required",
-  "addASmallProducer.error.lowBand.negative",
-  "addASmallProducer.error.lowBand.nonNumeric",
-  "addASmallProducer.error.lowBand.wholeNumber",
-  "addASmallProducer.error.lowBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
+         "lowBand" -> long(
+           "addASmallProducer.error.lowBand.required",
+           "addASmallProducer.error.lowBand.negative",
+           "addASmallProducer.error.lowBand.nonNumeric",
+           "addASmallProducer.error.lowBand.wholeNumber",
+           "addASmallProducer.error.lowBand.outOfMaxVal")
+           .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
 
-"highBand" -> long(
-  "addASmallProducer.error.highBand.required",
-  "addASmallProducer.error.highBand.negative",
-  "addASmallProducer.error.highBand.nonNumeric",
-  "addASmallProducer.error.highBand.wholeNumber",
-  "addASmallProducer.error.highBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
-)(AddASmallProducer.apply)(AddASmallProducer.unapply)
-)
-}
+         "highBand" -> long(
+           "addASmallProducer.error.highBand.required",
+           "addASmallProducer.error.highBand.negative",
+           "addASmallProducer.error.highBand.nonNumeric",
+           "addASmallProducer.error.highBand.wholeNumber",
+           "addASmallProducer.error.highBand.outOfMaxVal")
+           .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
+       )(AddASmallProducer.apply)(AddASmallProducer.unapply)
+     )
+   }
 }

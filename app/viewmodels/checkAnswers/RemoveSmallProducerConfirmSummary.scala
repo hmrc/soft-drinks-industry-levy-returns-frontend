@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import controllers.routes
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.RemoveSmallProducerConfirmPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -33,11 +33,11 @@ object RemoveSmallProducerConfirmSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "emoveSmallProducerConfirm.checkYourAnswersLabel",
+          key     = "removeSmallProducerConfirm.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.RemoveSmallProducerConfirmController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("emoveSmallProducerConfirm.change.hidden"))
+            ActionItemViewModel("site.change", routes.RemoveSmallProducerConfirmController.onPageLoad("CheckMode").url)
+              .withVisuallyHiddenText(messages("removeSmallProducerConfirm.change.hidden"))
           )
         )
     }

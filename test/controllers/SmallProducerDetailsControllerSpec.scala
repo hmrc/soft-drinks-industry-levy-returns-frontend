@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.SmallProducerDetailsFormProvider
-import models.{NormalMode, SmallProducer, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -47,8 +47,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
   "SmallProducerDetails Controller" - {
 
-    val smallProducerList = List(SmallProducer("ABC Ltd", "SDIL123456", (1000L, 1000L)),
-      SmallProducer("XYZ Ltd", "SDIL123789", (1000L, 1000L)))
+    val smallProducerList = List()
 
     "must return OK and the correct view for a GET" in {
 
@@ -143,6 +142,36 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, list)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, smallProducerDetailsRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, smallProducerDetailsRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

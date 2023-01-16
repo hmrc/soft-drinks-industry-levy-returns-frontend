@@ -2,13 +2,17 @@ package controllers.testSupport
 
 import models.{AddASmallProducer, BrandsPackagedAtOwnSites, HowManyAsAContractPacker, HowManyBroughtIntoUk, UserAnswers}
 import org.scalatest.TryValues
-import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, OwnBrandsPage, PackagedContractPackerPage}
+import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, OwnBrandsPage, PackagedContractPackerPage, RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
 import play.api.libs.json.Json
 
 import scala.concurrent.duration.DurationInt
 
 trait ITCoreTestData extends TryValues {
+  val lowBand = 1000L
+  val highBand = 1000L
   val sdilNumber = "XKSDIL000000022"
+  val producerName = Some("Super Cola Ltd")
+  val refNumber = "XZSDIL000000234"
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
 
@@ -20,29 +24,29 @@ trait ITCoreTestData extends TryValues {
 
   def brandPackagedOwnSiteAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L))
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand))
 
   def howManyAsContractPackerFullAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(1000L, 1000L))
+    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand))
 
   def howManyAsContractPackerPartialAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true)
 
   def exemptionsForSmallProducersPartialAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, false)
 
   def exemptionsForSmallProducersFullAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(1000L, 1000L)).success.value
+    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand)).success.value
     .set(ExemptionsForSmallProducersPage, true)
 
   def broughtIntoUkPartialAnswers = exemptionsForSmallProducersFullAnswers.success.value
@@ -57,12 +61,12 @@ trait ITCoreTestData extends TryValues {
 
   def creditsForLostDamagedPartialAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(1000L, 1000L)).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(1000L, 1000L)).success.value
+    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand)).success.value
     .set(ExemptionsForSmallProducersPage, false).success.value
     .set(BroughtIntoUKPage, true).success.value
-    .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(100L, 100L)).success.value
+    .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(lowBand, highBand)).success.value
     .set(BroughtIntoUkFromSmallProducersPage, false).success.value
     .set(ClaimCreditsForExportsPage, false)
 
@@ -76,13 +80,24 @@ trait ITCoreTestData extends TryValues {
 
   def howManyBroughtIntoUkFullAnswers = broughtIntoUkFullAnswers
     .success.value
-    .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(1000L, 1000L))
+    .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(lowBand, highBand))
 
   def addASmallProducerPartialAnswers = exemptionsForSmallProducersFullAnswers.success.value
     .set(ExemptionsForSmallProducersPage, true)
 
   def addASmallProducerFullAnswers = addASmallProducerPartialAnswers.success.value
-      .set(AddASmallProducerPage, AddASmallProducer(Some("Super Cola Ltd"),"XZSDIL000000234",1000L, 1000L))
+      .set(AddASmallProducerPage, AddASmallProducer(producerName, refNumber, lowBand, highBand))
 
+  def smallProducerDetaisPartialAnswers = addASmallProducerFullAnswers.success.value
+    .set(AddASmallProducerPage, AddASmallProducer(producerName, refNumber, lowBand, highBand))
+
+  def smallProducerDetaisFullAnswers = addASmallProducerPartialAnswers.success.value
+    .set(SmallProducerDetailsPage, true)
+
+  def removeSmallProducerConfirmPartialAnswers = smallProducerDetaisFullAnswers.success.value
+    .set(SmallProducerDetailsPage, false)
+
+  def removeSmallProducerConfirmFullAnswers = addASmallProducerPartialAnswers.success.value
+    .set(RemoveSmallProducerConfirmPage, true)
 
 }

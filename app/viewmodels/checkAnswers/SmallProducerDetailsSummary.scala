@@ -57,9 +57,9 @@ object SmallProducerDetailsSummary  {
         key     = smallProducer.sdilRef,
         value   = value,
         actions = Seq(
-          ActionItemViewModel("site.edit", routes.IndexController.onPageLoad.url)
+          ActionItemViewModel("site.edit", routes.AddASmallProducerController.onEditPageLoad(smallProducer.sdilRef).url)
             .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")),
-          ActionItemViewModel("site.remove", routes.IndexController.onPageLoad.url)
+          ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(smallProducer.sdilRef).url)
             .withVisuallyHiddenText(messages("smallProducerDetails.remove.hidden"))
         )
       )
