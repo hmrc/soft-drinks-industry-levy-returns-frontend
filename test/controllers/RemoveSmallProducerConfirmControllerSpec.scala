@@ -22,7 +22,6 @@ import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
 import play.api.inject.bind
@@ -33,7 +32,7 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.RemoveSmallProducerConfirmView
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSugar {
 

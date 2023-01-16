@@ -48,21 +48,6 @@ final case class UserAnswers(
     }
   }
 
-  def setList[A](producer: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
-    val updatedData = data.setObject(path = (JsPath \ s"producerList"), Json.toJson(value)) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(errors) =>
-        Failure(JsResultException(errors))
-    }
-
-    updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy (data = d)
-        producer.cleanup(Some(value), updatedAnswers)
-    }
-  }
-
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
