@@ -40,97 +40,57 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
   val formProvider = new RemoveSmallProducerConfirmFormProvider()
   val form = formProvider()
-
-  val value1 = "Party Drinks Group"
-
-  val value2 = "XPSDIL000000116"
-
-  val value3max: Long = 100000000000000L
-  val value3 = value3max - 1
-
-  val value4max: Long = 100000000000000L
-  val value4 = value4max - 1
-
-  lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$value2").url
-
-  val userAnswers = UserAnswers(
-    id = sdilNumber,
-    data = Json.obj(
-      RemoveSmallProducerConfirmPage.toString -> Json.obj(
-        "producerName" -> value1,
-        "referenceNumber" -> value2,
-        "lowBand" -> value3,
-        "highBand" -> value4
-      )
-    ),
-    smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))
+  val producerName = "Party Drinks Group"
+  val sdilReference = "XPSDIL000000116"
+  val bandMax: Long = 100000000000000L
+  val litres = bandMax - 1
+  val smallProducerList = List(SmallProducer(producerName, sdilReference, (litres, litres)))
+  val smallProducerListWithTwoProducers = List(
+    SmallProducer(producerName, sdilReference, (litres, litres)),
+    SmallProducer(producerName, sdilReference, (litres, litres))
   )
-
+  val userAnswersData = Json.obj(
+    RemoveSmallProducerConfirmPage.toString -> Json.obj(
+      "producerName" -> producerName,
+      "referenceNumber" -> sdilReference,
+      "lowBand" -> litres,
+      "highBand" -> litres
+    )
+  )
+  val userAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerList)
+  lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$sdilReference").url
 
   "RemoveSmallProducerConfirm Controller" - {
-
     "must return OK and the correct view for a GET" in {
-
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
       running(application) {
         val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
-
         val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
-
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, value2, value1)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, sdilReference, producerName)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(
-        id = value2,
-        data = Json.obj(
-            RemoveSmallProducerConfirmPage.toString -> Json.obj(
-              "producerName" -> value1,
-              "referenceNumber" -> value2,
-              "lowBand" -> value3,
-              "highBand" -> value4
-          )
-        ),
-        smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))).set(RemoveSmallProducerConfirmPage, true).success.value
-
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
-
         val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
-
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, value2, value1)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, sdilReference, producerName)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val userAnswers = UserAnswers(
-        id = value2,
-        data = Json.obj(
-          RemoveSmallProducerConfirmPage.toString -> Json.obj(
-            "producerName" -> value1,
-            "referenceNumber" -> value2,
-            "lowBand" -> value3,
-            "highBand" -> value4
-          )
-        ),
-        smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))).set(RemoveSmallProducerConfirmPage, true).success.value
-
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
@@ -140,10 +100,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
           .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, removeSmallProducerConfirmRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
+        val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -152,21 +109,8 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must remove small producer when user clicks on remove link" in {
-
-      val userAnswers = UserAnswers(
-        id = value2,
-        data = Json.obj(
-          RemoveSmallProducerConfirmPage.toString -> Json.obj(
-            "producerName" -> value1,
-            "referenceNumber" -> value2,
-            "lowBand" -> value3,
-            "highBand" -> value4
-          )
-        ),
-        smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))).set(RemoveSmallProducerConfirmPage, true).success.value
-
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -178,10 +122,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
           .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, removeSmallProducerConfirmRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
+        val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -189,45 +130,47 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val userAnswers = UserAnswers(
-        id = value2,
-        data = Json.obj(
-          RemoveSmallProducerConfirmPage.toString -> Json.obj(
-            "producerName" -> value1,
-            "referenceNumber" -> value2,
-            "lowBand" -> value3,
-            "highBand" -> value4
+    "must return to small producer details page when no is selected and there are two producers on the list" in {
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(
+        RemoveSmallProducerConfirmPage, true).success.value
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
-        ),
-        smallProducerList = List(SmallProducer(value1, value2, (value3, value4)))).set(RemoveSmallProducerConfirmPage, true).success.value
+          .build()
 
+      running(application) {
+        val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual Call("GET", "/soft-drinks-industry-levy-returns-frontend/small-producer-details").url
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, removeSmallProducerConfirmRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
+        val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", ""))
         val boundForm = form.bind(Map("value" -> ""))
-
         val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, value2, value1)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, sdilReference, producerName)(request, messages(application)).toString
       }
     }
 
     "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
-
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -236,20 +179,15 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
-
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, removeSmallProducerConfirmRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
+        val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-
   }
 }

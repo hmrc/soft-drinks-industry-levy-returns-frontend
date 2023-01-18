@@ -26,6 +26,13 @@ class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
 
+  val id = "id"
+  val superColaProducerAlias = "Super Cola Ltd"
+  val superJuiceProducerAlias = "Super Juice Ltd"
+  val referenceNumber1 = "XZSDIL000000234"
+  val referenceNumber2 = "XZSDIL000000235"
+  val literage = (10L, 20L)
+
   "Navigator" - {
 
     "in Normal mode" - {
@@ -33,7 +40,7 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers(id)) mustBe routes.IndexController.onPageLoad
       }
 
       "navigate to correct page " - {
@@ -44,7 +51,7 @@ class NavigatorSpec extends SpecBase {
 
              def navigate(value: Boolean) = navigator.nextPage(OwnBrandsPage,
               NormalMode,
-              UserAnswers("id", Json.obj("ownBrands" -> value)))
+              UserAnswers(id, Json.obj("ownBrands" -> value)))
 
             "select Yes to navigate to How Many own brands packaged at own sites page" in {
               val result = navigate(true)
@@ -62,7 +69,7 @@ class NavigatorSpec extends SpecBase {
             "select save and continue to navigate to packaged as contract packer page" in {
               val result = navigator.nextPage(BrandsPackagedAtOwnSitesPage,
                 NormalMode,
-                UserAnswers("id", Json.obj("ownBrands" -> true,
+                UserAnswers(id, Json.obj("ownBrands" -> true,
                   "brandsPackagedAtOwnSites" ->
                     Json.obj("lowBand" -> "100", "highBand" -> "100"))))
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
@@ -74,7 +81,7 @@ class NavigatorSpec extends SpecBase {
 
             def navigate(value: Boolean) = navigator.nextPage(PackagedContractPackerPage,
               NormalMode,
-              UserAnswers("id", Json.obj("packagedContractPacker" -> value)))
+              UserAnswers(id, Json.obj("packagedContractPacker" -> value)))
 
             "select Yes to navigate to How Many packaged as contract packer" in {
               val result = navigate(true)
@@ -142,9 +149,9 @@ class NavigatorSpec extends SpecBase {
             "select save and continue to navigate to small producer details page" in {
               val result = navigator.nextPage(AddASmallProducerPage,
                 NormalMode,
-                UserAnswers("id", Json.obj("ownBrands" -> true,
+                UserAnswers(id, Json.obj("ownBrands" -> true,
                   "addASmallProducer" ->
-                    Json.obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> "100", "highBand" -> "100"))))
+                    Json.obj("producerName" -> superColaProducerAlias, "referenceNumber" -> referenceNumber1, "lowBand" -> "100", "highBand" -> "100"))))
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
             }
 
@@ -254,6 +261,122 @@ class NavigatorSpec extends SpecBase {
             }
           }
 
+          "Small producer details" -{
+
+            "should navigate to add a small producer page when yes is selected" in {
+
+              val result = navigator.nextPage(SmallProducerDetailsPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("smallProducerDetails" -> true)))
+
+              result mustBe routes.AddASmallProducerController.onPageLoad(BlankMode)
+
+            }
+
+            "should navigate to add a brought into UK page when no is selected" in {
+
+              val result = navigator.nextPage(SmallProducerDetailsPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("smallProducerDetails" -> false)))
+
+              result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
+
+            }
+
+          }
+
+          "Remove small producer confirm" - {
+
+            "should redirect to add small producer page when user selects yes and clicks on " +
+              "save and continue and the this is the only small producer on the list" in {
+
+              val result = navigator.nextPage(
+                RemoveSmallProducerConfirmPage,
+                NormalMode,
+                UserAnswers(
+                  id,
+                  Json.obj("removeSmallProducerConfirm" -> true),
+                  smallProducerList = List()
+                ))
+              result mustBe routes.AddASmallProducerController.onPageLoad(BlankMode)
+            }
+
+            "should redirect to small producer details page when user selects yes and clicks on " +
+              "save and continue and the there is one small producer on the list" in {
+
+              val result = navigator.nextPage(
+                RemoveSmallProducerConfirmPage,
+                NormalMode,
+                UserAnswers(
+                  id,
+                  Json.obj("removeSmallProducerConfirm" -> true),
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))
+                ))
+              result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+            }
+
+            "should redirect to small producer details page when user selects yes and clicks on " +
+              "save and continue and the there is more than one small producer on the list" in {
+
+              val result = navigator.nextPage(
+                RemoveSmallProducerConfirmPage,
+                NormalMode,
+                UserAnswers(
+                  id,
+                  Json.obj("removeSmallProducerConfirm" -> true),
+                  smallProducerList = List(
+                    SmallProducer(superColaProducerAlias, referenceNumber1, literage),
+                    SmallProducer(superJuiceProducerAlias, referenceNumber2, literage))
+                ))
+              result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+            }
+
+            "should redirect to small producer details page when user selects no and clicks on " +
+              "save and continue and the this is the only small producer on the list" in {
+
+              val result = navigator.nextPage(
+                RemoveSmallProducerConfirmPage,
+                NormalMode,
+                UserAnswers(
+                  id,
+                  Json.obj("removeSmallProducerConfirm" -> false),
+                  smallProducerList = List()
+                ))
+              result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+            }
+
+            "should redirect to small producer details page when user selects no and clicks on " +
+              "save and continue and the there is one small producer on the list" in {
+
+              val result = navigator.nextPage(
+                RemoveSmallProducerConfirmPage,
+                NormalMode,
+                UserAnswers(
+                  id,
+                  Json.obj("removeSmallProducerConfirm" -> false),
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))
+                ))
+              result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+            }
+
+            "should redirect to small producer details page when user selects no and clicks on " +
+              "save and continue and the there is more than one small producer on the list" in {
+
+              val result = navigator.nextPage(
+                RemoveSmallProducerConfirmPage,
+                NormalMode,
+                UserAnswers(
+                  id,
+                  Json.obj("removeSmallProducerConfirm" -> false),
+                  smallProducerList = List(
+                    SmallProducer(superColaProducerAlias, referenceNumber1, literage),
+                    SmallProducer(superJuiceProducerAlias, referenceNumber2, literage))
+                )
+              )
+              result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+            }
+
+          }
 
         }
       }
@@ -264,8 +387,9 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe routes.CheckYourAnswersController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad
       }
     }
   }
+
 }
