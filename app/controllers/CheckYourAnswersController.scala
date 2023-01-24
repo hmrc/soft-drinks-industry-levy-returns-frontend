@@ -52,12 +52,26 @@ class CheckYourAnswersController @Inject()(
         rows = Seq.empty
       )
 
+      val alias: String = Await.result(sdilConnector.retrieveSubscription(request.sdilEnrolment,"sdil").map(subscription => subscription.get.orgName), 10.seconds)
+      val returnDate: String = request.returnPeriod.get.quarter match {
+        case 0 => "January to March " + request.returnPeriod.get.year
+        case 1 => "April to June " + request.returnPeriod.get.year
+        case 2 => "July to September " + request.returnPeriod.get.year
+        case 3 => "October to December " + request.returnPeriod.get.year
+      }
+
+      //Warehouse
+      val tradingName:String = "Soft Juice Ltd"
+      val line1: String = "3 Prospect St"
+      val line2: String = "Reading"
+      val line3: String = "Berkshire"
+      val line4: String = "United Kingdom"
+      val postcode: String = "CT44 0DF"
+      val warhouseList:List[Warehouse] = List(Warehouse(tradingName,Address(line1, line2, line3, line4, postcode)))
+
 //================================================================TODO Calculation START
       val currencyFormatter =
         java.text.NumberFormat.getCurrencyInstance(Locale.UK)
-
-      def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String =
-        currencyFormatter.format(d)
 
       val costLower = BigDecimal(config.underlying.getString("band-costs.lowBand"))
       val costHigher = BigDecimal(config.underlying.getString("band-costs.highBand"))
@@ -65,6 +79,8 @@ class CheckYourAnswersController @Inject()(
       def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
         sdilConnector.checkSmallProducerStatus(sdilRef, period)
 
+      def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String =
+        currencyFormatter.format(d)
 
       // Page 2 HowManyAsAContractPacker
       val howManyAsAContractPackerAnswers = request.userAnswers.get(HowManyAsAContractPackerPage)
@@ -187,7 +203,6 @@ class CheckYourAnswersController @Inject()(
       def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
         l.headOption.fold(BigDecimal(0))(_._2)
 
-
       val broughtForward = if(config.underlying.getBoolean("balanceAllEnabled")) {
          sdilConnector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x =>
           extractTotal(listItemsWithTotal(x))
@@ -201,21 +216,6 @@ class CheckYourAnswersController @Inject()(
                                                costHigher,
                                                smallProducerAnswerListTotal
                                               ) - Await.result(broughtForward,20.seconds)
-
- //================================================================TODO  Calculation END
-
-      //SmallProducer
-      val alias: String = "Vegan Cola"
-      val returnDate: String = "July to September 2022"
-
-      //Warehouse
-      val tradingName:String = "Soft Juice Ltd"
-      val line1: String = "3 Prospect St"
-      val line2: String = "Reading"
-      val line3: String = "Berkshire"
-      val line4: String = "United Kingdom"
-      val postcode: String = "CT44 0DF"
-      val warhouseList:List[Warehouse] = List(Warehouse(tradingName,Address(line1, line2, line3, line4, postcode)))
 
       def smallProducerCheck(smallProducerList:List[SmallProducer]): Option[List[SmallProducer]] = {
         if(smallProducerList.length > 0){
@@ -240,21 +240,21 @@ class CheckYourAnswersController @Inject()(
       Ok(view(
               mode,
               list,
-              alias,
-              returnDate,
-              formatAmountOfMoneyWithPoundSign(calculateSubtotal(
+              alias = alias:String,
+              returnDate = returnDate:String,
+              quarter = formatAmountOfMoneyWithPoundSign(calculateSubtotal(
                 costLower,
                 costHigher,
-                smallProducerAnswerListTotal)),
-              formatAmountOfMoneyWithPoundSign(Await.result(broughtForward ,20.seconds)),
-              formatAmountOfMoneyWithPoundSign(total),
-              financialStatus(total),
-              smallProducerCheck(request.userAnswers.smallProducerList),
-              warehouseCheck(warhouseList),
-              lowBandAnswerList:List[Long],
-              highBandAnswerList:List[Long],
-              lowBandAnswerListCost:List[String],
-              highBandAnswerListCost:List[String]
+                smallProducerAnswerListTotal)):String,
+              balanceBroughtForward = formatAmountOfMoneyWithPoundSign(Await.result(broughtForward ,20.seconds)):String,
+              total = formatAmountOfMoneyWithPoundSign(total): String,
+              financialStatus = financialStatus(total): String,
+              smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList):Option[List[SmallProducer]],
+              warehouseCheck = warehouseCheck(warhouseList),//TODO COLLECT WAREHOUSE LIST
+              lowBandAnswerList = lowBandAnswerList:List[Long],
+              highBandAnswerList = highBandAnswerList:List[Long],
+              lowBandAnswerListCost = lowBandAnswerListCost:List[String],
+              highBandAnswerListCost = highBandAnswerListCost:List[String]
               ))
   }
 }

@@ -85,18 +85,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
         contentAsString(result) mustEqual view(
           NormalMode,
           list,
-          alias,
-          returnDate,
-          zeroSubtotal,
-          zeroBroughtForwardTotal,
-          zeroTotal,
-          zeroTotal,
-          emptySmallProducerList,
-          emptyWarhouseList,
-          lowBandAnswerList,
-          highBandAnswerList,
-          lowBandAnswerListCost,
-          highBandAnswerListCost
+          alias = alias,
+          returnDate = returnDate,
+          quarter = zeroSubtotal,
+          balanceBroughtForward = zeroBroughtForwardTotal,
+          total = zeroTotal,
+          financialStatus = zeroTotal,
+          smallProducerCheck = emptySmallProducerList,
+          warehouseCheck = emptyWarhouseList,
+          lowBandAnswerList = lowBandAnswerList,
+          highBandAnswerList = highBandAnswerList,
+          lowBandAnswerListCost = lowBandAnswerListCost,
+          highBandAnswerListCost = highBandAnswerListCost
         )(request, messages(application)).toString
       }
     }
