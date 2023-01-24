@@ -16,30 +16,278 @@
 
 package controllers
 
-import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions._
+import connectors.SoftDrinksIndustryLevyConnector
+import models.{Address, FinancialLineItem, Mode, ReturnPeriod, SmallProducer, Warehouse}
+import pages._
+import viewmodels.govuk.summarylist._
+import views.html.CheckYourAnswersView
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.govuk.summarylist._
-import views.html.CheckYourAnswersView
+import play.api.Configuration
+import scala.math.BigDecimal
+
+import com.google.inject.Inject
+import scala.concurrent.{Await, ExecutionContext, Future}
+import java.util.Locale
+import scala.concurrent.duration.DurationInt
+
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
+                                            config: Configuration,
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
+                                            sdilConnector: SoftDrinksIndustryLevyConnector,
                                             view: CheckYourAnswersView
-                                          ) extends FrontendBaseController with I18nSupport {
+                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
       val list = SummaryListViewModel(
         rows = Seq.empty
       )
 
-      Ok(view(list))
+//================================================================TODO Calculation START
+      val currencyFormatter =
+        java.text.NumberFormat.getCurrencyInstance(Locale.UK)
+
+      def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String =
+        currencyFormatter.format(d)
+
+      val costLower = BigDecimal(config.underlying.getString("band-costs.lowBand"))
+      val costHigher = BigDecimal(config.underlying.getString("band-costs.highBand"))
+
+      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+        sdilConnector.checkSmallProducerStatus(sdilRef, period)
+
+
+      // Page 2 HowManyAsAContractPacker
+      val howManyAsAContractPackerAnswers = request.userAnswers.get(HowManyAsAContractPackerPage)
+      val howManyAsAContractPackerLowBand = if(request.userAnswers.get(PackagedContractPackerPage) == Some(true)){
+        howManyAsAContractPackerAnswers.map(answer => answer.lowBand).getOrElse(0L)}else 0L
+      val howManyAsAContractPackerLowBandCost = costLower * howManyAsAContractPackerLowBand * 1
+      val howManyAsAContractPackerHighBand = if(request.userAnswers.get(PackagedContractPackerPage) == Some(true)){
+        howManyAsAContractPackerAnswers.map(answer => answer.highBand).getOrElse(0L)}else 0L
+      val howManyAsAContractPackerHighBandCost = costHigher * howManyAsAContractPackerHighBand * 1
+      val howManyAsAContractPackerTotal = howManyAsAContractPackerLowBandCost + howManyAsAContractPackerHighBandCost
+
+
+      val smallProducerDetailsAnswers = request.userAnswers.smallProducerList
+      val smallProducerDetailsLowBand = smallProducerDetailsAnswers.map(answer => answer.litreage._1).sum
+      val smallProducerDetailsLowBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._1 * costLower * 0).sum
+      val smallProducerDetailsHighBand = smallProducerDetailsAnswers.map(answer => answer.litreage._2).sum
+      val smallProducerDetailsHighBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._2 * costLower * 0).sum
+      val smallProducerDetailsTotal = smallProducerDetailsLowBandCost + smallProducerDetailsHighBandCost
+
+      // Page 3 add-small-producer
+      val howManyBroughtIntoUkAnswers = request.userAnswers.get(HowManyBroughtIntoUkPage)
+      val howManyBroughtIntoUkLowBand = if(request.userAnswers.get(BroughtIntoUKPage) == Some(true)){
+        howManyBroughtIntoUkAnswers.map(answer => answer.lowBand).getOrElse(0L)} else 0L
+      val howManyBroughtIntoUkLowBandCost = (costLower * howManyBroughtIntoUkLowBand * 1)
+      val howManyBroughtIntoUkHighBand = if(request.userAnswers.get(BroughtIntoUKPage) == Some(true)){
+        howManyBroughtIntoUkAnswers.map(answer => answer.highBand).getOrElse(0L)}else 0L
+      val howManyBroughtIntoUkHighBandCost = (costHigher * howManyBroughtIntoUkHighBand * 1)
+      val howManyBroughtIntoUkTotal = howManyBroughtIntoUkLowBandCost + howManyBroughtIntoUkHighBandCost
+
+      val howManyBroughtIntoTheUKFromSmallProducersAnswers = request.userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage)
+      val howManyBroughtIntoTheUKFromSmallProducersLowBand = if(request.userAnswers.get(BroughtIntoUkFromSmallProducersPage) == Some(true)){
+        howManyBroughtIntoTheUKFromSmallProducersAnswers.map(answer => answer.lowBand).getOrElse(0L)}else 0L
+      val howManyBroughtIntoTheUKFromSmallProducersLowBandCost = (costLower * howManyBroughtIntoTheUKFromSmallProducersLowBand * 1)
+      val howManyBroughtIntoTheUKFromSmallProducersHighBand = if(request.userAnswers.get(BroughtIntoUkFromSmallProducersPage) == Some(true)){
+        howManyBroughtIntoTheUKFromSmallProducersAnswers.map(answer => answer.highBand).getOrElse(0L)}else 0L
+      val howManyBroughtIntoTheUKFromSmallProducersHighBandCost = (costHigher * howManyBroughtIntoTheUKFromSmallProducersHighBand * 1)
+      val howManyBroughtIntoTheUKFromSmallProducersTotal = howManyBroughtIntoTheUKFromSmallProducersLowBandCost + howManyBroughtIntoTheUKFromSmallProducersHighBandCost
+
+      val howManyCreditsForExportAnswers = request.userAnswers.get(HowManyCreditsForExportPage)
+      val howManyCreditsForExportLowBand = if(request.userAnswers.get(ClaimCreditsForExportsPage) == Some(true)){
+        howManyCreditsForExportAnswers.map(answer => answer.lowBand).getOrElse(0L)}else 0L
+      val howManyCreditsForExportLowBandCost = (costLower * howManyCreditsForExportLowBand * -1)
+      val howManyCreditsForExportHighBand = if(request.userAnswers.get(ClaimCreditsForExportsPage) == Some(true)){
+        howManyCreditsForExportAnswers.map(answer => answer.highBand).getOrElse(0L)}else 0L
+      val howManyCreditsForExportHighBandCost = (costLower * howManyCreditsForExportHighBand * -1)
+      val howManyCreditsForExportTotal = howManyCreditsForExportLowBandCost + costHigher * howManyCreditsForExportHighBand * -1
+
+      val howManyCreditsForLostDamagedAnswers = request.userAnswers.get(HowManyCreditsForLostDamagedPage)
+      val howManyCreditsForLostDamagedLowBand = if(request.userAnswers.get(ClaimCreditsForLostDamagedPage) == Some(true)){
+        howManyCreditsForLostDamagedAnswers.map(answer => answer.lowBand).getOrElse(0L)}else 0L
+      val howManyCreditsForLostDamagedLowBandCost = (costLower * howManyCreditsForLostDamagedLowBand * -1)
+      val howManyCreditsForLostDamagedHighBand = if(request.userAnswers.get(ClaimCreditsForLostDamagedPage) == Some(true)){
+        howManyCreditsForLostDamagedAnswers.map(answer => answer.highBand).getOrElse(0L)}else 0L
+      val howManyCreditsForLostDamagedTotal = costLower * howManyCreditsForLostDamagedLowBand * -1 + costHigher * howManyCreditsForLostDamagedHighBand * -1
+
+      val lowBandAnswerList:List[Long]= List(
+        howManyAsAContractPackerLowBand,
+        smallProducerDetailsLowBand,
+        howManyBroughtIntoUkLowBand,
+        howManyBroughtIntoTheUKFromSmallProducersLowBand,
+        howManyCreditsForExportLowBand,
+        howManyCreditsForLostDamagedLowBand)
+
+      val highBandAnswerList:List[Long] = List(
+        howManyAsAContractPackerHighBand,
+        smallProducerDetailsHighBand,
+        howManyBroughtIntoUkHighBand,
+        howManyBroughtIntoTheUKFromSmallProducersHighBand,
+        howManyCreditsForExportHighBand,
+        howManyCreditsForLostDamagedHighBand)
+
+      val lowBandAnswerListCost:List[String] = List(
+        howManyAsAContractPackerLowBandCost,
+        smallProducerDetailsLowBandCost,
+        howManyBroughtIntoUkLowBandCost,
+        howManyBroughtIntoTheUKFromSmallProducersLowBandCost,
+        howManyCreditsForExportLowBandCost,
+        howManyCreditsForLostDamagedLowBandCost).map(answers => formatAmountOfMoneyWithPoundSign(answers))
+
+
+
+      val highBandAnswerListCost:List[String] = List(
+        howManyAsAContractPackerHighBandCost,
+        smallProducerDetailsHighBandCost,
+        howManyBroughtIntoUkHighBandCost,
+        howManyBroughtIntoTheUKFromSmallProducersHighBandCost,
+        howManyCreditsForExportHighBandCost,
+        howManyCreditsForLostDamagedLowBandCost).map(answers => formatAmountOfMoneyWithPoundSign(answers))
+
+      def calculateSubtotal(
+                             costLower:BigDecimal,
+                             costHigher:BigDecimal,
+                             howManyAsAContractPackerTotal:BigDecimal,
+                             smallProducerDetailsTotal:BigDecimal,
+                             howManyBroughtIntoUkTotal:BigDecimal,
+                             howManyBroughtIntoTheUKFromSmallProducersTotal:BigDecimal,
+                             howManyCreditsForExportTotal:BigDecimal,
+                             howManyCreditsForLostDamagedTotal:BigDecimal
+                           ): BigDecimal = {
+        if(!Await.result(checkSmallProducerStatus(request.sdilEnrolment,request.returnPeriod.get),20.seconds).getOrElse(true)){
+
+          val subtotal =  (
+            howManyAsAContractPackerTotal+
+            smallProducerDetailsTotal +
+            howManyCreditsForLostDamagedTotal +
+            howManyCreditsForExportTotal +
+            howManyBroughtIntoTheUKFromSmallProducersTotal +
+            howManyBroughtIntoUkTotal
+            )
+          subtotal
+          }else{
+          val ownBranduserAnswers = request.userAnswers.get(BrandsPackagedAtOwnSitesPage)
+          val lowBand = ownBranduserAnswers.map(answer => answer.lowBand).getOrElse(0L)
+          val highBand = ownBranduserAnswers.map(answer => answer.highBand).getOrElse(0L)
+          val ownBrandTotal = costLower * lowBand * 1 + costHigher * highBand * 1
+          val subtotal = (
+            ownBrandTotal +
+            howManyAsAContractPackerTotal+
+            smallProducerDetailsTotal +
+            howManyCreditsForLostDamagedTotal +
+            howManyCreditsForExportTotal +
+            howManyBroughtIntoTheUKFromSmallProducersTotal +
+            howManyBroughtIntoUkTotal
+          )
+          subtotal
+        }
+        }
+
+      //TODO -> Brought Forward from older returns
+
+      def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
+        items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
+          (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
+        }
+
+      def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
+        l.headOption.fold(BigDecimal(0))(_._2)
+
+      val broughtForwardTrue =  sdilConnector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x =>
+        extractTotal(listItemsWithTotal(x))
+      }
+
+      val broughtForwardFalse =  sdilConnector.balance(request.sdilEnrolment, withAssessment = false)
+
+      val total:BigDecimal = calculateSubtotal(costLower,
+                                               costHigher,
+                                               howManyAsAContractPackerTotal,
+                                               smallProducerDetailsTotal,
+                                               howManyBroughtIntoUkTotal,
+                                               howManyBroughtIntoTheUKFromSmallProducersTotal,
+                                               howManyCreditsForExportTotal,
+                                               howManyCreditsForLostDamagedTotal
+                                              ) - Await.result(broughtForwardFalse ,20.seconds)
+
+ //================================================================TODO  Calculation END
+
+      //SmallProducer
+
+      val highBand: Long = 10000L
+      val lowBand: Long = 10000L
+      val sdilRef:String = "XCSDIL000000069"
+      val alias: String = "Vegan Cola"
+      val returnDate: String = "July to September 2022"
+
+      //Warehouse
+      val tradingName:String = "Soft Juice Ltd"
+      val line1: String = "3 Prospect St"
+      val line2: String = "Reading"
+      val line3: String = "Berkshire"
+      val line4: String = "United Kingdom"
+      val postcode: String = "CT44 0DF"
+      val warhouseList:List[Warehouse] = List(Warehouse(tradingName,Address(line1, line2, line3, line4, postcode)))
+      /* TODO -> This will be need for checking if we need to display producers
+      val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
+      */
+
+      def smallProducerCheck(smallProducerList:List[SmallProducer]): Option[List[SmallProducer]] = {
+        if(smallProducerList.length > 0){
+          Some(smallProducerList)
+        }else None
+      }
+
+      def warehouseCheck(warehouseList:List[Warehouse]): Option[List[Warehouse]] = {
+        if(warehouseList.length > 0){
+          Some(warehouseList)
+        }else None
+      }
+
+      // alias: String = sdilConnector.retrieveSubscription(request.sdilEnrolment,"sdil").map(subscription => subscription.get.orgName).toString
+      // val returnDate: String = request.returnPeriod.get.toString
+
+
+      def financialStatus (total:BigDecimal):String = {
+        total match {
+          case total if total > 0 => "amountToPay"
+          case total if total < 0 => "creditedPay"
+          case total if total == 0 => "noPayNeeded"
+        }
+      }
+
+      Ok(view(
+              mode,
+              list,
+              alias,
+              returnDate,
+              formatAmountOfMoneyWithPoundSign(calculateSubtotal(
+                costLower,
+                costHigher,
+                howManyAsAContractPackerTotal,
+                smallProducerDetailsTotal,
+                howManyBroughtIntoUkTotal,
+                howManyBroughtIntoTheUKFromSmallProducersTotal,
+                howManyCreditsForExportTotal,
+                howManyCreditsForLostDamagedTotal)),
+              formatAmountOfMoneyWithPoundSign(Await.result(broughtForwardFalse ,20.seconds)),
+              formatAmountOfMoneyWithPoundSign(total),
+              financialStatus(total),
+              smallProducerCheck(request.userAnswers.smallProducerList),
+              warehouseCheck(warhouseList),
+              lowBandAnswerList:List[Long],
+              highBandAnswerList:List[Long],
+              lowBandAnswerListCost:List[String],
+              highBandAnswerListCost:List[String]
+              ))
   }
 }

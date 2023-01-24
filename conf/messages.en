@@ -10,11 +10,13 @@ site.no = No
 site.yes = Yes
 site.continue = Continue
 site.saveContinue = Save and continue
+site.confirmDetailsSend = Confirm details and send return
 site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.updateReg = Update registration
+site.printPage = Print this page
 
 date.day = Day
 date.month = Month
@@ -409,3 +411,30 @@ secondaryWarehouseDetails.error.required = Select yes if you want to add another
 secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
 secondaryWarehouseDetails.remove.hidden = remove UK warehouse
+
+checkYourAnswers.title = Check your answers before sending your return
+checkYourAnswers.heading = Check your answers before sending your return
+
+checkYourAnswers.howManyAsAContractPacker= Contract packed at your own site
+checkYourAnswers.howManyBroughtIntoUk = Contract packed for registered small producers
+checkYourAnswers.howManyBroughtIntoTheUKFromSmallProducers = Brought into the UK
+checkYourAnswers.broughtIntoUkFromSmallProducers = Brought into the UK from small producers
+checkYourAnswers.howManyCreditsForExport = Exported
+checkYourAnswers.howManyCreditsForLostDamaged = Lost or destroyed
+
+
+
+
+
+checkYourAnswers.amountToPay.title = Amount to pay
+checkYourAnswers.creditedPay.title = Amount you will be credited
+checkYourAnswers.noPayNeeded.title = You do not need to pay anything
+checkYourAnswers.amountToPay.quarter = Total this quarter
+checkYourAnswers.amountToPay.balanceBroughtForward = Balance brought forward
+checkYourAnswers.amountToPay.total = Total
+checkYourAnswers.smallProducerAdded.title = Packaging sites added
+checkYourAnswers.smallProducerAdded.paragraph = You added {0} UK packaging site
+checkYourAnswers.smallProducerAdded.link = Edit UK packaging sites
+checkYourAnswers.warehouseAdded.title = Warehouses added
+checkYourAnswers.warehouseAdded.paragraph = You added {0} warehouse
+checkYourAnswers.warehouseAdded.link = Edit UK warehouses

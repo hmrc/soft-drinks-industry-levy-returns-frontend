@@ -12,7 +12,7 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
+GET        /check-your-answers                           controllers.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
@@ -90,27 +90,27 @@ POST       /claim-credits-for-exports                        controllers.ClaimCr
 GET        /change-claim-credits-for-exports                  controllers.ClaimCreditsForExportsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-claim-credits-for-exports                  controllers.ClaimCreditsForExportsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /small-producer-details                        controllers.SmallProducerDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /small-producer-details                        controllers.SmallProducerDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-small-producer-details                 controllers.SmallProducerDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-small-producer-details                  controllers.SmallProducerDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /small-producer-details                                     controllers.SmallProducerDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /small-producer-details                                     controllers.SmallProducerDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-small-producer-details                              controllers.SmallProducerDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-small-producer-details                              controllers.SmallProducerDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /return-change-registration                       controllers.ReturnChangeRegistrationController.onPageLoad()
-POST        /return-change-registration                       controllers.ReturnChangeRegistrationController.onSubmit()
+GET        /return-change-registration                                 controllers.ReturnChangeRegistrationController.onPageLoad()
+POST        /return-change-registration                                controllers.ReturnChangeRegistrationController.onSubmit()
 
-GET        /remove-small-producer-confirm/:sdil                       controllers.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
-POST       /remove-small-producer-confirm/:sdil                       controllers.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
+GET        /remove-small-producer-confirm/:sdil                         controllers.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
+POST       /remove-small-producer-confirm/:sdil                         controllers.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
 
-GET        /add-small-producer                              controllers.AddASmallProducerController.onPageLoad(mode: Mode = NormalMode)
-GET        /add-small-producer-edit/:sdil                     controllers.AddASmallProducerController.onEditPageLoad(mode: Mode = EditMode, sdil: String)
-POST       /add-small-producer-edit/:sdil                     controllers.AddASmallProducerController.onEditPageSubmit(mode: Mode = EditMode, sdil: String)
-POST       /add-small-producer                              controllers.AddASmallProducerController.onSubmit(mode: Mode = NormalMode)
-GET        /add-small-producer-next                        controllers.AddASmallProducerController.onPageLoad(mode: Mode = BlankMode)
-POST       /add-small-producer-next                      controllers.AddASmallProducerController.onSubmit(mode: Mode = BlankMode)
-GET        /change-add-small-producer                  controllers.AddASmallProducerController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-add-small-producer                 controllers.AddASmallProducerController.onSubmit(mode: Mode = CheckMode)
+GET        /add-small-producer                                          controllers.AddASmallProducerController.onPageLoad(mode: Mode = NormalMode)
+GET        /add-small-producer-edit/:sdil                               controllers.AddASmallProducerController.onEditPageLoad(mode: Mode = EditMode, sdil: String)
+POST       /add-small-producer-edit/:sdil                               controllers.AddASmallProducerController.onEditPageSubmit(mode: Mode = EditMode, sdil: String)
+POST       /add-small-producer                                          controllers.AddASmallProducerController.onSubmit(mode: Mode = NormalMode)
+GET        /add-small-producer-next                                     controllers.AddASmallProducerController.onPageLoad(mode: Mode = BlankMode)
+POST       /add-small-producer-next                                     controllers.AddASmallProducerController.onSubmit(mode: Mode = BlankMode)
+GET        /change-add-small-producer                                   controllers.AddASmallProducerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-add-small-producer                                   controllers.AddASmallProducerController.onSubmit(mode: Mode = CheckMode)
 
-GET        /secondary-warehouse-details                        controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /secondary-warehouse-details                        controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-secondary-warehouse-details                  controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-secondary-warehouse-details                  controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /secondary-warehouse-details                                 controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /secondary-warehouse-details                                 controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-secondary-warehouse-details                          controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-secondary-warehouse-details                          controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = CheckMode)

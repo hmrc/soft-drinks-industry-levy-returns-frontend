@@ -16,7 +16,7 @@
 
 package connectors
 
-import models.ReturnPeriod
+import models.{FinancialLineItem, ReturnPeriod}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -59,6 +59,21 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {
     val  m = http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
     m.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
+  }
+
+
+  def balance(
+               sdilRef: String,
+               withAssessment: Boolean
+             )(implicit hc: HeaderCarrier): Future[BigDecimal] =
+    http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
+
+  def balanceHistory(
+                      sdilRef: String,
+                      withAssessment: Boolean
+                    )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+    import FinancialLineItem.formatter
+    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
 
 }

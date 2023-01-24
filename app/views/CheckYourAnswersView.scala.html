@@ -16,14 +16,252 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    formHelper: FormWithCSRF,
+    govukSummaryList: GovukSummaryList,
+    govukTable : GovukTable,
+    govukButton: GovukButton
 )
 
-@(list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(mode: Mode,
+  list: SummaryList,
+  alias: String,
+  returnDate: String,
+  quarter: String,
+  balanceBroughtForward: String,
+  total: String,
+  financialStatus: String,
+  smallProducerCheck: Option[List[SmallProducer]],
+  warehouseCheck: Option[List[Warehouse]],
+  lowBandAnswerList:List[Long],
+  highBandAnswerList:List[Long],
+  lowBandAnswerListCost:List[String],
+  highBandAnswerListCost:List[String]
+  )(implicit request: Request[_], messages: Messages)
+
+
+@costBreakdown = {
+
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+                    SummaryListRow(
+                        key = Key(
+                        content = Text(messages("checkYourAnswers.howManyAsAContractPacker"))
+                    ),
+                    value = Value(
+                    content = HtmlContent(s"""
+                    <b>Low Band</b> ${lowBandAnswerList.apply(0)} Litres <br>
+                    <b>Levy</b> ${lowBandAnswerListCost.apply(0)} <br>
+                    <b>High Band</b> ${highBandAnswerList.apply(0)} Litres <br>
+                    <b>Levy</b> ${highBandAnswerListCost.apply(0)} """)
+                    ),
+                    actions = Some(Actions(
+                        items = Seq(
+                            ActionItem(
+                                href = "/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer",
+                                content = Text("Change"),
+                                visuallyHiddenText = Some("name")
+                            )
+                        )
+                    ))
+        ),
+        SummaryListRow(
+            key = Key(
+                content = Text(messages("checkYourAnswers.howManyBroughtIntoUk"))
+            ),
+        value = Value(
+            content = HtmlContent(s"""
+            <b>Low Band</b> ${lowBandAnswerList.apply(1)} Litres  <br>
+            <b>Levy</b> ${lowBandAnswerListCost.apply(1)} <br>
+            <b>High Band</b> ${highBandAnswerList.apply(1)} Litres <br>
+            <b>Levy</b> ${highBandAnswerListCost.apply(1)} """)
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = if(smallProducerCheck != None){"/soft-drinks-industry-levy-returns-frontend/small-producer-details"}else{"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers"},
+                        content = Text("Change"),
+                        visuallyHiddenText = Some("date of birth")
+                    )
+                )
+            ))
+        ),
+        SummaryListRow(
+            key = Key(
+                content = Text(messages("checkYourAnswers.howManyBroughtIntoTheUKFromSmallProducers"))
+            ),
+            value = Value(
+                content = HtmlContent(s"""
+                <b>Low Band</b> ${lowBandAnswerList.apply(2)} Litres  <br>
+                <b>Levy</b> ${lowBandAnswerListCost.apply(2)} <br>
+                <b>High Band</b> ${highBandAnswerList.apply(2)} Litres <br>
+                <b>Levy</b> ${highBandAnswerListCost.apply(2)} """)
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/soft-drinks-industry-levy-returns-frontend/brought-into-uk",
+                        content = Text("Change"),
+                        visuallyHiddenText = Some("address")
+                    )
+                )
+            ))
+        ),
+        SummaryListRow(
+            key = Key(
+                content = Text(messages("checkYourAnswers.broughtIntoUkFromSmallProducers"))
+            ),
+            value = Value(
+                content = HtmlContent(s"""
+                <b>Low Band</b> ${lowBandAnswerList.apply(3)} Litres  <br>
+                <b>Levy</b> ${lowBandAnswerListCost.apply(3)} <br>
+                <b>High Band</b> ${highBandAnswerList.apply(3)} Litres <br>
+                <b>Levy</b> ${highBandAnswerListCost.apply(3)} """)
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/soft-drinks-industry-levy-returns-frontend/brought-into-uk-from-small-producers",
+                        content = Text("Change"),
+                        visuallyHiddenText = Some("address")
+                    )
+                )
+            ))
+        ),
+        SummaryListRow(
+            key = Key(
+                content = Text(messages("checkYourAnswers.howManyCreditsForExport"))
+            ),
+            value = Value(
+                content = HtmlContent(s"""
+                <b>Low Band</b> ${lowBandAnswerList.apply(4)} Litres  <br>
+                <b>Levy</b> ${lowBandAnswerListCost.apply(4)} <br>
+                <b>High Band</b> ${highBandAnswerList.apply(4)} Litres <br>
+                <b>Levy</b> ${highBandAnswerListCost.apply(4)} """)
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/soft-drinks-industry-levy-returns-frontend/claim-credits-for-exports",
+                        content = Text("Change"),
+                        visuallyHiddenText = Some("address")
+                    )
+                )
+            ))
+        ),
+        SummaryListRow(
+            key = Key(
+                content = Text(messages("checkYourAnswers.howManyCreditsForLostDamaged"))
+            ),
+            value = Value(
+                content = HtmlContent(s"""
+                <b>Low Band</b> ${lowBandAnswerList.apply(5)} Litres  <br>
+                <b>Levy</b> ${lowBandAnswerListCost.apply(5)} <br>
+                <b>High Band</b> ${highBandAnswerList.apply(5)} Litres <br>
+                <b>Levy</b> ${highBandAnswerListCost.apply(5)} """)
+            ),
+            actions = Some(Actions(
+            items = Seq(
+                ActionItem(
+                    href = "/soft-drinks-industry-levy-returns-frontend/claim-credits-for-lost-damaged",
+                    content = Text("Change"),
+                    visuallyHiddenText = Some("address")
+                )
+            )
+            ))
+            )
+        )
+    ))
+}
+
+@amountToPayTable = {
+    @govukTable(Table(
+        rows = Seq(
+                    Seq(
+                        TableRow(
+                                 content = Text(messages("checkYourAnswers.amountToPay.quarter"))
+                                ),
+                        TableRow(
+                                content = Text(quarter)
+                                )
+                        ),
+                    Seq(
+                        TableRow(
+                                content = Text(messages("checkYourAnswers.amountToPay.balanceBroughtForward"))
+                                ),
+                        TableRow(
+                                content = Text(balanceBroughtForward)
+                                )
+                        ),
+                    Seq(
+                        TableRow(
+                                content = Text(messages("checkYourAnswers.amountToPay.total"))
+                                ),
+                        TableRow(
+                                content = Text(total)
+                                )
+                        )
+                    ),
+                    head = None,
+                    caption =  financialStatus match {
+                                    case "amountToPay" =>  Some(messages("checkYourAnswers.amountToPay.title"))
+                                    case "creditedPay" =>  Some(messages("checkYourAnswers.creditedPay.title"))
+                                    case "noPayNeeded" =>  Some(messages("checkYourAnswers.noPayNeeded.title"))
+                                },
+                    captionClasses = "govuk-table__caption--l",
+                    firstCellIsHeader = true
+        ))
+}
+
+@smallProducerAdded = {
+    <h1 class="govuk-heading-l">@messages("checkYourAnswers.smallProducerAdded.title")</h1>
+    <p class="govuk-body">@messages("checkYourAnswers.smallProducerAdded.paragraph", smallProducerCheck.get.length)
+        <br>
+        <a class="govuk-link" href="/soft-drinks-industry-levy-returns-frontend/small-producer-details">
+            @messages("checkYourAnswers.smallProducerAdded.link")
+        </a>
+    </p>
+
+}
+
+@warehouseAdded = {
+    <h1 class="govuk-heading-l">@messages("checkYourAnswers.warehouseAdded.title")</h1>
+    <p class="govuk-body">@messages("checkYourAnswers.warehouseAdded.paragraph", warehouseCheck.get.length)
+        <br>
+        <a class="govuk-link" href="/soft-drinks-industry-levy-returns-frontend/ask-secondary-warehouses-in-return">
+            @messages("checkYourAnswers.warehouseAdded.link")
+        </a>
+    </p>
+}
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+    @formHelper(action = routes.SmallProducerDetailsController.onSubmit(mode), 'autoComplete -> "off") {
 
-    @govukSummaryList(list)
+        <span class="govuk-caption-xl"> @alias - @returnDate </span>
+        <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+
+        @govukSummaryList(list)
+        @costBreakdown
+
+
+        @amountToPayTable
+
+        @if(smallProducerCheck != None){
+            @smallProducerAdded
+        }
+
+        @if(warehouseCheck != None){
+            @warehouseAdded
+        }
+
+        <h1 class="govuk-heading-m">Send your return</h1>
+        <p class="govuk-body">By submitting this application you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
+
+        @govukButton(
+        ButtonViewModel(messages("site.confirmDetailsSend"))
+        )
+    }
+        <a class="govuk-link" href="JavaScript: window.print()">
+            @messages("site.printPage")
+        </a>
 }

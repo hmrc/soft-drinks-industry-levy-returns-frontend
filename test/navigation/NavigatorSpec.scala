@@ -248,7 +248,7 @@ class NavigatorSpec extends SpecBase {
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
                 val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.IndexController.onPageLoad //TODO change it to check your answers page once ready
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
               }
 
             }
