@@ -52,7 +52,8 @@ class CheckYourAnswersController @Inject()(
         rows = Seq.empty
       )
 
-      val alias: String = Await.result(sdilConnector.retrieveSubscription(request.sdilEnrolment,"sdil").map(subscription => subscription.get.orgName), 10.seconds)
+      val alias: String = Await.result(sdilConnector.retrieveSubscription(request.sdilEnrolment,"sdil").map(
+        subscription => subscription.get.orgName), 10.seconds)
       val returnDate: String = request.returnPeriod.get.quarter match {
         case 0 => "January to March " + request.returnPeriod.get.year
         case 1 => "April to June " + request.returnPeriod.get.year
@@ -76,11 +77,13 @@ class CheckYourAnswersController @Inject()(
       val costLower = BigDecimal(config.underlying.getString("band-costs.lowBand"))
       val costHigher = BigDecimal(config.underlying.getString("band-costs.highBand"))
 
-      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
+      def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] = {
         sdilConnector.checkSmallProducerStatus(sdilRef, period)
+      }
 
-      def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String =
+      def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String = {
         currencyFormatter.format(d)
+      }
 
       // Page 2 HowManyAsAContractPacker
       val howManyAsAContractPackerAnswers = request.userAnswers.get(HowManyAsAContractPackerPage)
@@ -238,8 +241,8 @@ class CheckYourAnswersController @Inject()(
       }
 
       Ok(view(
-              mode,
-              list,
+              mode = mode,
+              list = list,
               alias = alias:String,
               returnDate = returnDate:String,
               quarter = formatAmountOfMoneyWithPoundSign(calculateSubtotal(
@@ -250,7 +253,7 @@ class CheckYourAnswersController @Inject()(
               total = formatAmountOfMoneyWithPoundSign(total): String,
               financialStatus = financialStatus(total): String,
               smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList):Option[List[SmallProducer]],
-              warehouseCheck = warehouseCheck(warhouseList),//TODO COLLECT WAREHOUSE LIST
+              warehouseCheck = warehouseCheck(warhouseList):Option[List[Warehouse]],//TODO COLLECT WAREHOUSE LIST
               lowBandAnswerList = lowBandAnswerList:List[Long],
               highBandAnswerList = highBandAnswerList:List[Long],
               lowBandAnswerListCost = lowBandAnswerListCost:List[String],

@@ -32,21 +32,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
 
   "CheckYourAnswers Controller" - {
 
-    //Calculations
-    val zeroSubtotal:String  = "£0.00"
-    val zeroBroughtForwardTotal: String = "£0.00"
-    val zeroTotal:String = "£0.00"
-    val quarter: BigDecimal = 1000
-    val balanceBroughtForward: BigDecimal = 1000
-
-    //Producer
-    val alias: String = "Vegan Cola"
-    val returnDate: String = "July to September 2022"
-    val highBand: Long = 10000L
-    val lowBand: Long = 10000L
-    val sdilRef:String = "XCSDIL000000069"
-
-
     //Warehouse
     val tradingName:String = "Soft Juice Ltd"
     val line1: String = "3 Prospect St"
@@ -54,13 +39,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
     val line3: String = "Berkshire"
     val line4: String = "United Kingdom"
     val postcode: String = "CT44 0DF"
-
-
     val warhouseList:List[Warehouse] = List(Warehouse(tradingName,Address(line1, line2, line3, line4, postcode)))
-
-    val emptySmallProducerList: Option[List[SmallProducer]] = None
-    val optinalSmallProducerList: Option[List[SmallProducer]] = Some(List(SmallProducer(alias, sdilRef, (highBand, lowBand))))
-    val emptyWarhouseList: Option[List[Warehouse]] = None
     val optinalWarhouseList: Option[List[Warehouse]] = Some(List(Warehouse(tradingName,Address(line1, line2, line3, line4, postcode))))
 
     val lowBandAnswerList:List[Long] = List(0L, 0L, 0L, 0L, 0L, 0L, 0L)
@@ -76,23 +55,33 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
 
       running(application) {
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
         val list = SummaryListViewModel(Seq.empty)
+        val alias: String = "Vegan Cola"
+        val returnDate: String = "July to September 2022"
+        val quarter: String = "£0.00"
+        val balanceBroughtForward: String = "£0.00"
+        val total: String = "£0.00"
+        val financialStatus: String = "noPayNeeded"
+        val smallProducerCheck: Option[List[SmallProducer]] = None
+        val warehouseCheck: Option[List[Warehouse]] = None
+
         val result = route(application, request).value
         val view = application.injector.instanceOf[CheckYourAnswersView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          NormalMode,
-          list,
-          alias = alias,
-          returnDate = returnDate,
-          quarter = zeroSubtotal,
-          balanceBroughtForward = zeroBroughtForwardTotal,
-          total = zeroTotal,
-          financialStatus = zeroTotal,
-          smallProducerCheck = emptySmallProducerList,
-          warehouseCheck = emptyWarhouseList,
+          mode = NormalMode,
+          list = list,
+          alias = alias: String,
+          returnDate = returnDate: String,
+          quarter = quarter: String,
+          balanceBroughtForward = balanceBroughtForward: String,
+          total = total: String,
+          financialStatus = financialStatus: String,
+          smallProducerCheck = smallProducerCheck: Option[List[SmallProducer]],
+          warehouseCheck = warehouseCheck,
           lowBandAnswerList = lowBandAnswerList,
           highBandAnswerList = highBandAnswerList,
           lowBandAnswerListCost = lowBandAnswerListCost,
