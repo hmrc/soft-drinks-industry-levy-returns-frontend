@@ -144,8 +144,6 @@ class CheckYourAnswersController @Inject()(
         howManyCreditsForExportLowBandCost,
         howManyCreditsForLostDamagedLowBandCost).map(answers => formatAmountOfMoneyWithPoundSign(answers))
 
-
-
       val highBandAnswerListCost:List[String] = List(
         howManyAsAContractPackerHighBandCost,
         smallProducerDetailsHighBandCost,
@@ -154,46 +152,32 @@ class CheckYourAnswersController @Inject()(
         howManyCreditsForExportHighBandCost,
         howManyCreditsForLostDamagedLowBandCost).map(answers => formatAmountOfMoneyWithPoundSign(answers))
 
+      val smallProducerAnswerListTotal:List[BigDecimal] = List(
+        howManyAsAContractPackerTotal,
+        smallProducerDetailsTotal,
+        howManyBroughtIntoUkTotal,
+        howManyBroughtIntoTheUKFromSmallProducersTotal,
+        howManyCreditsForExportTotal,
+        howManyCreditsForLostDamagedTotal
+      )
+
+
       def calculateSubtotal(
                              costLower:BigDecimal,
                              costHigher:BigDecimal,
-                             howManyAsAContractPackerTotal:BigDecimal,
-                             smallProducerDetailsTotal:BigDecimal,
-                             howManyBroughtIntoUkTotal:BigDecimal,
-                             howManyBroughtIntoTheUKFromSmallProducersTotal:BigDecimal,
-                             howManyCreditsForExportTotal:BigDecimal,
-                             howManyCreditsForLostDamagedTotal:BigDecimal
+                             smallProducerAnswerListTotal:List[BigDecimal]
                            ): BigDecimal = {
         if(!Await.result(checkSmallProducerStatus(request.sdilEnrolment,request.returnPeriod.get),20.seconds).getOrElse(true)){
-
-          val subtotal =  (
-            howManyAsAContractPackerTotal+
-            smallProducerDetailsTotal +
-            howManyCreditsForLostDamagedTotal +
-            howManyCreditsForExportTotal +
-            howManyBroughtIntoTheUKFromSmallProducersTotal +
-            howManyBroughtIntoUkTotal
-            )
-          subtotal
+            smallProducerAnswerListTotal.sum
           }else{
           val ownBranduserAnswers = request.userAnswers.get(BrandsPackagedAtOwnSitesPage)
           val lowBand = ownBranduserAnswers.map(answer => answer.lowBand).getOrElse(0L)
           val highBand = ownBranduserAnswers.map(answer => answer.highBand).getOrElse(0L)
           val ownBrandTotal = costLower * lowBand * 1 + costHigher * highBand * 1
-          val subtotal = (
-            ownBrandTotal +
-            howManyAsAContractPackerTotal+
-            smallProducerDetailsTotal +
-            howManyCreditsForLostDamagedTotal +
-            howManyCreditsForExportTotal +
-            howManyBroughtIntoTheUKFromSmallProducersTotal +
-            howManyBroughtIntoUkTotal
-          )
-          subtotal
+          val largeProducerListTotal =   ownBrandTotal + smallProducerAnswerListTotal.sum
+          largeProducerListTotal
+          }
         }
-        }
-
-      //TODO -> Brought Forward from older returns
 
       def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
         items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
@@ -203,29 +187,24 @@ class CheckYourAnswersController @Inject()(
       def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
         l.headOption.fold(BigDecimal(0))(_._2)
 
-      val broughtForwardTrue =  sdilConnector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x =>
-        extractTotal(listItemsWithTotal(x))
+
+      val broughtForward = if(config.underlying.getBoolean("balanceAllEnabled")) {
+         sdilConnector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x =>
+          extractTotal(listItemsWithTotal(x))
+        }
+      }else {
+          sdilConnector.balance(request.sdilEnrolment, withAssessment = false)
       }
 
-      val broughtForwardFalse =  sdilConnector.balance(request.sdilEnrolment, withAssessment = false)
 
       val total:BigDecimal = calculateSubtotal(costLower,
                                                costHigher,
-                                               howManyAsAContractPackerTotal,
-                                               smallProducerDetailsTotal,
-                                               howManyBroughtIntoUkTotal,
-                                               howManyBroughtIntoTheUKFromSmallProducersTotal,
-                                               howManyCreditsForExportTotal,
-                                               howManyCreditsForLostDamagedTotal
-                                              ) - Await.result(broughtForwardFalse ,20.seconds)
+                                               smallProducerAnswerListTotal
+                                              ) - Await.result(broughtForward,20.seconds)
 
  //================================================================TODO  Calculation END
 
       //SmallProducer
-
-      val highBand: Long = 10000L
-      val lowBand: Long = 10000L
-      val sdilRef:String = "XCSDIL000000069"
       val alias: String = "Vegan Cola"
       val returnDate: String = "July to September 2022"
 
@@ -237,9 +216,6 @@ class CheckYourAnswersController @Inject()(
       val line4: String = "United Kingdom"
       val postcode: String = "CT44 0DF"
       val warhouseList:List[Warehouse] = List(Warehouse(tradingName,Address(line1, line2, line3, line4, postcode)))
-      /* TODO -> This will be need for checking if we need to display producers
-      val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
-      */
 
       def smallProducerCheck(smallProducerList:List[SmallProducer]): Option[List[SmallProducer]] = {
         if(smallProducerList.length > 0){
@@ -252,10 +228,6 @@ class CheckYourAnswersController @Inject()(
           Some(warehouseList)
         }else None
       }
-
-      // alias: String = sdilConnector.retrieveSubscription(request.sdilEnrolment,"sdil").map(subscription => subscription.get.orgName).toString
-      // val returnDate: String = request.returnPeriod.get.toString
-
 
       def financialStatus (total:BigDecimal):String = {
         total match {
@@ -273,13 +245,8 @@ class CheckYourAnswersController @Inject()(
               formatAmountOfMoneyWithPoundSign(calculateSubtotal(
                 costLower,
                 costHigher,
-                howManyAsAContractPackerTotal,
-                smallProducerDetailsTotal,
-                howManyBroughtIntoUkTotal,
-                howManyBroughtIntoTheUKFromSmallProducersTotal,
-                howManyCreditsForExportTotal,
-                howManyCreditsForLostDamagedTotal)),
-              formatAmountOfMoneyWithPoundSign(Await.result(broughtForwardFalse ,20.seconds)),
+                smallProducerAnswerListTotal)),
+              formatAmountOfMoneyWithPoundSign(Await.result(broughtForward ,20.seconds)),
               formatAmountOfMoneyWithPoundSign(total),
               financialStatus(total),
               smallProducerCheck(request.userAnswers.smallProducerList),

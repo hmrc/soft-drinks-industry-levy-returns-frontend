@@ -36,7 +36,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
     val zeroSubtotal:String  = "£0.00"
     val zeroBroughtForwardTotal: String = "£0.00"
     val zeroTotal:String = "£0.00"
-
     val quarter: BigDecimal = 1000
     val balanceBroughtForward: BigDecimal = 1000
 
