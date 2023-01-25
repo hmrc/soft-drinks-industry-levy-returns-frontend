@@ -28,22 +28,23 @@ import models.retrieved.RetrievedSubscription
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Call = {
-    case RemoveSmallProducerConfirmPage => userAnswers => _  => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
+    case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt =>
+
       claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
-    case ClaimCreditsForExportsPage => userAnswers => _  => _ =>claimCreditsForExportPageNavigation(userAnswers)
-    case AddASmallProducerPage => _  => _  => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
-    case BroughtIntoUkFromSmallProducersPage => userAnswers => _  => _ => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
-    case HowManyBroughtIntoUkPage => _ => _  => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
+    case ClaimCreditsForExportsPage => userAnswers => _ => _ => claimCreditsForExportPageNavigation(userAnswers)
+    case AddASmallProducerPage => _ => _ => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => _ => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
+    case HowManyBroughtIntoUkPage => _ => _ => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
     case BroughtIntoUKPage => userAnswers => _ => _ => broughtIntoUkPageNavigation(userAnswers)
-    case HowManyAsAContractPackerPage => _  => _  => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
-    case ExemptionsForSmallProducersPage => userAnswers => _  => _  => exemptionForSmallProducersPageNavigation(userAnswers)
-    case SmallProducerDetailsPage => userAnswers => _  => _  => smallProducerDetailsPageNavigation(userAnswers)
-    case BrandsPackagedAtOwnSitesPage => _ => _ => _  =>  routes.PackagedContractPackerController.onPageLoad(NormalMode)
-    case PackagedContractPackerPage => userAnswers => _  => _ => packagedContractPackerPageNavigation(userAnswers)
-    case OwnBrandsPage => userAnswers => _  => _ => ownBrandPageNavigation(userAnswers)
-    case _ => _ => _  => _ => routes.IndexController.onPageLoad
+    case HowManyAsAContractPackerPage => _ => _ => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    case ExemptionsForSmallProducersPage => userAnswers => _ => _ => exemptionForSmallProducersPageNavigation(userAnswers)
+    case SmallProducerDetailsPage => userAnswers => _ => _ => smallProducerDetailsPageNavigation(userAnswers)
+    case BrandsPackagedAtOwnSitesPage => _ => _ => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
+    case PackagedContractPackerPage => userAnswers => _ => _ => packagedContractPackerPageNavigation(userAnswers)
+    case OwnBrandsPage => userAnswers => _ => _ => ownBrandPageNavigation(userAnswers)
+    case _ => _ => _ => _ => routes.IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
@@ -116,7 +117,7 @@ class Navigator @Inject()() {
   }
 
  private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
-   if(userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true)) {
+   if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
      routes.AddASmallProducerController.onPageLoad(BlankMode)
    } else {
      routes.SmallProducerDetailsController.onPageLoad(NormalMode)

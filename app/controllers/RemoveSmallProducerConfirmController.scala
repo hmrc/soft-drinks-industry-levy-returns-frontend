@@ -65,12 +65,25 @@ class RemoveSmallProducerConfirmController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, sdil, smallProducerName))),
         value =>{
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, value))
-            updatedList = request.userAnswers.smallProducerList.filterNot(x => x.sdilRef == sdil)
-            updatedAnswersFinal = {updatedAnswers.copy(smallProducerList = updatedList)}
-            _              <- sessionRepository.set(updatedAnswersFinal)
-          } yield Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, updatedAnswersFinal))}
+          if(value){
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, value))
+              modifiedProducerList = request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
+              updatedAnswersFinal = updatedAnswers.copy(smallProducerList = modifiedProducerList)
+              _ <- sessionRepository.set(updatedAnswersFinal)
+            } yield {
+              Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, updatedAnswersFinal))
+            }
+          } else {
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, value))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield {
+              Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, updatedAnswers))
+            }
+          }
+          }
       )
   }
 }
+
