@@ -26,9 +26,12 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import play.api.Configuration
-import scala.math.BigDecimal
 
+import scala.math.BigDecimal
 import com.google.inject.Inject
+import models.requests.IdentifierRequest
+import uk.gov.hmrc.auth.core.EnrolmentIdentifier
+
 import scala.concurrent.{Await, ExecutionContext, Future}
 import java.util.Locale
 import scala.concurrent.duration.DurationInt
@@ -54,13 +57,15 @@ class CheckYourAnswersController @Inject()(
 
       val alias: String = Await.result(sdilConnector.retrieveSubscription(request.sdilEnrolment,"sdil").map(
         subscription => subscription.get.orgName), 10.seconds)
-      println(Console.YELLOW + {request} + Console.WHITE)
-      val returnDate: String = request.returnPeriod.get.quarter match {
-        case 0 => "January to March " + request.returnPeriod.get.year
-        case 1 => "April to June " + request.returnPeriod.get.year
-        case 2 => "July to September " + request.returnPeriod.get.year
-        case 3 => "October to December " + request.returnPeriod.get.year
-      }
+
+      val returnDate2: String =  Await.result(sdilConnector.oldestPendingReturnPeriod(request.sdilEnrolment).map( Returns => Returns.head.quarter match {
+        case 0 => "January to March " + Returns.head.year
+        case 1 => "April to June " + Returns.head.year
+        case 2 => "July to September " + Returns.head.year
+        case 3 => "October to December " + Returns.head.year
+      }), 10.seconds)
+      println(Console.BLUE + {returnDate2} + Console.WHITE)
+
 //
 //      //Warehouse
 //      val tradingName:String = "Soft Juice Ltd"
@@ -245,7 +250,7 @@ class CheckYourAnswersController @Inject()(
               mode = mode,
               list = list,
               alias = alias:String,
-              returnDate = returnDate:String//,
+              returnDate = returnDate2:String//,
 //              quarter = formatAmountOfMoneyWithPoundSign(calculateSubtotal(
 //                costLower,
 //                costHigher,

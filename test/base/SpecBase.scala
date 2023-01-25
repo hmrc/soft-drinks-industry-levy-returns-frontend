@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.UserAnswers
+import models.{ReturnPeriod, UserAnswers}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -80,6 +80,9 @@ trait SpecBase
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
   )
+
+  val returnPeriod = ReturnPeriod(2018, 1)
+  val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
 
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
 

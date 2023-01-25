@@ -17,9 +17,11 @@
 package controllers
 
 import base.SpecBase
+import com.github.tomakehurst.wiremock.client.WireMock.matching
 import connectors.SoftDrinksIndustryLevyConnector
-import controllers.actions.IdentifierAction
+import controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
 import models.backend.{Contact, Site, UkAddress}
+import models.requests.IdentifierRequest
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import models.{Address, Mode, NormalMode, ReturnPeriod, SmallProducer, Warehouse}
 import org.mockito.ArgumentMatchers.any
@@ -30,6 +32,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.EnrolmentIdentifier
 import viewmodels.govuk.SummaryListFluency
 import views.html.CheckYourAnswersView
 
@@ -65,7 +68,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
   val financialStatus: String = "noPayNeeded"
   val smallProducerCheck: Option[List[SmallProducer]] = None
   val warehouseCheck: Option[List[Warehouse]] = None
-  val returnPeriod = ReturnPeriod(2022, 3)
 
   "CheckYourAnswers Controller" - {
 
@@ -75,9 +77,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
 
 
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      val mockIdentifierAction = mock[IdentifierAction]
 
-      when(mockSdilConnector.oldestPendingReturnPeriod(any())(any())).thenReturn {
+      when(mockSdilConnector.oldestPendingReturnPeriod(any())(any())).thenReturn{
         Future.successful(Some(returnPeriod))
       }
 
@@ -99,7 +100,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
 
         val list = SummaryListViewModel(Seq.empty)
         val alias: String = "Super Lemonade Plc"
-        val returnDate: String = "July to September 2022"
+        val returnDate: String = "April to June 2018"
         val result = route(application, request).value
         val view = application.injector.instanceOf[CheckYourAnswersView]
 
@@ -108,7 +109,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with Sum
           mode = NormalMode,
           list = list,
           alias = alias: String,
-          returnDate = returnDate: String,
+          returnDate = returnDate: String
         )(request, messages(application)).toString
       }
     }

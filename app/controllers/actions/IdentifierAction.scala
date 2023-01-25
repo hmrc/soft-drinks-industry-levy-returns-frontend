@@ -50,6 +50,7 @@ class AuthenticatedIdentifierAction @Inject()(
         case (None, Some(utr)) =>  sdilConnector.retrieveSubscription(utr, "utr").flatMap {
           case Some(subscription) =>
             sdilConnector.oldestPendingReturnPeriod(utr).flatMap { returnPeriod =>
+              println(Console.BLUE + "IDENTIFIER ACTION" + Console.WHITE)
               block(IdentifierRequest(request, EnrolmentIdentifier("sdil", subscription.sdilRef).value,List.empty,returnPeriod))
             }
           case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
