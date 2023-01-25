@@ -12,13 +12,13 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET        /check-your-answers                           controllers.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
-
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
+
+GET        /check-your-answers                           controllers.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 
 GET        /packaged-as-contract-packer                  controllers.PackagedContractPackerController.onPageLoad(mode: Mode = NormalMode)
 POST       /packaged-as-contract-packer                  controllers.PackagedContractPackerController.onSubmit(mode: Mode = NormalMode)

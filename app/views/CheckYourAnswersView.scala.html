@@ -25,7 +25,8 @@
 @(mode: Mode,
   list: SummaryList,
   alias: String,
-  returnDate: String,
+  returnDate: String)(implicit request: Request[_], messages: Messages)
+@*
   quarter: String,
   balanceBroughtForward: String,
   total: String,
@@ -265,3 +266,4 @@
             @messages("site.printPage")
         </a>
 }
+*@
