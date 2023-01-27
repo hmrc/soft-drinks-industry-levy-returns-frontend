@@ -22,7 +22,7 @@ import forms._
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.RemoveSmallProducerConfirmPage
+import pages.{ExemptionsForSmallProducersPage, RemoveSmallProducerConfirmPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -53,9 +53,15 @@ class RemoveSmallProducerConfirmController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
+      val smallProducerList = request.userAnswers.smallProducerList
+      val smallProducerMissing = smallProducerList.filter(producer => producer.sdilRef == sdil).isEmpty
 
-      Ok(view(preparedForm, mode, sdil, smallProducerName))
+      if(smallProducerMissing){
+        Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, request.userAnswers))
+      }else{
+        val smallProducerName = smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
+        Ok(view(preparedForm, mode, sdil, smallProducerName))
+      }
   }
 
   def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
