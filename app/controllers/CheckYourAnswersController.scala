@@ -36,15 +36,16 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-//      val returnPeriod = request.returnPeriod.getOrElse("no return period found")
-//
-//      println(Console.YELLOW + returnPeriod + Console.WHITE)
+      val returnPeriod = request.returnPeriod match {
+        case Some(returnPeriod) => returnPeriod.toString
+        case None => "return period not available"
+      }
 
       val list = SummaryListViewModel(
         rows = Seq.empty
       )
 
-//      Ok(view(list, "blah"))
-      Ok(view(list))
+     Ok(view(list, returnPeriod))
+
   }
 }

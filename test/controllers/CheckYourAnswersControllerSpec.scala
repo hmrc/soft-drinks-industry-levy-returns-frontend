@@ -17,10 +17,13 @@
 package controllers
 
 import base.SpecBase
+import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.CheckYourAnswersView
+
+import java.time.LocalDate
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -28,13 +31,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
     "must return OK and the correct view for a GET" in {
 
+//      val answers =
+//        emptyUserAnswers
+//          .set(OwnBrandsPage, LocalDate.now).success.value
+//          .set(BrandsPackagedAtOwnSitesPage, LocalDate.now).success.value
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-
         val result = route(application, request).value
-
         val view = application.injector.instanceOf[CheckYourAnswersView]
         val list = SummaryListViewModel(Seq.empty)
 
@@ -57,20 +63,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must show company alias above the page title" in {
-
+    "must show return period not available when no return period is present in request" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CheckYourAnswersView]
-        val list = SummaryListViewModel(Seq.empty)
-
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) must include ("return period not available")
       }
     }
   }
