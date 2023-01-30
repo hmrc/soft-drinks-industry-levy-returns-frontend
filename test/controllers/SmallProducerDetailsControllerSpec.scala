@@ -51,8 +51,6 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
   "SmallProducerDetails Controller" - {
 
-
-
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -194,7 +192,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
-    "must include added small producer sdil reference on the page" in {
+    "must include added small producer SDIL reference on the page" in {
 
       val userAnswers = UserAnswers(sdilNumber,Json.obj(),List(superCola))
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -205,6 +203,24 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         status(result) mustEqual OK
         contentAsString(result) must include(superCola.sdilRef)
+      }
+    }
+
+    "must include added small producer sdil reference on the page" in {
+
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List(superCola))
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val smallProducersSummaryList = SmallProducerDetailsSummary.row2(List(superCola))(messages(application))
+      val summaryList = SummaryListViewModel(rows = smallProducersSummaryList)
+
+      running(application) {
+        val request = FakeRequest(GET, smallProducerDetailsRoute)
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[SmallProducerDetailsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) must include(superCola.sdilRef)
+        contentAsString(result) mustEqual view(form, NormalMode, summaryList)(request, messages(application)).toString
       }
     }
 
