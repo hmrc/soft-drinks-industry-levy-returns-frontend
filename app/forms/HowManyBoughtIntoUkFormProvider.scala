@@ -28,19 +28,19 @@ class HowManyBoughtIntoUkFormProvider @Inject() extends Mappings {
    def apply(): Form[HowManyBroughtIntoUk] = Form(
      mapping(
       "lowBand" -> long(
-        "howManyBoughtIntoUk.error.lowBand.required",
-                    "howManyBoughtIntoUk.error.lowBand.negative",
-                    "howManyBoughtIntoUk.error.lowBand.nonNumeric",
-                    "howManyBoughtIntoUk.error.lowBand.wholeNumber",
-        "howManyBoughtIntoUk.error.lowBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.lowBand.outOfMaxVal")),
-        "highBand" -> long(
-        "howManyBoughtIntoUk.error.highBand.required",
-                    "howManyBoughtIntoUk.error.highBand.negative",
-                    "howManyBoughtIntoUk.error.highBand.nonNumeric",
-                    "howManyBoughtIntoUk.error.highBand.wholeNumber",
-          "howManyBoughtIntoUk.error.highBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.highBand.outOfMaxVal"))
+          "howManyBoughtIntoUk.error.lowBand.required",
+          "howManyBoughtIntoUk.error.lowBand.negative",
+          "howManyBoughtIntoUk.error.lowBand.nonNumeric",
+          "howManyBoughtIntoUk.error.lowBand.wholeNumber",
+          "howManyBoughtIntoUk.error.lowBand.outOfMaxVal"
+        ).verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.lowBand.outOfMaxVal")),
+       "highBand" -> long(
+          "howManyBoughtIntoUk.error.highBand.required",
+          "howManyBoughtIntoUk.error.highBand.negative",
+          "howManyBoughtIntoUk.error.highBand.nonNumeric",
+          "howManyBoughtIntoUk.error.highBand.wholeNumber",
+          "howManyBoughtIntoUk.error.highBand.outOfMaxVal"
+       ).verifying(maximumValueNotEqual(100000000000000L, "howManyBoughtIntoUk.error.highBand.outOfMaxVal"))
     )(HowManyBroughtIntoUk.apply)(HowManyBroughtIntoUk.unapply)
    )
  }
