@@ -25,7 +25,7 @@ object AppDependencies {
     "org.mockito"             %% "mockito-scala"           % "1.17.12",
     "org.scalacheck"          %% "scalacheck"              % "1.17.0",
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28" % hmrcMongoVersion,
-    "com.vladsch.flexmark"    %  "flexmark-all"            % "0.64.0",
+    "com.vladsch.flexmark"    %  "flexmark-all"            % "0.62.0",
     "com.github.tomakehurst"  % "wiremock-standalone"      % "2.27.2"
   ).map(_ % "test, it")
 
