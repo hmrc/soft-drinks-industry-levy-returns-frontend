@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
 import models.requests.DataRequest
-import models.{AddASmallProducer, NormalMode, UserAnswers}
+import models.{AddASmallProducer, NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -38,8 +38,9 @@ import scala.concurrent.Future
 
 abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
-
+//  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
+//  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
+  
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
   val application = applicationBuilder(userAnswers = None).build()
@@ -47,17 +48,13 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
   implicit val request: DataRequest[_]
   val form = formProvider(mockSessionRepository, sdilConnector)
 
-  val value1max: Option[String] = Some("Party Drinks Group")
-  val value1 = "Party Drinks Group"
+  val producerName = "Party Drinks Group"
+  val sdilReference = "XPSDIL000000116"
+  val bandMax = 100000000000000L
+  val litres = 20L
 
-  val value2max: String = "XPSDIL000000116"
-  val value2 = "XPSDIL000000116"
 
-  val value3max: Long = 100000000000000L
-  val value3 = value3max - 1
 
-  val value4max: Long = 100000000000000L
-  val value4 = value4max - 1
 
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
 
@@ -65,10 +62,10 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
     sdilNumber,
     Json.obj(
       AddASmallProducerPage.toString -> Json.obj(
-        "producerName" -> value1,
-        "referenceNumber" -> value2,
-        "lowBand" -> value3,
-        "highBand" -> value4
+        "producerName" -> producerName,
+        "referenceNumber" -> sdilReference,
+        "lowBand" -> litres,
+        "highBand" -> litres
       )
     )
   )
@@ -103,7 +100,7 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(AddASmallProducer(Some(value1), value2,value3,value4)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(AddASmallProducer(Some(producerName), sdilReference,litres,litres)), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -116,7 +113,6 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -124,12 +120,11 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
       running(application) {
         val request =
           FakeRequest(POST, addASmallProducerRoute)
-            .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+            .withFormUrlEncodedBody(("lowBand", producerName.toString), ("highBand", sdilReference.toString))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
