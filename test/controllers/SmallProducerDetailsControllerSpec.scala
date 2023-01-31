@@ -177,50 +177,36 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
-
-    "must say 0 small producers added when no small producers available" in {
-
-      val userAnswers = UserAnswers(sdilNumber)
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, smallProducerDetailsRoute)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include("You added 0 small producers")
-      }
-    }
-
-    "must include added small producer SDIL reference on the page" in {
-
-      val userAnswers = UserAnswers(sdilNumber,Json.obj(),List(superCola))
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, smallProducerDetailsRoute)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include(superCola.sdilRef)
-      }
-    }
-
-    "must include added small producer sdil reference on the page" in {
+    "must include added small producer SDIL reference on the row" in {
 
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List(superCola))
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val smallProducersSummaryList = SmallProducerDetailsSummary.row2(List(superCola))(messages(application))
-      val summaryList = SummaryListViewModel(rows = smallProducersSummaryList)
+      val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
+      val expectedSummaryList = SummaryListViewModel(SmallProducerDetailsSummary.row2(List(superCola))(messages(application)))
 
       running(application) {
         val request = FakeRequest(GET, smallProducerDetailsRoute)
         val result = route(application, request).value
-        val view = application.injector.instanceOf[SmallProducerDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) must include(superCola.sdilRef)
-        contentAsString(result) mustEqual view(form, NormalMode, summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual expectedView(form, NormalMode, expectedSummaryList)(request, messages(application)).toString
+      }
+    }
+
+    "must include all added small producer SDIL references on the page in rows" in {
+
+      val actualUserAnswers = UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))
+      val application = applicationBuilder(userAnswers = Some(actualUserAnswers)).build()
+
+      val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
+      val expectedSummaryList = SummaryListViewModel(SmallProducerDetailsSummary.row2(List(superCola, sparkyJuice))(messages(application)))
+
+      running(application) {
+        val request = FakeRequest(GET, smallProducerDetailsRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual expectedView(form, NormalMode, expectedSummaryList)(request, messages(application)).toString
       }
     }
 

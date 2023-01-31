@@ -59,7 +59,7 @@ class SmallProducerDetailsController @Inject()(
       val list: SummaryList = SummaryListViewModel(
         rows = smallProducersSummaryList
       )
-      
+
       Ok(view(preparedForm, mode, list))
   }
 
