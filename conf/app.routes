@@ -102,7 +102,7 @@ GET        /remove-small-producer-confirm/:sdil                       controller
 POST       /remove-small-producer-confirm/:sdil                       controllers.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
 
 GET        /add-small-producer                              controllers.AddASmallProducerController.onPageLoad(mode: Mode = NormalMode)
-GET        /add-small-producer-edit/:sdil                     controllers.AddASmallProducerController.onEditPageLoad(mode: Mode = EditMode, sdil: String)
+GET        /add-small-producer-edit                     controllers.AddASmallProducerController.onEditPageLoad(mode: Mode = EditMode)
 POST       /add-small-producer-edit/:sdil                     controllers.AddASmallProducerController.onEditPageSubmit(mode: Mode = EditMode, sdil: String)
 POST       /add-small-producer                              controllers.AddASmallProducerController.onSubmit(mode: Mode = NormalMode)
 GET        /add-small-producer-next                        controllers.AddASmallProducerController.onPageLoad(mode: Mode = BlankMode)

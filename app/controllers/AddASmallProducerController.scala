@@ -68,16 +68,17 @@ class AddASmallProducerController @Inject()(
 
   }
 
-  def onEditPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onEditPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
-      val form: Form[AddASmallProducer] = formProvider(sessionRepository,sdilConnector, Some(mode), Some(sdil))
+      val form: Form[AddASmallProducer] = formProvider(sessionRepository,sdilConnector, Some(mode))
       val preparedForm = {
-              val sp = request.userAnswers.smallProducerList.filter(_.sdilRef == sdil).headOption
-              val v: AddASmallProducer = sp.fold(sys.error(" no elemet present"))(value =>
+//              val smallProducer = request.userAnswers.smallProducerList.filter(_.sdilRef == sdil).headOption
+              val smallProducer = Some(SmallProducer("Jack", "XCSDIL000000069", (1L, 1L)))
+              val v: AddASmallProducer = smallProducer.fold(sys.error(" no element present"))(value =>
                 AddASmallProducer(Some(value.alias), value.sdilRef, value.litreage._1, value.litreage._2))
               form.fill(v)
             }
-            Ok(view(preparedForm, mode, Some(sdil)))
+            Ok(view(preparedForm, mode, Some("XCSDIL000000069")))
   }
 
   def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
