@@ -34,10 +34,9 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.AddASmallProducerView
 
-
 import scala.concurrent.Future
 
-class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
+abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
 //  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
 //  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
@@ -76,6 +75,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val expectedPageTitle = "Enter the registered ( checck ) small producer's details"
+      println(Console.YELLOW + "Should have the page here" + Console.WHITE)
+
       val expectedView = application.injector.instanceOf[AddASmallProducerView]
 
       running(application) {
