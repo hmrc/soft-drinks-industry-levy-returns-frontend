@@ -25,12 +25,18 @@ import play.api.data.FormError
 import repositories.SessionRepository
 
 
-abstract class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SpecBase with MockitoSugar {
+class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SpecBase with MockitoSugar {
+
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
   val application = applicationBuilder(userAnswers = None).build()
   val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
-  implicit val request: DataRequest[_]
+
+  // do we need to implement the datarequest
+  implicit val request: DataRequest[_] = {}
+
+
+
   val form = formProvider(mockSessionRepository, sdilConnector)
 
   ".producerName" - {

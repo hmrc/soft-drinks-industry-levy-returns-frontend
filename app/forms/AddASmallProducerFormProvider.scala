@@ -34,13 +34,9 @@ import scala.concurrent.{Await, Future}
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-
-
   def apply(sessionRepository: SessionRepository,
-            sdilConnector: SoftDrinksIndustryLevyConnector,
-            mode: Option[Mode] = None,
-            sdil: Option[String] = None
-           )(implicit request: DataRequest[_]): Form[AddASmallProducer] = {
+            sdilConnector: SoftDrinksIndustryLevyConnector
+             )(implicit request: DataRequest[_]): Form[AddASmallProducer] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
