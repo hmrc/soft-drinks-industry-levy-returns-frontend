@@ -18,10 +18,12 @@ package forms
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import forms.behaviours.{LongFieldBehaviour, StringFieldBehaviours, SDILReferenceFieldBehaviours}
+import forms.behaviours.{LongFieldBehaviour, SDILReferenceFieldBehaviours, StringFieldBehaviours}
 import models.requests.DataRequest
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.libs.json.Json
 import repositories.SessionRepository
 
 
@@ -80,7 +82,24 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     //    val alreadyExistsKey = "addASmallProducer.error.referenceNumber.Exist"
     //    val large = "addASmallProducer.error.referenceNumber.Large"
     //    val same = "addASmallProducer.error.referenceNumber.same"
-    
+
+
+    val fromJsonMaxChars: Int = 102400
+
+    "Small producer reference number must be different to reference currently submitting the returns" in {
+
+      // mock the session's sdil ref and assert same sdil cannot be submitted as a small producer
+      val postData = Json.obj(
+        "producerName" -> "Super Cola Ltd",
+        "referenceNumber" -> "XZSDIL000000234",
+        "lowBand" -> "12",
+        "highBand" -> "12"
+      )
+      val validatedForm = form.bind(postData, fromJsonMaxChars)
+      println(Console.YELLOW + validatedForm + Console.WHITE)
+      assert(validatedForm.errors.contains(FormError("referenceNumber", List("addASmallProducer.error.referenceNumber.same"))))
+    }
+
   }
 
   ".lowBand" - {
