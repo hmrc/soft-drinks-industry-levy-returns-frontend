@@ -135,10 +135,6 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     }
   }
 
-  def sdilReferences: Gen[String] = {
-    RegexpGen.from("^X[A-Z]SDIL000[0-9]{6}$")
-  }
-
   def badSdilReferences: Gen[String] = {
     RegexpGen.from("^X[A-Z]INVALID000[0-9]{6}$")
   }
