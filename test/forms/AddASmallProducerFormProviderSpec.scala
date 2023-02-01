@@ -61,15 +61,8 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
 
   ".referenceNumber" - {
     val fieldName = "referenceNumber"
-
     val requiredKey = "addASmallProducer.error.referenceNumber.required"
     val invalidSDILRefNumber = "addASmallProducer.error.referenceNumber.invalid"
-
-
-
-//    val alreadyExistsKey = "addASmallProducer.error.referenceNumber.Exist"
-//    val large = "addASmallProducer.error.referenceNumber.Large"
-//    val same = "addASmallProducer.error.referenceNumber.same"
 
     behave like mandatoryField(
       form,
@@ -83,25 +76,11 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
       requiredError = FormError(fieldName, invalidSDILRefNumber)
     )
 
-//    behave like sameRefNumber(
-//      form,
-//      fieldName,
-//      requiredError = FormError(fieldName, same)
-//    )
-//
-//    behave like existingRefNumber(
-//      form,
-//      fieldName,
-//      requiredError = FormError(fieldName, alreadyExistsKey)
-//    )
-//
-//    behave like largeRefNumber(
-//      form,
-//      fieldName,
-//      requiredError = FormError(fieldName, large)
-//    )
-//
-
+    //    Property tests would not suit the following constrains on the form, hence unit tests will be used instead
+    //    val alreadyExistsKey = "addASmallProducer.error.referenceNumber.Exist"
+    //    val large = "addASmallProducer.error.referenceNumber.Large"
+    //    val same = "addASmallProducer.error.referenceNumber.same"
+    
   }
 
   ".lowBand" - {
