@@ -44,7 +44,7 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
   val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
-  val form = formProvider(mockSessionRepository, sdilConnector)
+  val form = formProvider()
 
   val application = applicationBuilder(userAnswers = None).build()
 

@@ -18,26 +18,25 @@ package forms
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import forms.behaviours.{LongFieldBehaviour, StringFieldBehaviours}
+import forms.behaviours.{LongFieldBehaviour, StringFieldBehaviours, SDILReferenceFieldBehaviours}
 import models.requests.DataRequest
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 import repositories.SessionRepository
 
 
-class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SpecBase with MockitoSugar {
+class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SDILReferenceFieldBehaviours with SpecBase with MockitoSugar {
 
-  val formProvider = new AddASmallProducerFormProvider()
-  val mockSessionRepository = mock[SessionRepository]
-  val application = applicationBuilder(userAnswers = None).build()
-  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
+//  val mockSessionRepository = mock[SessionRepository]
+//  val application = applicationBuilder(userAnswers = None).build()
+//  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
 
   // do we need to implement the datarequest
-  implicit val request: DataRequest[_] = {}
+//  implicit val request: DataRequest[_]
 
 
 
-  val form = formProvider(mockSessionRepository, sdilConnector)
+  val form = new AddASmallProducerFormProvider()()
 
   ".producerName" - {
 
@@ -91,10 +90,6 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
       fieldName,
       requiredError = FormError(fieldName, large)
     )
-
-
-
-
 
     behave like mandatoryField(
       form,
