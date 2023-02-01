@@ -26,10 +26,11 @@ trait SDILReferenceFieldBehaviours extends FieldBehaviours {
 
     "not bind when SDIL reference has invalid format" in {
 
-
-
-      val result = form.bind(Map(fieldName -> "000000381XHSDIL")).apply(fieldName)
-      result.errors mustEqual Seq(requiredError)
+      forAll(badSdilReferences -> "sdilRef") {
+        sdilRef =>
+          val result = form.bind(Map(fieldName -> sdilRef)).apply(fieldName)
+          result.errors mustEqual Seq(requiredError)
+      }
     }
 
   }

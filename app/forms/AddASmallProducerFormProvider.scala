@@ -58,6 +58,14 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 //          Valid
 //      }
 
+    def referenceNumberFormat(regex: String, errorKey1: String): Constraint[String] =
+      Constraint {
+        case str if !str.matches(regex) =>
+          Invalid(errorKey1)
+        case _ =>
+          Valid
+      }
+
     Form(
       mapping(
         "producerName" -> optional(text(
@@ -68,10 +76,8 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
         "referenceNumber" -> text(
           "addASmallProducer.error.referenceNumber.required"
         )
-          .verifying(maxLength(160,"addASmallProducer.error.producerName.maxLength")),
-//          .verifying(
-//            referenceNumberFormat("^X[A-Z]SDIL000[0-9]{6}$",
-//              "addASmallProducer.error.referenceNumber.invalid",
+          .verifying(
+              referenceNumberFormat("^X[A-Z]SDIL000[0-9]{6}$", "addASmallProducer.error.referenceNumber.invalid")),
 //              request.sdilEnrolment,"addASmallProducer.error.referenceNumber.same",
 //              List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
 //              //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.
