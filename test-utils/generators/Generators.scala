@@ -134,4 +134,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
         Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
   }
+
+  def sdilReferences() = {
+    "^X[A-Z]SDIL000[0-9]{6}$"
+  }
 }
