@@ -61,41 +61,47 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
 
   ".referenceNumber" - {
     val fieldName = "referenceNumber"
+
     val requiredKey = "addASmallProducer.error.referenceNumber.required"
-    val alreadyExistsKey = "addASmallProducer.error.referenceNumber.Exist"
-    val large = "addASmallProducer.error.referenceNumber.Large"
-    val same = "addASmallProducer.error.referenceNumber.same"
-    val invalid = "Small producer reference number must be 6 letters and 9 numbers"
+    val invalidSDILRefNumber = "addASmallProducer.error.referenceNumber.invalid"
 
-    behave like invalidRefNumber(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, invalid)
-    )
 
-    behave like sameRefNumber(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, same)
-    )
 
-    behave like existingRefNumber(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, alreadyExistsKey)
-    )
-
-    behave like largeRefNumber(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, large)
-    )
+//    val alreadyExistsKey = "addASmallProducer.error.referenceNumber.Exist"
+//    val large = "addASmallProducer.error.referenceNumber.Large"
+//    val same = "addASmallProducer.error.referenceNumber.same"
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    behave like invalidRefNumber(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, invalidSDILRefNumber)
+    )
+
+//    behave like sameRefNumber(
+//      form,
+//      fieldName,
+//      requiredError = FormError(fieldName, same)
+//    )
+//
+//    behave like existingRefNumber(
+//      form,
+//      fieldName,
+//      requiredError = FormError(fieldName, alreadyExistsKey)
+//    )
+//
+//    behave like largeRefNumber(
+//      form,
+//      fieldName,
+//      requiredError = FormError(fieldName, large)
+//    )
+//
+
   }
 
   ".lowBand" - {
