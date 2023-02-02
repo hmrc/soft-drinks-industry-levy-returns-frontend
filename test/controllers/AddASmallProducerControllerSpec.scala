@@ -22,6 +22,7 @@ import forms.AddASmallProducerFormProvider
 import models.requests.DataRequest
 import models.{AddASmallProducer, NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -36,19 +37,17 @@ import views.html.AddASmallProducerView
 
 import scala.concurrent.Future
 
-abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
+class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
 //  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
 //  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
   
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
-  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
+//  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
   val form = formProvider()
 
   val application = applicationBuilder(userAnswers = None).build()
-
-  implicit val request: DataRequest[_]
 
   val producerName = "Party Drinks Group"
   val sdilReference = "XPSDIL000000116"
@@ -74,113 +73,135 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val expectedPageTitle = "Enter the registered ( checck ) small producer's details"
-      println(Console.YELLOW + "Should have the page here" + Console.WHITE)
-
-      val expectedView = application.injector.instanceOf[AddASmallProducerView]
+      val expectedPageTitle = "Enter the registered small producer’s details - soft-drinks-industry-levy-returns-frontend - GOV.UK"
+      val expectedH1 = "Enter the registered small producer’s details"
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerRoute)
         val result = route(application, request).value
 
         status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
 
-        println(Console.YELLOW + "Should have the page here" + Console.WHITE)
-        println(Console.YELLOW + contentAsString(result) + Console.WHITE)
-        contentAsString(result) must include(expectedPageTitle)
-//        contentAsString(result) mustEqual expectedView(form, NormalMode)(request, messages(application)).toString
+        page.title() mustEqual expectedPageTitle
+        page.getElementsByTag("h1").text() mustEqual expectedH1
       }
     }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, addASmallProducerRoute)
-
-        val view = application.injector.instanceOf[AddASmallProducerView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(AddASmallProducer(Some(producerName), sdilReference,litres,litres)), NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, addASmallProducerRoute)
-            .withFormUrlEncodedBody(("lowBand", producerName.toString), ("highBand", sdilReference.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-      }
-    }
-
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, addASmallProducerRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[AddASmallProducerView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, addASmallProducerRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST,  addASmallProducerRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
+//
+//    "must populate the view correctly on a GET when the question has previously been answered" in {
+//
+//      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+//
+//      running(application) {
+//        val request = FakeRequest(GET, addASmallProducerRoute)
+//
+//        val view = application.injector.instanceOf[AddASmallProducerView]
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual OK
+//        contentAsString(result) mustEqual view(form.fill(AddASmallProducer(Some(producerName), sdilReference,litres,litres)), NormalMode)(request, messages(application)).toString
+//      }
+//    }
+//
+//    "must redirect to the next page when valid data is submitted" in {
+//
+//      val mockSessionRepository = mock[SessionRepository]
+//
+//      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+//
+//      val application =
+//        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+//          .overrides(
+//            bind[SessionRepository].toInstance(mockSessionRepository)
+//          )
+//          .build()
+//
+//      running(application) {
+//        val request =
+//          FakeRequest(POST, addASmallProducerRoute)
+//            .withFormUrlEncodedBody(("lowBand", producerName.toString), ("highBand", sdilReference.toString))
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual SEE_OTHER
+//      }
+//    }
+//
+//    "must return a Bad Request and errors when invalid data is submitted" in {
+//
+//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+//
+//      running(application) {
+//        val request =
+//          FakeRequest(POST, addASmallProducerRoute)
+//            .withFormUrlEncodedBody(("value", "invalid value"))
+//
+//        val boundForm = form.bind(Map("value" -> "invalid value"))
+//
+//        val view = application.injector.instanceOf[AddASmallProducerView]
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual BAD_REQUEST
+//        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+//      }
+//    }
+//
+//    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
+//
+//      val application = applicationBuilder(userAnswers = None).build()
+//
+//      running(application) {
+//        val request = FakeRequest(GET, addASmallProducerRoute)
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual SEE_OTHER
+//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+//      }
+//    }
+//
+//    "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
+//
+//      val application = applicationBuilder(userAnswers = None).build()
+//
+//      running(application) {
+//        val request =
+//          FakeRequest(POST,  addASmallProducerRoute)
+//            .withFormUrlEncodedBody(("value", "true"))
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual SEE_OTHER
+//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+//      }
+//    }
+//
+//    "Small producer reference number must be different to reference currently submitting the returns" in {
+//      val mockSessionRepository = mock[SessionRepository]
+//
+//      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+//
+//      val application =
+//        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+//          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+//
+//      running(application) {
+//        val request =
+//          FakeRequest(POST, addASmallProducerRoute)
+//                  .withFormUrlEncodedBody(
+//                    ("producerName", "Super Cola Ltd"),
+//                    ("referenceNumber", sdilNumber),
+//                    ("lowBand", "12"),
+//                    ("highBand", "12")
+//                  )
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual BAD_REQUEST
+//      }
+//
+//    }
   }
 }
