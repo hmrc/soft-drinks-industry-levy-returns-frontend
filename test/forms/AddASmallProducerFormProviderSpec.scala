@@ -45,7 +45,7 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
 
 
 
-  val form = new AddASmallProducerFormProvider()()
+  val form = new AddASmallProducerFormProvider()("what?")
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
 
   ".producerName" - {
