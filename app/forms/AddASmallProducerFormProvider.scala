@@ -34,7 +34,7 @@ import scala.concurrent.{Await, Future}
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply()= {
+  def apply(id: String)= {
 
 //    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 //
@@ -63,11 +63,7 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
       Constraint {
         case sdilReference if !sdilReference.matches(validFormatPattern) =>
           Invalid("addASmallProducer.error.referenceNumber.invalid")
-        case sdilReference  =>
-          
-          // if request sdilref == sdil ref
-
-
+        case sdilReference if sdilReference == id =>
           Invalid("addASmallProducer.error.referenceNumber.same")
         case _ =>
           Valid
@@ -78,13 +74,11 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
       mapping(
         "producerName" -> optional(text(
 
-        )
-          .verifying(maxLength(160,"addASmallProducer.error.producerName.maxLength"))),
+        ).verifying(maxLength(160,"addASmallProducer.error.producerName.maxLength"))),
 
         "referenceNumber" -> text(
           "addASmallProducer.error.referenceNumber.required"
-        )
-          .verifying(
+        ).verifying(
             checkSDILReference()),
 //              List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
 //              //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.

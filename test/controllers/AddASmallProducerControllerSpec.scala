@@ -40,7 +40,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
-  val form = formProvider()
+  lazy val form = formProvider("123")
+
   val producerName = "Party Drinks Group"
   val sdilReference = "XPSDIL000000116"
   val bandMax = 100000000000000L
@@ -163,7 +164,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           FakeRequest(POST, addASmallProducerRoute)
             .withFormUrlEncodedBody(
               ("producerName", "Super Cola Ltd"),
-              ("referenceNumber", sdilReference),
+              ("referenceNumber", sdilNumber),
               ("lowBand", "12"),
               ("highBand", "12")
             )
