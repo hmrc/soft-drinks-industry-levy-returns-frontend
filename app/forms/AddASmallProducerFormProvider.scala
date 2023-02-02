@@ -58,13 +58,21 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
 //          Valid
 //      }
 
-    def referenceNumberFormat(regex: String, errorKey1: String): Constraint[String] =
+    def checkSDILReference(): Constraint[String] = {
+      val validFormatPattern = "^X[A-Z]SDIL000[0-9]{6}$"
       Constraint {
-        case str if !str.matches(regex) =>
-          Invalid(errorKey1)
+        case sdilReference if !sdilReference.matches(validFormatPattern) =>
+          Invalid("addASmallProducer.error.referenceNumber.invalid")
+        case sdilReference  =>
+          
+          // if request sdilref == sdil ref
+
+
+          Invalid("addASmallProducer.error.referenceNumber.same")
         case _ =>
           Valid
       }
+    }
 
     Form(
       mapping(
@@ -77,8 +85,7 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
           "addASmallProducer.error.referenceNumber.required"
         )
           .verifying(
-              referenceNumberFormat("^X[A-Z]SDIL000[0-9]{6}$", "addASmallProducer.error.referenceNumber.invalid")),
-//              request.sdilEnrolment,"addASmallProducer.error.referenceNumber.same",
+            checkSDILReference()),
 //              List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
 //              //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.
 //              request.returnPeriod.fold(sys.error("Return Period missing"))(identity),"addASmallProducer.error.referenceNumber.Large")),

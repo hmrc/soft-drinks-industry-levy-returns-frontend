@@ -28,6 +28,10 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.inject.bind
+import scala.concurrent.Future
 
 class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
@@ -84,37 +88,94 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        
+
         page.getElementsByTag("label").text() must include(Messages("addASmallProducer.hint1"))
         page.getElementsByTag("label").text() must include(Messages("addASmallProducer.referenceNumber"))
         page.getElementsByTag("label").text() must include(Messages("addASmallProducer.lowBand"))
         page.getElementsByTag("label").text() must include(Messages("addASmallProducer.highBand"))
       }
     }
-//
-//    "must redirect to the next page when valid data is submitted" in {
-//
-//      val mockSessionRepository = mock[SessionRepository]
-//
-//      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-//
-//      val application =
-//        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-//          .overrides(
-//            bind[SessionRepository].toInstance(mockSessionRepository)
-//          )
-//          .build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, addASmallProducerRoute)
-//            .withFormUrlEncodedBody(("lowBand", producerName.toString), ("highBand", sdilReference.toString))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//      }
-//    }
+
+    "must redirect to the next page when valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addASmallProducerRoute)
+            .withFormUrlEncodedBody(
+              ("producerName", "Super Cola Ltd"),
+              ("referenceNumber", "XZSDIL000000234"),
+              ("lowBand", "12"),
+              ("highBand", "12")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
+    "must return 400 (bad request) and invalid SDIL reference error when invalid SDIL ref is entered" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addASmallProducerRoute)
+            .withFormUrlEncodedBody(
+              ("producerName", "Super Cola Ltd"),
+              ("referenceNumber", "INVALID ref"),
+              ("lowBand", "12"),
+              ("highBand", "12")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        val page = Jsoup.parse(contentAsString(result))
+        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.invalid"))
+      }
+    }
+
+    "must return 400 (bad request) and same SDIL reference error " +
+      "when same SDIL ref as the logged in user is entered" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addASmallProducerRoute)
+            .withFormUrlEncodedBody(
+              ("producerName", "Super Cola Ltd"),
+              ("referenceNumber", sdilReference),
+              ("lowBand", "12"),
+              ("highBand", "12")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        val page = Jsoup.parse(contentAsString(result))
+        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.same"))
+      }
+    }
+
 //
 //    "must return a Bad Request and errors when invalid data is submitted" in {
 //
