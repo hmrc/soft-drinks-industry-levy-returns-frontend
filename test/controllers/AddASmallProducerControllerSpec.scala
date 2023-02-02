@@ -17,26 +17,17 @@
 package controllers
 
 import base.SpecBase
-import connectors.SoftDrinksIndustryLevyConnector
+
 import forms.AddASmallProducerFormProvider
-import models.requests.DataRequest
-import models.{AddASmallProducer, NormalMode, SmallProducer, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddASmallProducerPage
-import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import play.api.inject.bind
+import play.api.i18n.Messages
 import play.api.libs.json.Json
-import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.AddASmallProducerView
-
-import scala.concurrent.Future
 
 class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
@@ -70,9 +61,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     "must return OK with correct page title and header" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      //TODO - use messages instead of literals
-      val expectedPageTitle = "Enter the registered small producer’s details - soft-drinks-industry-levy-returns-frontend - GOV.UK"
-      val expectedH1 = "Enter the registered small producer’s details"
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerRoute)
@@ -86,25 +74,23 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-//    "must return OK and contain correct form fields" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-//      val smallProducerNameLabel = "Small producer name (optional)" //      addASmallProducer.hint1 =
-//      val sdilReferenceLabel = "Soft Drinks Industry Levy reference number" // addASmallProducer.referenceNumber =
-//      val lowBandLabel = "Litres in the low band" // addASmallProducer.lowBand =
-//      val highBandLabel = "Litres in the high band" // addASmallProducer.highBand =
-//
-//      running(application) {
-//        val request = FakeRequest(GET, addASmallProducerRoute)
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual OK
-//        val page = Jsoup.parse(contentAsString(result))
-//
-//        page.title() must include(expectedPageTitle)
-//        page.getElementsByTag("h1").text() mustEqual expectedH1
-//      }
-//    }
+    "must return OK and contain correct form fields" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, addASmallProducerRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        
+        page.getElementsByTag("label").text() must include(Messages("addASmallProducer.hint1"))
+        page.getElementsByTag("label").text() must include(Messages("addASmallProducer.referenceNumber"))
+        page.getElementsByTag("label").text() must include(Messages("addASmallProducer.lowBand"))
+        page.getElementsByTag("label").text() must include(Messages("addASmallProducer.highBand"))
+      }
+    }
 //
 //    "must redirect to the next page when valid data is submitted" in {
 //
