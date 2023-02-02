@@ -27,9 +27,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddASmallProducerPage
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.Call
+import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
@@ -41,14 +42,10 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
 //  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
 //  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
-  
+
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
-//  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
   val form = formProvider()
-
-  val application = applicationBuilder(userAnswers = None).build()
-
   val producerName = "Party Drinks Group"
   val sdilReference = "XPSDIL000000116"
   val bandMax = 100000000000000L
@@ -70,9 +67,10 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
   "AddASmallProducer Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK with correct page title and header" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      //TODO - use messages instead of literals
       val expectedPageTitle = "Enter the registered small producer’s details - soft-drinks-industry-levy-returns-frontend - GOV.UK"
       val expectedH1 = "Enter the registered small producer’s details"
 
@@ -83,24 +81,28 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.title() mustEqual expectedPageTitle
-        page.getElementsByTag("h1").text() mustEqual expectedH1
+        page.title() must include(Messages("addASmallProducer.title"))
+        page.getElementsByTag("h1").text() mustEqual Messages("addASmallProducer.heading")
       }
     }
+
+//    "must return OK and contain correct form fields" in {
 //
-//    "must populate the view correctly on a GET when the question has previously been answered" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+//      val smallProducerNameLabel = "Small producer name (optional)" //      addASmallProducer.hint1 =
+//      val sdilReferenceLabel = "Soft Drinks Industry Levy reference number" // addASmallProducer.referenceNumber =
+//      val lowBandLabel = "Litres in the low band" // addASmallProducer.lowBand =
+//      val highBandLabel = "Litres in the high band" // addASmallProducer.highBand =
 //
 //      running(application) {
 //        val request = FakeRequest(GET, addASmallProducerRoute)
-//
-//        val view = application.injector.instanceOf[AddASmallProducerView]
-//
 //        val result = route(application, request).value
 //
 //        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(form.fill(AddASmallProducer(Some(producerName), sdilReference,litres,litres)), NormalMode)(request, messages(application)).toString
+//        val page = Jsoup.parse(contentAsString(result))
+//
+//        page.title() must include(expectedPageTitle)
+//        page.getElementsByTag("h1").text() mustEqual expectedH1
 //      }
 //    }
 //
