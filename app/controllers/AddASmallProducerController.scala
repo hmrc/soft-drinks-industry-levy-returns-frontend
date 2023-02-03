@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.AddASmallProducerFormProvider
 
 import javax.inject.Inject
-import models.{AddASmallProducer, BlankMode, Mode, NormalMode, SmallProducer}
+import models.{AddASmallProducer, BlankMode, Mode, NormalMode, ReturnPeriod, SmallProducer}
 import navigation.Navigator
 import pages.AddASmallProducerPage
 import play.api.data.Form
@@ -33,7 +33,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AddASmallProducerView
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
 class AddASmallProducerController @Inject()(
                                       override val messagesApi: MessagesApi,
@@ -113,24 +112,17 @@ class AddASmallProducerController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val userAnswers = request.userAnswers
-
-
-      val form: Form[AddASmallProducer] = formProvider(userAnswers, isSmallProducer)
+      val form: Form[AddASmallProducer] = formProvider(userAnswers)
 
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val isSmallProducer: Boolean =  sdilConnector.checkSmallProducerStatus(value.referenceNumber).map {
-            case Right =>
-            case _ =>
-          }
-          val smallProducer: SmallProducer = SmallProducer(
-            value.producerName.getOrElse(""),
-            value.referenceNumber,
-            (value.lowBand, value.highBand))
-
+          val smallProducer = SmallProducer(value.producerName.getOrElse(""), value.referenceNumber, (value.lowBand, value.highBand))
           for {
+            // TODO - chnage get to getOrElse
+            notSmallProducer <- sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get)
+
             updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, value))
             updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
             _              <- sessionRepository.set(updatedAnswersFinal)
