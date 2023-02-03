@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
 import models.{NormalMode, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
@@ -180,11 +181,43 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     "must return 400 (bad request) and existing SDIL reference error " +
       "when a SDIL reference number matches one of the already entered small producer SDIL references" in {
 
+      val notASmallProducerSDILReference = "XPSDIL000000478"
+      val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
+
+      val application =
+        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber,Json.obj(),List(superCola, sparkyJuice))))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addASmallProducerRoute)
+            .withFormUrlEncodedBody(
+              ("producerName", producerName),
+              ("referenceNumber", notASmallProducerSDILReference),
+              ("lowBand", litres.toString),
+              ("highBand", litres.toString)
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        val page = Jsoup.parse(contentAsString(result))
+        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.notASmallProducer"))
+      }
+    }
+
+    "must return 400 (bad request) and not a small producer SDIL reference error " +
+      "when a SDIL reference number belongs to a producer that is not registered as a small producer" in {
+
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber,Json.obj(),List(superCola, sparkyJuice))))
+        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
@@ -204,8 +237,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.exists"))
       }
     }
-
-
 
 //
 //    "must return a Bad Request and errors when invalid data is submitted" in {

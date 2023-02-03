@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AddASmallProducerView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class AddASmallProducerController @Inject()(
                                       override val messagesApi: MessagesApi,
@@ -112,16 +113,23 @@ class AddASmallProducerController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val userAnswers = request.userAnswers
-      val form: Form[AddASmallProducer] = formProvider(userAnswers)
+
+
+      val form: Form[AddASmallProducer] = formProvider(userAnswers, isSmallProducer)
 
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val smallProducer: SmallProducer =
-            SmallProducer(value.producerName.getOrElse(""),
-              value.referenceNumber,
-              (value.lowBand, value.highBand))
+          val isSmallProducer: Boolean =  sdilConnector.checkSmallProducerStatus(value.referenceNumber).map {
+            case Right =>
+            case _ =>
+          }
+          val smallProducer: SmallProducer = SmallProducer(
+            value.producerName.getOrElse(""),
+            value.referenceNumber,
+            (value.lowBand, value.highBand))
+
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, value))
             updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
