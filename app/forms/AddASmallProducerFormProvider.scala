@@ -20,15 +20,13 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.AddASmallProducer
-
+import models.{AddASmallProducer, UserAnswers}
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import models.SmallProducer
 
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply(id: String, smallProducerList: Seq[SmallProducer]) = {
+  def apply(userAnswers: UserAnswers) = {
 
     def checkSDILReference(): Constraint[String] = {
 
@@ -37,9 +35,9 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
       Constraint {
         case sdilReference if !sdilReference.matches(validFormatPattern) =>
           Invalid("addASmallProducer.error.referenceNumber.invalid")
-        case sdilReference if sdilReference == id =>
+        case sdilReference if sdilReference == userAnswers.id =>
           Invalid("addASmallProducer.error.referenceNumber.same")
-        case sdilReference if !smallProducerList.filter(smallProducer => smallProducer.sdilRef == sdilReference).isEmpty =>
+        case sdilReference if !userAnswers.smallProducerList.filter(smallProducer => smallProducer.sdilRef == sdilReference).isEmpty =>
             Invalid("addASmallProducer.error.referenceNumber.exists")
         case _ =>
           Valid

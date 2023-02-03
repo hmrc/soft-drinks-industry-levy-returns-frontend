@@ -26,7 +26,7 @@ import play.api.data.FormError
 
 class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SDILReferenceFieldBehaviours with SpecBase with MockitoSugar {
 
-  val form = new AddASmallProducerFormProvider()("what?",List())
+  val form = new AddASmallProducerFormProvider()(emptyUserAnswers)
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
 
   ".producerName" - {

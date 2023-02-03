@@ -37,7 +37,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
-  lazy val form = formProvider("123", List())
+  lazy val form = formProvider(emptyUserAnswers)
 
   val producerName = "Party Drinks Group"
   val sdilReference = "XPSDIL000000116"

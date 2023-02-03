@@ -52,11 +52,12 @@ class AddASmallProducerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
-      val form: Form[AddASmallProducer] = formProvider(request.userAnswers.id, request.userAnswers.smallProducerList)
+      val userAnswers = request.userAnswers
+      val form: Form[AddASmallProducer] = formProvider(userAnswers)
        mode match {
         case BlankMode => Ok(view(form, NormalMode))
         case _ =>
-            val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
+            val preparedForm = userAnswers.get(AddASmallProducerPage) match {
               case None => form
               case Some(value) => form.fill(value)
             }
@@ -70,7 +71,8 @@ class AddASmallProducerController @Inject()(
 
   def onEditPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
-      val form: Form[AddASmallProducer] = formProvider(request.userAnswers.id, request.userAnswers.smallProducerList)
+      val userAnswers = request.userAnswers
+      val form: Form[AddASmallProducer] = formProvider(userAnswers)
       val preparedForm = {
 //              val smallProducer = request.userAnswers.smallProducerList.filter(_.sdilRef == sdil).headOption
               val smallProducer = Some(SmallProducer("Jack", "XCSDIL000000069", (1L, 1L)))
@@ -83,7 +85,8 @@ class AddASmallProducerController @Inject()(
 
   def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val form = formProvider(request.userAnswers.id, request.userAnswers.smallProducerList)
+      val userAnswers = request.userAnswers
+      val form: Form[AddASmallProducer] = formProvider(userAnswers)
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, Some(sdil)))),
@@ -93,8 +96,8 @@ class AddASmallProducerController @Inject()(
               value.referenceNumber,
               (value.lowBand, value.highBand))
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AddASmallProducerPage, value))
-            updatedList = request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
+            updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, value))
+            updatedList = userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
             updatedAnswersFinal = {updatedAnswers.copy(smallProducerList = smallProducer :: updatedList)}
             _              <- sessionRepository.set(updatedAnswersFinal)
           } yield {
@@ -108,7 +111,8 @@ class AddASmallProducerController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val form = formProvider(request.userAnswers.id, request.userAnswers.smallProducerList)
+      val userAnswers = request.userAnswers
+      val form: Form[AddASmallProducer] = formProvider(userAnswers)
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -119,7 +123,7 @@ class AddASmallProducerController @Inject()(
               value.referenceNumber,
               (value.lowBand, value.highBand))
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AddASmallProducerPage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, value))
             updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
             _              <- sessionRepository.set(updatedAnswersFinal)
           } yield {
