@@ -17,9 +17,8 @@
 package controllers
 
 import base.SpecBase
-
 import forms.AddASmallProducerFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddASmallProducerPage
@@ -31,21 +30,22 @@ import repositories.SessionRepository
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
+
 import scala.concurrent.Future
 
 class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
-//  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
-//  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
-
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
-  lazy val form = formProvider("123")
+  lazy val form = formProvider("123", List())
 
   val producerName = "Party Drinks Group"
   val sdilReference = "XPSDIL000000116"
   val bandMax = 100000000000000L
   val litres = 20L
+
+  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
+  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
 
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
 
@@ -174,6 +174,34 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
         val page = Jsoup.parse(contentAsString(result))
         page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.same"))
+      }
+    }
+
+    "must return 400 (bad request) and existing SDIL reference error " +
+      "when a SDIL reference number matches one of the already entered small producer SDIL references" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber,Json.obj(),List(superCola))))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addASmallProducerRoute)
+            .withFormUrlEncodedBody(
+              ("producerName", producerName),
+              ("referenceNumber", superCola.sdilRef),
+              ("lowBand", litres.toString),
+              ("highBand", litres.toString)
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        val page = Jsoup.parse(contentAsString(result))
+        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.exists"))
       }
     }
 

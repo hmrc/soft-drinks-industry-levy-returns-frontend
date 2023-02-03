@@ -16,55 +16,31 @@
 
 package forms
 
-import connectors.SoftDrinksIndustryLevyConnector
-
 import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{AddASmallProducer, Mode, ReturnPeriod}
-import models.requests.DataRequest
-import play.api.data.validation.{Constraint, Invalid, Valid}
-import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import models.AddASmallProducer
 
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
+import play.api.data.validation.{Constraint, Invalid, Valid}
+import models.SmallProducer
+
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply(id: String)= {
-
-//    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-//
-//    def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] =
-//      sdilConnector.checkSmallProducerStatus(sdilRef, period)
-//
-//    def referenceNumberFormat(regex: String, errorKey1: String,
-//                              referenceNumber: String, errorKey2: String,
-//                              referenceNumberList: List[String], errorKey3: String,
-//                              returnPeriod:ReturnPeriod,errorKey4: String): Constraint[String] =
-//      Constraint {
-//        case str if !str.matches(regex) =>
-//          Invalid(errorKey1, regex)
-//        case str if str.matches(referenceNumber) =>
-//          Invalid(errorKey2, referenceNumber)
-//        case str if referenceNumberList.contains(str) =>
-//          Invalid(errorKey3, referenceNumberList)
-//        case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)).equals(false)  =>
-//          Invalid(errorKey4)
-//        case _ =>
-//          Valid
-//      }
+  def apply(id: String, smallProducerList: Seq[SmallProducer]) = {
 
     def checkSDILReference(): Constraint[String] = {
+
       val validFormatPattern = "^X[A-Z]SDIL000[0-9]{6}$"
+
       Constraint {
         case sdilReference if !sdilReference.matches(validFormatPattern) =>
           Invalid("addASmallProducer.error.referenceNumber.invalid")
         case sdilReference if sdilReference == id =>
           Invalid("addASmallProducer.error.referenceNumber.same")
+        case sdilReference if !smallProducerList.filter(smallProducer => smallProducer.sdilRef == sdilReference).isEmpty =>
+            Invalid("addASmallProducer.error.referenceNumber.exists")
         case _ =>
           Valid
       }
@@ -73,17 +49,12 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
     Form(
       mapping(
         "producerName" -> optional(text(
-
-        ).verifying(maxLength(160,"addASmallProducer.error.producerName.maxLength"))),
-
+        ).verifying(
+          maxLength(160,"addASmallProducer.error.producerName.maxLength"))),
         "referenceNumber" -> text(
           "addASmallProducer.error.referenceNumber.required"
         ).verifying(
             checkSDILReference()),
-//              List("XHSDIL000000381","XLSDIL000000539"), "addASmallProducer.error.referenceNumber.Exist",
-//              //TODO -> NEED TO PULL THE DATE OF THE RETURN SELECTED.
-//              request.returnPeriod.fold(sys.error("Return Period missing"))(identity),"addASmallProducer.error.referenceNumber.Large")),
-
         "lowBand" -> long(
           "addASmallProducer.error.lowBand.required",
           "addASmallProducer.error.lowBand.negative",
