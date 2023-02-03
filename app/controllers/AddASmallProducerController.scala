@@ -52,7 +52,7 @@ class AddASmallProducerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
-      val form: Form[AddASmallProducer] = formProvider(request.userAnswers.id)
+      val form: Form[AddASmallProducer] = formProvider(request.userAnswers.id, request.userAnswers.smallProducerList)
        mode match {
         case BlankMode => Ok(view(form, NormalMode))
         case _ =>
@@ -70,7 +70,7 @@ class AddASmallProducerController @Inject()(
 
   def onEditPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
-      val form: Form[AddASmallProducer] = formProvider(request.userAnswers.id)
+      val form: Form[AddASmallProducer] = formProvider(request.userAnswers.id, request.userAnswers.smallProducerList)
       val preparedForm = {
 //              val smallProducer = request.userAnswers.smallProducerList.filter(_.sdilRef == sdil).headOption
               val smallProducer = Some(SmallProducer("Jack", "XCSDIL000000069", (1L, 1L)))
@@ -83,7 +83,7 @@ class AddASmallProducerController @Inject()(
 
   def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val form = formProvider(request.userAnswers.id)
+      val form = formProvider(request.userAnswers.id, request.userAnswers.smallProducerList)
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, Some(sdil)))),
@@ -108,7 +108,7 @@ class AddASmallProducerController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val form = formProvider(request.userAnswers.id)
+      val form = formProvider(request.userAnswers.id, request.userAnswers.smallProducerList)
 
       form.bindFromRequest().fold(
         formWithErrors =>
