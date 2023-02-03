@@ -184,7 +184,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber,Json.obj(),List(superCola))))
+        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber,Json.obj(),List(superCola, sparkyJuice))))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
@@ -204,6 +204,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.exists"))
       }
     }
+
+
 
 //
 //    "must return a Bad Request and errors when invalid data is submitted" in {
