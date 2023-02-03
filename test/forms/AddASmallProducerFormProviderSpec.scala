@@ -17,33 +17,14 @@
 package forms
 
 import base.SpecBase
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.routes
 import forms.behaviours.{LongFieldBehaviour, SDILReferenceFieldBehaviours, StringFieldBehaviours}
-import models.{NormalMode, UserAnswers}
-import models.requests.DataRequest
-import org.scalatestplus.mockito.MockitoSugar
-import pages.{AddASmallProducerPage, RemoveSmallProducerConfirmPage}
-import play.api.data.FormError
-import play.api.i18n.Messages
-import play.api.libs.json.Json
-import play.api.test.Helpers._
-import play.api.test.FakeRequest
-import play.api.test.Helpers.running
-import repositories.SessionRepository
-import views.html.AddASmallProducerView
+import models.NormalMode
 
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.FormError
 
 class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SDILReferenceFieldBehaviours with SpecBase with MockitoSugar {
-
-//  val mockSessionRepository = mock[SessionRepository]
-//  val application = applicationBuilder(userAnswers = None).build()
-//  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
-
-  // do we need to implement the datarequest
-//  implicit val request: DataRequest[_]
-
-
 
   val form = new AddASmallProducerFormProvider()("what?")
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
@@ -85,46 +66,6 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
       fieldName,
       requiredError = FormError(fieldName, invalidSDILRefNumber)
     )
-
-    //    Property tests would not suit the following constrains on the form, hence unit tests will be used instead
-    //    val alreadyExistsKey = "addASmallProducer.error.referenceNumber.Exist"
-    //    val large = "addASmallProducer.error.referenceNumber.Large"
-    //    val same = "addASmallProducer.error.referenceNumber.same"
-
-
-
-
-//    "Small producer reference number must be different to reference currently submitting the returns" in {
-//      val formData = Json.obj(
-//        "producerName" -> "Super Cola Ltd",
-//        "referenceNumber" -> sdilNumber,
-//        "lowBand" -> "12",
-//        "highBand" -> "12"
-//      )
-//      val userAnswers = UserAnswers(sdilNumber, Json.obj()).set(AddASmallProducerPage,"hello").success.value
-//      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-//
-//      running(application) {
-//
-//        val request = FakeRequest(POST, addASmallProducerRoute)
-//          .withFormUrlEncodedBody(
-//            ("producerName", "Super Cola Ltd"),
-//            ("referenceNumber", sdilNumber),
-//            ("lowBand", "12"),
-//            ("highBand", "12")
-//          )
-//
-//        val boundForm = form.bind(formData, 102400)
-//        val view = application.injector.instanceOf[AddASmallProducerView]
-//        val result = route(application, request).value
-//
-//
-//        status(result) mustEqual BAD_REQUEST
-////        contentAsString(result) must include ("addASmallProducer.error.referenceNumber.same")
-//        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-//      }
-//
-//    }
 
   }
 
