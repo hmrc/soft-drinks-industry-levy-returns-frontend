@@ -22,10 +22,10 @@ import controllers.actions._
 import forms.AddASmallProducerFormProvider
 
 import javax.inject.Inject
-import models.{AddASmallProducer, BlankMode, Mode, NormalMode, ReturnPeriod, SmallProducer}
+import models.{AddASmallProducer, BlankMode, Mode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import navigation.Navigator
 import pages.AddASmallProducerPage
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -90,13 +90,14 @@ class AddASmallProducerController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, Some(sdil)))),
-        value => {
+        addSmallProducer => {
           val smallProducer: SmallProducer =
-            SmallProducer(value.producerName.getOrElse(""),
-              value.referenceNumber,
-              (value.lowBand, value.highBand))
+            SmallProducer(addSmallProducer.producerName.getOrElse(""),
+              addSmallProducer.referenceNumber,
+              (addSmallProducer.lowBand, addSmallProducer.highBand))
+              sdilConnector.checkSmallProducerStatus(addSmallProducer.referenceNumber, request.returnPeriod)
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
             updatedList = userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
             updatedAnswersFinal = {updatedAnswers.copy(smallProducerList = smallProducer :: updatedList)}
             _              <- sessionRepository.set(updatedAnswersFinal)
@@ -113,27 +114,35 @@ class AddASmallProducerController @Inject()(
     implicit request =>
       val userAnswers = request.userAnswers
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
-
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val smallProducer = SmallProducer(value.producerName.getOrElse(""), value.referenceNumber, (value.lowBand, value.highBand))
-          for {
-            // TODO - change get to getOrElse
-            notSmallProducer <- sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get)
-            updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, value))
-            updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
-            _              <- sessionRepository.set(updatedAnswersFinal)
-          } yield {
-//            if(notSmallProducer.get)
-//              Future.successful(BadRequest(view(, mode)))
-
-            Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
-
+          sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get).flatMap {
+            case Some(true) => updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
+              Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
+            )
+            case Some(false) =>
+              Future.successful(
+                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+              )
+            case None => Future.successful(
+              BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+            )
           }
-        }
 
+        }
       )
+  }
+
+  private def updateDatabase(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
+    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber, (addSmallProducer.lowBand, addSmallProducer.highBand))
+    for {
+      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
+      updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
+      _ <- sessionRepository.set(updatedAnswersFinal)
+    } yield {
+      updatedAnswersFinal
+    }
   }
 }
