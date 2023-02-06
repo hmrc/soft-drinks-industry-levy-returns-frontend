@@ -120,13 +120,15 @@ class AddASmallProducerController @Inject()(
         value => {
           val smallProducer = SmallProducer(value.producerName.getOrElse(""), value.referenceNumber, (value.lowBand, value.highBand))
           for {
-            // TODO - chnage get to getOrElse
+            // TODO - change get to getOrElse
             notSmallProducer <- sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get)
-
             updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, value))
             updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
             _              <- sessionRepository.set(updatedAnswersFinal)
           } yield {
+//            if(notSmallProducer.get)
+//              Future.successful(BadRequest(view(, mode)))
+
             Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
 
           }

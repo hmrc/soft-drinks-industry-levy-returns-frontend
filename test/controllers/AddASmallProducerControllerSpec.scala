@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
-import models.{NormalMode, SmallProducer, UserAnswers}
+import models.{NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddASmallProducerPage
@@ -107,8 +107,11 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
 
       val application =
-        applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+        applicationBuilder(Some(emptyUserAnswers), Some(ReturnPeriod(2022,3)))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          ).build()
 
       running(application) {
         val request = FakeRequest(POST, addASmallProducerRoute)
@@ -219,8 +222,13 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
 
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+        applicationBuilder(
+            Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))),
+            Some(ReturnPeriod(2022,3)))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          ).build()
 
       running(application) {
         val request =
