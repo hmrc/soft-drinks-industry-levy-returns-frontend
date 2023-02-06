@@ -43,9 +43,10 @@
         <h1 class="govuk-heading-m">@messages("addASmallProducer.heading")</h1>
 
         @govukInput(
-            InputViewModel(
-                field = form("producerName"),
-                label = Label(content = Text(messages("addASmallProducer.hint1")))
+            Input(
+                id = "producerName",
+                name = "producerName",
+                label = Label(content = Text(messages("addASmallProducer.hint1"))),
             )
             .withWidth(Fixed20)
         )
@@ -60,20 +61,28 @@
         )
 
         @govukInput(
-            InputViewModel(
-                field = form("lowBand"),
-                label = LabelViewModel(messages("addASmallProducer.lowBand"))
+            Input(
+                id = "lowBand",
+                name = "lowBand",
+                label = LabelViewModel(messages("addASmallProducer.lowBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
                 .withHint(Hint(content = Text(messages("addASmallProducer.hint3"))))
         )
 
         @govukInput(
-            InputViewModel(
-                field = form("highBand"),
-                label = LabelViewModel(messages("addASmallProducer.highBand"))
+            Input(
+                id = "highBand",
+                name = "highBand",
+                label = LabelViewModel(messages("addASmallProducer.highBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
                 .withHint(Hint(content = Text(messages("addASmallProducer.hint4"))))
         )
 
