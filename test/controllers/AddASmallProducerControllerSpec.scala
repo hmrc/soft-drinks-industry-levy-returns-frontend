@@ -21,6 +21,8 @@ import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
 import models.{EditMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
+import models.{NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import org.jsoup.Jsoup
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddASmallProducerPage
 import play.api.i18n.Messages
