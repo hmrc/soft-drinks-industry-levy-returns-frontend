@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.UserAnswers
+import models.{ReturnPeriod, UserAnswers}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -91,11 +91,13 @@ trait SpecBase
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+                                    userAnswers: Option[UserAnswers] = None,
+                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
 }
