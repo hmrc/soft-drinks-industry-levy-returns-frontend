@@ -95,7 +95,6 @@ class AddASmallProducerController @Inject()(
             SmallProducer(addSmallProducer.producerName.getOrElse(""),
               addSmallProducer.referenceNumber,
               (addSmallProducer.lowBand, addSmallProducer.highBand))
-              sdilConnector.checkSmallProducerStatus(addSmallProducer.referenceNumber, request.returnPeriod)
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
             updatedList = userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
@@ -114,6 +113,7 @@ class AddASmallProducerController @Inject()(
     implicit request =>
       val userAnswers = request.userAnswers
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
@@ -126,8 +126,8 @@ class AddASmallProducerController @Inject()(
               Future.successful(
                 BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
               )
-            case None => Future.successful(
-              BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+            case None =>
+              Future.successful(BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
             )
           }
 

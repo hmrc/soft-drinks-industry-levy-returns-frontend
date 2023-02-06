@@ -104,7 +104,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
 
       val application =
         applicationBuilder(Some(emptyUserAnswers), Some(ReturnPeriod(2022,3)))
