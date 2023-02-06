@@ -60,14 +60,11 @@ class SmallProducerDetailsController @Inject()(
         rows = smallProducersSummaryList
       )
 
-
       val smallProducerDetails = SummaryListViewModel(
         rows = Seq(
           AddASmallProducerSummary.row(request.userAnswers)
         ).flatten
       )
-
-
 
       Ok(view(preparedForm, mode, list, smallProducerDetails))
   }
@@ -83,7 +80,6 @@ class SmallProducerDetailsController @Inject()(
           AddASmallProducerSummary.row(request.userAnswers)
         ).flatten
       )
-
 
       val list: SummaryList = SummaryListViewModel(
         rows = smallProducersSummaryList
