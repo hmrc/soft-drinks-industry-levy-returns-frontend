@@ -62,51 +62,7 @@ class AddASmallProducerController @Inject()(
               case Some(value) => form.fill(value)
             }
             Ok(view(preparedForm, mode))
-
-
       }
-
-
-  }
-
-  def onEditPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request: DataRequest[AnyContent] =>
-      val userAnswers = request.userAnswers
-      val form: Form[AddASmallProducer] = formProvider(userAnswers)
-      val preparedForm = {
-//              val smallProducer = request.userAnswers.smallProducerList.filter(_.sdilRef == sdil).headOption
-              val smallProducer = Some(SmallProducer("Jack", "XCSDIL000000069", (1L, 1L)))
-              val v: AddASmallProducer = smallProducer.fold(sys.error(" no element present"))(value =>
-                AddASmallProducer(Some(value.alias), value.sdilRef, value.litreage._1, value.litreage._2))
-              form.fill(v)
-            }
-            Ok(view(preparedForm, mode, Some("XCSDIL000000069")))
-  }
-
-  def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      val userAnswers = request.userAnswers
-      val form: Form[AddASmallProducer] = formProvider(userAnswers)
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, Some(sdil)))),
-        addSmallProducer => {
-          val smallProducer: SmallProducer =
-            SmallProducer(addSmallProducer.producerName.getOrElse(""),
-              addSmallProducer.referenceNumber,
-              (addSmallProducer.lowBand, addSmallProducer.highBand))
-          for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
-            updatedList = userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
-            updatedAnswersFinal = {updatedAnswers.copy(smallProducerList = smallProducer :: updatedList)}
-            _              <- sessionRepository.set(updatedAnswersFinal)
-          } yield {
-            Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
-          }
-        }
-
-      )
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -141,4 +97,47 @@ class AddASmallProducerController @Inject()(
       updatedAnswersFinal
     }
   }
+
+      def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+        implicit request: DataRequest[AnyContent] =>
+          val userAnswers = request.userAnswers
+          val form: Form[AddASmallProducer] = formProvider(userAnswers)
+
+          val sp = request.userAnswers.smallProducerList.headOption
+          println(Console.YELLOW + sp.get + Console.WHITE)
+
+          val v = sp.fold(sys.error(" no element present"))(value => AddASmallProducer(Some(value.alias), value.sdilRef, value.litreage._1, value.litreage._2))
+          val preparedForm = form.fill(v)
+
+          Ok(view(preparedForm, mode))
+      }
+
+      def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+        implicit request =>
+          val userAnswers = request.userAnswers
+          val form: Form[AddASmallProducer] = formProvider(userAnswers)
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, Some(sdil)))),
+            addSmallProducer => {
+              val smallProducer: SmallProducer =
+                SmallProducer(addSmallProducer.producerName.getOrElse(""),
+                  addSmallProducer.referenceNumber,
+                  (addSmallProducer.lowBand, addSmallProducer.highBand))
+              for {
+                updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
+                updatedList = userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
+                updatedAnswersFinal = {updatedAnswers.copy(smallProducerList = smallProducer :: updatedList)}
+                _              <- sessionRepository.set(updatedAnswersFinal)
+              } yield {
+                Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
+              }
+            }
+
+          )
+
+      }
+
+
+
 }

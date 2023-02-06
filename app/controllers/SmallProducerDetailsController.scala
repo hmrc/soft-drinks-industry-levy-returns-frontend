@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.SmallProducerDetailsFormProvider
-import viewmodels.checkAnswers.SmallProducerDetailsSummary
+import viewmodels.checkAnswers.{AddASmallProducerSummary, SmallProducerDetailsSummary}
 import views.html.SmallProducerDetailsView
 import models.{Mode, SmallProducer}
 import navigation.Navigator
@@ -60,19 +60,38 @@ class SmallProducerDetailsController @Inject()(
         rows = smallProducersSummaryList
       )
 
-      Ok(view(preparedForm, mode, list))
+
+      val smallProducerDetails = SummaryListViewModel(
+        rows = Seq(
+          AddASmallProducerSummary.row(request.userAnswers)
+        ).flatten
+      )
+
+
+
+      Ok(view(preparedForm, mode, list, smallProducerDetails))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      println(Console.YELLOW + "I got this far 4" + Console.WHITE)
       val spList = request.userAnswers.smallProducerList
       val smallProducersSummaryList: List[SummaryListRow] = SmallProducerDetailsSummary.row2(spList)
+
+      val smallProducerDetails = SummaryListViewModel(
+        rows = Seq(
+          AddASmallProducerSummary.row(request.userAnswers)
+        ).flatten
+      )
+
+
       val list: SummaryList = SummaryListViewModel(
         rows = smallProducersSummaryList
       )
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, list))),
+
+          Future.successful(BadRequest(view(formWithErrors, mode, list, smallProducerDetails))),
 
         value =>
           for {

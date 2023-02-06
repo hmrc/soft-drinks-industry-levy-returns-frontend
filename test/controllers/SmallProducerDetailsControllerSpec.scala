@@ -50,7 +50,6 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
   lazy val smallProducerDetailsRoute = routes.SmallProducerDetailsController.onPageLoad(NormalMode).url
 
   "SmallProducerDetails Controller" - {
-
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -147,6 +146,8 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
+
+    // TODO - look into these tests and see if we need to move them to a different file
     "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
