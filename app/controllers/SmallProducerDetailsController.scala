@@ -71,10 +71,8 @@ class SmallProducerDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      println(Console.YELLOW + "I got this far 4" + Console.WHITE)
       val spList = request.userAnswers.smallProducerList
       val smallProducersSummaryList: List[SummaryListRow] = SmallProducerDetailsSummary.row2(spList)
-
       val smallProducerDetails = SummaryListViewModel(
         rows = Seq(
           AddASmallProducerSummary.row(request.userAnswers)

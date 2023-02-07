@@ -165,6 +165,8 @@ howManyBoughtIntoUk.error.highBand.outOfMaxVal = Number of litres in the high ba
 howManyBoughtIntoUk.lowBand.change.hidden = Litres in the low band
 howManyBoughtIntoUk.highBand.change.hidden = Litres in the high band
 
+litres.suffix = litres
+
 
 howManyBoughtIntoUk.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
 howManyBoughtIntoUk.heading = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?

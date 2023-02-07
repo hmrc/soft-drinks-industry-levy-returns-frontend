@@ -122,17 +122,10 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        println(page.getElementById("producerName").`val`())
-        println(page.getElementById("referenceNumber").`val`())
-        println(page.getElementById("lowBand").`val`())
-        println(page.getElementById("highBand").`val`())
-        
         page.getElementById("producerName").`val`() mustEqual(superCola.alias)
         page.getElementById("referenceNumber").`val`() mustEqual(superCola.sdilRef)
-        page.getElementById("lowBand").`val`() mustEqual(superCola.litreage._1)
-        page.getElementById("highBand").`val`() mustEqual(superCola.litreage._2)
-
-
+        page.getElementById("lowBand").`val`() mustEqual(superCola.litreage._1.toString)
+        page.getElementById("highBand").`val`() mustEqual(superCola.litreage._2.toString)
       }
     }
 
