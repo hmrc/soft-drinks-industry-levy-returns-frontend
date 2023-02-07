@@ -23,7 +23,7 @@
     govukSummaryList: GovukSummaryList
 )
 
-@(form: Form[_], mode: Mode, smallProducerList: SummaryList, spDetails: SummaryList)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, smallProducerList: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("smallProducerDetails.title"))) {
 
@@ -37,9 +37,6 @@
         @govukSummaryList(smallProducerList)
 
         <h2 class="govuk-heading-m">@messages("smallProducerDetails.heading2")</h2>
-
-        <h2 class="govuk-heading-m">New Row</h2>
-        @govukSummaryList(spDetails)
 
         @govukRadios(
             RadiosViewModel.yesNo(

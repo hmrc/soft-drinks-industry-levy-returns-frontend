@@ -66,7 +66,7 @@ class SmallProducerDetailsController @Inject()(
         ).flatten
       )
 
-      Ok(view(preparedForm, mode, list, smallProducerDetails))
+      Ok(view(preparedForm, mode, list))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -87,7 +87,7 @@ class SmallProducerDetailsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
 
-          Future.successful(BadRequest(view(formWithErrors, mode, list, smallProducerDetails))),
+          Future.successful(BadRequest(view(formWithErrors, mode, list))),
 
         value =>
           for {
