@@ -111,8 +111,10 @@ class AddASmallProducerController @Inject()(
 
   def onEditPageSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
       val userAnswers = request.userAnswers
-      val form: Form[AddASmallProducer] = formProvider(userAnswers)
+      val form = formProvider(userAnswers)
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, Some(sdil)))),

@@ -26,7 +26,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply(userAnswers: UserAnswers, isSmallProducer: Boolean = false) = {
+  def apply(userAnswers: UserAnswers) = {
 
     def checkSDILReference(): Constraint[String] = {
 
@@ -39,8 +39,6 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
           Invalid("addASmallProducer.error.referenceNumber.same")
         case sdilReference if !userAnswers.smallProducerList.filter(smallProducer => smallProducer.sdilRef == sdilReference).isEmpty =>
             Invalid("addASmallProducer.error.referenceNumber.exists")
-//        case sdilReference if !isSmallProducer =>
-//          Invalid("addASmallProducer.error.referenceNumber.notASmallProducer")
         case _ =>
           Valid
       }
