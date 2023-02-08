@@ -29,6 +29,7 @@ import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AddASmallProducerView
 
@@ -75,17 +76,15 @@ class AddASmallProducerController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
 
-          // Check for existing sdil
           val smallProducerList = request.userAnswers.smallProducerList
           val smallProducerOpt = smallProducerList.find(smallProducer => smallProducer.sdilRef == value.referenceNumber)
 
           smallProducerOpt match {
-            case Some(smallProducer) =>
+            case Some(_) =>
               Future.successful(
                 BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode))
               )
             case _ =>
-              // Check if indeed a small producer
               sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get).flatMap {
                 case Some(false) =>
                   Future.successful(
@@ -111,6 +110,19 @@ class AddASmallProducerController @Inject()(
     }
   }
 
+  private def isValidSDILRef(curretSDILRef: String, addASmallProducerSDILRef: String, smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])(implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
+    if (curretSDILRef == addASmallProducerSDILRef) {
+      Future.successful(Right())
+    } else if (smallProducerList.map(_.sdilRef).contains(curretSDILRef)) {
+      Future.successful(Left("Already exists"))
+    } else {
+      sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
+        case Some(false) => Left("Not a small producer")
+        case _ => Right()
+      }
+    }
+  }
+
   def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
 
@@ -133,27 +145,30 @@ class AddASmallProducerController @Inject()(
     implicit request =>
 
       val userAnswers = request.userAnswers
+      val returnPeriod = request.returnPeriod
       val form = formProvider(userAnswers)
-
-      // if sdilReference (being edited ) is the same as the one being posted/submitted then we let it
-
 
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))),
         value => {
-          sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get).flatMap {
-            case Some(false) =>
+          val smallProducerList = request.userAnswers.smallProducerList
+          isValidSDILRef(sdilReference, value.referenceNumber, smallProducerList, returnPeriod).flatMap({
+            case Left("Already exists") =>
+              Future.successful(
+                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
+              )
+            case Left(_) =>
               Future.successful(
                 BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
               )
-            case _ => updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
-              Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
-            )
-          }
+            case Right(_) => updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
+              Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
+          })
         }
       )
-
+  }
+}
 //
 //      val userAnswers = request.userAnswers
 //      val form = formProvider(userAnswers)
@@ -176,8 +191,6 @@ class AddASmallProducerController @Inject()(
 //          }
 //        }
 //      )
-  }
 
 
 
-}

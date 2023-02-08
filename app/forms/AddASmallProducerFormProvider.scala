@@ -37,8 +37,6 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
           Invalid("addASmallProducer.error.referenceNumber.invalid")
         case sdilReference if sdilReference == userAnswers.id =>
           Invalid("addASmallProducer.error.referenceNumber.same")
-//        case sdilReference if !userAnswers.smallProducerList.filter(smallProducer => smallProducer.sdilRef == sdilReference).isEmpty =>
-//            Invalid("addASmallProducer.error.referenceNumber.exists")
         case _ =>
           Valid
       }
