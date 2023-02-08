@@ -150,16 +150,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
       lazy val addASmallProducerEditSubmitRoute = routes.AddASmallProducerController.onEditPageSubmit(superCola.sdilRef).url
 
-      val sessionData =
-          Json.obj(
-            AddASmallProducerPage.toString -> Json.obj(
-              "producerName" -> superCola.alias,
-              "referenceNumber" -> superCola.sdilRef,
-              "lowBand" -> superCola.litreage._1,
-              "highBand" -> superCola.litreage._2
-            )
-          )
-
       val mockSessionRepository = mock[SessionRepository]
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
@@ -167,7 +157,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
 
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(2022, 3)))
+        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))), Some(ReturnPeriod(2022, 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
