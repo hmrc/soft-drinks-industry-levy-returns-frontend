@@ -26,7 +26,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply(userAnswers: UserAnswers) = {
+  def apply(userAnswers: UserAnswers  ) = {
 
     def checkSDILReference(): Constraint[String] = {
 

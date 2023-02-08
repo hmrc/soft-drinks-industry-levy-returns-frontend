@@ -51,6 +51,8 @@ object SmallProducerDetailsSummary  {
       val value = ValueViewModel(
         HtmlContent(
           HtmlFormat.escape(smallProducer.alias)
+//          HtmlFormat.escape(smallProducer.litreage._1.toString),
+//          HtmlFormat.escape(smallProducer.litreage._2.toString),
         )
       )
       SummaryListRowViewModel(

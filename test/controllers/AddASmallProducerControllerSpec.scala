@@ -19,9 +19,8 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
-import models.{EditMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{AddASmallProducer, EditMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
-import models.{NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddASmallProducerPage
@@ -100,6 +99,21 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         labels must include(Messages("addASmallProducer.highBand"))
       }
     }
+
+    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, addASmallProducerRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
   }
 
   "AddASmallProducer Controller onEditPageLoad" - {
@@ -122,14 +136,81 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementById("producerName").`val`() mustEqual(superCola.alias)
-        page.getElementById("referenceNumber").`val`() mustEqual(superCola.sdilRef)
-        page.getElementById("lowBand").`val`() mustEqual(superCola.litreage._1.toString)
-        page.getElementById("highBand").`val`() mustEqual(superCola.litreage._2.toString)
+        page.getElementById("producerName").`val`() mustEqual (superCola.alias)
+        page.getElementById("referenceNumber").`val`() mustEqual (superCola.sdilRef)
+        page.getElementById("lowBand").`val`() mustEqual (superCola.litreage._1.toString)
+        page.getElementById("highBand").`val`() mustEqual (superCola.litreage._2.toString)
       }
     }
+  }
+
+  "AddASmallProducer Controller onEditSubmitLoad" - {
+
+    "must return Redirect(303) when SDIL reference has not been changed" in {
+
+      lazy val addASmallProducerEditSubmitRoute = routes.AddASmallProducerController.onEditPageSubmit(superCola.sdilRef).url
+
+      val sessionData =
+          Json.obj(
+            AddASmallProducerPage.toString -> Json.obj(
+              "producerName" -> superCola.alias,
+              "referenceNumber" -> superCola.sdilRef,
+              "lowBand" -> superCola.litreage._1,
+              "highBand" -> superCola.litreage._2
+            )
+          )
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+
+      val application =
+        applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(2022, 3)))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          ).build()
+
+      running(application) {
+        val request = FakeRequest(POST, addASmallProducerEditSubmitRoute)
+          .withFormUrlEncodedBody(
+            ("producerName", superCola.alias),
+            ("referenceNumber", superCola.sdilRef),
+            ("lowBand", superCola.litreage._1.toString),
+            ("highBand", superCola.litreage._2.toString)
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        val page = Jsoup.parse(contentAsString(result))
+      }
+    }
+  }
 
   "AddASmallProducer Controller onSubmit" - {
+
+//    "must return a Bad Request and errors when invalid data is submitted" in {
+//
+//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+//
+//      running(application) {
+//        val request =
+//          FakeRequest(POST, addASmallProducerRoute)
+//            .withFormUrlEncodedBody(("value", "invalid value"))
+//
+//        val boundForm = form.bind(Map("value" -> "invalid value"))
+//
+//        val view = application.injector.instanceOf[AddASmallProducerView]
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual BAD_REQUEST
+//        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+//      }
+//    }
 
     "must redirect to the next page when valid data is submitted" in {
 
@@ -316,46 +397,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.notASmallProducer"))
       }
     }
-  }
-
-
-
-
-
-
-//    "must return a Bad Request and errors when invalid data is submitted" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, addASmallProducerRoute)
-//            .withFormUrlEncodedBody(("value", "invalid value"))
-//
-//        val boundForm = form.bind(Map("value" -> "invalid value"))
-//
-//        val view = application.injector.instanceOf[AddASmallProducerView]
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual BAD_REQUEST
-//        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-//      }
-//    }
-
-    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, addASmallProducerRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
 
     "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
 
@@ -363,7 +404,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST,  addASmallProducerRoute)
+          FakeRequest(POST, addASmallProducerRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -385,18 +426,17 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, addASmallProducerRoute)
-                  .withFormUrlEncodedBody(
-                    ("producerName", "Super Cola Ltd"),
-                    ("referenceNumber", sdilNumber),
-                    ("lowBand", "12"),
-                    ("highBand", "12")
-                  )
+            .withFormUrlEncodedBody(
+              ("producerName", "Super Cola Ltd"),
+              ("referenceNumber", sdilNumber),
+              ("lowBand", "12"),
+              ("highBand", "12")
+            )
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
       }
-
     }
   }
 }
