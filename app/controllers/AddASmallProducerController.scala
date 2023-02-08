@@ -128,12 +128,12 @@ class AddASmallProducerController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))),
         value => {
           sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get).flatMap {
             case Some(false) =>
               Future.successful(
-                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
               )
             case _ => updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
               Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
