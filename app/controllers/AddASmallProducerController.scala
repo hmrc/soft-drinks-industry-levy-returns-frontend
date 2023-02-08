@@ -74,15 +74,28 @@ class AddASmallProducerController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get).flatMap {
-            case Some(false) =>
+
+          // Check for existing sdil
+          val smallProducerList = request.userAnswers.smallProducerList
+          val smallProducerOpt = smallProducerList.find(smallProducer => smallProducer.sdilRef == value.referenceNumber)
+
+          smallProducerOpt match {
+            case Some(smallProducer) =>
               Future.successful(
-                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode))
               )
-            case _ => updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
-              Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
-            )
-          }
+            case _ =>
+              // Check if indeed a small producer
+              sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get).flatMap {
+                case Some(false) =>
+                  Future.successful(
+                    BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+                  )
+                case _ => updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
+                  Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
+                )
+              }
+           }
         }
       )
   }
@@ -121,6 +134,9 @@ class AddASmallProducerController @Inject()(
 
       val userAnswers = request.userAnswers
       val form = formProvider(userAnswers)
+
+      // if sdilReference (being edited ) is the same as the one being posted/submitted then we let it
+
 
       form.bindFromRequest().fold(
         formWithErrors =>

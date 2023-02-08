@@ -185,7 +185,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         contentAsString(result) mustNot include(Messages("addASmallProducer.error.referenceNumber.exists"))
         status(result) mustEqual SEE_OTHER
-        
+
       }
     }
   }
