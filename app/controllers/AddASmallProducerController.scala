@@ -119,10 +119,6 @@ class AddASmallProducerController @Inject()(
   def onEditPageSubmit(mode: Mode, sdilReference: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      println(Console.YELLOW + "I've been summoned" + mode.toString + Console.WHITE)
-      println(Console.YELLOW + "SmallProducers " + request.userAnswers.smallProducerList + Console.WHITE)
-      println(Console.YELLOW + "SDIL reference being edited " + sdilReference + Console.WHITE)
-
       val userAnswers = request.userAnswers
       val form = formProvider(userAnswers)
 

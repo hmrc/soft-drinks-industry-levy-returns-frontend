@@ -149,6 +149,11 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     "must return Redirect(303) when SDIL reference has not been changed" in {
 
       lazy val addASmallProducerEditSubmitRoute = routes.AddASmallProducerController.onEditPageSubmit(superCola.sdilRef).url
+      val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
 
       val sessionData =
           Json.obj(
@@ -159,12 +164,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
               "highBand" -> superCola.litreage._2
             )
           )
-
-      val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
 
       val application =
         applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(2022, 3)))
@@ -184,8 +183,9 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
+        contentAsString(result) mustNot include(Messages("addASmallProducer.error.referenceNumber.exists"))
         status(result) mustEqual SEE_OTHER
-        val page = Jsoup.parse(contentAsString(result))
+        
       }
     }
   }
