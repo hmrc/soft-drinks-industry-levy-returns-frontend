@@ -397,42 +397,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-//    "must return 400 (bad request) when a connector returns none for check small producer status" in {
-//
-//      val notASmallProducerSDILReference = "XPSDIL000000478"
-//      val mockSessionRepository = mock[SessionRepository]
-//      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-//
-//      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-//      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
-//
-//      val application =
-//        applicationBuilder(
-//          Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))),
-//          Some(ReturnPeriod(2022, 3)))
-//          .overrides(
-//            bind[SessionRepository].toInstance(mockSessionRepository),
-//            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-//          ).build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, addASmallProducerRoute)
-//            .withFormUrlEncodedBody(
-//              ("producerName", producerName),
-//              ("referenceNumber", notASmallProducerSDILReference),
-//              ("lowBand", litres.toString),
-//              ("highBand", litres.toString)
-//            )
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual BAD_REQUEST
-//        val page = Jsoup.parse(contentAsString(result))
-//        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.notASmallProducer"))
-//      }
-//    }
-
     "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
