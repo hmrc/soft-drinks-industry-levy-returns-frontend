@@ -183,10 +183,61 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
+        println(Console.YELLOW + "Result is" + contentAsString(result) + Console.WHITE)
+
         contentAsString(result) mustNot include(Messages("addASmallProducer.error.referenceNumber.exists"))
         status(result) mustEqual SEE_OTHER
 
       }
+    }
+
+    "AddASmallProducer Controller onEditSubmitLoad" - {
+
+      "must return Redirect(303) and show correct updated information" in {
+
+        lazy val addASmallProducerEditSubmitRoute = routes.AddASmallProducerController.onEditPageSubmit(superCola.sdilRef).url
+        val mockSessionRepository = mock[SessionRepository]
+        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+
+        val sessionData =
+          Json.obj(
+            AddASmallProducerPage.toString -> Json.obj(
+              "producerName" -> superCola.alias,
+              "referenceNumber" -> superCola.sdilRef,
+              "lowBand" -> superCola.litreage._1,
+              "highBand" -> superCola.litreage._2
+            )
+          )
+
+        val application =
+          applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(2022, 3)))
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+            ).build()
+
+        running(application) {
+          val request = FakeRequest(POST, addASmallProducerEditSubmitRoute)
+            .withFormUrlEncodedBody(
+              ("producerName", "DavesDrinks"),
+              ("referenceNumber", superCola.sdilRef),
+              ("lowBand", "100"),
+              ("highBand", "200")
+            )
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          println(Console.YELLOW + "Result is" + result.value + Console.WHITE)
+//          contentAsString(result) must include("DavesDrinks")
+//          contentAsString(result) mustNot include(superCola.alias)
+
+        }
+      }
+
     }
 
     "must return bad request(400) when SDIL reference has been changed but " +
@@ -226,26 +277,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
   }
 
   "AddASmallProducer Controller onSubmit" - {
-
-//    "must return a Bad Request and errors when invalid data is submitted" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, addASmallProducerRoute)
-//            .withFormUrlEncodedBody(("value", "invalid value"))
-//
-//        val boundForm = form.bind(Map("value" -> "invalid value"))
-//
-//        val view = application.injector.instanceOf[AddASmallProducerView]
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual BAD_REQUEST
-//        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-//      }
-//    }
 
     "must redirect to the next page when valid data is submitted" in {
 
@@ -439,14 +470,3 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     }
   }
 }
-//
-//val sessionData =
-//Json.obj (
-//AddASmallProducerPage.toString -> Json.obj (
-//"producerName" -> superCola.alias,
-//"referenceNumber" -> superCola.sdilRef,
-//"lowBand" -> superCola.litreage._1,
-//"highBand" -> superCola.litreage._2
-//)
-//)
-

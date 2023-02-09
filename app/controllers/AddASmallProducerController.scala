@@ -152,6 +152,7 @@ class AddASmallProducerController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))),
         value => {
+          println(Console.YELLOW + value.producerName + Console.WHITE)
           val smallProducerList = request.userAnswers.smallProducerList
           isValidSDILRef(sdilReference, value.referenceNumber, smallProducerList, returnPeriod).flatMap({
             case Left("Already exists") =>
@@ -162,8 +163,10 @@ class AddASmallProducerController @Inject()(
               Future.successful(
                 BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
               )
-            case Right(_) => updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
-              Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
+            case Right(_) =>
+              println(Console.YELLOW + request.userAnswers.smallProducerList + Console.WHITE)
+              updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
+                Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
           })
         }
       )
