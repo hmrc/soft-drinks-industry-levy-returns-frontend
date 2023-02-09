@@ -30,7 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import play.api.inject.bind
 
 import scala.concurrent.duration.DurationInt
@@ -231,7 +231,9 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
           val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
+          status(result)  mustEqual SEE_OTHER
+//          redirectLocation()
+//          verify(mockSessionRepository).sendReceivedTemplatedEmail(c.capture())(Matchers.any())
           println(Console.YELLOW + "Result is" + result.value + Console.WHITE)
 //          contentAsString(result) must include("DavesDrinks")
 //          contentAsString(result) mustNot include(superCola.alias)

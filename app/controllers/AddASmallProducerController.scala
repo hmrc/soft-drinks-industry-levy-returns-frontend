@@ -169,36 +169,36 @@ class AddASmallProducerController @Inject()(
                 BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
               )
             case Right(_) =>
-              updateSmallProducerList(value, userAnswers).map(updatedAnswersFinal =>
+              updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
               Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
           })
         }
       )
   }
 
-  private def updateSmallProducerList(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
-    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber, (addSmallProducer.lowBand, addSmallProducer.highBand))
-    for {
-      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
-      updatedAnswersFinal = {
-
-        val producerToRemoveSDILRef = addSmallProducer.referenceNumber
-        val indexOfsmallProducerToRemove = userAnswers.smallProducerList.indexOf(producerToRemoveSDILRef)
-        val newList = userAnswers.smallProducerList.updated(indexOfsmallProducerToRemove, smallProducer)
-        println(Console.YELLOW + "new list is: " + newList + Console.WHITE)
-
-        //val newList = updatedAnswers.smallProducerList.map(???)
-        // updatedAnswersFinal = updatedAnswers.copy(smallProducerList = newList)
-//        _
-//        <- sessionRepository.set(updatedAnswersFinal)
-        updatedAnswersFinal = updatedAnswers.copy(smallProducerList === newList)
-      }
-      _ <- sessionRepository.set(updatedAnswersFinal)
-    } yield {
-      updatedAnswersFinal
-    }
-  }
-
+//  private def updateSmallProducerList(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
+//    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber, (addSmallProducer.lowBand, addSmallProducer.highBand))
+//    for {
+//      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
+//      updatedAnswersFinal = {
+//
+//        val producerToRemoveSDILRef = addSmallProducer.referenceNumber
+//        val indexOfsmallProducerToRemove = userAnswers.smallProducerList.indexOf(producerToRemoveSDILRef)
+//        val newList = userAnswers.smallProducerList.updated(indexOfsmallProducerToRemove, smallProducer)
+//        println(Console.YELLOW + "new list is: " + newList + Console.WHITE)
+//
+//        //val newList = updatedAnswers.smallProducerList.map(???)
+//        // updatedAnswersFinal = updatedAnswers.copy(smallProducerList = newList)
+////        _
+////        <- sessionRepository.set(updatedAnswersFinal)
+//        updatedAnswersFinal = updatedAnswers.copy(smallProducerList === newList)
+//      }
+//      _ <- sessionRepository.set(updatedAnswersFinal)
+//    } yield {
+//      updatedAnswersFinal
+//    }
+//  }
+//
 }
 //
 //      val userAnswers = request.userAnswers
@@ -222,6 +222,3 @@ class AddASmallProducerController @Inject()(
 //          }
 //        }
 //      )
-
-
-
