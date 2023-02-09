@@ -40,8 +40,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository = mock[SessionRepository]
-//  lazy val form = formProvider(emptyUserAnswers, false)
-//
+
   val producerName = "Party Drinks Group"
   val sdilReference = "XPSDIL000000116"
   val bandMax = 100000000000000L
@@ -51,18 +50,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
   val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
 
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
-
-//  val mockUserAnswers = UserAnswers(
-//    sdilNumber,
-//    Json.obj(
-//      AddASmallProducerPage.toString -> Json.obj(
-//        "producerName" -> producerName,
-//        "referenceNumber" -> sdilReference,
-//        "lowBand" -> litres,
-//        "highBand" -> litres
-//      )
-//    )
-//  )
 
   "AddASmallProducer Controller onPageLoad" - {
 
