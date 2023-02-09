@@ -100,7 +100,8 @@ class AddASmallProducerController @Inject()(
   }
 
   private def updateDatabase(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
-    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber, (addSmallProducer.lowBand, addSmallProducer.highBand))
+    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber,
+      (addSmallProducer.lowBand, addSmallProducer.highBand))
     for {
       updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
       updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
@@ -110,7 +111,9 @@ class AddASmallProducerController @Inject()(
     }
   }
 
-  private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String, smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])(implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
+  private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String,
+                             smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])
+                            (implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
     if (currentSDILRef == addASmallProducerSDILRef) {
       Future.successful(Right())
     } else if (smallProducerList.map(_.sdilRef).contains(currentSDILRef)) {
@@ -123,7 +126,8 @@ class AddASmallProducerController @Inject()(
     }
   }
 
-  def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] =
+      (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
 
       val userAnswers = request.userAnswers
@@ -132,7 +136,8 @@ class AddASmallProducerController @Inject()(
 
       targetSmallProducer match {
         case Some(producer) =>
-          val addASmallProducer = AddASmallProducer(Some(producer.alias), producer.sdilRef, producer.litreage._1, producer.litreage._2)
+          val addASmallProducer = AddASmallProducer(Some(producer.alias), producer.sdilRef, producer.litreage._1,
+            producer.litreage._2)
           val preparedForm = form.fill(addASmallProducer)
           Ok(view(preparedForm, mode, Some(sdilReference)))
         case _ =>
@@ -141,7 +146,8 @@ class AddASmallProducerController @Inject()(
       }
   }
 
-  def onEditPageSubmit(mode: Mode, sdilReference: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onEditPageSubmit(mode: Mode, sdilReference: String): Action[AnyContent] =
+      (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val userAnswers = request.userAnswers
@@ -175,9 +181,17 @@ class AddASmallProducerController @Inject()(
     for {
       updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
       updatedAnswersFinal = {
+
         val producerToRemoveSDILRef = addSmallProducer.referenceNumber
-        val newList = updatedAnswers.smallProducerList.map(???)
-        updatedAnswers.copy(smallProducerList = updatedAnswers.smallProducerList)
+        val indexOfsmallProducerToRemove = userAnswers.smallProducerList.indexOf(producerToRemoveSDILRef)
+        val newList = userAnswers.smallProducerList.updated(indexOfsmallProducerToRemove, smallProducer)
+        println(Console.YELLOW + "new list is: " + newList + Console.WHITE)
+
+        //val newList = updatedAnswers.smallProducerList.map(???)
+        // updatedAnswersFinal = updatedAnswers.copy(smallProducerList = newList)
+//        _
+//        <- sessionRepository.set(updatedAnswersFinal)
+        updatedAnswersFinal = updatedAnswers.copy(smallProducerList === newList)
       }
       _ <- sessionRepository.set(updatedAnswersFinal)
     } yield {
