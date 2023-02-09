@@ -4,6 +4,7 @@ import play.api.Logging
 
 import java.net.ServerSocket
 import scala.annotation.tailrec
+import scala.language.postfixOps
 
 object Port extends Logging {
   val rnd = new scala.util.Random

@@ -110,10 +110,10 @@ class AddASmallProducerController @Inject()(
     }
   }
 
-  private def isValidSDILRef(curretSDILRef: String, addASmallProducerSDILRef: String, smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])(implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
-    if (curretSDILRef == addASmallProducerSDILRef) {
+  private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String, smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])(implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
+    if (currentSDILRef == addASmallProducerSDILRef) {
       Future.successful(Right())
-    } else if (smallProducerList.map(_.sdilRef).contains(curretSDILRef)) {
+    } else if (smallProducerList.map(_.sdilRef).contains(currentSDILRef)) {
       Future.successful(Left("Already exists"))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
@@ -152,7 +152,6 @@ class AddASmallProducerController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))),
         value => {
-          println(Console.YELLOW + value.producerName + Console.WHITE)
           val smallProducerList = request.userAnswers.smallProducerList
           isValidSDILRef(sdilReference, value.referenceNumber, smallProducerList, returnPeriod).flatMap({
             case Left("Already exists") =>
@@ -164,13 +163,28 @@ class AddASmallProducerController @Inject()(
                 BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
               )
             case Right(_) =>
-              println(Console.YELLOW + request.userAnswers.smallProducerList + Console.WHITE)
-              updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
-                Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
+              updateSmallProducerList(value, userAnswers).map(updatedAnswersFinal =>
+              Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
           })
         }
       )
   }
+
+  private def updateSmallProducerList(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
+    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber, (addSmallProducer.lowBand, addSmallProducer.highBand))
+    for {
+      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
+      updatedAnswersFinal = {
+        val producerToRemoveSDILRef = addSmallProducer.referenceNumber
+        val newList = updatedAnswers.smallProducerList.map(???)
+        updatedAnswers.copy(smallProducerList = updatedAnswers.smallProducerList)
+      }
+      _ <- sessionRepository.set(updatedAnswersFinal)
+    } yield {
+      updatedAnswersFinal
+    }
+  }
+
 }
 //
 //      val userAnswers = request.userAnswers

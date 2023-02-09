@@ -33,7 +33,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 
-import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
 
 class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
@@ -305,6 +306,9 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        val res = result.value.map( res => res.get)
+        println(Console.YELLOW + res + Console.WHITE)
+
       }
     }
 
