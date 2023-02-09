@@ -34,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AddASmallProducerView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class AddASmallProducerController @Inject()(
                                       override val messagesApi: MessagesApi,
@@ -49,20 +50,18 @@ class AddASmallProducerController @Inject()(
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
-
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
       val userAnswers = request.userAnswers
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
-       mode match {
+      mode match {
         case BlankMode => Ok(view(form, NormalMode))
         case _ =>
-            val preparedForm = userAnswers.get(AddASmallProducerPage) match {
-              case None => form
-              case Some(value) => form.fill(value)
-            }
-            Ok(view(preparedForm, mode))
+          val preparedForm = userAnswers.get(AddASmallProducerPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode))
       }
   }
 
@@ -94,7 +93,7 @@ class AddASmallProducerController @Inject()(
                   Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
                 )
               }
-           }
+          }
         }
       )
   }
@@ -127,98 +126,69 @@ class AddASmallProducerController @Inject()(
   }
 
   def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] =
-      (identify andThen getData andThen requireData) {
-    implicit request: DataRequest[AnyContent] =>
+    (identify andThen getData andThen requireData) {
+      implicit request: DataRequest[AnyContent] =>
 
-      val userAnswers = request.userAnswers
-      val form = formProvider(userAnswers)
-      val targetSmallProducer = userAnswers.smallProducerList.find(producer => producer.sdilRef == sdilReference)
+        val userAnswers = request.userAnswers
+        val form = formProvider(userAnswers)
+        val targetSmallProducer = userAnswers.smallProducerList.find(producer => producer.sdilRef == sdilReference)
 
-      targetSmallProducer match {
-        case Some(producer) =>
-          val addASmallProducer = AddASmallProducer(Some(producer.alias), producer.sdilRef, producer.litreage._1,
-            producer.litreage._2)
-          val preparedForm = form.fill(addASmallProducer)
-          Ok(view(preparedForm, mode, Some(sdilReference)))
-        case _ =>
-          // TODO - Any tests to cover this case?
-          ???
-      }
-  }
+        targetSmallProducer match {
+          case Some(producer) =>
+            val addASmallProducer = AddASmallProducer(Some(producer.alias), producer.sdilRef, producer.litreage._1,
+              producer.litreage._2)
+            val preparedForm = form.fill(addASmallProducer)
+            Ok(view(preparedForm, mode, Some(sdilReference)))
+          case _ =>
+            // TODO - Any tests to cover this case?
+            ???
+        }
+    }
 
   def onEditPageSubmit(mode: Mode, sdilReference: String): Action[AnyContent] =
-      (identify andThen getData andThen requireData).async {
-    implicit request =>
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
 
-      val userAnswers = request.userAnswers
-      val returnPeriod = request.returnPeriod
-      val form = formProvider(userAnswers)
+        val userAnswers = request.userAnswers
+        val returnPeriod = request.returnPeriod
+        val form = formProvider(userAnswers)
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))),
-        value => {
-          val smallProducerList = request.userAnswers.smallProducerList
-          isValidSDILRef(sdilReference, value.referenceNumber, smallProducerList, returnPeriod).flatMap({
-            case Left("Already exists") =>
-              Future.successful(
-                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
-              )
-            case Left(_) =>
-              Future.successful(
-                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
-              )
-            case Right(_) =>
-              updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
-              Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
-          })
-        }
-      )
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))),
+          formData => {
+            val smallProducerList = request.userAnswers.smallProducerList
+            isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, returnPeriod).flatMap({
+              case Left("Already exists") =>
+                Future.successful(
+                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
+                )
+              case Left(_) =>
+                Future.successful(
+                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
+                )
+              case Right(_) =>
+                updateSmallProducerList(formData, userAnswers).map(updatedAnswersFinal =>
+                  Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
+            })
+          }
+        )
+    }
+
+  private def updateSmallProducerList(formData: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
+
+    val smallProducer = SmallProducer(
+      formData.producerName.getOrElse(""),
+      formData.referenceNumber,
+      (formData.lowBand, formData.highBand))
+
+    for {
+      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, formData))
+      newListWithOldSPRemoved = updatedAnswers.smallProducerList.filterNot(_.sdilRef == formData.referenceNumber)
+      updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: newListWithOldSPRemoved)
+      _ <- sessionRepository.set(updatedAnswersFinal)
+    } yield {
+      updatedAnswersFinal
+    }
   }
-
-//  private def updateSmallProducerList(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
-//    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber, (addSmallProducer.lowBand, addSmallProducer.highBand))
-//    for {
-//      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
-//      updatedAnswersFinal = {
-//
-//        val producerToRemoveSDILRef = addSmallProducer.referenceNumber
-//        val indexOfsmallProducerToRemove = userAnswers.smallProducerList.indexOf(producerToRemoveSDILRef)
-//        val newList = userAnswers.smallProducerList.updated(indexOfsmallProducerToRemove, smallProducer)
-//        println(Console.YELLOW + "new list is: " + newList + Console.WHITE)
-//
-//        //val newList = updatedAnswers.smallProducerList.map(???)
-//        // updatedAnswersFinal = updatedAnswers.copy(smallProducerList = newList)
-////        _
-////        <- sessionRepository.set(updatedAnswersFinal)
-//        updatedAnswersFinal = updatedAnswers.copy(smallProducerList === newList)
-//      }
-//      _ <- sessionRepository.set(updatedAnswersFinal)
-//    } yield {
-//      updatedAnswersFinal
-//    }
-//  }
-//
 }
-//
-//      val userAnswers = request.userAnswers
-//      val form = formProvider(userAnswers)
-//
-//      form.bindFromRequest().fold(
-//        formWithErrors =>
-//          Future.successful(BadRequest(view(formWithErrors, mode, Some(sdil)))),
-//        addSmallProducer => {
-//          val smallProducer: SmallProducer =
-//            SmallProducer(addSmallProducer.producerName.getOrElse(""),
-//              addSmallProducer.referenceNumber,
-//              (addSmallProducer.lowBand, addSmallProducer.highBand))
-//          for {
-//            updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
-//            updatedList = userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
-//            updatedAnswersFinal = {updatedAnswers.copy(smallProducerList = smallProducer :: updatedList)}
-//            _              <- sessionRepository.set(updatedAnswersFinal)
-//          } yield {
-//            Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
-//          }
-//        }
-//      )
