@@ -184,11 +184,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        println(Console.YELLOW + "Result is" + contentAsString(result) + Console.WHITE)
-
         contentAsString(result) mustNot include(Messages("addASmallProducer.error.referenceNumber.exists"))
         status(result) mustEqual SEE_OTHER
-
       }
     }
 
@@ -309,8 +306,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         val res = result.value.map( res => res.get)
-        println(Console.YELLOW + res + Console.WHITE)
-
       }
     }
 
