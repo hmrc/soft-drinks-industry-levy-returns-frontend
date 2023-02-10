@@ -40,13 +40,15 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
   val formProvider = new RemoveSmallProducerConfirmFormProvider()
   val form = formProvider()
-  val producerName = "Party Drinks Group"
-  val sdilReference = "XPSDIL000000116"
+  val producerName = "Super Cola Plc"
+  val sdilReference = "XCSDIL000000069"
+  val producerNameParty = "Party Drinks Group"
+  val sdilReferenceParty = "XPSDIL000000116"
   val bandMax: Long = 100000000000000L
   val litres = bandMax - 1
-  val smallProducerList = List(SmallProducer(producerName, sdilReference, (litres, litres)))
+  val smallProducerList = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
   val smallProducerListWithTwoProducers = List(
-    SmallProducer(producerName, sdilReference, (litres, litres)),
+    SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)),
     SmallProducer(producerName, sdilReference, (litres, litres))
   )
   val userAnswersData = Json.obj(
@@ -58,18 +60,21 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     )
   )
   val userAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerList)
-  lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$sdilReference").url
+  lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$sdilReferenceParty").url
 
   "RemoveSmallProducerConfirm Controller" - {
+
     "must return OK and the correct view for a GET" in {
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
       running(application) {
         val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
         val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, sdilReference, producerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
       }
     }
 
@@ -83,7 +88,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, sdilReference, producerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
       }
     }
 
@@ -162,7 +167,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, sdilReference, producerName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
       }
     }
 
