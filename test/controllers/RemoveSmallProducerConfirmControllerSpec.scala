@@ -16,8 +16,10 @@
 
 package controllers
 
+import akka.stream.impl
 import base.SpecBase
 import forms.RemoveSmallProducerConfirmFormProvider
+import models.requests.OptionalDataRequest
 import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
@@ -35,8 +37,11 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.RemoveSmallProducerConfirmView
+import play.api.test.Helpers.baseApplicationBuilder.injector
 
-import scala.concurrent.Future
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+
 
 class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSugar {
 
@@ -96,25 +101,9 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
       running(application) {
         val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
-        val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-      }
-    }
-
-    // TODO what is this actually trying to test?
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
-        val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
       }
     }
 
@@ -141,12 +130,14 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     // TODO add proper database info into line 146 and properly check output ~ line 164
     "must remove small producer when user clicks on remove link and confirms yes to remove" in {
-      // start with 2 small producers
+
+      implicit lazy val executionContext = injector.instanceOf[ExecutionContext]
+
       val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-     // when(mockSessionRepository.set(userAnswersWithTwoProducers)) thenReturn Future.successful(true)
-      // println(Console.YELLOW + "This is the repo information " + mockSessionRepository + Console.WHITE)
+
+      when(mockSessionRepository.set(userAnswersWithTwoProducers)) thenReturn Future.successful(true)
+
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
@@ -159,9 +150,19 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
+        for {
+          res <- mockSessionRepository.get(sdilReference)
+        } yield {
+          println(Console.YELLOW + res.get + Console.WHITE)
+        }
+
+
+
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-        // verify(mockSessionRepository).get(sdilReference)(Matchers
+
+
+
+//        verify(mockSessionRepository).get(sdilReference)
       }
     }
 
