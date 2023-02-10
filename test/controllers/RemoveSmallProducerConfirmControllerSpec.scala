@@ -23,6 +23,8 @@ import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.verify
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
 import play.api.i18n.Messages
@@ -101,6 +103,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
+    // TODO what is this actually trying to test?
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -136,11 +139,14 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must remove small producer when user clicks on remove link" in {
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
+    // TODO add proper database info into line 146 and properly check output ~ line 164
+    "must remove small producer when user clicks on remove link and confirms yes to remove" in {
+      // start with 2 small producers
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
+     // when(mockSessionRepository.set(userAnswersWithTwoProducers)) thenReturn Future.successful(true)
+      // println(Console.YELLOW + "This is the repo information " + mockSessionRepository + Console.WHITE)
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
@@ -155,6 +161,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+        // verify(mockSessionRepository).get(sdilReference)(Matchers
       }
     }
 
