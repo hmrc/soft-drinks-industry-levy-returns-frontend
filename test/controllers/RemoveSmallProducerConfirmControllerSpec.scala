@@ -46,8 +46,8 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
   val form = formProvider()
   val producerName = "Super Cola Plc"
   val sdilReference = "XCSDIL000000069"
-  val producerNameParty = "Party Drinks Group"
-  val sdilReferenceParty = "XPSDIL000000116"
+  val producerNameParty = "Soft Juice"
+  val sdilReferenceParty = "XMSDIL000000113"
   val bandMax: Long = 100000000000000L
   val litres = bandMax - 1
   val smallProducerList = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
@@ -219,7 +219,9 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+        val page = Jsoup.parse(contentAsString(result))
         contentAsString(result) mustEqual view(boundForm, NormalMode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
+        page.getElementsByTag("a").text() must include(Messages("removeSmallProducerConfirm.error.required"))
       }
     }
 
