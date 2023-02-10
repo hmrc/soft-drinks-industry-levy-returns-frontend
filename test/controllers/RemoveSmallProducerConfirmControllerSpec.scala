@@ -53,6 +53,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)),
     SmallProducer(producerName, sdilReference, (litres, litres))
   )
+  val smallProducerListOnlySuperCola = List(SmallProducer(producerName, sdilReference, (litres, litres)))
   val userAnswersData = Json.obj(
     RemoveSmallProducerConfirmPage.toString -> Json.obj(
       "producerName" -> producerName,
@@ -63,6 +64,8 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
   )
   val userAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerList)
   val userAnswersWithTwoProducers = UserAnswers(sdilNumber, userAnswersData, smallProducerListWithTwoProducers)
+  val userAnswersWithOneProducer = UserAnswers(sdilNumber, userAnswersData, smallProducerListOnlySuperCola)
+
   lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$sdilReferenceParty").url
 
   "RemoveSmallProducerConfirm Controller" - {
@@ -84,9 +87,10 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to small producer details page when more than one producer present" in {
+    "must redirect to small producer details page when more than one producer present and the small producer is not in" +
+      "the SmallProducerList (i.e. user clicked back button/browser back after confirming remove" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithTwoProducers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithOneProducer)).build()
 
       running(application) {
         val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
