@@ -20,10 +20,12 @@ import base.SpecBase
 import forms.RemoveSmallProducerConfirmFormProvider
 import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -60,6 +62,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     )
   )
   val userAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerList)
+  val userAnswersWithTwoProducers = UserAnswers(sdilNumber, userAnswersData, smallProducerListWithTwoProducers)
   lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$sdilReferenceParty").url
 
   "RemoveSmallProducerConfirm Controller" - {
@@ -74,7 +77,23 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() must include(Messages("removeSmallProducerConfirm.title"))
+        page.getElementsByTag("h1").text() mustEqual Messages("removeSmallProducerConfirm.heading")
         contentAsString(result) mustEqual view(form, NormalMode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to small producer details page when more than one producer present" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithTwoProducers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
+        val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
       }
     }
 
@@ -156,6 +175,28 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
+    "must return to small producer details page when yes is selected and it is not the last producer being removed" in {
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(
+        RemoveSmallProducerConfirmPage, true).success.value
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "true"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual Call("GET", "/soft-drinks-industry-levy-returns-frontend/small-producer-details").url
+      }
+    }
+
+
     "must return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -194,5 +235,6 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
   }
 }
