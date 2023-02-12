@@ -19,22 +19,20 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
-import models.{AddASmallProducer, EditMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
-import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddASmallProducerPage
 import play.api.i18n.Messages
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
-import play.api.inject.bind
 
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 

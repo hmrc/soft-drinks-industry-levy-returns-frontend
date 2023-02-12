@@ -16,17 +16,14 @@
 
 package controllers
 
-import akka.stream.impl
 import base.SpecBase
 import forms.RemoveSmallProducerConfirmFormProvider
-import models.requests.OptionalDataRequest
 import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, when}
 import org.mockito.MockitoSugar.verify
-import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
 import play.api.i18n.Messages
@@ -35,11 +32,10 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.test.Helpers.baseApplicationBuilder.injector
 import repositories.SessionRepository
 import views.html.RemoveSmallProducerConfirmView
-import play.api.test.Helpers.baseApplicationBuilder.injector
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
