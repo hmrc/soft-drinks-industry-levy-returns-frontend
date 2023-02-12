@@ -86,7 +86,6 @@ class Navigator @Inject()() {
 
   private def exemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
-
       routes.AddASmallProducerController.onPageLoad(NormalMode)
     } else {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)

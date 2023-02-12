@@ -20,20 +20,17 @@ import controllers.actions._
 import forms._
 
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
-import pages.{ExemptionsForSmallProducersPage, RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
+import pages.{RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html._
-import play.api.Logger
-import play.api.libs.json.Json
+import views.html.RemoveSmallProducerConfirmView
 
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.{ExecutionContext, Future}
+
 
 class RemoveSmallProducerConfirmController @Inject()(
                                                      override val messagesApi: MessagesApi,
@@ -48,7 +45,6 @@ class RemoveSmallProducerConfirmController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
-  private val logger: Logger = Logger(getClass.getName)
 
   def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
