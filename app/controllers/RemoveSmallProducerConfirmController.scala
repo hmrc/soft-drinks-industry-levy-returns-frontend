@@ -20,16 +20,20 @@ import controllers.actions._
 import forms._
 
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.{ExemptionsForSmallProducersPage, RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html._
+import play.api.Logger
+import play.api.libs.json.Json
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class RemoveSmallProducerConfirmController @Inject()(
                                                      override val messagesApi: MessagesApi,
@@ -44,6 +48,7 @@ class RemoveSmallProducerConfirmController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  private val logger: Logger = Logger(getClass.getName)
 
   def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -70,10 +75,10 @@ class RemoveSmallProducerConfirmController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, sdil, smallProducerName))),
-        value =>{
-          if(value){
+        formData =>{
+          if(formData){
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, formData))
               modifiedProducerList = request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
               updatedAnswersFinal = updatedAnswers.copy(smallProducerList = modifiedProducerList)
               _ <- sessionRepository.set(updatedAnswersFinal)
@@ -82,7 +87,7 @@ class RemoveSmallProducerConfirmController @Inject()(
             }
           } else {
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveSmallProducerConfirmPage, formData))
               _ <- sessionRepository.set(updatedAnswers)
             } yield {
               Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, updatedAnswers))

@@ -218,7 +218,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           status(result)  mustEqual SEE_OTHER
 //          redirectLocation()
 //          verify(mockSessionRepository).sendReceivedTemplatedEmail(c.capture())(Matchers.any())
-          println(Console.YELLOW + "Result is" + result.value + Console.WHITE)
+//          println(Console.YELLOW + "Result is" + result.value + Console.WHITE)
 //          contentAsString(result) must include("DavesDrinks")
 //          contentAsString(result) mustNot include(superCola.alias)
 

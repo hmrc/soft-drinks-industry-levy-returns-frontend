@@ -298,7 +298,7 @@ class NavigatorSpec extends SpecBase {
                   Json.obj("removeSmallProducerConfirm" -> true),
                   smallProducerList = List()
                 ))
-              result mustBe routes.AddASmallProducerController.onPageLoad(BlankMode)
+              result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
             }
 
             "should redirect to small producer details page when user selects yes and clicks on " +

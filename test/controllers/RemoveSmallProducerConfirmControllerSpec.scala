@@ -24,7 +24,7 @@ import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, when}
 import org.mockito.MockitoSugar.verify
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
@@ -133,7 +133,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
       implicit lazy val executionContext = injector.instanceOf[ExecutionContext]
 
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
+      val userAnswers = UserAnswers(sdilReference, Json.obj(), smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(userAnswersWithTwoProducers)) thenReturn Future.successful(true)
@@ -150,19 +150,8 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
-        for {
-          res <- mockSessionRepository.get(sdilReference)
-        } yield {
-          println(Console.YELLOW + res.get + Console.WHITE)
-        }
-
-
-
         status(result) mustEqual SEE_OTHER
-
-
-
-//        verify(mockSessionRepository).get(sdilReference)
+        verify(mockSessionRepository, times(5)).get(sdilReference)
       }
     }
 

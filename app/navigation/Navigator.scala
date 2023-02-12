@@ -86,6 +86,7 @@ class Navigator @Inject()() {
 
   private def exemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
+
       routes.AddASmallProducerController.onPageLoad(NormalMode)
     } else {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
@@ -118,7 +119,7 @@ class Navigator @Inject()() {
 
  private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
    if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
-     routes.AddASmallProducerController.onPageLoad(BlankMode)
+     routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
    } else {
      routes.SmallProducerDetailsController.onPageLoad(NormalMode)
    }
