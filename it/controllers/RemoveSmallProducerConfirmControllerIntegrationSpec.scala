@@ -68,7 +68,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers")
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/small-producer-details")
           }
 
         }
@@ -80,7 +80,9 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
           .commonPrecondition
 
         val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
-        val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$aliasPartyDrinks", s"$sdilRefPartyDrinks", (smallLitre, largeLitre))))
+        val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
+          SmallProducer(s"$aliasPartyDrinks", s"$sdilRefPartyDrinks", (smallLitre, largeLitre)))
+        )
 
         setAnswers(updatedUserAnswers)
 
