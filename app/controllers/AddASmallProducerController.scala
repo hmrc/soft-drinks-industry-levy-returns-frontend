@@ -17,11 +17,9 @@
 package controllers
 
 import connectors.SoftDrinksIndustryLevyConnector
-import models.requests.DataRequest
 import controllers.actions._
 import forms.AddASmallProducerFormProvider
-
-import javax.inject.Inject
+import models.requests.DataRequest
 import models.{AddASmallProducer, BlankMode, Mode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import navigation.Navigator
 import pages.AddASmallProducerPage
@@ -33,8 +31,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AddASmallProducerView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class AddASmallProducerController @Inject()(
                                       override val messagesApi: MessagesApi,
