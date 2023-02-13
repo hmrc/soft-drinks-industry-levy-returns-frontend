@@ -141,8 +141,7 @@ class AddASmallProducerController @Inject()(
             val preparedForm = form.fill(addASmallProducer)
             Ok(view(preparedForm, mode, Some(sdilReference)))
           case _ =>
-            // TODO - Any tests to cover this case?
-            ???
+            throw new RuntimeException("No such small producer exists")
         }
     }
 

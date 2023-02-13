@@ -123,10 +123,10 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must return to small producer details page when no is selected and there are two producers on the list" in {
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(
-        RemoveSmallProducerConfirmPage, true).success.value
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
