@@ -152,7 +152,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           )
 
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(2022, 3)))
+        applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(year = 2022, quarter = 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -236,7 +236,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
 
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))), Some(ReturnPeriod(2022, 3)))
+        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))), Some(ReturnPeriod(year = 2022, quarter = 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -374,6 +374,37 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
         val page = Jsoup.parse(contentAsString(result))
         page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.exists"))
+      }
+    }
+
+    "must return 400 (bad request) and keep user entered data in the form " +
+      "when a SDIL reference number matches one of the already entered small producer SDIL references" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addASmallProducerRoute)
+            .withFormUrlEncodedBody(
+              ("producerName", producerName),
+              ("referenceNumber", superCola.sdilRef),
+              ("lowBand", litres.toString),
+              ("highBand", litres.toString)
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        val page = Jsoup.parse(contentAsString(result))
+        println(Console.YELLOW + "page looks like" + page + Console.WHITE)
+        page.body().text() must include(producerName)
+        page.body().text() must include(litres.toString)
+// TODO: fix test
       }
     }
 

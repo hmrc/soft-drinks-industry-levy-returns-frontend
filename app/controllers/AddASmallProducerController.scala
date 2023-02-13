@@ -79,14 +79,16 @@ class AddASmallProducerController @Inject()(
 
           smallProducerOpt match {
             case Some(_) =>
+              val preparedForm = form.fill(value)
               Future.successful(
-                BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode))
+                BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode))
               )
             case _ =>
+              val preparedForm = form.fill(value)
               sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get).flatMap {
                 case Some(false) =>
                   Future.successful(
-                    BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+                    BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
                   )
                 case _ => updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
                   Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
