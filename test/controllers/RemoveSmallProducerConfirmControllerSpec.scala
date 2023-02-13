@@ -122,30 +122,6 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    // TODO add proper database info into line 146 and properly check output ~ line 164
-    "must remove small producer from user answers small producer list " +
-      "when user clicks on remove link and confirms yes to remove" in {
-
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
-      val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "true"))
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        //verify(mockSessionRepository, times(5)).get(sdilReference)
-      }
-    }
-
     "must return to small producer details page when no is selected and there are two producers on the list" in {
       val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(
         RemoveSmallProducerConfirmPage, true).success.value

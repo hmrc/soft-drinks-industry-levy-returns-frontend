@@ -47,9 +47,10 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
         given
           .commonPrecondition
 
+        val smallProducerToRemove = SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre))
         val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
         val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
-          SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre)),
+          smallProducerToRemove,
           SmallProducer(s"$aliasSuperCola",s"$sdilRefSuperCola",(smallLitre,largeLitre)))
         )
 
@@ -69,6 +70,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/small-producer-details")
+            getAnswers("XKSDIL000000022").fold(List.empty[SmallProducer])(_.smallProducerList) mustNot contain(smallProducerToRemove)
           }
 
         }
