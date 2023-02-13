@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
-import models.{NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{BlankMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -46,6 +46,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
   val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
   val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
+  val userAnswersWithTwoSmallProducers = UserAnswers(sdilReference, Json.obj(), List(superCola, sparkyJuice))
 
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
 
@@ -77,7 +78,25 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
+        val labels = page.getElementsByTag("label").text()
+        labels must include(Messages("addASmallProducer.hint1"))
+        labels must include(Messages("addASmallProducer.referenceNumber"))
+        labels must include(Messages("addASmallProducer.lowBand"))
+        labels must include(Messages("addASmallProducer.highBand"))
+      }
+    }
 
+    "must return OK when loaded in blank mode" in {
+      lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(BlankMode).url
+
+      val application = applicationBuilder(Some(userAnswersWithTwoSmallProducers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, addASmallProducerRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
         val labels = page.getElementsByTag("label").text()
         labels must include(Messages("addASmallProducer.hint1"))
         labels must include(Messages("addASmallProducer.referenceNumber"))

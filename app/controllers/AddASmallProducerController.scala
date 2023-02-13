@@ -56,11 +56,7 @@ class AddASmallProducerController @Inject()(
         case BlankMode =>
           Ok(view(form, NormalMode))
         case _ =>
-          val preparedForm = userAnswers.get(AddASmallProducerPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-          Ok(view(preparedForm, mode))
+          Ok(view(form, mode))
       }
   }
 
