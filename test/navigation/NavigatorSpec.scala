@@ -269,7 +269,7 @@ class NavigatorSpec extends SpecBase {
                 NormalMode,
                 UserAnswers(id, Json.obj("smallProducerDetails" -> true)))
 
-              result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
+              result mustBe routes.AddASmallProducerController.onPageLoad(BlankMode)
 
             }
 
