@@ -22,8 +22,7 @@ import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, when}
-import org.mockito.MockitoSugar.verify
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
 import play.api.i18n.Messages
@@ -32,11 +31,10 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.test.Helpers.baseApplicationBuilder.injector
 import repositories.SessionRepository
 import views.html.RemoveSmallProducerConfirmView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 
 class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSugar {
@@ -125,19 +123,16 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     // TODO add proper database info into line 146 and properly check output ~ line 164
-    "must remove small producer when user clicks on remove link and confirms yes to remove" in {
+    "must remove small producer from user answers small producer list " +
+      "when user clicks on remove link and confirms yes to remove" in {
 
-      implicit lazy val executionContext = injector.instanceOf[ExecutionContext]
-
-      val userAnswers = UserAnswers(sdilReference, Json.obj(), smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(userAnswersWithTwoProducers)) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()

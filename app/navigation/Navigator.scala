@@ -111,6 +111,8 @@ class Navigator @Inject()() {
   private def smallProducerDetailsPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
       routes.AddASmallProducerController.onPageLoad(BlankMode)
+    } else if (userAnswers.smallProducerList.isEmpty){
+      routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     } else {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }

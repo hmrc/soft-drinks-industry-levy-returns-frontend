@@ -47,6 +47,7 @@ trait SpecBase
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
 
+  val genericSmallProducerAlias = "Generic Producer LTD"
   val sdilNumber: String = "XKSDIL000000022"
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
