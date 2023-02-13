@@ -110,7 +110,7 @@ class Navigator @Inject()() {
 
   private def smallProducerDetailsPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
-      routes.AddASmallProducerController.onPageLoad(BlankMode)
+      routes.AddASmallProducerController.onPageLoad(NormalMode)
     } else {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }

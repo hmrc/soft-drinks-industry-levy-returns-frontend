@@ -84,9 +84,7 @@ class SmallProducerDetailsController @Inject()(
       )
       form.bindFromRequest().fold(
         formWithErrors =>
-
           Future.successful(BadRequest(view(formWithErrors, mode, list))),
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SmallProducerDetailsPage, value))

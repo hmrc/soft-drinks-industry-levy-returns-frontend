@@ -54,15 +54,23 @@ class AddASmallProducerController @Inject()(
     implicit request: DataRequest[AnyContent] =>
       val userAnswers = request.userAnswers
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
-      mode match {
-        case BlankMode => Ok(view(form, NormalMode))
-        case _ =>
-          val preparedForm = userAnswers.get(AddASmallProducerPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-          Ok(view(preparedForm, mode))
+      val preparedForm = userAnswers.get(AddASmallProducerPage) match {
+        case None =>
+          println(Console.YELLOW + "None Mode" + Console.WHITE)
+          form
+        case Some(value) =>
+          println(Console.YELLOW + "Fill Mode" + Console.WHITE)
+          form
       }
+      Ok(view(preparedForm, mode))
+//
+//      mode match {
+//        case BlankMode =>
+//          println(Console.YELLOW + "Got this far" + Console.WHITE)
+//          Ok(view(form, BlankMode))
+//        case _ =>
+//
+//      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

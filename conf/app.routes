@@ -105,8 +105,6 @@ GET        /add-small-producer                                  controllers.AddA
 POST       /add-small-producer                                  controllers.AddASmallProducerController.onSubmit(mode: Mode = NormalMode)
 GET        /add-small-producer-edit                             controllers.AddASmallProducerController.onEditPageLoad(mode: Mode = EditMode, sdilReference: String)
 POST       /add-small-producer-edit                             controllers.AddASmallProducerController.onEditPageSubmit(mode: Mode = EditMode, sdilReference: String)
-GET        /add-small-producer-next                             controllers.AddASmallProducerController.onPageLoad(mode: Mode = BlankMode)
-POST       /add-small-producer-next                             controllers.AddASmallProducerController.onSubmit(mode: Mode = BlankMode)
 GET        /change-add-small-producer                           controllers.AddASmallProducerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-add-small-producer                           controllers.AddASmallProducerController.onSubmit(mode: Mode = CheckMode)
 
