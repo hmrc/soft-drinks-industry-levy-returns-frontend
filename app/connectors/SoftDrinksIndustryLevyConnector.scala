@@ -34,6 +34,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   extends ServicesConfig(configuration) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
+  lazy val sdilFrontendUrl:String = baseUrl("soft-drinks-industry-levy-frontend")
 
   private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
@@ -63,7 +64,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def submitReturn(sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    http.POST[SdilReturn, Boolean](s"$sdilUrl/submit-return",sdilReturn)
+    http.POST[SdilReturn, Boolean](s"$sdilFrontendUrl/submit-return",sdilReturn)
   }
 
 }
