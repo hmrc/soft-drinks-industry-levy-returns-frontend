@@ -17,6 +17,7 @@
 package connectors
 
 import com.typesafe.config.ConfigFactory
+import models.{SdilReturn, SmallProducer}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.mockito.ArgumentMatchers.any
@@ -48,6 +49,16 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
 
 
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, config)
+
+  val sdilReturn = SdilReturn(
+    (1L, 1L),
+    (1L, 1L),
+    List(SmallProducer("alias", "XKSDIL000000022", (1L, 1L))),
+    (1L, 1L),
+    (1L, 1L),
+    (1L, 1L),
+    (1L, 1L)
+  )
 
   val aSubscription = RetrievedSubscription(
     "0000000022",
@@ -97,10 +108,32 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
      val identifierType: String = "0000000022"
      val sdilNumber: String = "XKSDIL000000022"
 
-    when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
+    when(softDrinksIndustryLevyConnector.http.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
 
      Await.result(softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType), 4.seconds) mustBe  Some(aSubscription)
 
+    }
+
+    "submit a return successfully" in{
+
+      when{
+        softDrinksIndustryLevyConnector.http.POST[SdilReturn, Boolean](any(), any(), any())(any(), any(), any(), any())
+      } thenReturn Future.successful(true)
+
+      whenReady(softDrinksIndustryLevyConnector.submitReturn(sdilReturn)) { result =>
+        result mustBe true
+      }
+    }
+
+    "submit a return unsuccessfully" in{
+
+      when{
+        softDrinksIndustryLevyConnector.http.POST[SdilReturn, Boolean](any(), any(), any())(any(), any(), any(), any())
+      } thenReturn Future.successful(false)
+
+      whenReady(softDrinksIndustryLevyConnector.submitReturn(sdilReturn)) { result =>
+        result mustBe false
+      }
     }
   }
 }

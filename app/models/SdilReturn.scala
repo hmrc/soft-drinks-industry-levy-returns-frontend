@@ -19,6 +19,7 @@ package models
 import java.time.LocalDateTime
 import cats.implicits._
 import SdilReturn._
+import play.api.libs.json.{Json, OFormat}
 import models.requests.DataRequest
 import pages._
 
@@ -83,4 +84,5 @@ object SdilReturn {
 
   }
 
+  implicit val format: OFormat[SdilReturn] = Json.format
 }
