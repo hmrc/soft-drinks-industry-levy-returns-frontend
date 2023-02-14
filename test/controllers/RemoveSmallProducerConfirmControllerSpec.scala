@@ -181,7 +181,30 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         page.getElementsByTag("a").text() must include(Messages("removeSmallProducerConfirm.error.required"))
       }
     }
+// TODO: ask Christine if you can mock the user back button
+    /*"must load the confirmRemove page when the user has previously selected no and from the next page clicks back" +
+      "i.e. 1) user selects no -> continue and redirects to the ASPdetails page and then clicks back link" in {
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
+      running(application) {
+        val initialRequest = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", ""))
+        val initialBoundForm = form.bind(Map("value" -> "false"))
+        val initialResult = route(application, initialRequest).value
+        val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "false"))
+        val boundForm = form.bind(Map("value" -> "false"))
+        val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
+        val result = route(application, initialRequest).value
+
+        status(result) mustEqual 303
+               val page = Jsoup.parse(contentAsString(result))
+//        contentAsString(result) mustEqual view(boundForm, NormalMode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
+//        page.getElementsByClass("govuk-summary-list__value").`val`() must include("Soft Juice")
+        page.getElementById("value-no").`val`() mustEqual "false"
+      }
+    }
+
+*/
     "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
       val application = applicationBuilder(userAnswers = None).build()
 

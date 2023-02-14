@@ -366,6 +366,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    // TODO: Is not actually testing right side of isValidSDILReference in controller
     "must return 500 when small producer the SDIL ref check fails at the check connection" in {
 
       lazy val addASmallProducerEditSubmitRoute = routes.AddASmallProducerController.onEditPageSubmit(superCola.sdilRef).url
