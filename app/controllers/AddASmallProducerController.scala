@@ -110,9 +110,12 @@ class AddASmallProducerController @Inject()(
   private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String,
                              smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])
                             (implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
+
     if (currentSDILRef == addASmallProducerSDILRef) {
       Future.successful(Right())
-    } else if (smallProducerList.map(_.sdilRef).contains(currentSDILRef)) {
+    } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
+      println(Console.BLUE + "the check if the sdil number matches is " + (smallProducerList.map(_.sdilRef).contains(currentSDILRef)) + Console.WHITE)
+      println((smallProducerList.map(_.sdilRef).contains(currentSDILRef)))
       Future.successful(Left("Already exists"))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
@@ -153,13 +156,15 @@ class AddASmallProducerController @Inject()(
           formWithErrors =>
             Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))),
           formData => {
+            println(Console.YELLOW + "user sdilReference is " + sdilReference + Console.WHITE)
+            println(Console.YELLOW + "form sdil is " + formData.referenceNumber + Console.WHITE)
             val smallProducerList = request.userAnswers.smallProducerList
             isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, returnPeriod).flatMap({
               case Left("Already exists") =>
                 Future.successful(
                   BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
                 )
-              case Left(_) =>
+              case Left("Not a small producer") =>
                 Future.successful(
                   BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
                 )

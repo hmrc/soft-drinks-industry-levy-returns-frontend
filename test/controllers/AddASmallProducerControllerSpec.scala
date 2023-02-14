@@ -169,7 +169,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     }
   }
 
-  "AddASmallProducer Controller onEditSubmitLoad" - {
+  "AddASmallProducer Controller onEditSubmit" - {
 
     "must return Redirect(303) when SDIL reference has not been changed" in {
 
@@ -326,8 +326,46 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
       }
     }
-
   }
+
+  "must return 400 (bad request) and not a small producer SDIL reference error " +
+    "when a SDIL reference number belongs to a producer that is not registered as a small producer" in {
+
+    lazy val addASmallProducerEditSubmitRoute = routes.AddASmallProducerController.onEditPageSubmit(superCola.sdilRef).url
+    val notASmallProducerSDILReference = "XPSDIL000000478"
+    val mockSessionRepository = mock[SessionRepository]
+    val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+    when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+    when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
+
+    val application =
+      applicationBuilder(
+        Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))),
+        Some(ReturnPeriod(2022, 3)))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        ).build()
+
+    running(application) {
+      val request =
+        FakeRequest(POST, addASmallProducerEditSubmitRoute)
+          .withFormUrlEncodedBody(
+            ("producerName", producerName),
+            ("referenceNumber", notASmallProducerSDILReference),
+            ("lowBand", litres.toString),
+            ("highBand", litres.toString)
+          )
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+      val page = Jsoup.parse(contentAsString(result))
+      page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.notASmallProducer"))
+    }
+  }
+
 
   "AddASmallProducer Controller onSubmit" - {
 
