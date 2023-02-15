@@ -17,7 +17,7 @@
 package connectors
 
 import com.typesafe.config.ConfigFactory
-import models.{SdilReturn, SmallProducer}
+import models.{SdilReturn, SdilReturnYearQuarter, SmallProducer}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.mockito.ArgumentMatchers.any
@@ -43,6 +43,11 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
                                  |    host     = "$host"
                                  |    port     = $port
                                  |  }
+                                 |
+                                 |   microservice.services.soft-drinks-industry-levy-frontend {
+                                 |    host     = "$host"
+                                 |    port     = $port
+                                 |  }
                                  |""".stripMargin)
   )
   val mockHttp = mock[HttpClient]
@@ -50,7 +55,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
 
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, config)
 
-  val sdilReturn = SdilReturn(
+  val sdilReturn = SdilReturnYearQuarter(
+    SdilReturn(
     (1L, 1L),
     (1L, 1L),
     List(SmallProducer("alias", "XKSDIL000000022", (1L, 1L))),
@@ -58,6 +64,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
     (1L, 1L),
     (1L, 1L),
     (1L, 1L)
+  ),year = 2022,
+    quarter = 1
   )
 
   val aSubscription = RetrievedSubscription(
@@ -117,7 +125,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
     "submit a return successfully" in{
 
       when{
-        softDrinksIndustryLevyConnector.http.POST[SdilReturn, Boolean](any(), any(), any())(any(), any(), any(), any())
+        softDrinksIndustryLevyConnector.http.POST[SdilReturnYearQuarter, Boolean](any(), any(), any())(any(), any(), any(), any())
       } thenReturn Future.successful(true)
 
       whenReady(softDrinksIndustryLevyConnector.submitReturn(sdilReturn)) { result =>
@@ -128,7 +136,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
     "submit a return unsuccessfully" in{
 
       when{
-        softDrinksIndustryLevyConnector.http.POST[SdilReturn, Boolean](any(), any(), any())(any(), any(), any(), any())
+        softDrinksIndustryLevyConnector.http.POST[SdilReturnYearQuarter, Boolean](any(), any(), any())(any(), any(), any(), any())
       } thenReturn Future.successful(false)
 
       whenReady(softDrinksIndustryLevyConnector.submitReturn(sdilReturn)) { result =>

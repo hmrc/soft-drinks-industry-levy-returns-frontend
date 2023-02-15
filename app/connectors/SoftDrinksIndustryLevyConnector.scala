@@ -17,7 +17,7 @@
 package connectors
 
 
-import models.{ReturnPeriod, SdilReturn}
+import models.{ReturnPeriod, SdilReturn, SdilReturnYearQuarter}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -63,8 +63,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     m.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
   }
 
-  def submitReturn(sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    http.POST[SdilReturn, Boolean](s"$sdilFrontendUrl/submit-return",sdilReturn)
+  def submitReturn(sdilReturn: SdilReturnYearQuarter)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    http.POST[SdilReturnYearQuarter , Boolean](s"$sdilFrontendUrl/submit-return/",sdilReturn)
   }
-
 }
