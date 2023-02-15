@@ -27,7 +27,7 @@ object AppDependencies {
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28" % hmrcMongoVersion,
     "com.vladsch.flexmark"    %  "flexmark-all"            % "0.62.0",
     "com.github.tomakehurst"  % "wiremock-standalone"      % "2.27.2",
-    "io.github.wolfendale" %% "scalacheck-gen-regexp" % "1.1.0"
+    "io.github.wolfendale"    %% "scalacheck-gen-regexp" % "1.1.0"
   ).map(_ % "test, it")
 
   def apply(): Seq[ModuleID] = compile ++ test
