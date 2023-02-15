@@ -173,8 +173,6 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
-
-    // TODO - look into these tests and see if we need to move them to a different file
     "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
