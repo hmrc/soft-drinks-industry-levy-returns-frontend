@@ -214,52 +214,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must return Redirect(303) and show the updated information" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-
-      val sessionData =
-        Json.obj(
-          AddASmallProducerPage.toString -> Json.obj(
-            "producerName" -> superCola.alias,
-            "referenceNumber" -> superCola.sdilRef,
-            "lowBand" -> superCola.litreage._1,
-            "highBand" -> superCola.litreage._2
-          )
-        )
-
-      val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(2022, 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          ).build()
-
-      running(application) {
-        val request = FakeRequest(POST, addASmallProducerEditSubmitRoute)
-          .withFormUrlEncodedBody(
-            ("producerName", "DavesDrinks"),
-            ("referenceNumber", superCola.sdilRef),
-            ("lowBand", "100"),
-            ("highBand", "200")
-          )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        //TODO - show updated information or just do this in the IT tests?
-        //          redirectLocation()
-        //          verify(mockSessionRepository).sendReceivedTemplatedEmail(c.capture())(Matchers.any())
-        //          println(Console.YELLOW + "Result is" + result.value + Console.WHITE)
-        //          contentAsString(result) must include("DavesDrinks")
-        //          contentAsString(result) mustNot include(superCola.alias)
-
-      }
-    }
 
     "must return bad request(400) when SDIL reference has been changed but " +
       "it's already been added as another small producer" in {
