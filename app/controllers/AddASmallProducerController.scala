@@ -95,34 +95,6 @@ class AddASmallProducerController @Inject()(
       )
   }
 
-  private def updateDatabase(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
-    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber,
-      (addSmallProducer.lowBand, addSmallProducer.highBand))
-    for {
-      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
-      updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
-      _ <- sessionRepository.set(updatedAnswersFinal)
-    } yield {
-      updatedAnswersFinal
-    }
-  }
-
-  private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String,
-                             smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])
-                            (implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
-
-    if (currentSDILRef == addASmallProducerSDILRef) {
-      Future.successful(Right())
-    } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
-      Future.successful(Left("Already exists"))
-    } else {
-      sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
-        case Some(false) => Left("Not a small producer")
-        case _ => Right()
-      }
-    }
-  }
-
   def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request: DataRequest[AnyContent] =>
@@ -171,6 +143,34 @@ class AddASmallProducerController @Inject()(
           }
         )
     }
+
+  private def updateDatabase(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
+    val smallProducer = SmallProducer(addSmallProducer.producerName.getOrElse(""), addSmallProducer.referenceNumber,
+      (addSmallProducer.lowBand, addSmallProducer.highBand))
+    for {
+      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
+      updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: updatedAnswers.smallProducerList)
+      _ <- sessionRepository.set(updatedAnswersFinal)
+    } yield {
+      updatedAnswersFinal
+    }
+  }
+
+  private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String,
+                             smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])
+                            (implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
+
+    if (currentSDILRef == addASmallProducerSDILRef) {
+      Future.successful(Right())
+    } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
+      Future.successful(Left("Already exists"))
+    } else {
+      sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
+        case Some(false) => Left("Not a small producer")
+        case _ => Right()
+      }
+    }
+  }
 
   private def updateSmallProducerList(formData: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
 
