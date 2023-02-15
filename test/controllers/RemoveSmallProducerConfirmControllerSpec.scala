@@ -22,7 +22,7 @@ import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
 import play.api.i18n.Messages
@@ -85,6 +85,21 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         page.title() must include(Messages("removeSmallProducerConfirm.title"))
         page.getElementsByTag("h1").text() mustEqual Messages("removeSmallProducerConfirm.heading")
         contentAsString(result) mustEqual view(form, NormalMode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET when yes or no was already answered on previous visits to the page" in {
+      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, false).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() must include(Messages("removeSmallProducerConfirm.title"))
+        page.getElementsByTag("h1").text() mustEqual Messages("removeSmallProducerConfirm.heading")
       }
     }
 
