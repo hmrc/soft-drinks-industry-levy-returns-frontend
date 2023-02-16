@@ -38,7 +38,7 @@ class CheckYourAnswersController @Inject()(
 
       val returnPeriod = request.returnPeriod match {
         case Some(returnPeriod) => returnPeriod.toString
-        case None => "return period not available"
+        case None => "Return period not available"
       }
 
       val list = SummaryListViewModel(

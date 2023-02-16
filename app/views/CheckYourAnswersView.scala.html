@@ -20,10 +20,11 @@
 )
 
 @(list: SummaryList,
-  returnPeriod: String = "no return period available"
+  returnPeriod: String
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
