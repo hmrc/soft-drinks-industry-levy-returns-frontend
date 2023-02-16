@@ -19,6 +19,7 @@ package controllers
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.AddASmallProducerFormProvider
+import models.errors.{AlreadyExists, NotASmallProducer, SDILReferenceErrors}
 import models.requests.DataRequest
 import models.{AddASmallProducer, BlankMode, Mode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import navigation.Navigator
@@ -128,11 +129,11 @@ class AddASmallProducerController @Inject()(
           formData => {
             val smallProducerList = request.userAnswers.smallProducerList
             isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, returnPeriod).flatMap({
-              case Left("Already exists") =>
+              case Left(AlreadyExists) =>
                 Future.successful(
                   BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
                 )
-              case Left("Not a small producer") =>
+              case Left(NotASmallProducer) =>
                 Future.successful(
                   BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
                 )
@@ -158,15 +159,15 @@ class AddASmallProducerController @Inject()(
 
   private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String,
                              smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])
-                            (implicit hc: HeaderCarrier): Future[Either[String, Unit]] = {
+                            (implicit hc: HeaderCarrier): Future[Either[SDILReferenceErrors, Unit]] = {
 
     if (currentSDILRef == addASmallProducerSDILRef) {
       Future.successful(Right())
     } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
-      Future.successful(Left("Already exists"))
+      Future.successful(Left(AlreadyExists))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
-        case Some(false) => Left("Not a small producer")
+        case Some(false) => Left(NotASmallProducer)
         case _ => Right()
       }
     }
