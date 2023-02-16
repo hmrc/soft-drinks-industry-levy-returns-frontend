@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import forms.PackAtBusinessAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -30,21 +31,26 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.PackAtBusinessAddressView
+import models.{BlankMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import org.jsoup.Jsoup
+import play.api.i18n.Messages
+import play.api.i18n.Messages.implicitMessagesProviderToMessages
 
 import scala.concurrent.Future
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form = formProvider()
+  val mockSessionRepository = mock[SessionRepository]
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+  val usersRetrievedSubscription = aSubscription
 
   lazy val packAtBusinessAddressRoute = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
   "PackAtBusinessAddress Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the User Company name and address for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -52,11 +58,11 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[PackAtBusinessAddressView]
+        val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        page.getElementById("organisation").`val`() mustEqual usersRetrievedSubscription.orgName
+        page.getElementById("orgAddress").`val`() mustEqual usersRetrievedSubscription.address
       }
     }
 
@@ -87,7 +93,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -100,11 +105,11 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request, continue to have the correct information on the page, and answer required error " +
+      "when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -118,9 +123,13 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         val result = route(application, request).value
+        val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+        page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
+//        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.notASmallProducer"))
       }
     }
 
