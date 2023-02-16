@@ -58,7 +58,7 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
            Invalid(errorKey2, referenceNumber)
          case str if referenceNumberList.contains(str) =>
            Invalid(errorKey3, referenceNumberList)
-         case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)).equals(false)  =>
+         case str if (Await.result(checkSmallProducerStatus(str,returnPeriod),20.seconds).getOrElse(true)) == false  =>
            Invalid(errorKey4)
          case _ =>
            Valid
