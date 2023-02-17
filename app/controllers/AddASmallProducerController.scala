@@ -138,7 +138,7 @@ class AddASmallProducerController @Inject()(
                   BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
                 )
               case Right(_) =>
-                updateSmallProducerList(formData, userAnswers).map(updatedAnswersFinal =>
+                updateSmallProducerList(formData, userAnswers, sdilReference).map(updatedAnswersFinal =>
                   Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
             })
           }
@@ -173,7 +173,7 @@ class AddASmallProducerController @Inject()(
     }
   }
 
-  private def updateSmallProducerList(formData: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
+  private def updateSmallProducerList(formData: AddASmallProducer, userAnswers: UserAnswers, sdilUnderEdit: String): Future[UserAnswers] = {
 
     val smallProducer = SmallProducer(
       formData.producerName.getOrElse(""),
@@ -182,7 +182,7 @@ class AddASmallProducerController @Inject()(
 
     for {
       updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, formData))
-      newListWithOldSPRemoved = updatedAnswers.smallProducerList.filterNot(_.sdilRef == formData.referenceNumber)
+      newListWithOldSPRemoved = updatedAnswers.smallProducerList.filterNot(_.sdilRef == sdilUnderEdit)
       updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducer :: newListWithOldSPRemoved)
       _ <- sessionRepository.set(updatedAnswersFinal)
     } yield {

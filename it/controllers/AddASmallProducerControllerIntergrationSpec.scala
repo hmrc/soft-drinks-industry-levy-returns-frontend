@@ -11,8 +11,12 @@ import play.mvc.Http.HeaderNames
 class AddASmallProducerControllerIntergrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
 
 
+  val sdilRefSparkyJuice = "XZSDIL000000234"
+  val aliasSparkyJuice = "Sparky Juice"
+
   val sdilRefSuperCola = "XZSDIL000000235"
   val aliasSuperCola = "Super Cola"
+
   val litreMax: Long = 100000000000000L
   val litre = litreMax - 1
 
@@ -38,7 +42,7 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
       }
     }
 
-    "Post the Own brand packaged at own sites " in {
+    "Post the new form data and navigate to small producer details page " in {
 
       given
         .commonPrecondition
@@ -64,7 +68,7 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
 
     }
 
-    "load small producer details when producer details in edit mode " in {
+    "Load small producer details when producer details in edit mode " in {
 
       val userAnswers = addASmallProducerPartialAnswers.success.value
       val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
@@ -114,7 +118,12 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
             .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj("producerName" -> "Jackson's Breeze", "referenceNumber" -> sdilRefSuperCola, "lowBand" -> "1000", "highBand" -> "5000"))
+            .post(Json.obj(
+              "producerName" -> amendedProducerAlias,
+              "referenceNumber" -> sdilRefSuperCola,
+              "lowBand" -> amendedLowBand,
+              "highBand" -> amendedHighBand
+            ))
 
         whenReady(result) { res =>
           res.status mustBe 303
@@ -129,7 +138,50 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
 
     }
 
-  }
+    "Post and update the existing small producer details when SDIL ref is changed and not add an additional producer" in {
 
+      val amendedProducerAlias = "Jackson's Breeze"
+      val amendedSDILReference = "XCSDIL000000066"
+      val amendedLowBand = "1000"
+      val amendedHighBand = "5000"
+
+      given
+        .commonPrecondition
+
+      val userAnswers = addASmallProducerFullAnswers.success.value
+      val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
+        SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre)),
+        SmallProducer(s"$aliasSparkyJuice", s"$sdilRefSparkyJuice", (litre, litre)))
+      )
+
+      setAnswers(updatedUserAnswers)
+
+      WsTestClient.withClient { client =>
+        val result =
+          client.url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+              "Csrf-Token" -> "nocheck")
+            .withFollowRedirects(false)
+            .post(Json.obj(
+              "producerName" -> amendedProducerAlias,
+              "referenceNumber" -> amendedSDILReference,
+              "lowBand" -> amendedLowBand,
+              "highBand" -> amendedHighBand
+            ))
+
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/small-producer-details")
+          val smallProducers = getAnswers("XKSDIL000000022").get.smallProducerList
+          println(Console.YELLOW + smallProducers + Console.WHITE)
+          assert(smallProducers.filter(_.sdilRef == sdilRefSuperCola).isEmpty)
+          assert(smallProducers.size == 2)
+        }
+
+      }
+
+    }
+  }
 }
 

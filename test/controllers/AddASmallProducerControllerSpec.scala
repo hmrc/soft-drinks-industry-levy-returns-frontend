@@ -214,6 +214,46 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must return Redirect(303) when SDIL reference has been changed and update the existing producer details" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+
+      val sessionData =
+        Json.obj(
+          AddASmallProducerPage.toString -> Json.obj(
+            "producerName" -> superCola.alias,
+            "referenceNumber" -> superCola.sdilRef,
+            "lowBand" -> superCola.litreage._1,
+            "highBand" -> superCola.litreage._2
+          )
+        )
+
+      val application =
+        applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(year = 2022, quarter = 3)))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          ).build()
+
+      running(application) {
+        val request = FakeRequest(POST, addASmallProducerEditSubmitRoute)
+          .withFormUrlEncodedBody(
+            ("producerName", superCola.alias),
+            ("referenceNumber", "XCSDIL000000069"),
+            ("lowBand", superCola.litreage._1.toString),
+            ("highBand", superCola.litreage._2.toString)
+          )
+
+        val result = route(application, request).value
+
+        contentAsString(result) mustNot include(Messages("addASmallProducer.error.referenceNumber.exists"))
+        status(result) mustEqual SEE_OTHER
+      }
+    }
 
     "must return bad request(400) when SDIL reference has been changed but " +
       "it's already been added as another small producer" in {
