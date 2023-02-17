@@ -17,9 +17,10 @@
 package controllers
 
 import base.SpecBase
-import models.UserAnswers
+import models.{ReturnPeriod, UserAnswers}
 import org.jsoup.Jsoup
 import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +36,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     "must return OK and contain company alias and return period in grey pre header" in {
 
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      val expectedPreHeader = s"${aSubscription.orgName} - October to December 2022"
 
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -43,11 +45,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        println(Console.YELLOW + page.body() + Console.WHITE)
+        page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
+        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
       }
-
-
-
 
     }
 

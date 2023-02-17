@@ -36,16 +36,27 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
+
+
       val returnPeriod = request.returnPeriod match {
-        case Some(returnPeriod) => returnPeriod.toString
+        case Some(returnPeriod) => returnPeriod.quarter match {
+          case 0 => "January to March " + returnPeriod.year
+          case 1 => "April to June " + returnPeriod.year
+          case 2 => "July to September " + returnPeriod.year
+          case 3 => "October to December " + returnPeriod.year
+        }
         case None => "Return period not available"
       }
+
+      println(Console.YELLOW + request.returnPeriod + Console.WHITE)
+
+      val alias = "Super Lemonade Plc"
 
       val list = SummaryListViewModel(
         rows = Seq.empty
       )
 
-     Ok(view(list, returnPeriod))
+     Ok(view(list, alias, returnPeriod))
 
   }
 }

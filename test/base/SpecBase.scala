@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.UserAnswers
+import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -25,10 +25,11 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
 import play.api.Application
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 
 import java.time.LocalDate
@@ -41,7 +42,25 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience {
 
+  val application = applicationBuilder(userAnswers = None).build()
+  implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
+  implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
+  lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
+
+  val baseAlias = "Jackson's Drinks"
+  val baseLiterage = 100L
   val sdilNumber: String = "XKSDIL000000022"
+  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
+  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
+
+  val baseSessionData =
+    Json.obj(
+      "producerName" -> baseAlias,
+      "referenceNumber" -> sdilNumber,
+      "lowBand" -> baseLiterage,
+      "highBand" -> baseLiterage
+    )
+
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",
@@ -85,11 +104,13 @@ trait SpecBase
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+                                    userAnswers: Option[UserAnswers] = None,
+                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
 }

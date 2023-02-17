@@ -16,19 +16,19 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukInput: GovukInput
 )
 
 @(list: SummaryList,
+  alias: String,
   returnPeriod: String
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-
+    <span class="govuk-caption-xl" id="pre-header-caption"> @alias - @returnPeriod </span>
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
-    <p>@returnPeriod</p>
-
-    @govukSummaryList(list)
+<!--    @govukSummaryList(list)-->
 }
