@@ -46,12 +46,17 @@ class AuthenticatedIdentifierAction @Inject()(
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
       (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
-        case (Some(e), _) =>
-          block(IdentifierRequest(request, e.value))
+        case (Some(e), _) => block(IdentifierRequest(request, e.value, e.value)) //TODO - e.value to sdil ref and orgname?
         case (None, Some(utr)) =>  sdilConnector.retrieveSubscription(utr, "utr").flatMap {
           case Some(subscription) =>
             sdilConnector.oldestPendingReturnPeriod(utr).flatMap { returnPeriod =>
-              block(IdentifierRequest(request, EnrolmentIdentifier("sdil", subscription.sdilRef).value,List.empty,returnPeriod))
+              block(IdentifierRequest(
+                request,
+                EnrolmentIdentifier("sdil", subscription.sdilRef).value,
+                EnrolmentIdentifier("orgName", subscription.orgName).value,
+                List.empty,
+                returnPeriod
+              ))
             }
           case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
         }
@@ -77,7 +82,7 @@ class SessionIdentifierAction @Inject()(
 
     hc.sessionId match {
       case Some(session) =>
-        block(IdentifierRequest(request, session.value))
+        block(IdentifierRequest(request, session.value, session.value))
       case None =>
         Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }

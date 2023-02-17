@@ -17,17 +17,22 @@
 package controllers
 
 import base.SpecBase
+import models.requests.IdentifierRequest
 import models.{ReturnPeriod, UserAnswers}
 import org.jsoup.Jsoup
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 import views.html.CheckYourAnswersView
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 

@@ -43,19 +43,14 @@ class CheckYourAnswersController @Inject()(
           case 2 => "July to September " + returnPeriod.year
           case 3 => "October to December " + returnPeriod.year
         }
-        case None => "Return period not available"
+        case None => "Return period not available" // TODO - should this throw an exception instead
       }
-
-
-//      println(Console.YELLOW +  + Console.WHITE)
-
-      val alias = "Super Lemonade Plc"
 
       val list = SummaryListViewModel(
         rows = Seq.empty
       )
 
-     Ok(view(list, alias, returnPeriod))
+     Ok(view(list, request.orgName, returnPeriod))
 
   }
 }

@@ -19,4 +19,4 @@ package models.requests
 import models.{SmallProducer,ReturnPeriod}
 import play.api.mvc.{Request, WrappedRequest}
 
-case class IdentifierRequest[A] (request: Request[A], sdilEnrolment: String, smallProducerList :List[SmallProducer] = List.empty, returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
+case class IdentifierRequest[A] (request: Request[A], sdilEnrolment: String, orgName: String, smallProducerList :List[SmallProducer] = List.empty, returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
