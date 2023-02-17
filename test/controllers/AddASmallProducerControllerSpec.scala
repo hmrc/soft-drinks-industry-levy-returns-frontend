@@ -104,6 +104,7 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(AddASmallProducer(Some(value1), value2,value3,value4)), NormalMode)(request, messages(application)).toString
+
       }
     }
 

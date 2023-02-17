@@ -78,9 +78,12 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         val result = route(application, request).value
+        val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        page.title() must include(Messages("removeSmallProducerConfirm.title"))
+        page.getElementsByTag("h1").text() mustEqual Messages("removeSmallProducerConfirm.heading")
       }
     }
 
@@ -129,7 +132,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
         page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
-//        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.notASmallProducer"))
+        page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.required"))
+//      page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.notASmallProducer"))
       }
     }
 
