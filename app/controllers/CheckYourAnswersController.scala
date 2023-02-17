@@ -36,8 +36,6 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-
-
       val returnPeriod = request.returnPeriod match {
         case Some(returnPeriod) => returnPeriod.quarter match {
           case 0 => "January to March " + returnPeriod.year
@@ -48,7 +46,8 @@ class CheckYourAnswersController @Inject()(
         case None => "Return period not available"
       }
 
-      println(Console.YELLOW + request.returnPeriod + Console.WHITE)
+
+//      println(Console.YELLOW +  + Console.WHITE)
 
       val alias = "Super Lemonade Plc"
 

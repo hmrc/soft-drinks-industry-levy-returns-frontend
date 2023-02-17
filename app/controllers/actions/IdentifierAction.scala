@@ -46,7 +46,8 @@ class AuthenticatedIdentifierAction @Inject()(
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
       (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
-        case (Some(e), _) => block(IdentifierRequest(request, e.value))
+        case (Some(e), _) =>
+          block(IdentifierRequest(request, e.value))
         case (None, Some(utr)) =>  sdilConnector.retrieveSubscription(utr, "utr").flatMap {
           case Some(subscription) =>
             sdilConnector.oldestPendingReturnPeriod(utr).flatMap { returnPeriod =>
