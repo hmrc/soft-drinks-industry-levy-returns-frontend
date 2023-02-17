@@ -21,6 +21,7 @@ import models.requests.IdentifierRequest
 import models.{ReturnPeriod, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfter
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
 import play.api.i18n.Messages
@@ -34,16 +35,15 @@ import views.html.CheckYourAnswersView
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter {
 
   "Check Your Answers Controller" - {
 
-    "must return OK and contain company alias and return period in grey pre header" in {
+    val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
 
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
-      val expectedPreHeader = s"${aSubscription.orgName} - October to December 2022"
-
+    "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).build()
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("firstQuarter")} 2022"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -53,10 +53,64 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
         page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
       }
-
     }
 
+    "must return OK and contain company alias and return correct description for period 1 in grey pre header" in {
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 1))).build()
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2022"
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
 
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
+        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+      }
+    }
+
+    "must return OK and contain company alias and return correct description for period 2 in grey pre header" in {
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 2))).build()
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("thirdQuarter")} 2022"
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
+        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+      }
+    }
+
+    "must return OK and contain company alias and return correct description for period 3 in grey pre header" in {
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("fourthQuarter")} 2022"
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
+        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+      }
+    }
+
+    "must throw and exception when return period quarter is not exist" in {
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 4))).build()
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("fourthQuarter")} 2022"
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = intercept[Throwable](route(application, request).value)
+        result.getMessage mustEqual "Invalid return period quarter"
+
+//        status(result) mustEqual OK
+//        val page = Jsoup.parse(contentAsString(result))
+//        page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
+//        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+      }
+    }
 //    "must return OK and the correct view for a GET" in {
 //
 ////      val answers =

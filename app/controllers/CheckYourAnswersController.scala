@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist._
@@ -37,13 +37,16 @@ class CheckYourAnswersController @Inject()(
     implicit request =>
 
       val returnPeriod = request.returnPeriod match {
-        case Some(returnPeriod) => returnPeriod.quarter match {
-          case 0 => "January to March " + returnPeriod.year
-          case 1 => "April to June " + returnPeriod.year
-          case 2 => "July to September " + returnPeriod.year
-          case 3 => "October to December " + returnPeriod.year
-        }
-        case None => "Return period not available" // TODO - should this throw an exception instead
+        case Some(returnPeriod) =>
+          val year = returnPeriod.year
+          returnPeriod.quarter match {
+            case 0 => s"${Messages("firstQuarter")} $year"
+            case 1 => s"${Messages("secondQuarter")} $year"
+            case 2 => s"${Messages("thirdQuarter")} $year"
+            case 3 => s"${Messages("fourthQuarter")} $year"
+            case _ => throw new RuntimeException("Invalid return period quarter")
+          }
+        case None => throw new RuntimeException("No return period returned")
       }
 
       val list = SummaryListViewModel(
