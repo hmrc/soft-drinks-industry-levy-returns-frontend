@@ -44,7 +44,6 @@ class CheckYourAnswersController @Inject()(
             case 1 => s"${Messages("secondQuarter")} $year"
             case 2 => s"${Messages("thirdQuarter")} $year"
             case 3 => s"${Messages("fourthQuarter")} $year"
-            case _ => throw new RuntimeException("Invalid return period quarter")
           }
         case None => throw new RuntimeException("No return period returned")
       }

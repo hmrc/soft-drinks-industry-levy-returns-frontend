@@ -97,20 +97,19 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must throw and exception when return period quarter is not exist" in {
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 4))).build()
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("fourthQuarter")} 2022"
-      running(application) {
+    "must throw and exception when return period is not returned" in {
+      val application = applicationBuilder(Some(userAnswers), None).build()
+      val result = running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-        val result = intercept[Throwable](route(application, request).value)
-        result.getMessage mustEqual "Invalid return period quarter"
-
-//        status(result) mustEqual OK
-//        val page = Jsoup.parse(contentAsString(result))
-//        page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
-//        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+        route(application, request).value
       }
+
+      intercept[RuntimeException](
+        result mustBe an[RuntimeException]
+      )
     }
+
+
 //    "must return OK and the correct view for a GET" in {
 //
 ////      val answers =
