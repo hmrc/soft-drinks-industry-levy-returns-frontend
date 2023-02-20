@@ -39,10 +39,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
   "Check Your Answers Controller" - {
 
-    val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
+    val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
 
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).build()
+      val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("firstQuarter")} 2022"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -56,7 +56,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias and return correct description for period 1 in grey pre header" in {
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 1))).build()
+      val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 1))).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2022"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -70,7 +70,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias and return correct description for period 2 in grey pre header" in {
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 2))).build()
+      val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 2))).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("thirdQuarter")} 2022"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -84,7 +84,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias and return correct description for period 3 in grey pre header" in {
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("fourthQuarter")} 2022"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -98,7 +98,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must throw and exception when return period is not returned" in {
-      val application = applicationBuilder(Some(userAnswers), None).build()
+      val application = applicationBuilder(Some(bareBoneUserAnswers), None).build()
       val result = running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         route(application, request).value
@@ -107,6 +107,22 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       intercept[RuntimeException](
         result mustBe an[RuntimeException]
       )
+    }
+
+    "must show own brands packaged at own site row when present" in {
+
+      val userAnswersData = Json.obj()
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.body().text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
+        page.body().text() must include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
+      }
     }
 
 

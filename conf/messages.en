@@ -44,8 +44,8 @@ index.title = soft-drinks-industry-levy-returns-frontend
 index.heading = soft-drinks-industry-levy-returns-frontend
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
-checkYourAnswers.title = Check Your Answers
-checkYourAnswers.heading = Check Your Answers
+checkYourAnswers.title = Check Your Answers before sending your update
+checkYourAnswers.heading = Check Your Answers before sending your update
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
@@ -415,3 +415,5 @@ firstQuarter = January to March
 secondQuarter = April to June
 thirdQuarter = July to September
 fourthQuarter = October to December
+ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
+reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
