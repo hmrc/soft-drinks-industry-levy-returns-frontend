@@ -20,7 +20,7 @@
     govukInput: GovukInput
 )
 
-@(list: SummaryList,
+@(answers: SummaryList,
   alias: String,
   returnPeriod: String
 )(implicit request: Request[_], messages: Messages)
@@ -30,7 +30,28 @@
     <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
+    <h2 class="govuk-heading-m">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
 
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            SummaryListRow(key = Key(content = Text(messages("reportingOwnBrandsPackagedAtYourOwnSite"))),
+            value = Value(
+                content = HtmlContent(s"""
+                <b>Low Band</b> ${lowBandAnswerList.apply(0)} Litres <br>
+                <b>Levy</b> ${lowBandAnswerListCost.apply(0)} <br>
+                <b>High Band</b> ${highBandAnswerList.apply(0)} Litres <br>
+                <b>Levy</b> ${highBandAnswerListCost.apply(0)} """)
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer",
+                        content = Text("Change"),
+                        visuallyHiddenText = Some("name")
+                    )
+                )
+            ))
+        )
+    ))))
 
-<!--    @govukSummaryList(list)-->
 }
