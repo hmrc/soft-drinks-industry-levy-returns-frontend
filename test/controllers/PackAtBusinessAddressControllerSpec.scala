@@ -18,93 +18,72 @@ package controllers
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import forms.AddASmallProducerFormProvider
-import models.requests.DataRequest
-import models.{AddASmallProducer, NormalMode, UserAnswers}
+import forms.PackAtBusinessAddressFormProvider
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AddASmallProducerPage
+import pages.PackAtBusinessAddressPage
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.AddASmallProducerView
+import views.html.PackAtBusinessAddressView
+import models.{BlankMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import org.jsoup.Jsoup
+import play.api.i18n.Messages
+import play.api.i18n.Messages.implicitMessagesProviderToMessages
 
 import scala.concurrent.Future
 
-abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
+class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
-
-  val formProvider = new AddASmallProducerFormProvider()
+  val formProvider = new PackAtBusinessAddressFormProvider()
+  val form = formProvider()
   val mockSessionRepository = mock[SessionRepository]
-  override val application = applicationBuilder(userAnswers = None).build()
-  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
-  implicit val request: DataRequest[_]
-  val form = formProvider(mockSessionRepository, sdilConnector)
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+  val usersRetrievedSubscription = aSubscription
 
-  val value1max: Option[String] = Some("Party Drinks Group")
-  val value1 = "Party Drinks Group"
+  lazy val packAtBusinessAddressRoute = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
-  val value2max: String = "XPSDIL000000116"
-  val value2 = "XPSDIL000000116"
+  "PackAtBusinessAddress Controller" - {
 
-  val value3max: Long = 100000000000000L
-  val value3 = value3max - 1
-
-  val value4max: Long = 100000000000000L
-  val value4 = value4max - 1
-
-  lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
-
-  val userAnswers = UserAnswers(
-    sdilNumber,
-    Json.obj(
-      AddASmallProducerPage.toString -> Json.obj(
-        "producerName" -> value1,
-        "referenceNumber" -> value2,
-        "lowBand" -> value3,
-        "highBand" -> value4
-      )
-    )
-  )
-
-  "AddASmallProducer Controller" - {
-
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the User Company name and address for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, addASmallProducerRoute)
-
-        val view = application.injector.instanceOf[AddASmallProducerView]
+        val request = FakeRequest(GET, packAtBusinessAddressRoute)
 
         val result = route(application, request).value
+        val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+//        page.getElementById("organisation").`val`() mustEqual usersRetrievedSubscription.orgName
+//        page.getElementById("orgAddress").`val`() mustEqual usersRetrievedSubscription.address
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
+      val userAnswers = UserAnswers(sdilNumber).set(PackAtBusinessAddressPage, true).success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, addASmallProducerRoute)
+        val request = FakeRequest(GET, packAtBusinessAddressRoute)
 
-        val view = application.injector.instanceOf[AddASmallProducerView]
+        val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         val result = route(application, request).value
+        val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(AddASmallProducer(Some(value1), value2,value3,value4)), NormalMode)(request, messages(application)).toString
-
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+//        page.title() must include(Messages("removeSmallProducerConfirm.title"))
+//        page.getElementsByTag("h1").text() mustEqual Messages("removeSmallProducerConfirm.heading")
       }
     }
 
@@ -117,49 +96,53 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, addASmallProducerRoute)
-            .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+          FakeRequest(POST, packAtBusinessAddressRoute)
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request, continue to have the correct information on the page, and answer required error " +
+      "when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, addASmallProducerRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+          FakeRequest(POST, packAtBusinessAddressRoute)
+            .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[AddASmallProducerView]
+        val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         val result = route(application, request).value
+        val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+//        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+//        page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
+//        page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.required"))
+
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing user answers data is found" in {
+    "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, addASmallProducerRoute)
+        val request = FakeRequest(GET, packAtBusinessAddressRoute)
 
         val result = route(application, request).value
 
@@ -168,13 +151,13 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no existing user answers data is found" in {
+    "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request =
-          FakeRequest(POST,  addASmallProducerRoute)
+          FakeRequest(POST, packAtBusinessAddressRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -183,6 +166,5 @@ abstract class AddASmallProducerControllerSpec extends SpecBase with MockitoSuga
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-
   }
 }
