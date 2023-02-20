@@ -32,7 +32,7 @@ object BrandsPackagedAtOwnSitesSummary  {
     answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
 
-      val value = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
+        val value = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
 
         SummaryListRowViewModel(
           key     = "brandsPackagedAtOwnSites.checkYourAnswersLabel",

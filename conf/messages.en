@@ -77,7 +77,8 @@ packagedContractPacker.change.hidden = packagedContractPacker
 ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.heading = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
-ownBrands.checkYourAnswersLabel = ownBrands
+ownBrands.checkYourAnswersHeading = Own brands packaged at your own site
+ownBrands.checkYourAnswersLabel = Reporting own brands packaged at your own site?
 ownBrands.error.required = Select yes if you are reporting your own brands of \
                              liable drink you have packaged at UK sites you operate
 ownBrands.change.hidden = OwnBrands
@@ -415,5 +416,4 @@ firstQuarter = January to March
 secondQuarter = April to June
 thirdQuarter = July to September
 fourthQuarter = October to December
-ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
-reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
+

@@ -23,7 +23,7 @@ import pages.BrandsPackagedAtOwnSitesPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.BrandsPackagedAtOwnSitesSummary
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, OwnBrandsSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -53,9 +53,10 @@ class CheckYourAnswersController @Inject()(
 
 
       println(Console.YELLOW + request.userAnswers.data + Console.WHITE)
+
       val answers = SummaryListViewModel(
         rows = Seq(
-          BrandsPackagedAtOwnSitesSummary.row(request.userAnswers)
+          OwnBrandsSummary.row(request.userAnswers)
         ).flatten
       )
 

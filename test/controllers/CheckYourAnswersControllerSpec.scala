@@ -110,8 +110,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show own brands packaged at own site row when present" in {
-
-      val userAnswersData = Json.obj()
+      val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
       running(application) {
@@ -120,8 +119,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.body().text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
-        page.body().text() must include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
+        page.getElementsByTag("h2").text() must include(Messages("ownBrands.checkYourAnswersHeading"))
+        page.getElementsByTag("dt").text() must include(Messages("ownBrands.checkYourAnswersLabel"))
       }
     }
 
