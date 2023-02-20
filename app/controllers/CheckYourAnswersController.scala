@@ -22,8 +22,9 @@ import models.UserAnswers
 import pages.BrandsPackagedAtOwnSitesPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, OwnBrandsSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, OwnBrandsSummary, PackagedContractPackerSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -51,16 +52,10 @@ class CheckYourAnswersController @Inject()(
         case None => throw new RuntimeException("No return period returned")
       }
 
+      val ownBrandsAnswer = SummaryListViewModel(rows = Seq(OwnBrandsSummary.row(request.userAnswers)).flatten)
+      val packagedContractPackerAnswer = SummaryListViewModel(rows = Seq(PackagedContractPackerSummary.row(request.userAnswers)).flatten)
 
-      println(Console.YELLOW + request.userAnswers.data + Console.WHITE)
-
-      val answers = SummaryListViewModel(
-        rows = Seq(
-          OwnBrandsSummary.row(request.userAnswers)
-        ).flatten
-      )
-
-      Ok(view(answers, request.orgName, returnPeriod))
+      Ok(view(ownBrandsAnswer, packagedContractPackerAnswer, request.orgName, returnPeriod))
 
   }
 }

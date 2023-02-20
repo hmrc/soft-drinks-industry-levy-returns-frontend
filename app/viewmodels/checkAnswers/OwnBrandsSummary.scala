@@ -20,13 +20,14 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.OwnBrandsPage
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object OwnBrandsSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(OwnBrandsPage).map {
       answer =>
 
@@ -41,4 +42,6 @@ object OwnBrandsSummary  {
           )
         )
     }
+  }
+
 }

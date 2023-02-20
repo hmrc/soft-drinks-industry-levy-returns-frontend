@@ -20,7 +20,8 @@
     govukInput: GovukInput
 )
 
-@(answers: SummaryList,
+@(ownBrandsAnswer: SummaryList,
+  packagedContractPackerAnswer: SummaryList,
   alias: String,
   returnPeriod: String
 )(implicit request: Request[_], messages: Messages)
@@ -31,6 +32,10 @@
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
     <h2 class="govuk-heading-m">@messages("ownBrands.checkYourAnswersHeading")</h2>
-    @govukSummaryList(answers)
+    @govukSummaryList(ownBrandsAnswer)
+
+    <h2 class="govuk-heading-m">@messages("packagedContractPacker.checkYourAnswersHeading")</h2>
+    @govukSummaryList(packagedContractPackerAnswer)
+
 
 }

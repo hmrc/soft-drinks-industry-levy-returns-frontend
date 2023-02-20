@@ -124,6 +124,21 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must show packaged contract packer row when present" in {
+      val userAnswersData = Json.obj("packagedContractPacker" -> false)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("packagedContractPacker.checkYourAnswersHeading"))
+        page.getElementsByTag("dt").text() must include(Messages("packagedContractPacker.checkYourAnswersLabel"))
+      }
+    }
+
 
 //    "must return OK and the correct view for a GET" in {
 //
