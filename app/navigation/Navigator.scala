@@ -85,11 +85,12 @@ class Navigator @Inject()() {
   }
 
   private def exemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
-    if(userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
+    if(userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
       routes.AddASmallProducerController.onPageLoad(NormalMode)
-    } else {
+    } else if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(false)) {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
-    }
+    }else routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+
   }
 
   private def broughtIntoUkPageNavigation(userAnswers: UserAnswers) = {

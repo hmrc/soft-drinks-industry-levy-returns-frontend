@@ -119,6 +119,17 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
             }
 
+
+            "should navigate to small producer details page when yes is selected and there are is greater than 0 small producers" in {
+              val result = navigator.nextPage(ExemptionsForSmallProducersPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true),
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage)))
+              )
+
+              result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+            }
+
             "select No to navigate to brought into uk page" in {
               val result = navigate(false)
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
