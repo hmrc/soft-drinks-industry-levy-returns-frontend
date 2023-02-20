@@ -62,7 +62,7 @@ unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
 packAtBusinessAddress.title = Is this address a UK packaging site you operate to produce liable drinks?
-packAtBusinessAddress.required = Select yes if your registered business address is a UK\
+packAtBusinessAddress.required = Select yes if your registered business address is a UK \
    packaging site that you operate to produce liable drinks
 
 packagedContractPacker.title = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
