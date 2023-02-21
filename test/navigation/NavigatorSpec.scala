@@ -175,6 +175,17 @@ class NavigatorSpec extends SpecBase {
 
           }
 
+          "How many brought into the uk from small producers" - {
+            "select save and continue to navigate to claim-credits-for-exports" in {
+              val result = navigator.nextPage(HowManyBroughtIntoTheUKFromSmallProducersPage,
+                NormalMode,
+                UserAnswers(sdilNumber, Json.obj("broughtIntoUkFromSmallProducers" -> true,
+                  "howManyBroughtIntoTheUKFromSmallProducers" ->
+                    Json.obj("lowBand" -> "100", "highBand" -> "100"))))
+              result mustBe routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
+            }
+          }
+
           "Claim credits for export" - {
 
             def navigate(value: Boolean) = navigator.nextPage(ClaimCreditsForExportsPage,
