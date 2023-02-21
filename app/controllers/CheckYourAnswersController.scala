@@ -24,7 +24,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, OwnBrandsSummary, PackagedContractPackerSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, HowManyAsAContractPackerSummary, OwnBrandsSummary, PackagedContractPackerSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -55,9 +55,12 @@ class CheckYourAnswersController @Inject()(
       println(Console.YELLOW + request.userAnswers + Console.WHITE)
 
       val ownBrandsAnswer = SummaryListViewModel(rows = Seq(OwnBrandsSummary.row(request.userAnswers)).flatten)
-      val packagedContractPackerAnswer = SummaryListViewModel(rows = Seq(PackagedContractPackerSummary.row(request.userAnswers)).flatten)
+      val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
+        PackagedContractPackerSummary.row(request.userAnswers),
+        HowManyAsAContractPackerSummary.row(request.userAnswers)).flatten
+      )
 
-      Ok(view(ownBrandsAnswer, packagedContractPackerAnswer, request.orgName, returnPeriod))
+      Ok(view(ownBrandsAnswer, packagedContractPackerAnswers, request.orgName, returnPeriod))
 
   }
 }

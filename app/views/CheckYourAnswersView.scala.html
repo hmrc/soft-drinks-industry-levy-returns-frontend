@@ -21,7 +21,7 @@
 )
 
 @(ownBrandsAnswer: SummaryList,
-  packagedContractPackerAnswer: SummaryList,
+  packagedContractPackerAnswers: SummaryList,
   alias: String,
   returnPeriod: String
 )(implicit request: Request[_], messages: Messages)
@@ -35,7 +35,7 @@
     @govukSummaryList(ownBrandsAnswer)
 
     <h2 class="govuk-heading-m">@messages("packagedContractPacker.checkYourAnswersHeading")</h2>
-    @govukSummaryList(packagedContractPackerAnswer)
+    @govukSummaryList(packagedContractPackerAnswers)
 
 
 }

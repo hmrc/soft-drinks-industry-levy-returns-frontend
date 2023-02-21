@@ -154,6 +154,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("packagedContractPacker.checkYourAnswersHeading"))
         page.getElementsByTag("dt").text() must include(Messages("packagedContractPacker.checkYourAnswersLabel"))
+
         page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.lowBand"))
         page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.lowBandLevy"))
         page.getElementsByTag("dt").text() must include("123")
