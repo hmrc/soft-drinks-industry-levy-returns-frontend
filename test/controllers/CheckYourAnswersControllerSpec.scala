@@ -124,7 +124,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show packaged contract packer row when present" in {
+    "must show packaged contract packer row when present and answer is no" in {
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
@@ -136,6 +136,30 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("packagedContractPacker.checkYourAnswersHeading"))
         page.getElementsByTag("dt").text() must include(Messages("packagedContractPacker.checkYourAnswersLabel"))
+      }
+    }
+
+    "must show packaged contract packer row when present and answer is yes" in {
+      val userAnswersData = Json.obj(
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> ("lowBand" -> 123, "highBand"-> 333)
+      )
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("packagedContractPacker.checkYourAnswersHeading"))
+        page.getElementsByTag("dt").text() must include(Messages("packagedContractPacker.checkYourAnswersLabel"))
+        page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.lowBand"))
+        page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.lowBandLevy"))
+        page.getElementsByTag("dt").text() must include("123")
+        page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.highBand"))
+        page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.highBandLevy"))
+        page.getElementsByTag("dt").text() must include("333")
       }
     }
 
