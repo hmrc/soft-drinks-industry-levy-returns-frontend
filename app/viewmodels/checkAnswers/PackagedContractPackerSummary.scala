@@ -33,7 +33,7 @@ object PackagedContractPackerSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "packagedContractPacker.checkYourAnswersLabel",
+          key     = "reportingContractPackedAtYourOwnSite",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)

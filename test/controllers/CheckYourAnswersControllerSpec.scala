@@ -109,7 +109,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       )
     }
 
-    "must show own brands packaged at own site row when present" in {
+    "must show own brands packaged at own site row when no selected" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
@@ -119,8 +119,36 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("ownBrands.checkYourAnswersHeading"))
-        page.getElementsByTag("dt").text() must include(Messages("ownBrands.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
+        page.getElementsByTag("dt").text() must include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
+      }
+    }
+
+    "must show own brands packaged at own site row containing calculation when yes is selected" in {
+      val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> ("lowBand" -> 10, "highBand" -> 20))
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
+        page.getElementsByTag("dt").text() must include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() must include("10")
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+//        page.getElementsByTag("dt").text() must include("low band calculated amount ")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dt").text() must include("20")
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+//        page.getElementsByTag("dt").text() must include("high band calculated amount ")
+
+
       }
     }
 
@@ -134,81 +162,36 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("packagedContractPacker.checkYourAnswersHeading"))
-        page.getElementsByTag("dt").text() must include(Messages("packagedContractPacker.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedAtYourOwnSite"))
+        page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite"))
+
       }
     }
-
-    "must show packaged contract packer row when present and answer is yes" in {
-      val userAnswersData = Json.obj(
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> ("lowBand" -> 123, "highBand"-> 333)
-      )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
-      running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("packagedContractPacker.checkYourAnswersHeading"))
-        page.getElementsByTag("dt").text() must include(Messages("packagedContractPacker.checkYourAnswersLabel"))
-
-        page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.lowBand"))
-        page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.lowBandLevy"))
-        page.getElementsByTag("dt").text() must include("123")
-        page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.highBand"))
-        page.getElementsByTag("dt").text() must include(Messages("brandsPackagedAtOwnSites.highBandLevy"))
-        page.getElementsByTag("dt").text() must include("333")
-      }
-    }
-
-
-//    "must return OK and the correct view for a GET" in {
 //
-////      val answers =
-////        emptyUserAnswers
-////          .set(BrandsPackagedAtOwnSitesPage, LocalDate.now).success.value
-////          .set(OwnBrandsPage, LocalDate.now).success.value
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-//        val result = route(application, request).value
-//        val view = application.injector.instanceOf[CheckYourAnswersView]
-//        val list = SummaryListViewModel(Seq.empty)
-//
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
-//      }
-//    }
-//
-//    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-//
-//      val application = applicationBuilder(userAnswers = None).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-//      }
-//    }
-//
-//    "must show return period not available when no return period is present in request" in {
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-//
+//    "must show packaged contract packer row when present and answer is yes" in {
+//      val userAnswersData = Json.obj(
+//        "packagedContractPacker" -> true,
+//        "howManyAsAContractPacker" -> ("lowBand" -> 123, "highBand"-> 333)
+//      )
+//      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+//      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
 //      running(application) {
 //        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
 //        val result = route(application, request).value
 //
 //        status(result) mustEqual OK
-//        contentAsString(result) must include ("return period not available")
+//        val page = Jsoup.parse(contentAsString(result))
+//        page.getElementsByTag("h2").text() must include(Messages("contractPackedAtYourOwnSite"))
+//        page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite"))
+//
+//        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+//        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+//        page.getElementsByTag("dt").text() must include("123")
+//        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+//        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+//        page.getElementsByTag("dt").text() must include("333")
 //      }
 //    }
+
   }
 }

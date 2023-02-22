@@ -54,7 +54,11 @@ class CheckYourAnswersController @Inject()(
 
       println(Console.YELLOW + request.userAnswers + Console.WHITE)
 
-      val ownBrandsAnswer = SummaryListViewModel(rows = Seq(OwnBrandsSummary.row(request.userAnswers)).flatten)
+      val ownBrandsAnswer = SummaryListViewModel(rows = Seq(
+        OwnBrandsSummary.row(request.userAnswers),
+        BrandsPackagedAtOwnSitesSummary.row(request.userAnswers)
+      ).flatten)
+
       val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
         PackagedContractPackerSummary.row(request.userAnswers),
         HowManyAsAContractPackerSummary.row(request.userAnswers)).flatten

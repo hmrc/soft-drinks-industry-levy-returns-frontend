@@ -69,8 +69,8 @@ packagedContractPacker.detailsLink = What is a small producer?
 packagedContractPacker.detailsContent1 = A business is a small producer if it:
 packagedContractPacker.detailsContent2 = has had less than 1 million litres of its own brands of liable drink packaged globally in the past 12 months
 packagedContractPacker.detailsContent3 = will not have more than 1 million litres of its own brands of liable drink packaged globally in the next 30 days
-packagedContractPacker.checkYourAnswersHeading = Contract packed at your own site
-packagedContractPacker.checkYourAnswersLabel = Reporting contract packed at your own sites?
+
+
 packagedContractPacker.error.required = Select yes if you are reporting liable drink you have packaged as a third party or contract packer at UK sites you operate
 packagedContractPacker.change.hidden = if reporting contract packed at your own sites
 
@@ -78,8 +78,6 @@ packagedContractPacker.change.hidden = if reporting contract packed at your own 
 ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.heading = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
-ownBrands.checkYourAnswersHeading = Own brands packaged at your own site
-ownBrands.checkYourAnswersLabel = Reporting own brands packaged at your own site?
 ownBrands.error.required = Select yes if you are reporting your own brands of \
                              liable drink you have packaged at UK sites you operate
 ownBrands.change.hidden = if reporting own brands packaged at your own site
@@ -420,3 +418,34 @@ secondQuarter = April to June
 thirdQuarter = July to September
 fourthQuarter = October to December
 
+litresInTheLowBand = Litres in the low band
+lowBandLevy = Low band levy
+litresInTheHighBand = Litres in the high band
+highBandLevy = High band levy
+
+ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
+reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
+
+contractPackedAtYourOwnSite = Contract packed at your own site
+reportingContractPackedAtYourOwnSite = Reporting contract packed at your own sites?
+
+broughtIntoTheUK = Brought into the UK
+reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK
+
+broughtIntoTheUKFromSmallProducers = Brought into the UK from small producers
+reportingLiableDrinksBroughtIntoTheUKFromSmallProducers = Reporting liable drinks brought into the UK from small producers
+
+exported = Exported
+claimingCreditForExportedLiableDrinks = Claiming credit for exported liable drinks?
+
+lostOrDestroyed = Lost or destroyed
+claimingCreditForLostOrDestroyedLiableDrinks = Claiming credit for lost or destroyed liable drinks?
+
+amountToPay = Amount to pay
+totalThisQuarter = Total this quarter
+balanceBroughtForward = Balance brought forward
+total = Total
+
+sendYourReturn = Send yor return
+sendYourReturnConfirmation = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
+confirmDetailsAndSendReturn = Confirm details and send return

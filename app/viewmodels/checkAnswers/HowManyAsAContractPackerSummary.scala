@@ -35,7 +35,7 @@ object HowManyAsAContractPackerSummary  {
       val value = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
 
         SummaryListRowViewModel(
-          key     = "howManyAsAContractPacker.checkYourAnswersLabel",
+          key     = "howManyBroughtIntoTheUKFromSmallProducers.lowBand",
           value   = ValueViewModel(HtmlContent(value)),
           actions = Seq(
             ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)

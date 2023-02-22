@@ -21,6 +21,7 @@ import models.{CheckMode, UserAnswers}
 import pages.OwnBrandsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -33,14 +34,38 @@ object OwnBrandsSummary  {
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = "ownBrands.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("ownBrands.change.hidden"))
+        if (!answer){
+          SummaryListRowViewModel(
+            key = "reportingOwnBrandsPackagedAtYourOwnSite",
+            value = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("ownBrands.change.hidden"))
+            )
           )
-        )
+        } else {
+          SummaryListRowViewModel(
+            key = "reportingOwnBrandsPackagedAtYourOwnSite",
+            value = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("ownBrands.change.hidden"))
+            )
+          )
+
+          val rowValue = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
+
+          SummaryListRowViewModel(
+            key = "brandsPackagedAtOwnSites.checkYourAnswersLabel",
+            value = ValueViewModel(HtmlContent(rowValue)),
+            actions = Seq(
+              ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden"))
+            )
+          )
+        }
+
+
     }
   }
 
