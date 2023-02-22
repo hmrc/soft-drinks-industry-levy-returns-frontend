@@ -49,6 +49,7 @@ class SmallProducerDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
       val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
         case None => form

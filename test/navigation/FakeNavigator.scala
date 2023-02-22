@@ -25,6 +25,7 @@ class FakeNavigator(desiredRoute: Call) extends Navigator {
 
   override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers,
                         sdilReturn: Option[SdilReturn] = None,
-                        subscription: Option[RetrievedSubscription] = None): Call =
+                        subscription: Option[RetrievedSubscription] = None,
+                        smallProducerMissing: Option[Boolean] = None): Call =
     desiredRoute
 }

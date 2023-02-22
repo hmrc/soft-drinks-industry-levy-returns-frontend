@@ -48,7 +48,6 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(RemoveSmallProducerConfirmPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -58,7 +57,7 @@ class RemoveSmallProducerConfirmController @Inject()(
       val smallProducerMissing = smallProducerList.filter(producer => producer.sdilRef == sdil).isEmpty
 
       if(smallProducerMissing && !smallProducerList.isEmpty){
-        Redirect(navigator.nextPage(SmallProducerDetailsPage, mode, request.userAnswers))
+        Redirect(navigator.nextPage(SmallProducerDetailsPage, mode, request.userAnswers, smallProducerMissing = Some(smallProducerMissing)))
       }else{
         val smallProducerName = smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
         Ok(view(preparedForm, mode, sdil, smallProducerName))
