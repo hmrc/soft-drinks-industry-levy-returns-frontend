@@ -67,6 +67,10 @@ class PackAtBusinessAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id, "sdil"), 1.seconds)
+
+      val businessName = subscription.get.orgName
+      val businessAddress = subscription.get.address
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -76,7 +80,7 @@ class PackAtBusinessAddressController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BrandsPackagedAtOwnSitesController, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(PackAtBusinessAddressPage, mode, updatedAnswers))
       )
   }
 }

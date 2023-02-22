@@ -21,11 +21,19 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    govukSummaryList: GovukSummaryList
 )
 
 @(form: Form[_], businessName: String, businessAddress: UkAddress, mode: Mode)(implicit request: Request[_], messages: Messages)
+@formattedBusinessAddress = {
+    (businessAddress.lines.head).toString() + " " + businessAddress.lines[1] " " + businessAddress.lines[2] " " + businessAddress.postCode
+}
+@formattedBusinessAddress1 = @{
+    businessAddress
+}
 
+    {UkAddress(List(58 Dolefield, Kirkwall),KW37 4SY).lines.head} + + {UkAddress(List(58 Dolefield, Kirkwall),KW37 4SY).lines[1]}
 @layout(pageTitle = title(form, messages("packAtBusinessAddress.title"))) {
 
     @formHelper(action = routes.PackAtBusinessAddressController.onSubmit(mode), 'autoComplete -> "off") {
@@ -34,12 +42,28 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-@*       <h1 class="govuk-heading-m">@messages("packAtBusinessAddress.title")</h1>*@
+       <h1 class="govuk-heading-m">@messages("packAtBusinessAddress.title")</h1>
+
+        @govukSummaryList(SummaryList(
+            rows = Seq(
+                SummaryListRow(
+                    value = Value(
+                        content = Text(businessName)
+                    )
+                ),
+                SummaryListRow(
+                    value = Value(
+                        content = Text(businessAddress.lines.head + ", " + businessAddress.lines.last + ", " + businessAddress.postCode)
+                    )
+                ),
+            ),
+            classes = "govuk-summary-list--no-border"
+        ))
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("packAtBusinessAddress.title")).asPageHeading(),
+                legend = LegendViewModel(messages("")),
                 hint = None
             )
         )
