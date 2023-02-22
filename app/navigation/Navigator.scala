@@ -37,6 +37,7 @@ class Navigator @Inject()() {
     case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => _ => _ => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => _ => _ => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
     case BroughtIntoUKPage => userAnswers => _ => _ => _ => broughtIntoUkPageNavigation(userAnswers)
+    case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => _ => _ => _ => routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
     case HowManyAsAContractPackerPage => _ => _ => _ => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     case ExemptionsForSmallProducersPage => userAnswers => _ => _ => _ => exemptionForSmallProducersPageNavigation(userAnswers)
     case SmallProducerDetailsPage => userAnswers => _ => _ => smallProducerMissing => smallProducerDetailsPageNavigation(userAnswers, smallProducerMissing)
