@@ -20,24 +20,19 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.PackAtBusinessAddressFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.PackAtBusinessAddressView
-import models.{BlankMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
-import play.api.i18n.Messages.implicitMessagesProviderToMessages
-
 import scala.concurrent.Future
-import scala.concurrent.duration.DurationInt
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
@@ -56,14 +51,17 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the User Company name and address for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), usersRetrievedSubscription = aSubscription).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
+        println(Console.MAGENTA_B + "Running test application" + Console.WHITE)
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
-
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+          Future.successful(Some(aSubscription))
+        }
         val result = route(application, request).value
         val page = Jsoup.parse(contentAsString(result))
-
+        println(Console.CYAN_B + "test result is " + result + Console.WHITE)
         status(result) mustEqual OK
         page.getElementById("organisation").`val`() mustEqual usersRetrievedSubscription.orgName
         page.getElementById("orgAddress").`val`() mustEqual usersRetrievedSubscription.address
@@ -80,7 +78,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
 
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
-
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+          Future.successful(Some(aSubscription))
+        }
         val result = route(application, request).value
         val page = Jsoup.parse(contentAsString(result))
 
@@ -108,7 +108,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, packAtBusinessAddressRoute)
             .withFormUrlEncodedBody(("value", "true"))
-
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+          Future.successful(Some(aSubscription))
+        }
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -126,7 +128,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
-
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+          Future.successful(Some(aSubscription))
+        }
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         val result = route(application, request).value
@@ -163,7 +167,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, packAtBusinessAddressRoute)
             .withFormUrlEncodedBody(("value", "true"))
-
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+          Future.successful(Some(aSubscription))
+        }
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

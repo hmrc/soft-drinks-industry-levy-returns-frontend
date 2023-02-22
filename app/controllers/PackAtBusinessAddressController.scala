@@ -19,7 +19,6 @@ package controllers
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
-
 import javax.inject.Inject
 import models.Mode
 import models.backend.UkAddress
@@ -31,10 +30,9 @@ import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackAtBusinessAddressView
-
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.util.{Failure, Success}
+
 
 class PackAtBusinessAddressController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -53,8 +51,9 @@ class PackAtBusinessAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id,"sdil"),1.seconds)
-
+      println(Console.YELLOW + "Inside OnPageLoad" + Console.WHITE)
+      val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id, "sdil"), 1.seconds)
+      println(Console.BLUE + "After Connector Call" + Console.WHITE)
       val businessName = subscription.get.orgName
       val businessAddress = subscription.get.address
       val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
