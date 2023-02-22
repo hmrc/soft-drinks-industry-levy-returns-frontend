@@ -66,6 +66,8 @@ packAtBusinessAddress.required = Select yes if your registered business address 
    packaging site that you operate to produce liable drinks
 packAtBusinessAddress.detailsLink = Why we need these details
 packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
+packAtBusinessAddress.nameText = The business name is
+packAtBusinessAddress.addressText = The business address is
 
 packagedContractPacker.title = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
 packagedContractPacker.heading = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
