@@ -22,18 +22,12 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukDetails: GovukDetails
 )
 
 @(form: Form[_], businessName: String, businessAddress: UkAddress, mode: Mode)(implicit request: Request[_], messages: Messages)
-@formattedBusinessAddress = {
-    (businessAddress.lines.head).toString() + " " + businessAddress.lines[1] " " + businessAddress.lines[2] " " + businessAddress.postCode
-}
-@formattedBusinessAddress1 = @{
-    businessAddress
-}
 
-    {UkAddress(List(58 Dolefield, Kirkwall),KW37 4SY).lines.head} + + {UkAddress(List(58 Dolefield, Kirkwall),KW37 4SY).lines[1]}
 @layout(pageTitle = title(form, messages("packAtBusinessAddress.title"))) {
 
     @formHelper(action = routes.PackAtBusinessAddressController.onSubmit(mode), 'autoComplete -> "off") {
@@ -67,6 +61,11 @@
                 hint = None
             )
         )
+
+        @govukDetails(Details(
+            summary = Text(messages("packAtBusinessAddress.detailsLink")),
+            content = Text(messages("packAtBusinessAddress.detailsContent"))
+        ))
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
