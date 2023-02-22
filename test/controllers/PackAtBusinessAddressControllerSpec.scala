@@ -37,6 +37,7 @@ import play.api.i18n.Messages
 import play.api.i18n.Messages.implicitMessagesProviderToMessages
 
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
@@ -45,6 +46,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
   val mockSessionRepository = mock[SessionRepository]
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val usersRetrievedSubscription = aSubscription
+  val businessName = usersRetrievedSubscription.orgName
+  val businessAddress = usersRetrievedSubscription.address
+
 
   lazy val packAtBusinessAddressRoute = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
@@ -81,9 +85,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
-//        page.title() must include(Messages("removeSmallProducerConfirm.title"))
-//        page.getElementsByTag("h1").text() mustEqual Messages("removeSmallProducerConfirm.heading")
+        contentAsString(result) mustEqual view(form.fill(true), businessName, businessAddress, NormalMode)(request, messages(application)).toString
+        page.title() must include(Messages("packAtBusinessAddress.title"))
+        page.getElementsByTag("h1").text() mustEqual Messages("packAtBusinessAddress.title")
       }
     }
 
@@ -129,9 +133,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-//        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
-//        page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
+        contentAsString(result) mustEqual view(boundForm, businessName, businessAddress, NormalMode)(request, messages(application)).toString
+        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+        page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
 //        page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.required"))
 
       }

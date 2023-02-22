@@ -28,6 +28,7 @@ import pages.PackAtBusinessAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackAtBusinessAddressView
 
@@ -56,8 +57,6 @@ class PackAtBusinessAddressController @Inject()(
 
       val businessName = subscription.get.orgName
       val businessAddress = subscription.get.address
-
-      println(Console.YELLOW + "This is my test" + businessName + Console.WHITE)
       val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -83,4 +82,7 @@ class PackAtBusinessAddressController @Inject()(
           } yield Redirect(navigator.nextPage(PackAtBusinessAddressPage, mode, updatedAnswers))
       )
   }
+//  def getSubscription(sdilRef: String, identifier: String): Action[AnyContent] = (identify andThen getData andThen requireData)(implicit hc: HeaderCarrier) {
+//    val subscription = Await.result(connector.retrieveSubscription(sdilRef,"sdil"),1.seconds)
+//  }
 }
