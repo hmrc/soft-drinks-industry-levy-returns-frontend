@@ -45,7 +45,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
   val form = formProvider()
   val mockSessionRepository = mock[SessionRepository]
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-  val usersRetrievedSubscription = aSubscription
+  var usersRetrievedSubscription = aSubscription
   val businessName = usersRetrievedSubscription.orgName
   val businessAddress = usersRetrievedSubscription.address
 
@@ -56,7 +56,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the User Company name and address for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), usersRetrievedSubscription = aSubscription).build()
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
@@ -65,8 +65,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual OK
-//        page.getElementById("organisation").`val`() mustEqual usersRetrievedSubscription.orgName
-//        page.getElementById("orgAddress").`val`() mustEqual usersRetrievedSubscription.address
+        page.getElementById("organisation").`val`() mustEqual usersRetrievedSubscription.orgName
+        page.getElementById("orgAddress").`val`() mustEqual usersRetrievedSubscription.address
       }
     }
 

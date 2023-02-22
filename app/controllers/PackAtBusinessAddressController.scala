@@ -82,7 +82,7 @@ class PackAtBusinessAddressController @Inject()(
           } yield Redirect(navigator.nextPage(PackAtBusinessAddressPage, mode, updatedAnswers))
       )
   }
-//  def getSubscription(sdilRef: String, identifier: String): Action[AnyContent] = (identify andThen getData andThen requireData)(implicit hc: HeaderCarrier) {
-//    val subscription = Await.result(connector.retrieveSubscription(sdilRef,"sdil"),1.seconds)
-//  }
+  private def getSubscription(sdilRef: String, identifier: String) (implicit hc: HeaderCarrier) {
+    val subscription = Await.result(connector.retrieveSubscription(sdilRef,"sdil"),1.seconds)
+  }
 }
