@@ -114,3 +114,8 @@ GET        /secondary-warehouse-details                         controllers.Seco
 POST       /secondary-warehouse-details                         controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-secondary-warehouse-details                  controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-secondary-warehouse-details                  controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /pack-at-business-address-in-return                        controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /pack-at-business-address-in-return                       controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-pack-at-business-address-in-return                  controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-pack-at-business-address-in-return                 controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)

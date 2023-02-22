@@ -110,7 +110,6 @@ class Navigator @Inject()() {
   }
 
   private def smallProducerDetailsPageNavigation(userAnswers: UserAnswers, smallProducerMissing: Option[Boolean]) = {
-
     smallProducerMissing match {
       case Some(true) => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
       case _ =>

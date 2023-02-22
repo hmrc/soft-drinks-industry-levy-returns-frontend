@@ -26,7 +26,8 @@ import play.api.libs.json.{JsValue, Json}
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
-  val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+  val generators: Seq[Gen[(QuestionPage[_], JsValue)]] = {
+    arbitrary[(PackAtBusinessAddressPage.type, JsValue)] ::
     arbitrary[(SecondaryWarehouseDetailsPage.type, JsValue)] ::
     arbitrary[(RemoveSmallProducerConfirmPage.type, JsValue)] ::
     arbitrary[(SmallProducerDetailsPage.type, JsValue)] ::
@@ -46,6 +47,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(BrandsPackagedAtOwnSitesPage.type, JsValue)] ::
     arbitrary[(ExemptionsForSmallProducersPage.type, JsValue)] ::
     Nil
+  }
 
 
   implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] = {
