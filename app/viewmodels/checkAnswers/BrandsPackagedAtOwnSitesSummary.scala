@@ -28,18 +28,63 @@ import viewmodels.implicits._
 
 object BrandsPackagedAtOwnSitesSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
-
-        val value = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
-
+        val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRowViewModel(
-          key     = "brandsPackagedAtOwnSites.checkYourAnswersLabel",
+          key     = "litresInTheLowBand",
           value   = ValueViewModel(HtmlContent(value)),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden"))
+            ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)//TODO - replace with correct TARGET PAGE
+              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden"))//TODO - replace with correct hidden content
+          )
+        )
+    }
+
+  def lowBandLevyRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
+      answer =>
+        //TODO - replace with actual calculation
+        val value = HtmlFormat.escape("£10000").toString
+
+        SummaryListRowViewModel(
+          key = "lowBandLevy",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq(
+            ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)//TODO - replace with correct TARGET PAGE
+              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden"))//TODO - replace with correct hidden content
+          )
+        )
+    }
+
+  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
+      answer =>
+        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
+
+        SummaryListRowViewModel(
+          key = "litresInTheHighBand",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq(
+            ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)//TODO - replace with correct TARGET PAGE
+              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+          )
+        )
+    }
+
+  def highBandLevyRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
+      answer =>
+        //TODO - replace with actual calculation
+        val value = HtmlFormat.escape("£2000").toString
+
+        SummaryListRowViewModel(
+          key = "highBandLevy",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq(
+            ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)//TODO - replace with correct TARGET PAGE
+              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden"))//TODO - replace with correct hidden content
           )
         )
     }

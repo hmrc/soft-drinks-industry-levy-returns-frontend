@@ -18,7 +18,7 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.OwnBrandsPage
+import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -29,42 +29,20 @@ import viewmodels.implicits._
 object OwnBrandsSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+
     answers.get(OwnBrandsPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
-        if (!answer){
-          SummaryListRowViewModel(
-            key = "reportingOwnBrandsPackagedAtYourOwnSite",
-            value = ValueViewModel(value),
-            actions = Seq(
-              ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("ownBrands.change.hidden"))
-            )
+        SummaryListRowViewModel(
+          key = "reportingOwnBrandsPackagedAtYourOwnSite",
+          value = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("ownBrands.change.hidden"))
           )
-        } else {
-          SummaryListRowViewModel(
-            key = "reportingOwnBrandsPackagedAtYourOwnSite",
-            value = ValueViewModel(value),
-            actions = Seq(
-              ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("ownBrands.change.hidden"))
-            )
-          )
-
-          val rowValue = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
-
-          SummaryListRowViewModel(
-            key = "brandsPackagedAtOwnSites.checkYourAnswersLabel",
-            value = ValueViewModel(HtmlContent(rowValue)),
-            actions = Seq(
-              ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden"))
-            )
-          )
-        }
-
+        )
 
     }
   }

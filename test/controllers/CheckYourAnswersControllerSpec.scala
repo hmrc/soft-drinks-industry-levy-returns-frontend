@@ -125,7 +125,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected" in {
-      val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> ("lowBand" -> 10, "highBand" -> 20))
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 10 , "highBand"-> 20)
+      )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
 
@@ -139,14 +142,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dt").text() must include("10")
+        page.getElementsByTag("dd").text() must include("10")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-//        page.getElementsByTag("dt").text() must include("low band calculated amount ")
+        page.getElementsByTag("dd").text() must include("£1000")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dt").text() must include("20")
+        page.getElementsByTag("dd").text() must include("20")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-//        page.getElementsByTag("dt").text() must include("high band calculated amount ")
+        page.getElementsByTag("dd").text() must include("£2000")
 
 
       }
