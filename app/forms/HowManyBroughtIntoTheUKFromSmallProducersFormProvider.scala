@@ -28,19 +28,19 @@ class HowManyBroughtIntoTheUKFromSmallProducersFormProvider @Inject() extends Ma
    def apply(): Form[HowManyBroughtIntoTheUKFromSmallProducers] = Form(
      mapping(
       "lowBand" -> long(
-        "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.required",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.negative",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.nonNumeric",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.wholeNumber",
-        "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.outOfMaxVal")),
+        "error.lowBand.required",
+                    "error.lowBand.negative",
+                    "error.lowBand.nonNumeric",
+                    "error.lowBand.wholeNumber",
+        "error.lowBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "error.lowBand.outOfMaxVal")),
         "highBand" -> long(
-        "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.required",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.negative",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.nonNumeric",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.wholeNumber",
-          "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.outOfMaxVal"))
+        "error.highBand.required",
+                    "error.highBand.negative",
+                    "error.highBand.nonNumeric",
+                    "error.highBand.wholeNumber",
+          "error.highBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "error.highBand.outOfMaxVal"))
     )(HowManyBroughtIntoTheUKFromSmallProducers.apply)(HowManyBroughtIntoTheUKFromSmallProducers.unapply)
    )
  }

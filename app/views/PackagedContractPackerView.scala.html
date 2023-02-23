@@ -40,14 +40,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("packagedContractPacker.heading")</h1>
+        <h1 class="govuk-heading-m">@messages("packagedContractPacker.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("packagedContractPacker.subHeading")), None
         ))
         @govukDetails(Details(
-            summary = Text(messages("packagedContractPacker.detailsLink")),
+            summary = Text(messages("whatIsASmallProducer.DetailsLink")),
             content = HtmlContent(htmlContent)
         ))
 

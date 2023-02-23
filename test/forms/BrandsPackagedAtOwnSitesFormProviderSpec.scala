@@ -26,11 +26,11 @@ class BrandsPackagedAtOwnSitesFormProviderSpec extends LongFieldBehaviour {
   ".lowBand" - {
 
     val fieldName = "lowBand"
-    val requiredKey = "brandsPackagedAtOwnSites.error.lowBand.required"
-    val numberKey = "brandsPackagedAtOwnSites.error.lowBand.nonNumeric"
-    val negativeNumberKey = "brandsPackagedAtOwnSites.error.lowBand.negative"
-    val maxValueKey = "brandsPackagedAtOwnSites.error.lowBand.outOfMaxVal"
-    val wholeNumberKey = "brandsPackagedAtOwnSites.error.lowBand.wholeNumber"
+    val requiredKey = "error.lowBand.required"
+    val numberKey = "error.lowBand.nonNumeric"
+    val negativeNumberKey = "error.lowBand.negative"
+    val maxValueKey = "error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -65,11 +65,11 @@ class BrandsPackagedAtOwnSitesFormProviderSpec extends LongFieldBehaviour {
   ".highBand" - {
 
     val fieldName = "highBand"
-    val requiredKey = "brandsPackagedAtOwnSites.error.highBand.required"
-    val numberKey = "brandsPackagedAtOwnSites.error.highBand.nonNumeric"
-    val negativeNumberKey = "brandsPackagedAtOwnSites.error.highBand.negative"
-    val maxValueKey = "brandsPackagedAtOwnSites.error.highBand.outOfMaxVal"
-    val wholeNumberKey = "brandsPackagedAtOwnSites.error.highBand.wholeNumber"
+    val requiredKey = "error.highBand.required"
+    val numberKey = "error.highBand.nonNumeric"
+    val negativeNumberKey = "error.highBand.negative"
+    val maxValueKey = "error.highBand.outOfMaxVal"
+    val wholeNumberKey = "error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

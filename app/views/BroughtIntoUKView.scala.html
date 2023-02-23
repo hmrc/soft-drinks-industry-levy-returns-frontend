@@ -25,10 +25,10 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 @htmlContent = {
-        <p class ="govuk-body">@messages("broughtIntoUK.detailsContent1")</p>
+        <p class ="govuk-body">@messages("whatIsASmallProducer.detailsContent1")</p>
         <ul class="govuk-list govuk-list--bullet">
-            <li >@messages("broughtIntoUK.detailsContent2")</li>
-            <li>@messages("broughtIntoUK.detailsContent3")</li>
+            <li >@messages("whatIsASmallProducer.detailsContent2")</li>
+            <li>@messages("whatIsASmallProducer.detailsContent3")</li>
         </ul>
     }
 
@@ -40,7 +40,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("broughtIntoUK.heading")</h1>
+        <h1 class="govuk-heading-m">@messages("broughtIntoUK.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
@@ -48,7 +48,7 @@
                 None
         ))
         @govukDetails(Details(
-            summary = Text(messages("broughtIntoUK.detailsLink")),
+            summary = Text(messages("whatIsASmallProducer.DetailsLink")),
             content = HtmlContent(htmlContent)
         ))
 

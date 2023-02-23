@@ -28,19 +28,19 @@ class HowManyCreditsForExportFormProvider @Inject() extends Mappings {
    def apply(): Form[HowManyCreditsForExport] = Form(
      mapping(
       "lowBand" -> long(
-        "howManyCreditsForExport.error.lowBand.required",
-                    "howManyCreditsForExport.error.lowBand.negative",
-                    "howManyCreditsForExport.error.lowBand.nonNumeric",
-                    "howManyCreditsForExport.error.lowBand.wholeNumber",
-        "howManyCreditsForExport.error.lowBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForExport.error.lowBand.outOfMaxVal")),
+        "error.lowBand.required",
+                    "error.lowBand.negative",
+                    "error.lowBand.nonNumeric",
+                    "error.lowBand.wholeNumber",
+        "error.lowBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "error.lowBand.outOfMaxVal")),
         "highBand" -> long(
-        "howManyCreditsForExport.error.highBand.required",
-                    "howManyCreditsForExport.error.highBand.negative",
-                    "howManyCreditsForExport.error.highBand.nonNumeric",
-                    "howManyCreditsForExport.error.highBand.wholeNumber",
-          "howManyCreditsForExport.error.highBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForExport.error.highBand.outOfMaxVal"))
+        "error.highBand.required",
+                    "error.highBand.negative",
+                    "error.highBand.nonNumeric",
+                    "error.highBand.wholeNumber",
+          ".error.highBand.outOfMaxVal")
+  .verifying(maximumValueNotEqual(100000000000000L, "error.highBand.outOfMaxVal"))
     )(HowManyCreditsForExport.apply)(HowManyCreditsForExport.unapply)
    )
  }

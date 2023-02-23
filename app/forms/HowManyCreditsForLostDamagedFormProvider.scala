@@ -28,18 +28,18 @@ class HowManyCreditsForLostDamagedFormProvider @Inject() extends Mappings {
    def apply(): Form[HowManyCreditsForLostDamaged] = Form(
      mapping(
       "lowBand" -> long(
-        "howManyCreditsForLostDamaged.error.lowBand.required",
-                    "howManyCreditsForLostDamaged.error.lowBand.negative",
-                    "howManyCreditsForLostDamaged.error.lowBand.nonNumeric",
-                    "howManyCreditsForLostDamaged.error.lowBand.wholeNumber",
-        "howManyCreditsForLostDamaged.error.lowBand.outOfMaxVal")
+        "error.lowBand.required",
+                    "error.lowBand.negative",
+                    "error.lowBand.nonNumeric",
+                    "error.lowBand.wholeNumber",
+        "error.lowBand.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForLostDamaged.error.lowBand.outOfMaxVal")),
         "highBand" -> long(
-        "howManyCreditsForLostDamaged.error.highBand.required",
-                    "howManyCreditsForLostDamaged.error.highBand.negative",
-                    "howManyCreditsForLostDamaged.error.highBand.nonNumeric",
-                    "howManyCreditsForLostDamaged.error.highBand.wholeNumber",
-          "howManyCreditsForLostDamaged.error.highBand.outOfMaxVal")
+        "error.highBand.required",
+                    "error.highBand.negative",
+                    "error.highBand.nonNumeric",
+                    "error.highBand.wholeNumber",
+          "error.highBand.outOfMaxVal")
   .verifying(maximumValueNotEqual(100000000000000L, "howManyCreditsForLostDamaged.error.highBand.outOfMaxVal"))
     )(HowManyCreditsForLostDamaged.apply)(HowManyCreditsForLostDamaged.unapply)
    )

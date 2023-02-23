@@ -45,25 +45,25 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("howManyCreditsForExport.heading")</h1>
+        <h1 class="govuk-heading-m">@messages("howManyCreditsForExport.title")</h1>
         <p class="govuk-body">@messages("howManyCreditsForExport.subtext")</p>
 
         @govukInput(
             InputViewModel(
                 field = form("lowBand"),
-                label = LabelViewModel(messages("howManyCreditsForExport.lowBand"))
+                label = LabelViewModel(messages("litres.lowBand"))
             )
             .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("howManyCreditsForExport.hint1"))))
+                .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
         )
 
         @govukInput(
             InputViewModel(
                 field = form("highBand"),
-                label = LabelViewModel(messages("howManyCreditsForExport.highBand"))
+                label = LabelViewModel(messages("litres.highBand"))
             )
             .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("howManyCreditsForExport.hint2"))))
+                .withHint(Hint(content = Text(messages("litres.highBandHint"))))
         )
 
         @govukDetails(Details(
