@@ -15,7 +15,7 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
       given
         .commonPrecondition
 
-      WsTestClient.withClient { client ⇒
+      WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/add-small-producer")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
