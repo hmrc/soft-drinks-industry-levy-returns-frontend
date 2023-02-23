@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package navigation
+package forms.behaviours
 
-import models.retrieved.RetrievedSubscription
-import play.api.mvc.Call
-import pages._
-import models.{Mode, SdilReturn, UserAnswers}
+import play.api.data.{Form, FormError}
 
-class FakeNavigator(desiredRoute: Call) extends Navigator {
+trait SDILReferenceFieldBehaviours extends FieldBehaviours {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers,
-                        sdilReturn: Option[SdilReturn] = None,
-                        subscription: Option[RetrievedSubscription] = None,
-                        smallProducerMissing: Option[Boolean] = None): Call =
-    desiredRoute
+  def invalidRefNumber(form: Form[_],
+                       fieldName: String,
+                       requiredError: FormError): Unit = {
+
+    "not bind when SDIL reference has invalid format" in {
+
+      forAll(badSdilReferences -> "sdilRef") {
+        sdilRef =>
+          val result = form.bind(Map(fieldName -> sdilRef)).apply(fieldName)
+          result.errors mustEqual Seq(requiredError)
+      }
+    }
+
+  }
+
+
 }

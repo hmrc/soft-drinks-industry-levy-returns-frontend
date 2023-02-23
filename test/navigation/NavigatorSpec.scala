@@ -119,6 +119,17 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
             }
 
+
+            "should navigate to small producer details page when yes is selected and there are is greater than 0 small producers" in {
+              val result = navigator.nextPage(ExemptionsForSmallProducersPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true),
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage)))
+              )
+
+              result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+            }
+
             "select No to navigate to brought into uk page" in {
               val result = navigate(false)
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
@@ -284,11 +295,22 @@ class NavigatorSpec extends SpecBase {
 
             }
 
-            "should navigate to add a brought into UK page when no is selected" in {
+            "should navigate to add a brought into UK page when no is selected and there are 0 small producers" in {
 
               val result = navigator.nextPage(SmallProducerDetailsPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("smallProducerDetails" -> false)))
+                UserAnswers(id, Json.obj("smallProducerDetails" -> false),List()))
+
+              result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+
+            }
+
+            "should navigate to add a brought into UK page when no is selected and there is 1 small producer" in {
+
+              val result = navigator.nextPage(SmallProducerDetailsPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("smallProducerDetails" -> false),
+                smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))))
 
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
 
@@ -309,7 +331,7 @@ class NavigatorSpec extends SpecBase {
                   Json.obj("removeSmallProducerConfirm" -> true),
                   smallProducerList = List()
                 ))
-              result mustBe routes.AddASmallProducerController.onPageLoad(BlankMode)
+              result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
             }
 
             "should redirect to small producer details page when user selects yes and clicks on " +

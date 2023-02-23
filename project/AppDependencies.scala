@@ -29,8 +29,9 @@ object AppDependencies {
     "org.scalacheck"          %% "scalacheck"                   % "1.17.0",
     "uk.gov.hmrc"             %% s"bootstrap-test$playSuffix"   % bootstrapVersion,
     "uk.gov.hmrc.mongo"       %% s"hmrc-mongo-test$playSuffix"  % hmrcMongoVersion,
-    "com.vladsch.flexmark"    %  "flexmark-all"                 % "0.64.0",
-    "com.github.tomakehurst"  % "wiremock-standalone"           % "2.27.2"
+    "com.vladsch.flexmark"    %  "flexmark-all"                 % "0.62.0",
+    "com.github.tomakehurst"  % "wiremock-standalone"           % "2.27.2",
+    "io.github.wolfendale"    %% "scalacheck-gen-regexp"        % "1.1.0"
   ).map(_ % "test, it")
 
   def apply(): Seq[ModuleID] = compile ++ test
