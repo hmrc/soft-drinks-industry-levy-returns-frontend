@@ -17,6 +17,7 @@
 package controllers
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
 import pages.BrandsPackagedAtOwnSitesPage
@@ -30,6 +31,7 @@ import views.html.CheckYourAnswersView
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
+                                            config: FrontendAppConfig,
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
@@ -39,6 +41,8 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+
+      val userAnswers = request.userAnswers
 
       val returnPeriod = request.returnPeriod match {
         case Some(returnPeriod) =>
@@ -56,10 +60,10 @@ class CheckYourAnswersController @Inject()(
 
       val ownBrandsAnswer = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
-        BrandsPackagedAtOwnSitesSummary.lowBandRow(request.userAnswers),
-        BrandsPackagedAtOwnSitesSummary.lowBandLevyRow(request.userAnswers),
-        BrandsPackagedAtOwnSitesSummary.highBandRow(request.userAnswers),
-        BrandsPackagedAtOwnSitesSummary.highBandLevyRow(request.userAnswers)
+        BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
+        BrandsPackagedAtOwnSitesSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        BrandsPackagedAtOwnSitesSummary.highBandRow(userAnswers),
+        BrandsPackagedAtOwnSitesSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
       ).flatten)
 
 //      val ownBrandsAnswer = SummaryListViewModel(rows = Seq(
@@ -73,6 +77,6 @@ class CheckYourAnswersController @Inject()(
       )
 
       Ok(view(ownBrandsAnswer, packagedContractPackerAnswers, request.orgName, returnPeriod))
-
   }
+
 }
