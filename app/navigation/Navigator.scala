@@ -44,11 +44,11 @@ class Navigator @Inject()() {
     case BrandsPackagedAtOwnSitesPage => _ => _ => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
     case PackagedContractPackerPage => userAnswers => _ => _ => packagedContractPackerPageNavigation(userAnswers)
     case OwnBrandsPage => userAnswers => _ => _ => ownBrandPageNavigation(userAnswers)
-    case _ => _ => _ => _ => routes.IndexController.onPageLoad
+    case _ => _ => _ => _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CheckYourAnswersController.onPageLoad
+    case _ => _ => routes.CheckYourAnswersController.onPageLoad()
   }
 
   private val EditRouteMap: Page => UserAnswers => Call = {
@@ -139,13 +139,13 @@ class Navigator @Inject()() {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
     } else {
       (sdilReturnOpt, subscriptionOpt)  match {
-        case (Some(sdilReturn), Some(subscription)) =>{
+        case (Some(sdilReturn), Some(subscription)) =>
           val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
           val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-          if(isNewImporter || isNewPacker) routes.ReturnChangeRegistrationController.onPageLoad else routes.IndexController.onPageLoad
+          if(isNewImporter || isNewPacker) routes.ReturnChangeRegistrationController.onPageLoad() else routes.IndexController.onPageLoad()
           //TODO IndexController to be replaced with CYA page
-        }
-        case _ => routes.IndexController.onPageLoad //TODO to be replaced with CYA page
+
+        case _ => routes.IndexController.onPageLoad() //TODO to be replaced with CYA page
       }
     }
   }

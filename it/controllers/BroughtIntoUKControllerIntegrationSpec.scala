@@ -18,13 +18,13 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
       setAnswers(userAnswers)
       given
         .commonPrecondition
-      WsTestClient.withClient { client ⇒
+      WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/$broughtIntoUkUrl")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
-        whenReady(result1) { res ⇒
+        whenReady(result1) { res =>
           res.status mustBe 200
         }
 

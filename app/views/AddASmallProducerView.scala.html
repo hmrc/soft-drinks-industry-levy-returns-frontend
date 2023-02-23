@@ -32,7 +32,7 @@
 @action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdil.get) else routes.AddASmallProducerController.onSubmit(mode)}
 
 @layout(pageTitle = title(form, messages("addASmallProducer.title"))) {
-    @formHelper(action = action, 'autoComplete -> "off") {
+    @formHelper(action = action, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

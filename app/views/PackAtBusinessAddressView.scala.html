@@ -26,7 +26,7 @@
 
 @layout(pageTitle = title(form, messages("packAtBusinessAddress.title"))) {
 
-    @formHelper(action = routes.PackAtBusinessAddressController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.PackAtBusinessAddressController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

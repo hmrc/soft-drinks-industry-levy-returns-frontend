@@ -34,7 +34,7 @@
 
 @layout(pageTitle = title(form, messages("exemptionsForSmallProducers.title"))) {
 
-    @formHelper(action = routes.ExemptionsForSmallProducersController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.ExemptionsForSmallProducersController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

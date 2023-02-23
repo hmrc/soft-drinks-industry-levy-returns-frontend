@@ -52,15 +52,15 @@ class AuthenticatedIdentifierAction @Inject()(
             sdilConnector.oldestPendingReturnPeriod(utr).flatMap { returnPeriod =>
               block(IdentifierRequest(request, EnrolmentIdentifier("sdil", subscription.sdilRef).value,List.empty,returnPeriod))
             }
-          case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+          case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
         }
-        case _ => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+        case _ => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
       }
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
       case _: AuthorisationException =>
-        Redirect(routes.UnauthorisedController.onPageLoad)
+        Redirect(routes.UnauthorisedController.onPageLoad())
     }
   }
 }

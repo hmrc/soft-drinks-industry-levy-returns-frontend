@@ -26,13 +26,13 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
       given
       .commonPrecondition
 
-      WsTestClient.withClient { client ⇒
+      WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/remove-small-producer-confirm/$sdilRef")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
-        whenReady(result1) { res ⇒
+        whenReady(result1) { res =>
           res.status mustBe 200
         }
 

@@ -29,7 +29,7 @@
 
 @layout(pageTitle = title(form, messages("brandsPackagedAtOwnSites.title"))) {
 
-    @formHelper(action = routes.BrandsPackagedAtOwnSitesController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.BrandsPackagedAtOwnSitesController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
