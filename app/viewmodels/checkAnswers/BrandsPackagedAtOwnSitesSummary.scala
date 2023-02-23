@@ -40,6 +40,7 @@ object BrandsPackagedAtOwnSitesSummary  {
             items =
               Seq(
                 ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
+                  .withAttribute("id", "change-lowband-literage")
                   .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
               )))
         )
@@ -75,6 +76,7 @@ object BrandsPackagedAtOwnSitesSummary  {
               items =
                 Seq(
                   ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
+                    .withAttribute("id", "change-highband-literage")
                     .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
                 )))
         )

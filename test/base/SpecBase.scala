@@ -47,6 +47,7 @@ trait SpecBase
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
 
+  val baseUrl = "/soft-drinks-industry-levy-returns-frontend"
   val baseAlias = "Jackson's Drinks"
   val baseLiterage = 100L
   val sdilNumber: String = "XKSDIL000000022"

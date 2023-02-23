@@ -40,6 +40,7 @@ object OwnBrandsSummary  {
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-own-brands")
               .withVisuallyHiddenText(messages("ownBrands.change.hidden"))
           )
         )
