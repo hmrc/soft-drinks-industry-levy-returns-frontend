@@ -19,13 +19,13 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         given
           .commonPrecondition
 
-        WsTestClient.withClient { client ⇒
+        WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/packaged-as-contract-packer")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
 
-          whenReady(result1) { res ⇒
+          whenReady(result1) { res =>
             res.status mustBe 200
           }
 
@@ -44,7 +44,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
 
-          whenReady(result1) { res ⇒
+          whenReady(result1) { res =>
             res.status mustBe 200
           }
 

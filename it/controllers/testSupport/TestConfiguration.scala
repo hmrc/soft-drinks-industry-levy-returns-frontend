@@ -30,7 +30,7 @@ trait TestConfiguration
     with BeforeAndAfterEach
     with BeforeAndAfterAll {
 
-  me: Suite with TestSuite ⇒
+  me: Suite with TestSuite =>
 
   val wiremockHost: String = "localhost"
   val wiremockPort: Int = Port.randomAvailable
