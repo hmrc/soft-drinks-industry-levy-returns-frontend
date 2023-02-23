@@ -14,13 +14,13 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
       given
         .commonPrecondition
 
-      WsTestClient.withClient { client ⇒
+      WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
-        whenReady(result1) { res ⇒
+        whenReady(result1) { res =>
           res.status mustBe 200
         }
 
