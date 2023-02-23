@@ -68,7 +68,12 @@ class CheckYourAnswersController @Inject()(
 
       val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
         PackagedContractPackerSummary.row(request.userAnswers),
-        HowManyAsAContractPackerSummary.row(request.userAnswers)).flatten
+        HowManyAsAContractPackerSummary.lowBandRow(request.userAnswers),
+        HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        HowManyAsAContractPackerSummary.highBandRow(userAnswers),
+        HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+      ).flatten
+
       )
 
       Ok(view(ownBrandsAnswer, packagedContractPackerAnswers, request.orgName, returnPeriod))
