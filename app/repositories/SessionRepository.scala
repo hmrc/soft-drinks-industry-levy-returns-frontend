@@ -88,6 +88,6 @@ class SessionRepository @Inject()(
   def clear(id: String): Future[Boolean] =
     collection
       .deleteOne(byId(id))
-      .toFuture
+      .toFuture()
       .map(_ => true)
 }
