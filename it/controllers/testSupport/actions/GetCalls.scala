@@ -9,7 +9,7 @@ class GetCalls(baseUrl: String) {
   def contactPersonPage(implicit client: WSClient): Future[WSResponse] = {
     client.url(s"$baseUrl/form/contactPerson")
       .withFollowRedirects(false)
-      .withHttpHeaders("X-Session-ID" → "some-id")
+      .withHttpHeaders("X-Session-ID" -> "some-id")
       .get()
   }
 

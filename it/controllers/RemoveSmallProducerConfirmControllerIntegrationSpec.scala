@@ -33,7 +33,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
-        whenReady(result1) { res ⇒
+        whenReady(result1) { res =>
           res.status mustBe 200
         }
 

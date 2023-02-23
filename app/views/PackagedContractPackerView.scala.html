@@ -34,7 +34,7 @@
 
 @layout(pageTitle = title(form, messages("packagedContractPacker.title"))) {
 
-    @formHelper(action = routes.PackagedContractPackerController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.PackagedContractPackerController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
