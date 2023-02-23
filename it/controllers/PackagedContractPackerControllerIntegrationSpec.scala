@@ -38,7 +38,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         given
           .commonPrecondition
 
-        WsTestClient.withClient { client ⇒
+        WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/packaged-as-contract-packer")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
