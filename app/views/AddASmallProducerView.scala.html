@@ -24,12 +24,14 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, sdil: Option[String]= None)(implicit request: Request[_], messages: Messages)
+@(form: Form[_],
+  mode: Mode,
+  sdilReference: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @htmlContent = {
     <label class="govuk-heading-s">@messages("addASmallProducer.referenceNumber")</label>
 }
-@action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdil.get) else routes.AddASmallProducerController.onSubmit(mode)}
+@action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdilReference.get) else routes.AddASmallProducerController.onSubmit(mode)}
 
 @layout(pageTitle = title(form, messages("addASmallProducer.title"))) {
     @formHelper(action = action, Symbol("autoComplete") -> "off") {
@@ -41,42 +43,45 @@
         <h1 class="govuk-heading-m">@messages("addASmallProducer.heading")</h1>
 
         @govukInput(
-            InputViewModel(
-                field = form("producerName"),
-                label = Label(content = Text(messages("addASmallProducer.hint1")))
+        InputViewModel(
+            field = form("producerName"),
+            label = Label(content = Text(messages("addASmallProducer.hint1"))),
             )
-            .withWidth(Fixed20)
+        .withWidth(Fixed20)
         )
 
         @govukInput(
         InputViewModel(
-        field = form("referenceNumber"),
-        label = Label(content = (HtmlContent(htmlContent)))
+            field = form("referenceNumber"),
+            label = Label(content = (HtmlContent(htmlContent))),
         )
         .withWidth(Fixed10)
         .withHint(Hint(content = Text(messages("addASmallProducer.hint2"))))
         )
 
         @govukInput(
-            InputViewModel(
-                field = form("lowBand"),
-                label = LabelViewModel(messages("addASmallProducer.lowBand"))
-            )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("addASmallProducer.hint3"))))
+        InputViewModel(
+            field = form("lowBand"),
+            label = Label(content = Text(messages("addASmallProducer.lowBand"))),
+        )
+        .withWidth(Fixed10)
+        .withHint(Hint(content = Text(messages("addASmallProducer.hint3"))))
+        .withSuffix(PrefixOrSuffix(content = Text(messages("litres.suffix"))))
         )
 
         @govukInput(
-            InputViewModel(
-                field = form("highBand"),
-                label = LabelViewModel(messages("addASmallProducer.highBand"))
-            )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("addASmallProducer.hint4"))))
+        InputViewModel(
+            field = form("highBand"),
+            label = Label(content = Text(messages("addASmallProducer.highBand"))),
+        )
+        .withWidth(Fixed10)
+        .withHint(Hint(content = Text(messages("addASmallProducer.hint4"))))
+        .withSuffix(PrefixOrSuffix(content = Text(messages("litres.suffix"))))
         )
 
         @govukButton(
             ButtonViewModel(messages("site.saveContinue"))
         )
+
     }
 }

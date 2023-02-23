@@ -168,6 +168,8 @@ howManyBoughtIntoUk.error.highBand.outOfMaxVal = Number of litres in the high ba
 howManyBoughtIntoUk.lowBand.change.hidden = Litres in the low band
 howManyBoughtIntoUk.highBand.change.hidden = Litres in the high band
 
+litres.suffix = litres
+
 
 howManyBoughtIntoUk.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
 howManyBoughtIntoUk.heading = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
@@ -387,9 +389,8 @@ addASmallProducer.checkYourAnswersLabel = AddASmallProducer
 addASmallProducer.error.referenceNumber.required = Enter the small producer’s reference number
 addASmallProducer.error.referenceNumber.invalid = Small producer reference number must be 6 letters and 9 numbers
 addASmallProducer.error.referenceNumber.same = Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
-addASmallProducer.error.referenceNumber.Exist = Small producer reference number must be different to a small producer reference number you have already added
-addASmallProducer.error.referenceNumber.Large = Small producer reference number does not match a business that is currently registered as a \
-                                                small producer. Check and try again.
+addASmallProducer.error.referenceNumber.exists = Small producer reference number must be different to a small producer reference number you have already added
+addASmallProducer.error.referenceNumber.notASmallProducer = Small producer reference number does not match a business that is currently registered as a small producer. Check and try again.
 addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
 addASmallProducer.error.lowBand.required = Enter the number of litres in the low band
 addASmallProducer.error.highBand.required = Enter the number of litres in the high band

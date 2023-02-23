@@ -1,6 +1,7 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import models.SmallProducer
 import org.scalatest.TryValues
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
@@ -56,12 +57,39 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
         }
       }
 
-      "user selected no " in {
+      "user selected no with 0 small producers on the list" in {
 
         given
           .commonPrecondition
 
         val userAnswers = addASmallProducerFullAnswers.success.value
+        setAnswers(userAnswers)
+
+        WsTestClient.withClient { client =>
+          val result =
+            client.url(s"$baseUrl/small-producer-details")
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+                "Csrf-Token" -> "nocheck")
+              .withFollowRedirects(false)
+              .post(Json.obj("value" -> "false"))
+
+
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers")
+          }
+
+        }
+
+      }
+
+      "user selected no with at least one small producer on the list" in {
+
+        given
+          .commonPrecondition
+
+        val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("","",(1L, 1L))))
         setAnswers(userAnswers)
 
         WsTestClient.withClient { client =>

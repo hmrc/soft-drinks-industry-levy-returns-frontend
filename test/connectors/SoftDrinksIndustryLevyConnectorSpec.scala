@@ -17,6 +17,7 @@
 package connectors
 
 import com.typesafe.config.ConfigFactory
+import models.ReturnPeriod
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.mockito.ArgumentMatchers.any
@@ -97,10 +98,31 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
      val identifierType: String = "0000000022"
      val sdilNumber: String = "XKSDIL000000022"
 
-    when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
+     when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
 
      Await.result(softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType), 4.seconds) mustBe  Some(aSubscription)
 
     }
+
+    "return a small producer status successfully" in {
+
+      val sdilNumber: String = "XKSDIL000000022"
+      val period = ReturnPeriod(year = 2022, quarter = 3)
+
+      when(mockHttp.GET[Option[Boolean]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(Some(false)))
+
+      Await.result(softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period), 4.seconds) mustBe Some(false)
+
+    }
+
+    "return a oldest pending return period successfully" in {
+
+      val utr: String = "1234567891"
+      val returnPeriod = ReturnPeriod(year = 2022, quarter = 3)
+      when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(List(returnPeriod)))
+      Await.result(softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr), 4.seconds) mustBe Some(returnPeriod)
+
+    }
   }
+
 }

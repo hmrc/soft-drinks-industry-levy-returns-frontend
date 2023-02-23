@@ -20,12 +20,11 @@
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
-        govukDetails: GovukDetails
+        govukDetails: GovukDetails,
+        govukSummaryList: GovukSummaryList
 )
 
 @(form: Form[_], mode: Mode, sdilNumber: String, smallProducerName: String)(implicit request: Request[_], messages: Messages)
-
-@html = @{s"<b>$sdilNumber&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$smallProducerName"}
 
 @layout(pageTitle = title(form, messages("removeSmallProducerConfirm.title"))) {
 
@@ -36,11 +35,25 @@
         }
 
         <h1 class="govuk-heading-m">@messages("removeSmallProducerConfirm.heading")</h1>
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(HtmlContent(html)), None
-        ))
+        @govukSummaryList(SummaryList(
+            rows = Seq(
+                SummaryListRow(
+                    key = Key(
+                        content = Text(sdilNumber)
+                    ),
+                    value = Value(
+                        content = Text(smallProducerName)
+                    )
+                ),
+            ),
+            classes = "govuk-summary-list--no-border"
+            ))
+
+            @govukRadios(
+                RadiosViewModel.yesNo(
+                    field = form("value"),
+                    legend = LegendViewModel(""), None
+                ))
 
         @govukButton(
             ButtonViewModel(messages("site.saveContinue"))

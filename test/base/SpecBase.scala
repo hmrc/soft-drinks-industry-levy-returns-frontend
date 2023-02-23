@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.UserAnswers
+import models.{ReturnPeriod, UserAnswers}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -25,12 +25,12 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
 import play.api.Application
-import play.api.i18n.{Messages, MessagesApi, Lang, MessagesImpl}
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.FakeRequest
 
 import java.time.LocalDate
 
@@ -45,7 +45,9 @@ trait SpecBase
   val application = applicationBuilder(userAnswers = None).build()
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
+  lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
 
+  val genericSmallProducerAlias = "Generic Producer LTD"
   val sdilNumber: String = "XKSDIL000000022"
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
@@ -90,11 +92,13 @@ trait SpecBase
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+                                    userAnswers: Option[UserAnswers] = None,
+                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
 }
