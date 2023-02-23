@@ -52,15 +52,18 @@ class PackAtBusinessAddressController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       println(Console.YELLOW + "Inside OnPageLoad" + Console.WHITE)
-      val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id, "sdil"), 1.seconds)
+      println(request.userAnswers)
       println(Console.BLUE + "After Connector Call" + Console.WHITE)
-      val businessName = subscription.get.orgName
-      val businessAddress = subscription.get.address
-      val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(view(preparedForm, businessName, businessAddress, mode))
+      val businessName = request.subscription.orgName
+      println("SSSSSSS")
+      val businessAddress = request.subscription.address
+        println("yyyy")
+        lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        println("SSSSSSS")
+        Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
