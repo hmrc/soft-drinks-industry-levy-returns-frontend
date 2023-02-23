@@ -40,7 +40,7 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers(id)) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers(id)) mustBe routes.IndexController.onPageLoad()
       }
 
       "navigate to correct page " - {
@@ -266,7 +266,7 @@ class NavigatorSpec extends SpecBase {
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
                 val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.IndexController.onPageLoad //TODO change it to check your answers page once ready
+                result mustBe routes.IndexController.onPageLoad() //TODO change it to check your answers page once ready
               }
 
             }
@@ -398,7 +398,7 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad()
       }
     }
   }
