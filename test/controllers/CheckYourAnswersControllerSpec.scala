@@ -173,31 +173,37 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       }
     }
-//
-//    "must show packaged contract packer row when present and answer is yes" in {
-//      val userAnswersData = Json.obj(
-//        "packagedContractPacker" -> true,
-//        "howManyAsAContractPacker" -> ("lowBand" -> 123, "highBand"-> 333)
-//      )
-//      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-//      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
-//      running(application) {
-//        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual OK
-//        val page = Jsoup.parse(contentAsString(result))
-//        page.getElementsByTag("h2").text() must include(Messages("contractPackedAtYourOwnSite"))
-//        page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite"))
-//
+
+    "must show packaged contract packer row containing calculation when yes is selected" in {
+      val userAnswersData = Json.obj(
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
+      )
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedAtYourOwnSite"))
+        page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite"))
+        page.getElementById("change-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-packaged-as-contract-packer"
+
 //        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+//        page.getElementsByTag("dd").text() must include("10000")
+//        page.getElementById("change-lowband-literage").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
 //        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-//        page.getElementsByTag("dt").text() must include("123")
+//        page.getElementsByTag("dd").text() must include("£1800")
+//
 //        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+//        page.getElementsByTag("dd").text() must include("20000")
+//        page.getElementById("change-highband-literage").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
 //        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-//        page.getElementsByTag("dt").text() must include("333")
-//      }
-//    }
+//        page.getElementsByTag("dd").text() must include("£4800")
+      }
+    }
 
   }
 }

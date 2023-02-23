@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()(
         case None => throw new RuntimeException("No return period returned")
       }
 
-//      println(Console.YELLOW + "Controller \n" + request.userAnswers + Console.WHITE)
+      println(Console.YELLOW + "Controller \n" + request.userAnswers + Console.WHITE)
 
       val ownBrandsAnswer = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
@@ -65,11 +65,6 @@ class CheckYourAnswersController @Inject()(
         BrandsPackagedAtOwnSitesSummary.highBandRow(userAnswers),
         BrandsPackagedAtOwnSitesSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
       ).flatten)
-
-//      val ownBrandsAnswer = SummaryListViewModel(rows = Seq(
-//        OwnBrandsSummary.row(request.userAnswers),
-//        BrandsPackagedAtOwnSitesSummary.row(request.userAnswers)
-//      ).flatten)
 
       val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
         PackagedContractPackerSummary.row(request.userAnswers),

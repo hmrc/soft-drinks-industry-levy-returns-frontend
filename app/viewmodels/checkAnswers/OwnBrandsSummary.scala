@@ -41,7 +41,7 @@ object OwnBrandsSummary  {
           actions = Seq(
             ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-own-brands")
-              .withVisuallyHiddenText(messages("ownBrands.change.hidden"))
+              .withVisuallyHiddenText(messages("ownBrands.change.hidden")) // TODO - what should this say?
           )
         )
 

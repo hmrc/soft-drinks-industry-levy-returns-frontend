@@ -37,6 +37,7 @@ object PackagedContractPackerSummary  {
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-contract-packer")
               .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
           )
         )
