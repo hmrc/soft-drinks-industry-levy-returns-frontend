@@ -205,5 +205,23 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+
+    //exemptionsForSmallProducers
+    "must show exemption for small producers row when present and answer is no" in {
+      val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
+        page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
+
+      }
+    }
+
   }
 }

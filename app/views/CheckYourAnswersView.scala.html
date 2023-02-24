@@ -20,11 +20,11 @@
     govukInput: GovukInput
 )
 
-@(ownBrandsAnswer: SummaryList,
+@(alias: String,
+  returnPeriod: String,
+  ownBrandsAnswers: SummaryList,
   packagedContractPackerAnswers: SummaryList,
-  alias: String,
-  returnPeriod: String
-)(implicit request: Request[_], messages: Messages)
+  exemptionsForSmallProducersAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -32,10 +32,13 @@
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
     <h2 class="govuk-heading-m">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
-    @govukSummaryList(ownBrandsAnswer)
+    @govukSummaryList(ownBrandsAnswers)
 
     <h2 class="govuk-heading-m">@messages("contractPackedAtYourOwnSite")</h2>
     @govukSummaryList(packagedContractPackerAnswers)
+
+    <h2 class="govuk-heading-m">@messages("contractPackedForRegisteredSmallProducers")</h2>
+    @govukSummaryList(exemptionsForSmallProducersAnswers)
 
 
 }

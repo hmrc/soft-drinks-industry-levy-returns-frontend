@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, HowManyAsAContractPackerSummary, OwnBrandsSummary, PackagedContractPackerSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, OwnBrandsSummary, PackagedContractPackerSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -57,8 +57,8 @@ class CheckYourAnswersController @Inject()(
           }
         case None => throw new RuntimeException("No return period returned")
       }
-      
-      val ownBrandsAnswer = SummaryListViewModel(rows = Seq(
+
+      val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
         BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
         BrandsPackagedAtOwnSitesSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
@@ -72,11 +72,15 @@ class CheckYourAnswersController @Inject()(
         HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
         HowManyAsAContractPackerSummary.highBandRow(userAnswers),
         HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-      ).flatten
+      ).flatten)
 
-      )
+      val exemptionsForSmallProducersAnswers = SummaryListViewModel(rows = Seq(
+        ExemptionsForSmallProducersSummary.row(request.userAnswers),
+      ).flatten)
 
-      Ok(view(ownBrandsAnswer, packagedContractPackerAnswers, request.orgName, returnPeriod))
+      Ok(view(request.orgName, returnPeriod, ownBrandsAnswers,
+        packagedContractPackerAnswers,
+        exemptionsForSmallProducersAnswers))
   }
 
 }

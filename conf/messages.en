@@ -429,6 +429,9 @@ reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your 
 contractPackedAtYourOwnSite = Contract packed at your own site
 reportingContractPackedAtYourOwnSite = Reporting contract packed at your own sites?
 
+contractPackedForRegisteredSmallProducers = Contract packed for registered small producers
+exemptionForRegisteredSmallProducers = Exemption for registered small producers?
+
 broughtIntoTheUK = Brought into the UK
 reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK
 

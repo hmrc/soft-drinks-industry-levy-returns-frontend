@@ -33,10 +33,11 @@ object ExemptionsForSmallProducersSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "exemptionsForSmallProducers.checkYourAnswersLabel",
+          key     = "exemptionForRegisteredSmallProducers",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-exemption-small-producers")
               .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
           )
         )
