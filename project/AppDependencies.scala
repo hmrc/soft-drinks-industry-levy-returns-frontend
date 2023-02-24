@@ -29,7 +29,7 @@ object AppDependencies {
     "org.scalacheck"          %% "scalacheck"                   % "1.17.0",
     "uk.gov.hmrc"             %% s"bootstrap-test$playSuffix"   % bootstrapVersion,
     "uk.gov.hmrc.mongo"       %% s"hmrc-mongo-test$playSuffix"  % hmrcMongoVersion,
-    "com.vladsch.flexmark"    %  "flexmark-all"                 % "0.64.0",
+    "com.vladsch.flexmark"    %  "flexmark-all"                 % "0.62.2",
     "com.github.tomakehurst"  % "wiremock-standalone"           % "2.27.2"
   ).map(_ % "test, it")
 

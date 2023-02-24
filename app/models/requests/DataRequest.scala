@@ -24,12 +24,10 @@ case class OptionalDataRequest[A] (request: Request[A],
                                    sdilEnrolment: String,
                                    subscription: RetrievedSubscription,
                                    userAnswers: Option[UserAnswers],
-                                   //smallProducerList :List[SmallProducer] = List.empty,
                                    returnPeriod: Option[ReturnPeriod]) extends WrappedRequest[A](request)
 
 case class DataRequest[A] (request: Request[A],
                            sdilEnrolment: String,
                            subscription: RetrievedSubscription,
                            userAnswers: UserAnswers,
-                           //smallProducerList :List[SmallProducer] = List.empty,
                            returnPeriod: Option[ReturnPeriod]) extends WrappedRequest[A](request)
