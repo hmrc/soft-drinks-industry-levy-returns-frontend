@@ -43,6 +43,8 @@ class CheckYourAnswersController @Inject()(
     implicit request =>
 
       val userAnswers = request.userAnswers
+      val lowerBandCostPerLitre = config.lowerBandCostPerLitre
+      val higherBandCostPerLitre = config.higherBandCostPerLitre
 
       val returnPeriod = request.returnPeriod match {
         case Some(returnPeriod) =>
@@ -55,23 +57,21 @@ class CheckYourAnswersController @Inject()(
           }
         case None => throw new RuntimeException("No return period returned")
       }
-
-      println(Console.YELLOW + "Controller \n" + request.userAnswers + Console.WHITE)
-
+      
       val ownBrandsAnswer = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
         BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
-        BrandsPackagedAtOwnSitesSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        BrandsPackagedAtOwnSitesSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
         BrandsPackagedAtOwnSitesSummary.highBandRow(userAnswers),
-        BrandsPackagedAtOwnSitesSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+        BrandsPackagedAtOwnSitesSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten)
 
       val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
         PackagedContractPackerSummary.row(request.userAnswers),
         HowManyAsAContractPackerSummary.lowBandRow(request.userAnswers),
-        HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
         HowManyAsAContractPackerSummary.highBandRow(userAnswers),
-        HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+        HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten
 
       )

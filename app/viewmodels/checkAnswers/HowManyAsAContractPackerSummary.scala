@@ -28,22 +28,6 @@ import viewmodels.implicits._
 
 object HowManyAsAContractPackerSummary  {
 
-//  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-//    answers.get(HowManyAsAContractPackerPage).map {
-//      answer =>
-//
-//      val value = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
-//
-//        SummaryListRowViewModel(
-//          key     = "howManyBroughtIntoTheUKFromSmallProducers.lowBand",
-//          value   = ValueViewModel(HtmlContent(value)),
-//          actions = Seq(
-//            ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
-//              .withVisuallyHiddenText(messages("howManyAsAContractPacker.change.hidden"))
-//          )
-//        )
-//    }
-
   def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyAsAContractPackerPage).map {
       answer =>
