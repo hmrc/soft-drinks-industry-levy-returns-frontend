@@ -27,7 +27,7 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object HowManyBroughtIntoUkSummary  {
-  
+
   def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoUkPage).map {
       answer =>
@@ -40,7 +40,7 @@ object HowManyBroughtIntoUkSummary  {
             items =
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-literage")
+                  .withAttribute("id", "change-lowband-literage-brought-into-uk")
                   .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
               )))
         )
@@ -76,7 +76,7 @@ object HowManyBroughtIntoUkSummary  {
               items =
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
-                    .withAttribute("id", "change-highband-literage")
+                    .withAttribute("id", "change-highband-literage-brought-into-uk")
                     .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
                 )))
         )
