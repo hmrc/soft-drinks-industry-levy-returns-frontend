@@ -47,6 +47,7 @@ index.guidance = Welcome to your new frontend. Please see the README file for a 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
+
 journeyRecovery.title = Sorry, there is a problem with the service
 journeyRecovery.guidance = [Add content to explain how to proceed.]
 
@@ -113,7 +114,6 @@ howManyAsAContractPacker.checkYourAnswersLabel = HowManyAsAContractPacker
 
 litres.suffix = litres
 
-
 howManyBoughtIntoUk.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
 howManyBoughtIntoUk.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
 howManyBoughtIntoUk.checkYourAnswersLabel = howManyBoughtIntoUk
@@ -164,8 +164,8 @@ howManyCreditsForLostDamaged.checkYourAnswersLabel = HowManyCreditsForLostDamage
 
 howManyBroughtIntoTheUKFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
 howManyBroughtIntoTheUKFromSmallProducers.subtext = Include your own brands of liable drinks produced outside of the UK.
-howManyBroughtIntoTheUKFromSmallProducers.checkYourAnswersLabel = HowManyBroughtIntoTheUKFromSmallProducers
 
+howManyBroughtIntoTheUKFromSmallProducers.checkYourAnswersLabel = HowManyBroughtIntoTheUKFromSmallProducers
 
 broughtIntoUkFromSmallProducers.title = Are you reporting liable drinks you have brought into the UK from small producers?
 broughtIntoUkFromSmallProducers.subHeading = Include your own brands of liable drinks produced outside of the UK.
