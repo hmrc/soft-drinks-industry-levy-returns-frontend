@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoUkSummary, OwnBrandsSummary, PackagedContractPackerSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoUkSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -69,20 +69,22 @@ class CheckYourAnswersController @Inject()(
       ).flatten)
 
       val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
-        PackagedContractPackerSummary.row(request.userAnswers),
-        HowManyAsAContractPackerSummary.lowBandRow(request.userAnswers),
+        PackagedContractPackerSummary.row(userAnswers),
+        HowManyAsAContractPackerSummary.lowBandRow(userAnswers),
         HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
         HowManyAsAContractPackerSummary.highBandRow(userAnswers),
         HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten)
 
       val exemptionsForSmallProducersAnswers = SummaryListViewModel(rows = Seq(
-        ExemptionsForSmallProducersSummary.row(request.userAnswers),
+        ExemptionsForSmallProducersSummary.row(userAnswers),
+        SmallProducerDetailsSummary.lowBandRow(userAnswers),
+        SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre)
       ).flatten)
 
       val broughtIntoTheUKAnswers = SummaryListViewModel(rows = Seq(
-        BroughtIntoUKSummary.row(request.userAnswers),
-        HowManyBroughtIntoUkSummary.lowBandRow(request.userAnswers),
+        BroughtIntoUKSummary.row(userAnswers),
+        HowManyBroughtIntoUkSummary.lowBandRow(userAnswers),
         HowManyBroughtIntoUkSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
         HowManyBroughtIntoUkSummary.highBandRow(userAnswers),
         HowManyBroughtIntoUkSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)

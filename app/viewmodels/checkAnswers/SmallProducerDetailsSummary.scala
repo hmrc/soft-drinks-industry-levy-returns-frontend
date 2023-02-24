@@ -18,11 +18,11 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, SmallProducer, UserAnswers}
-import pages.SmallProducerDetailsPage
+import pages.{AddASmallProducerPage, SmallProducerDetailsPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -63,7 +63,44 @@ object SmallProducerDetailsSummary  {
             .withVisuallyHiddenText(messages("smallProducerDetails.remove.hidden"))
         )
       )
+    }
   }
+
+
+  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(AddASmallProducerPage).map {
+      answer =>
+        val value = HtmlFormat.escape(answer.lowBand.toString).toString
+        SummaryListRow(
+          key = "litresInTheLowBand",
+          value = ValueViewModel(HtmlContent(value)),
+          classes = "govuk-summary-list__row--no-border",
+          actions = Some(Actions("",
+            items =
+              Seq(
+                ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
+                  .withAttribute("id", "change-lowband-literage-small-producers")
+                  .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+              )))
+        )
+    }
+
+
+  def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
+
+    val levyTotal = answers.smallProducerList.map
+
+    answers.get(AddASmallProducerPage).map {
+      answer =>
+        val levy = "£" + String.format("%.0f", (answer.lowBand * lowBandCostPerLitre.toDouble))
+        val value = HtmlFormat.escape(levy).toString
+
+        SummaryListRowViewModel(
+          key = "lowBandLevy",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq()
+        )
+    }
   }
 
 

@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import models.requests.IdentifierRequest
-import models.{ReturnPeriod, UserAnswers}
+import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfter
@@ -37,9 +37,9 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter {
 
-  "Check Your Answers Controller" - {
+  val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
 
-    val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
+  "Check Your Answers Controller" - {
 
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
       val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).build()
@@ -222,8 +222,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show exemption for small producers row when yes is selected" in {
-      val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswersData = Json.obj(
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
+      )
+
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
+
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -234,6 +241,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
         page.getElementById("change-exemption-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-exemptions-for-small-producers"
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("4000")
+        page.getElementById("change-lowband-literage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£720")
       }
     }
 
