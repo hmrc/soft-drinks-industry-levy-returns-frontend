@@ -121,6 +121,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
         page.getElementsByTag("dt").text() must include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
+        page.getElementById("change-own-brands").attributes().get("href") mustEqual s"$baseUrl/change-own-brands-packaged-at-own-sites"
       }
     }
 
@@ -154,7 +155,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementById("change-highband-literage").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4800")
-
       }
     }
 
@@ -170,7 +170,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("contractPackedAtYourOwnSite"))
         page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite"))
-
+        page.getElementById("change-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-packaged-as-contract-packer"
       }
     }
 
@@ -205,8 +205,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-
-    //exemptionsForSmallProducers
     "must show exemption for small producers row when present and answer is no" in {
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
@@ -219,7 +217,23 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
+        page.getElementById("change-exemption-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-exemptions-for-small-producers"
+      }
+    }
 
+    "must show exemption for small producers row when yes is selected" in {
+      val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
+        page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
+        page.getElementById("change-exemption-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-exemptions-for-small-producers"
       }
     }
 
