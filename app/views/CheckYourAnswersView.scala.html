@@ -24,7 +24,8 @@
   returnPeriod: String,
   ownBrandsAnswers: SummaryList,
   packagedContractPackerAnswers: SummaryList,
-  exemptionsForSmallProducersAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
+  exemptionsForSmallProducersAnswers: SummaryList,
+  broughtIntoTheUKAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -39,6 +40,9 @@
 
     <h2 class="govuk-heading-m">@messages("contractPackedForRegisteredSmallProducers")</h2>
     @govukSummaryList(exemptionsForSmallProducersAnswers)
+
+    <h2 class="govuk-heading-m">@messages("broughtIntoTheUK")</h2>
+    @govukSummaryList(broughtIntoTheUKAnswers)
 
 
 }

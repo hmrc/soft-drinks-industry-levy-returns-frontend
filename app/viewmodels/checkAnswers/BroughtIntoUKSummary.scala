@@ -24,7 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object BoughtIntoUKSummary  {
+object BroughtIntoUKSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(BroughtIntoUKPage).map {
@@ -33,10 +33,11 @@ object BoughtIntoUKSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "broughtIntoUK.checkYourAnswersLabel",
+          key     = "reportingLiableDrinksBroughtIntoTheUK",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-brought-into-uk")
               .withVisuallyHiddenText(messages("broughtIntoUK.change.hidden"))
           )
         )

@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, OwnBrandsSummary, PackagedContractPackerSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoUkSummary, OwnBrandsSummary, PackagedContractPackerSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -58,6 +58,8 @@ class CheckYourAnswersController @Inject()(
         case None => throw new RuntimeException("No return period returned")
       }
 
+      println(Console.YELLOW + userAnswers + Console.WHITE)
+
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
         BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
@@ -78,9 +80,19 @@ class CheckYourAnswersController @Inject()(
         ExemptionsForSmallProducersSummary.row(request.userAnswers),
       ).flatten)
 
+      val broughtIntoTheUKAnswers = SummaryListViewModel(rows = Seq(
+        BroughtIntoUKSummary.row(request.userAnswers),
+        HowManyBroughtIntoUkSummary.lowBandRow(request.userAnswers),
+        HowManyBroughtIntoUkSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+        HowManyBroughtIntoUkSummary.highBandRow(userAnswers),
+        HowManyBroughtIntoUkSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+      ).flatten)
+
       Ok(view(request.orgName, returnPeriod, ownBrandsAnswers,
         packagedContractPackerAnswers,
-        exemptionsForSmallProducersAnswers))
+        exemptionsForSmallProducersAnswers,
+        broughtIntoTheUKAnswers
+      ))
   }
 
 }
