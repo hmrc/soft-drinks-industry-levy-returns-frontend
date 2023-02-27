@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -99,11 +99,11 @@ class CheckYourAnswersController @Inject()(
       ).flatten)
 
       val claimCreditsForExportsAnswers = SummaryListViewModel(rows = Seq(
-        ClaimCreditsForExportsSummary.row(userAnswers)
-//        HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandRow(userAnswers),
-//        HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-//        HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandRow(userAnswers),
-//        HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+        ClaimCreditsForExportsSummary.row(userAnswers),
+        HowManyCreditsForExportSummary.lowBandRow(userAnswers),
+        HowManyCreditsForExportSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+        HowManyCreditsForExportSummary.highBandRow(userAnswers),
+        HowManyCreditsForExportSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten)
 
       Ok(view(request.orgName, returnPeriod, ownBrandsAnswers,

@@ -58,6 +58,7 @@ class HowManyCreditsForLostDamagedController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>

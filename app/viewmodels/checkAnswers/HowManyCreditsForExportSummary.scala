@@ -22,25 +22,77 @@ import pages.HowManyCreditsForExportPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object HowManyCreditsForExportSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyCreditsForExportPage).map {
       answer =>
-
-      val value = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
-
-        SummaryListRowViewModel(
-          key     = "howManyCreditsForExport.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(value)),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("howManyCreditsForExport.change.hidden"))
-          )
+        val value = HtmlFormat.escape(answer.lowBand.toString).toString
+        SummaryListRow(
+          key = "litresInTheLowBand",
+          value = ValueViewModel(HtmlContent(value)),
+          classes = "govuk-summary-list__row--no-border",
+          actions = Some(Actions("",
+            items =
+              Seq(
+                ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
+                  .withAttribute("id", "change-lowband-export-credits")
+                  .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+              )))
         )
     }
+
+
+  def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
+
+    answers.get(HowManyCreditsForExportPage).map {
+      answer =>
+        val levy = "-£" + String.format("%.0f", (answer.lowBand * lowBandCostPerLitre.toDouble))
+        val value = HtmlFormat.escape(levy).toString
+
+        SummaryListRowViewModel(
+          key = "lowBandLevy",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq()
+        )
+    }
+  }
+
+  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(HowManyCreditsForExportPage).map {
+      answer =>
+        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
+
+        SummaryListRow(
+          key = "litresInTheHighBand",
+          value = ValueViewModel(HtmlContent(value)),
+          classes = "govuk-summary-list__row--no-border",
+          actions = Some(
+            Actions("",
+              items =
+                Seq(
+                  ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
+                    .withAttribute("id", "change-highband-export-credits")
+                    .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                )))
+        )
+    }
+
+  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(HowManyCreditsForExportPage).map {
+      answer =>
+        val levy = "-£" + String.format("%.0f", (answer.highBand * highBandCostPerLitre.toDouble))
+        val value = HtmlFormat.escape(levy).toString
+
+        SummaryListRowViewModel(
+          key = "highBandLevy",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq()
+        )
+    }
+
 }
