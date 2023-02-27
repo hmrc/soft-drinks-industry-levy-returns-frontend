@@ -82,7 +82,7 @@ class BrandsPackagedAtOwnSitesFormProviderSpec extends LongFieldBehaviour {
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, numberKey),
+      nonNumericError  = FormError(numberKey),
       negativeNumberError = FormError(fieldName, negativeNumberKey),
       wholeNumberError = FormError(fieldName, wholeNumberKey)
     )

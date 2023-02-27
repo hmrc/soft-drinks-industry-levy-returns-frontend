@@ -10,11 +10,10 @@ class $className$FormProviderSpec extends LongFieldBehaviour {
   ".$field1Name$" - {
 
     val fieldName = "$field1Name$"
-    val requiredKey = "$className;format="decap"$.error.$field1Name$.required"
-    val numberKey = "$className;format="decap"$.error.$field1Name$.nonNumeric"
-    val negativeNumberKey = "$className;format="decap"$.error.$field1Name$.negative"
-    val maxValueKey = "$className;format="decap"$.error.$field1Name$.outOfMaxVal"
-    val wholeNumberKey = "$className;format="decap"$.error.$field1Name$.wholeNumber"
+    val requiredKey = "error.$field1Name$.required"
+    val numberKey = "error.$field1Name$.nonNumeric"
+    val negativeNumberKey = "error.$field1Name$.outOfMaxVal"
+    val wholeNumberKey = "error.$field1Name$.wholeNumber"
     val maxValue = $field1Maximum$
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -49,11 +48,11 @@ class $className$FormProviderSpec extends LongFieldBehaviour {
   ".$field2Name$" - {
 
     val fieldName = "$field2Name$"
-    val requiredKey = "$className;format="decap"$.error.$field2Name$.required"
-    val numberKey = "$className;format="decap"$.error.$field2Name$.nonNumeric"
-    val negativeNumberKey = "$className;format="decap"$.error.$field2Name$.negative"
-    val maxValueKey = "$className;format="decap"$.error.$field2Name$.outOfMaxVal"
-    val wholeNumberKey = "$className;format="decap"$.error.$field2Name$.wholeNumber"
+    val requiredKey = "error.$field2Name$.required"
+    val numberKey = "error.$field2Name$.nonNumeric"
+    val negativeNumberKey = "error.$field2Name$.negative"
+    val maxValueKey = "error.$field2Name$.outOfMaxVal"
+    val wholeNumberKey = "error.$field2Name$.wholeNumber"
     val maxValue = $field2Maximum$
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

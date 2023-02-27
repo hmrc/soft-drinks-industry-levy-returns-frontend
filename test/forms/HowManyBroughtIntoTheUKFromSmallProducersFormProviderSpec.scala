@@ -26,11 +26,11 @@ class HowManyBroughtIntoTheUKFromSmallProducersFormProviderSpec extends LongFiel
   ".lowBand" - {
 
     val fieldName = "lowBand"
-    val requiredKey = "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.required"
-    val numberKey = "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.nonNumeric"
-    val negativeNumberKey = "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.negative"
-    val maxValueKey = "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.outOfMaxVal"
-    val wholeNumberKey = "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.wholeNumber"
+    val requiredKey = "error.lowBand.required"
+    val numberKey = "error.lowBand.nonNumeric"
+    val negativeNumberKey = "error.lowBand.negative"
+    val maxValueKey = "error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -65,11 +65,11 @@ class HowManyBroughtIntoTheUKFromSmallProducersFormProviderSpec extends LongFiel
   ".highBand" - {
 
     val fieldName = "highBand"
-    val requiredKey = "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.required"
-    val numberKey = "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.nonNumeric"
-    val negativeNumberKey = "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.negative"
-    val maxValueKey = "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.outOfMaxVal"
-    val wholeNumberKey = "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.wholeNumber"
+    val requiredKey = "error.highBand.required"
+    val numberKey = "error.highBand.nonNumeric"
+    val negativeNumberKey = "error.highBand.negative"
+    val maxValueKey = "error.highBand.outOfMaxVal"
+    val wholeNumberKey = "error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

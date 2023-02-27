@@ -26,11 +26,11 @@ class HowManyCreditsForLostDamagedFormProviderSpec extends LongFieldBehaviour {
   ".lowBand" - {
 
     val fieldName = "lowBand"
-    val requiredKey = "howManyCreditsForLostDamaged.error.lowBand.required"
-    val numberKey = "howManyCreditsForLostDamaged.error.lowBand.nonNumeric"
-    val negativeNumberKey = "howManyCreditsForLostDamaged.error.lowBand.negative"
-    val maxValueKey = "howManyCreditsForLostDamaged.error.lowBand.outOfMaxVal"
-    val wholeNumberKey = "howManyCreditsForLostDamaged.error.lowBand.wholeNumber"
+    val requiredKey = "error.lowBand.required"
+    val numberKey = "error.lowBand.nonNumeric"
+    val negativeNumberKey = "error.lowBand.negative"
+    val maxValueKey = "error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -65,11 +65,11 @@ class HowManyCreditsForLostDamagedFormProviderSpec extends LongFieldBehaviour {
   ".highBand" - {
 
     val fieldName = "highBand"
-    val requiredKey = "howManyCreditsForLostDamaged.error.highBand.required"
-    val numberKey = "howManyCreditsForLostDamaged.error.highBand.nonNumeric"
-    val negativeNumberKey = "howManyCreditsForLostDamaged.error.highBand.negative"
-    val maxValueKey = "howManyCreditsForLostDamaged.error.highBand.outOfMaxVal"
-    val wholeNumberKey = "howManyCreditsForLostDamaged.error.highBand.wholeNumber"
+    val requiredKey = "error.highBand.required"
+    val numberKey = "error.highBand.nonNumeric"
+    val negativeNumberKey = "error.highBand.negative"
+    val maxValueKey = "error.highBand.outOfMaxVal"
+    val wholeNumberKey = "error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
