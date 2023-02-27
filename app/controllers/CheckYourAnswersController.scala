@@ -79,7 +79,9 @@ class CheckYourAnswersController @Inject()(
       val exemptionsForSmallProducersAnswers = SummaryListViewModel(rows = Seq(
         ExemptionsForSmallProducersSummary.row(userAnswers),
         SmallProducerDetailsSummary.lowBandRow(userAnswers),
-        SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre)
+        SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+        SmallProducerDetailsSummary.highBandRow(userAnswers),
+        SmallProducerDetailsSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten)
 
       val broughtIntoTheUKAnswers = SummaryListViewModel(rows = Seq(

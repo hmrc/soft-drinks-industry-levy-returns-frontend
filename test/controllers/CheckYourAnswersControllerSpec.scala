@@ -247,6 +247,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementById("change-lowband-literage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£720")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("6000")
+        page.getElementById("change-highband-literage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1440")
       }
     }
 

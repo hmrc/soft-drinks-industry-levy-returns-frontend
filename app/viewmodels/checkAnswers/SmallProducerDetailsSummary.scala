@@ -66,41 +66,60 @@ object SmallProducerDetailsSummary  {
     }
   }
 
-
-  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AddASmallProducerPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.lowBand.toString).toString
-        SummaryListRow(
-          key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)),
-          classes = "govuk-summary-list__row--no-border",
-          actions = Some(Actions("",
-            items =
-              Seq(
-                ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-literage-small-producers")
-                  .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
-              )))
-        )
-    }
-
+  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    val literageTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._1).sum
+    Some(SummaryListRow(
+      key = "litresInTheLowBand",
+      value = ValueViewModel(HtmlContent(literageTotal.toString)),
+      classes = "govuk-summary-list__row--no-border",
+      actions = Some(Actions("",
+        items =
+          Seq(
+            ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-lowband-literage-small-producers")
+              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+          )))))
+  }
 
   def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
 
-    val levyTotal = answers.smallProducerList.map
+    val levyTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._1 * lowBandCostPerLitre.toDouble).sum
+    val levy = "£" + String.format("%.0f", levyTotal)
+    val value = HtmlFormat.escape(levy).toString
 
-    answers.get(AddASmallProducerPage).map {
-      answer =>
-        val levy = "£" + String.format("%.0f", (answer.lowBand * lowBandCostPerLitre.toDouble))
-        val value = HtmlFormat.escape(levy).toString
+    Some(SummaryListRowViewModel(
+      key = "lowBandLevy",
+      value = ValueViewModel(HtmlContent(value)),
+      actions = Seq()
+    ))
+  }
 
-        SummaryListRowViewModel(
-          key = "lowBandLevy",
-          value = ValueViewModel(HtmlContent(value)),
-          actions = Seq()
-        )
-    }
+  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    val literageTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._2).sum
+    Some(SummaryListRow(
+      key = "litresInTheHighBand",
+      value = ValueViewModel(HtmlContent(literageTotal.toString)),
+      classes = "govuk-summary-list__row--no-border",
+      actions = Some(Actions("",
+        items =
+          Seq(
+            ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-highband-literage-small-producers")
+              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+          )))))
+  }
+
+  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
+
+    val levyTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._2 * highBandCostPerLitre.toDouble).sum
+    val levy = "£" + String.format("%.0f", levyTotal)
+    val value = HtmlFormat.escape(levy).toString
+
+    Some(SummaryListRowViewModel(
+      key = "highBandLevy",
+      value = ValueViewModel(HtmlContent(value)),
+      actions = Seq()
+    ))
   }
 
 
