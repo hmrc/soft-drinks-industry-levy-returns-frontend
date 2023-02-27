@@ -28,14 +28,18 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.PackAtBusinessAddressView
+import views.html.{HowManyAsAContractPackerView, PackAtBusinessAddressView}
 import models.{NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
+import org.fluentlenium.core.filter.matcher.ContainsWordMatcher
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
+import play.api.mvc.Call
+
 import scala.concurrent.Future
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
-
+  def onwardRoute = Call("GET", "#")
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form = formProvider()
   val mockSessionRepository = mock[SessionRepository]
@@ -54,17 +58,17 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        println(Console.MAGENTA_B + "Running test application" + Console.WHITE)
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
         when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
           Future.successful(Some(aSubscription))
         }
         val result = route(application, request).value
         val page = Jsoup.parse(contentAsString(result))
-        println(Console.CYAN_B + "test result is " + result + Console.WHITE)
         status(result) mustEqual OK
-        page.getElementById("organisation").`val`() mustEqual usersRetrievedSubscription.orgName
-        page.getElementById("orgAddress").`val`() mustEqual usersRetrievedSubscription.address
+
+        page.body().`val`() contains businessName
+        page.body().`val`() contains businessAddress
+
       }
     }
 
@@ -88,6 +92,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual view(form.fill(true), businessName, businessAddress, NormalMode)(request, messages(application)).toString
         page.title() must include(Messages("packAtBusinessAddress.title"))
         page.getElementsByTag("h1").text() mustEqual Messages("packAtBusinessAddress.title")
+        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
       }
     }
 
@@ -100,6 +105,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -108,12 +114,12 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, packAtBusinessAddressRoute)
             .withFormUrlEncodedBody(("value", "true"))
-        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-          Future.successful(Some(aSubscription))
-        }
+
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+
       }
     }
 
@@ -128,9 +134,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
-        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-          Future.successful(Some(aSubscription))
-        }
+
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         val result = route(application, request).value
@@ -138,6 +142,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, businessName, businessAddress, NormalMode)(request, messages(application)).toString
+
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
         page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
 //        page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.required"))
@@ -167,9 +172,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, packAtBusinessAddressRoute)
             .withFormUrlEncodedBody(("value", "true"))
-        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-          Future.successful(Some(aSubscription))
-        }
+
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

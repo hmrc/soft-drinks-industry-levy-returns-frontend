@@ -16,7 +16,6 @@
 
 package controllers
 
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
 import javax.inject.Inject
@@ -27,18 +26,15 @@ import pages.PackAtBusinessAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackAtBusinessAddressView
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class PackAtBusinessAddressController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
                                          navigator: Navigator,
-                                         connector: SoftDrinksIndustryLevyConnector,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
@@ -51,27 +47,19 @@ class PackAtBusinessAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      println(Console.YELLOW + "Inside OnPageLoad" + Console.WHITE)
-      println(request.userAnswers)
-      println(Console.BLUE + "After Connector Call" + Console.WHITE)
       val businessName = request.subscription.orgName
-      println("SSSSSSS")
       val businessAddress = request.subscription.address
-        println("yyyy")
         lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        println("SSSSSSS")
         Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id, "sdil"), 1.seconds)
-
-      val businessName = subscription.get.orgName
-      val businessAddress = subscription.get.address
+      val businessName = request.subscription.orgName
+      val businessAddress = request.subscription.address
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -83,8 +71,5 @@ class PackAtBusinessAddressController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(PackAtBusinessAddressPage, mode, updatedAnswers))
       )
-  }
-  private def getSubscription(sdilRef: String, identifier: String) (implicit hc: HeaderCarrier) {
-    val subscription = Await.result(connector.retrieveSubscription(sdilRef,"sdil"),1.seconds)
   }
 }
