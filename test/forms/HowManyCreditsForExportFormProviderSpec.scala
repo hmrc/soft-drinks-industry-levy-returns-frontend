@@ -16,24 +16,82 @@
 
 package forms
 
-import forms.behaviours.BooleanFieldBehaviours
+import forms.behaviours.{LongFieldBehaviour}
 import play.api.data.FormError
 
-class ClaimCreditsForExportsFormProviderSpec extends BooleanFieldBehaviours {
+class HowManyCreditsForExportFormProviderSpec extends LongFieldBehaviour {
 
-  val requiredKey = "claimCreditsForExports.error.required"
-  val invalidKey = "error.boolean"
+  val form = new HowManyCreditsForExportFormProvider()()
 
-  val form = new ClaimCreditsForExportsFormProvider()()
+  ".lowBand" - {
 
-  ".value" - {
+    val fieldName = "lowBand"
+    val requiredKey = "howManyCreditsForExport.error.lowBand.required"
+    val numberKey = "howManyCreditsForExport.error.lowBand.nonNumeric"
+    val negativeNumberKey = "howManyCreditsForExport.error.lowBand.negative"
+    val maxValueKey = "howManyCreditsForExport.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "howManyCreditsForExport.error.lowBand.wholeNumber"
+    val maxValue = 100000000000000L
+    val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
-    val fieldName = "value"
-
-    behave like booleanField(
+    behave like fieldThatBindsValidData(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      validDataGenerator
+    )
+
+    behave like longField(
+      form,
+      fieldName,
+      nonNumericError  = FormError(fieldName, numberKey),
+      negativeNumberError = FormError(fieldName, negativeNumberKey),
+      wholeNumberError = FormError(fieldName, wholeNumberKey)
+    )
+
+    behave like longFieldWithMaximum(
+      form,
+      fieldName,
+      maxValue,
+      FormError(fieldName, maxValueKey, Seq(maxValue))
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
+
+  ".highBand" - {
+
+    val fieldName = "highBand"
+    val requiredKey = "howManyCreditsForExport.error.highBand.required"
+    val numberKey = "howManyCreditsForExport.error.highBand.nonNumeric"
+    val negativeNumberKey = "howManyCreditsForExport.error.highBand.negative"
+    val maxValueKey = "howManyCreditsForExport.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "howManyCreditsForExport.error.highBand.wholeNumber"
+    val maxValue = 100000000000000L
+    val validDataGenerator = longInRangeWithCommas(0, maxValue)
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      validDataGenerator
+    )
+
+    behave like longField(
+      form,
+      fieldName,
+      nonNumericError  = FormError(fieldName, numberKey),
+      negativeNumberError = FormError(fieldName, negativeNumberKey),
+      wholeNumberError = FormError(fieldName, wholeNumberKey)
+    )
+
+    behave like longFieldWithMaximum(
+      form,
+      fieldName,
+      maxValue,
+      FormError(fieldName, maxValueKey, Seq(maxValue))
     )
 
     behave like mandatoryField(
