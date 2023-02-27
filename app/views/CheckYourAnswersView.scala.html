@@ -25,7 +25,8 @@
   ownBrandsAnswers: SummaryList,
   packagedContractPackerAnswers: SummaryList,
   exemptionsForSmallProducersAnswers: SummaryList,
-  broughtIntoTheUKAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
+  broughtIntoTheUKAnswers: SummaryList,
+  broughtIntoTheUKSmallProducersAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -43,6 +44,9 @@
 
     <h2 class="govuk-heading-m">@messages("broughtIntoTheUK")</h2>
     @govukSummaryList(broughtIntoTheUKAnswers)
+
+    <h2 class="govuk-heading-m">@messages("broughtIntoTheUKFromSmallProducers")</h2>
+    @govukSummaryList(broughtIntoTheUKSmallProducersAnswers)
 
 
 }

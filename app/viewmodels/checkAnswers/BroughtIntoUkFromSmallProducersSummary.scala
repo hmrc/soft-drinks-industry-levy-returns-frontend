@@ -33,12 +33,14 @@ object BroughtIntoUkFromSmallProducersSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "broughtIntoUkFromSmallProducers.checkYourAnswersLabel",
+          key     = "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-brought-into-uk-small-producers")
               .withVisuallyHiddenText(messages("broughtIntoUkFromSmallProducers.change.hidden"))
           )
         )
     }
+
 }
