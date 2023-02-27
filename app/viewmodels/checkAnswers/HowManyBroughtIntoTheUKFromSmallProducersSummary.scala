@@ -39,7 +39,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
           actions = Some(Actions("",
             items =
               Seq(
-                ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
+                ActionItemViewModel("site.change", routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode).url)
                   .withAttribute("id", "change-lowband-literage-brought-into-uk-small-producers")
                   .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
               )))
@@ -75,7 +75,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
             Actions("",
               items =
                 Seq(
-                  ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
+                  ActionItemViewModel("site.change", routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode).url)
                     .withAttribute("id", "change-highband-literage-brought-into-uk-small-producers")
                     .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
                 )))

@@ -336,17 +336,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("reportingLiableDrinksBroughtIntoTheUKFromSmallProducers"))
         page.getElementById("change-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk-from-small-producers"
 
-//        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-//        page.getElementsByTag("dd").text() must include("10000")
-//        page.getElementById("change-lowband-literage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
-//        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-//        page.getElementsByTag("dd").text() must include("£1800")
-//
-//        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-//        page.getElementsByTag("dd").text() must include("20000")
-//        page.getElementById("change-highband-literage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
-//        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-//        page.getElementsByTag("dd").text() must include("£4800")
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementById("change-lowband-literage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1800")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementById("change-highband-literage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£4800")
       }
     }
 
