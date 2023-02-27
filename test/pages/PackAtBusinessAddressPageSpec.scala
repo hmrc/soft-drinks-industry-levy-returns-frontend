@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package navigation
+package pages
 
-import models.retrieved.RetrievedSubscription
-import play.api.mvc.Call
-import pages._
-import models.{Mode, SdilReturn, UserAnswers}
+import pages.behaviours.PageBehaviours
 
-class FakeNavigator(desiredRoute: Call) extends Navigator {
+class PackAtBusinessAddressPageSpec extends PageBehaviours {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers,
-                        sdilReturn: Option[SdilReturn] = None,
-                        subscription: Option[RetrievedSubscription] = None,
-                        smallProducerMissing: Option[Boolean] = None): Call =
-    desiredRoute
+  "PackAtBusinessAddressPage" - {
+
+    beRetrievable[Boolean](PackAtBusinessAddressPage)
+
+    beSettable[Boolean](PackAtBusinessAddressPage)
+
+    beRemovable[Boolean](PackAtBusinessAddressPage)
+  }
 }

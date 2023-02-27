@@ -56,9 +56,9 @@ object SecondaryWarehouseDetailsSummary  {
           key     = warehouse.tradingName,
           value   = value,
           actions = Seq(
-            ActionItemViewModel("site.edit", routes.IndexController.onPageLoad.url)
+            ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url)
               .withVisuallyHiddenText(messages("secondaryWarehouseDetails.edit.hidden")),
-            ActionItemViewModel("site.remove", routes.IndexController.onPageLoad.url)
+            ActionItemViewModel("site.remove", routes.IndexController.onPageLoad().url)
               .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
           )
         )

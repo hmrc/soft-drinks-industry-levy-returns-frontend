@@ -24,20 +24,20 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("ownBrands.title"))) {
+@layout(pageTitle = title(form, messages("packAtBusinessAddress.title"))) {
 
-    @formHelper(action = routes.OwnBrandsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.PackAtBusinessAddressController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("ownBrands.heading")</h1>
+@*       <h1 class="govuk-heading-m">@messages("packAtBusinessAddress.title")</h1>*@
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("ownBrands.subHeading")),
+                legend = LegendViewModel(messages("packAtBusinessAddress.title")).asPageHeading(),
                 hint = None
             )
         )

@@ -18,13 +18,14 @@ package controllers
 
 import base.SpecBase
 import forms.SmallProducerDetailsFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, SmallProducer, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.SmallProducerDetailsPage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -46,9 +47,6 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
   lazy val smallProducerDetailsRoute = routes.SmallProducerDetailsController.onPageLoad(NormalMode).url
 
   "SmallProducerDetails Controller" - {
-
-    val smallProducerList = List()
-
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -59,7 +57,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         val smallProducersSummaryList: List[SummaryListRow] =
-          SmallProducerDetailsSummary.row2(smallProducerList)(messages(application))
+          SmallProducerDetailsSummary.row2(List())(messages(application))
 
         val list: SummaryList = SummaryListViewModel(
           rows = smallProducersSummaryList
@@ -82,7 +80,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         val view = application.injector.instanceOf[SmallProducerDetailsView]
         val result = route(application, request).value
         val smallProducersSummaryList: List[SummaryListRow] =
-          SmallProducerDetailsSummary.row2(smallProducerList)(messages(application))
+          SmallProducerDetailsSummary.row2(List())(messages(application))
 
         val list: SummaryList = SummaryListViewModel(
           rows = smallProducersSummaryList
@@ -119,6 +117,33 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
+    "If user selects no on the small producer details page with 0 producers, " +
+      "navigation takes them back to exemption question page" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, smallProducerDetailsRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers"
+      }
+    }
+
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -134,7 +159,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         val result = route(application, request).value
         val smallProducersSummaryList: List[SummaryListRow] =
-          SmallProducerDetailsSummary.row2(smallProducerList)(messages(application))
+          SmallProducerDetailsSummary.row2(List())(messages(application))
         val list: SummaryList = SummaryListViewModel(
           rows = smallProducersSummaryList
         )
@@ -172,6 +197,39 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must include added small producer SDIL reference on the row" in {
+
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List(superCola))
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
+      val expectedSummaryList = SummaryListViewModel(SmallProducerDetailsSummary.row2(List(superCola))(messages(application)))
+
+      running(application) {
+        val request = FakeRequest(GET, smallProducerDetailsRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual expectedView(form, NormalMode, expectedSummaryList)(request, messages(application)).toString
+      }
+    }
+
+    "must include all added small producer SDIL references on the page in rows" in {
+
+      val actualUserAnswers = UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))
+      val application = applicationBuilder(userAnswers = Some(actualUserAnswers)).build()
+
+      val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
+      val expectedSummaryList = SummaryListViewModel(SmallProducerDetailsSummary.row2(List(superCola, sparkyJuice))(messages(application)))
+
+      running(application) {
+        val request = FakeRequest(GET, smallProducerDetailsRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual expectedView(form, NormalMode, expectedSummaryList)(request, messages(application)).toString
       }
     }
 

@@ -17,13 +17,13 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
       given
         .commonPrecondition
 
-      WsTestClient.withClient { client ⇒
+      WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-brought-into-uk")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
-        whenReady(result1) { res ⇒
+        whenReady(result1) { res =>
           res.status mustBe 200
         }
 

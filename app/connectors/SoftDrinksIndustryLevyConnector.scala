@@ -36,29 +36,23 @@ class SoftDrinksIndustryLevyConnector @Inject()(
 
   private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
-  def retrieveSubscription(
-    sdilNumber: String,
-    identifierType: String
-  )(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
-  http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).map {
-    case Some(a) => Some(a)
-    case _ => None
+  def retrieveSubscription(sdilNumber: String, identifierType: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
+    http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).map {
+      case Some(a) => Some(a)
+      case _ => None
   }
 
-  private def smallProducerUrl(sdilRef:String,period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
+  private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
 
-  def checkSmallProducerStatus(
-                                sdilRef: String,
-                                period: ReturnPeriod
-                              )(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+  def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
         http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
         case Some(a) => Some(a)
         case _ => None
   }
 
   def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {
-    val  m = http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
-    m.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
+    val returnPeriods = http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+    returnPeriods.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
   }
 
 }

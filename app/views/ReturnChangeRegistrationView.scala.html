@@ -23,7 +23,7 @@
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("returnChangeRegistration.title"))) {
-    @formHelper(action = routes.ReturnChangeRegistrationController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = routes.ReturnChangeRegistrationController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         <h1 class="govuk-heading-m">@messages("returnChangeRegistration.heading")</h1>
         <p class="govuk-body">@messages("returnChangeRegistration.subtext1")</p>

@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("askSecondaryWarehouseInReturn.title"))) {
 
-    @formHelper(action = routes.AskSecondaryWarehouseInReturnController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.AskSecondaryWarehouseInReturnController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

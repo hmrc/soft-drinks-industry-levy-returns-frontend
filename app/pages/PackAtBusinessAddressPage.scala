@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package navigation
+package pages
 
-import models.retrieved.RetrievedSubscription
-import play.api.mvc.Call
-import pages._
-import models.{Mode, SdilReturn, UserAnswers}
+import play.api.libs.json.JsPath
 
-class FakeNavigator(desiredRoute: Call) extends Navigator {
+case object PackAtBusinessAddressPage extends QuestionPage[Boolean] {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers,
-                        sdilReturn: Option[SdilReturn] = None,
-                        subscription: Option[RetrievedSubscription] = None,
-                        smallProducerMissing: Option[Boolean] = None): Call =
-    desiredRoute
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "packAtBusinessAddress"
 }

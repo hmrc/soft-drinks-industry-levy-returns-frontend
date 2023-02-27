@@ -17,21 +17,17 @@
 package forms
 
 import base.SpecBase
-import connectors.SoftDrinksIndustryLevyConnector
-import forms.behaviours.{LongFieldBehaviour, StringFieldBehaviours}
-import models.requests.DataRequest
+import controllers.routes
+import forms.behaviours.{LongFieldBehaviour, SDILReferenceFieldBehaviours, StringFieldBehaviours}
+import models.NormalMode
+
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
-import repositories.SessionRepository
 
+class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SDILReferenceFieldBehaviours with SpecBase with MockitoSugar {
 
-abstract class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SpecBase with MockitoSugar {
-  val formProvider = new AddASmallProducerFormProvider()
-  val mockSessionRepository = mock[SessionRepository]
-//  val application = applicationBuilder(userAnswers = None).build()
-  val sdilConnector = application.injector.instanceOf[SoftDrinksIndustryLevyConnector]
-  implicit val request: DataRequest[_]
-  val form = formProvider(mockSessionRepository, sdilConnector)
+  val form = new AddASmallProducerFormProvider()(emptyUserAnswers)
+  lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
 
   ".producerName" - {
 
@@ -57,44 +53,20 @@ abstract class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with
   ".referenceNumber" - {
     val fieldName = "referenceNumber"
     val requiredKey = "addASmallProducer.error.referenceNumber.required"
-    val alreadyExistsKey = "addASmallProducer.error.referenceNumber.Exist"
-    val large = "addASmallProducer.error.referenceNumber.Large"
-    val same = "addASmallProducer.error.referenceNumber.same"
-    val invalid = "Small producer reference number must be 6 letters and 9 numbers"
-
-    behave like invalidRefNumber(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, invalid)
-    )
-
-    behave like sameRefNumber(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, same)
-    )
-
-    behave like existingRefNumber(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, alreadyExistsKey)
-    )
-
-    behave like largeRefNumber(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, large)
-    )
-
-
-
-
+    val invalidSDILRefNumber = "addASmallProducer.error.referenceNumber.invalid"
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    behave like invalidRefNumber(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, invalidSDILRefNumber)
+    )
+
   }
 
   ".lowBand" - {

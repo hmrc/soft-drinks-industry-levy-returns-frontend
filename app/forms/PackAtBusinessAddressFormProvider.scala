@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package navigation
+package forms
 
-import models.retrieved.RetrievedSubscription
-import play.api.mvc.Call
-import pages._
-import models.{Mode, SdilReturn, UserAnswers}
+import javax.inject.Inject
 
-class FakeNavigator(desiredRoute: Call) extends Navigator {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers,
-                        sdilReturn: Option[SdilReturn] = None,
-                        subscription: Option[RetrievedSubscription] = None,
-                        smallProducerMissing: Option[Boolean] = None): Call =
-    desiredRoute
+class PackAtBusinessAddressFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("packAtBusinessAddress.error.required")
+    )
 }
