@@ -26,11 +26,11 @@ class HowManyAsAContractPackerFormProviderSpec extends LongFieldBehaviour {
   ".lowBand" - {
 
     val fieldName = "lowBand"
-    val requiredKey = "error.lowBand.required"
-    val numberKey = "error.lowBand.nonNumeric"
-    val negativeNumberKey = "error.lowBand.negative"
-    val maxValueKey = "error.lowBand.outOfMaxVal"
-    val wholeNumberKey = "error.lowBand.wholeNumber"
+    val requiredKey = "howManyAsAContractPacker.error.lowBand.required"
+    val numberKey = "howManyAsAContractPacker.error.lowBand.nonNumeric"
+    val negativeNumberKey = "howManyAsAContractPacker.error.lowBand.negative"
+    val maxValueKey = "howManyAsAContractPacker.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "howManyAsAContractPacker.error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -65,11 +65,11 @@ class HowManyAsAContractPackerFormProviderSpec extends LongFieldBehaviour {
   ".highBand" - {
 
     val fieldName = "highBand"
-    val requiredKey = "error.highBand.required"
-    val numberKey = "error.highBand.nonNumeric"
-    val negativeNumberKey = "error.highBand.negative"
-    val maxValueKey = "error.highBand.outOfMaxVal"
-    val wholeNumberKey = "error.highBand.wholeNumber"
+    val requiredKey = "howManyAsAContractPacker.error.highBand.required"
+    val numberKey = "howManyAsAContractPacker.error.highBand.nonNumeric"
+    val negativeNumberKey = "howManyAsAContractPacker.error.highBand.negative"
+    val maxValueKey = "howManyAsAContractPacker.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "howManyAsAContractPacker.error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

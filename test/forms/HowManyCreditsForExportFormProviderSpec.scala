@@ -26,11 +26,11 @@ class HowManyCreditsForExportFormProviderSpec extends LongFieldBehaviour {
   ".lowBand" - {
 
     val fieldName = "lowBand"
-    val requiredKey = "error.lowBand.required"
-    val numberKey = "error.lowBand.nonNumeric"
-    val negativeNumberKey = "error.lowBand.negative"
-    val maxValueKey = "error.lowBand.outOfMaxVal"
-    val wholeNumberKey = "error.lowBand.wholeNumber"
+    val requiredKey = "howManyCreditsForExport.error.lowBand.required"
+    val numberKey = "howManyCreditsForExport.error.lowBand.nonNumeric"
+    val negativeNumberKey = "howManyCreditsForExport.error.lowBand.negative"
+    val maxValueKey = "howManyCreditsForExport.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "howManyCreditsForExport.error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -65,11 +65,11 @@ class HowManyCreditsForExportFormProviderSpec extends LongFieldBehaviour {
   ".highBand" - {
 
     val fieldName = "highBand"
-    val requiredKey = "error.highBand.required"
-    val numberKey = "error.highBand.nonNumeric"
-    val negativeNumberKey = "error.highBand.negative"
-    val maxValueKey = "error.highBand.outOfMaxVal"
-    val wholeNumberKey = "error.highBand.wholeNumber"
+    val requiredKey = "howManyCreditsForExport.error.highBand.required"
+    val numberKey = "howManyCreditsForExport.error.highBand.nonNumeric"
+    val negativeNumberKey = "howManyCreditsForExport.error.highBand.negative"
+    val maxValueKey = "howManyCreditsForExport.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "howManyCreditsForExport.error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

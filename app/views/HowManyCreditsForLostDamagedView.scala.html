@@ -17,26 +17,26 @@
 @import viewmodels.InputWidth._
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-   govukDetails: GovukDetails
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        govukDetails: GovukDetails
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 @htmlContent = {
-<p class ="govuk-body">@messages("claimCreditsForLostDamaged.detailsContent1")</p>
-<ul class="govuk-list govuk-list--bullet">
-    <li >@messages("claimCreditsForLostDamaged.detailsContent2")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent3")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent4")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent5")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent6")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent7")</li>
-</ul>
-<p class ="govuk-body">@messages("claimCreditsForLostDamaged.detailsContent8")</p>
+    <p class ="govuk-body">@messages("howManyCreditsForLostDamaged.detailsContent1")</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li >@messages("howManyCreditsForLostDamaged.detailsContent2")</li>
+        <li>@messages("howManyCreditsForLostDamaged.detailsContent3")</li>
+        <li>@messages("howManyCreditsForLostDamaged.detailsContent4")</li>
+        <li>@messages("howManyCreditsForLostDamaged.detailsContent5")</li>
+        <li>@messages("howManyCreditsForLostDamaged.detailsContent6")</li>
+        <li>@messages("howManyCreditsForLostDamaged.detailsContent7")</li>
+    </ul>
+    <p class ="govuk-body">@messages("howManyCreditsForLostDamaged.detailsContent8")</p>
 }
 @layout(pageTitle = title(form, messages("howManyCreditsForLostDamaged.title"))) {
 
@@ -52,23 +52,23 @@
         @govukInput(
             InputViewModel(
                 field = form("lowBand"),
-                label = LabelViewModel(messages("litres.lowBand"))
+                label = LabelViewModel(messages("howManyCreditsForLostDamaged.lowBand"))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
+                    .withWidth(Fixed10)
+                    .withHint(Hint(content = Text(messages("howManyCreditsForLostDamaged.hint1"))))
         )
 
         @govukInput(
             InputViewModel(
                 field = form("highBand"),
-                label = LabelViewModel(messages("litres.highBand"))
+                label = LabelViewModel(messages("howManyCreditsForLostDamaged.highBand"))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("litres.highBandHint"))))
+                    .withWidth(Fixed10)
+                    .withHint(Hint(content = Text(messages("howManyCreditsForLostDamaged.hint2"))))
         )
 
         @govukDetails(Details(
-            summary = Text(messages("whatCanIClaimCreditForDetailsLink")),
+            summary = Text(messages("howManyCreditsForLostDamaged.detailsLink")),
             content = HtmlContent(htmlContent)
         ))
 
