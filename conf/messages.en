@@ -86,16 +86,16 @@ litres.lowBand = Litres in the low band
 litres.lowBandHint = At least 5 grams of sugar per 100 millilitres
 litres.highBand = Litres in the high band
 litres.highBandHint = At least 8 grams of sugar per 100 millilitres
-error.lowBand.required = Enter the number of litres in the low band
-error.highBand.required = Enter the number of litres in the high band
-error.lowBand.nonNumeric = Number of litres in the low band must be numeric
-error.highBand.nonNumeric = Number of litres in the high band must be numeric
-error.lowBand.negative = Number of litres in the low band must be a positive number
-error.highBand.negative = Number of litres in the high band must be a positive number
-error.lowBand.wholeNumber = Number of litres in the low band must be a whole number
-error.highBand.wholeNumber = Number of litres in the high band must be a whole number
-error.lowBand.outOfMaxVal = Number of litres in the low band must be less than 100,000,000,000,000
-error.highBand.outOfMaxVal = Number of litres in the high band must be less than 100,000,000,000,000
+litres.error.lowBand.required = Enter the number of litres in the low band
+litres.error.highBand.required = Enter the number of litres in the high band
+litres.error.lowBand.nonNumeric = Number of litres in the low band must be numeric
+litres.error.highBand.nonNumeric = Number of litres in the high band must be numeric
+litres.error.lowBand.negative = Number of litres in the low band must be a positive number
+litres.error.highBand.negative = Number of litres in the high band must be a positive number
+litres.error.lowBand.wholeNumber = Number of litres in the low band must be a whole number
+litres.error.highBand.wholeNumber = Number of litres in the high band must be a whole number
+litres.error.lowBand.outOfMaxVal = Number of litres in the low band must be less than 100,000,000,000,000
+litres.error.highBand.outOfMaxVal = Number of litres in the high band must be less than 100,000,000,000,000
 
 
 brandsPackagedAtOwnSites.title = How many litres of liable drinks have you packaged at UK sites you operate?
