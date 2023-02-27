@@ -33,10 +33,11 @@ object ClaimCreditsForLostDamagedSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "claimCreditsForLostDamaged.checkYourAnswersLabel",
+          key     = "claimingCreditForLostOrDestroyedLiableDrinks",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-credits-lost-damaged")
               .withVisuallyHiddenText(messages("claimCreditsForLostDamaged.change.hidden"))
           )
         )

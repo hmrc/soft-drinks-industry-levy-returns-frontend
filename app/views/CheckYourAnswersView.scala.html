@@ -27,7 +27,8 @@
   exemptionsForSmallProducersAnswers: SummaryList,
   broughtIntoTheUKAnswers: SummaryList,
   broughtIntoTheUKSmallProducersAnswers: SummaryList,
-  claimCreditsForExportsAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
+  claimCreditsForExportsAnswers: SummaryList,
+  claimCreditsForLostOrDamagedAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -51,6 +52,9 @@
 
     <h2 class="govuk-heading-m">@messages("exported")</h2>
     @govukSummaryList(claimCreditsForExportsAnswers)
+
+    <h2 class="govuk-heading-m">@messages("lostOrDestroyed")</h2>
+    @govukSummaryList(claimCreditsForLostOrDamagedAnswers)
 
 
 }

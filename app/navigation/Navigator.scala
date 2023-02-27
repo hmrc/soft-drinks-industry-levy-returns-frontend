@@ -144,9 +144,14 @@ class Navigator @Inject()() {
   private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers,
                                                        sdilReturnOpt: Option[SdilReturn],
                                                        subscriptionOpt: Option[RetrievedSubscription]) = {
+
+    println(Console.YELLOW + "Sure got this far" + Console.WHITE)
+
     if(userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
     } else {
+
+      println(Console.YELLOW + "Sure got this far too" + Console.WHITE)
       (sdilReturnOpt, subscriptionOpt)  match {
         case (Some(sdilReturn), Some(subscription)) =>
           val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer

@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -57,7 +57,7 @@ class CheckYourAnswersController @Inject()(
           }
         case None => throw new RuntimeException("No return period returned")
       }
-
+      
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
         BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
@@ -106,12 +106,21 @@ class CheckYourAnswersController @Inject()(
         HowManyCreditsForExportSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten)
 
+      val claimCreditsForLostOrDamagedAnswers = SummaryListViewModel(rows = Seq(
+        ClaimCreditsForLostDamagedSummary.row(userAnswers),
+        HowManyCreditsForLostDamagedSummary.lowBandRow(userAnswers),
+        HowManyCreditsForLostDamagedSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+        HowManyCreditsForLostDamagedSummary.highBandRow(userAnswers),
+        HowManyCreditsForLostDamagedSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+      ).flatten)
+
       Ok(view(request.orgName, returnPeriod, ownBrandsAnswers,
         packagedContractPackerAnswers,
         exemptionsForSmallProducersAnswers,
         broughtIntoTheUKAnswers,
         broughtIntoTheUKSmallProducersAnswers,
-        claimCreditsForExportsAnswers
+        claimCreditsForExportsAnswers,
+        claimCreditsForLostOrDamagedAnswers
       ))
   }
 
