@@ -26,7 +26,7 @@ import viewmodels.implicits._
 
 object ExemptionsForSmallProducersSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ExemptionsForSmallProducersPage).map {
       answer =>
 
@@ -35,10 +35,11 @@ object ExemptionsForSmallProducersSummary  {
         SummaryListRowViewModel(
           key     = "exemptionsForSmallProducers.checkYourAnswersLabel",
           value   = ValueViewModel(value),
-          actions = Seq(
+          actions = if(checkAnswers == true){Seq(
             ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-exemptions-for-small-producers")
               .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
-          )
+          )}else{Seq()}
         )
     }
 }

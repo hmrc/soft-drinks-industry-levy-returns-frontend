@@ -24,9 +24,9 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object BoughtIntoUKSummary  {
+object BroughtIntoUKSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(BroughtIntoUKPage).map {
       answer =>
 
@@ -35,10 +35,10 @@ object BoughtIntoUKSummary  {
         SummaryListRowViewModel(
           key     = "broughtIntoUK.checkYourAnswersLabel",
           value   = ValueViewModel(value),
-          actions = Seq(
+          actions = if(checkAnswers == true){Seq(
             ActionItemViewModel("site.change", routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("broughtIntoUK.change.hidden"))
-          )
+          )}else{Seq()}
         )
     }
 }

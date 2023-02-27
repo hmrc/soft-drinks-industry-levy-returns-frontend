@@ -71,7 +71,7 @@ class Navigator @Inject()() {
 
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
-      routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
+     routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
     } else {
       routes.PackagedContractPackerController.onPageLoad(NormalMode)
     }
@@ -135,9 +135,11 @@ class Navigator @Inject()() {
 
   private def claimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
-      routes.HowManyCreditsForExportController.onPageLoad(NormalMode)
+      routes.ReturnSentController.onPageLoad
+      //routes.HowManyCreditsForExportController.onPageLoad(NormalMode)
     } else {
-      routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+      routes.ReturnSentController.onPageLoad
+      //routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     }
   }
 

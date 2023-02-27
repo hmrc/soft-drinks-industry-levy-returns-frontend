@@ -1,11 +1,164 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import java.time.{LocalTime,LocalDate,ZoneId}
+@import java.time.format.DateTimeFormatter
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import java.time.format.DateTimeFormatter
+@import models.retrieved.RetrievedSubscription
+
 @this(
         layout: templates.Layout,
+        govukPanel : GovukPanel,
+        govukSummaryList: GovukSummaryList,
         govukButton: GovukButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(returnDate:ReturnPeriod,
+  subscription: RetrievedSubscription,
+  amountOwed:String,
+  balance: BigDecimal,
+  paymentDate:ReturnPeriod,
+  pageAnswers: String,
+  ownBrandsAnswer: SummaryList,
+  packagedContractPackerAnswers: SummaryList,
+  exemptionsForSmallProducersAnswers: SummaryList,
+  broughtIntoUkAnswers: SummaryList,
+  broughtIntoUkSmallProducerAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("returnSent.title"))) {
 
-    <h1 class="govuk-heading-xl">@messages("returnSent.heading")</h1>
+    @govukPanel(Panel(
+    title = Text(messages("returnSent.title")),
+    content = HtmlContent(messages("returnSent.panel.returnMessage", returnDate.start.format(DateTimeFormatter.ofPattern("MMMM")), returnDate.end.format(DateTimeFormatter.ofPattern("MMMM")), returnDate.start.getYear.toString, subscription.orgName))
+    ))
+    <p class = "govuk-body-m">
+    <a href="javascript:window.print()" class="govuk-link">@messages("site.print")</a>
+    </p>
+
+    <p class="govuk-body">@messages("returnSent.returnsDoneMessage",
+        returnDate.start.format(DateTimeFormatter.ofPattern("MMMM")),
+        returnDate.end.format(DateTimeFormatter.ofPattern("MMMM")),
+        returnDate.start.getYear.toString,
+        subscription.orgName,
+        LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
+        LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))</p>
+
+    <h1 class="govuk-heading-m">
+       @messages("returnSent.headerOne")
+    </h1>
+
+    @if(balance > 0){
+    <p class="govuk-body">
+        @Html(messages("returnSent.paymentsBlurb.payby", amountOwed, paymentDate.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))))
+    </p>
+    <p class="govuk-body">
+        @messages("returnSent.paymentsBlurb.payby.info",subscription.sdilRef)
+    </p>
+    <p class = "govuk-body-m">
+    <a class="govuk-link" href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">@messages("retutnSent.paymentBlurb.paybyLink")</a>
+    </p>
+    }else if(balance < 0){
+    <p class="govuk-body">@messages("returnSent.paymentsBlurb.nothingOwed")</p>
+    <p class="govuk-body">@messages("returnSent.paymentsBlurb.credited")</p>
+    }else{
+    <p class="govuk-body">@messages("returnSent.paymentsBlurb.nothingOwed")</p>
+    }
+    <p class="govuk-body">@messages("returnSent.paymentsBlurb.nextReturn",
+        paymentDate.next.start.format(DateTimeFormatter.ofPattern("MMMM")),
+        paymentDate.next.end.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+        paymentDate.next.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))),
+    </p>
+
+    <h1 class="govuk-heading-m">
+        @messages("returnSent.headerTwo")
+    </h1>
+
+    <p class="govuk-body">
+        @messages("returnSent.points")
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@messages("returnSent.list1")</li>
+            <li>@messages("returnSent.list2")</li>
+            <li>@messages("returnSent.list3")</li>
+            <li>@messages("returnSent.list4")</li>
+        </ul>
+    </p>
+
+    <p class="govuk-body">
+        <a class="govuk-link" href="http://localhost:8700/soft-drinks-industry-levy/register/start" target="_blank">@messages("returnSent.help.link")</a>
+    </p>
+
+<details class="govuk-details" data-module="govuk-details">
+
+    <div class = "ownBrands">
+        <h2 class="govuk-heading-m">
+            @messages("returnSent.ownBrands")
+        </h2>
+        <p class="govuk-body">
+            @govukSummaryList(ownBrandsAnswer)
+        </p>
+    </div>
+
+    <div class = "packagedContractPacker">
+        <h2 class="govuk-heading-m">
+            @messages("returnSent.packagedContractPacker")
+        </h2>
+        <p class="govuk-body">
+            @govukSummaryList(packagedContractPackerAnswers)
+        </p>
+    </div>
+
+    <div class = "exemptionsForSmallProducers">
+        <h2 class="govuk-heading-m">
+            @messages("returnSent.exemptionsForSmallProducers")
+        </h2>
+        <p class="govuk-body">
+            @govukSummaryList(exemptionsForSmallProducersAnswers)
+        </p>
+    </div>
+
+    <div class = "broughtIntoUk">
+        <h2 class="govuk-heading-m">
+            @messages("returnSent.broughtIntoUk")
+        </h2>
+        <p class="govuk-body">
+            @govukSummaryList(broughtIntoUkAnswers)
+        </p>
+    </div>
+
+    <div class = "broughtIntoUkSmallProducers">
+        <h2 class="govuk-heading-m">
+            @messages("returnSent.broughtIntoUkSmallProducer")
+        </h2>
+        <p class="govuk-body">
+            @govukSummaryList(broughtIntoUkSmallProducerAnswers)
+        </p>
+    </div>
+
+    <h2 class="govuk-heading-m">
+        @messages("returnSent.exported")
+    </h2>
+
+    <h2 class="govuk-heading-m">
+        @messages("returnSent.lostDestroyed")
+    </h2>
+
+    <h2 class="govuk-heading-m">
+        @messages("returnSent.amountToPay")
+    </h2>
+
+</details>
 }

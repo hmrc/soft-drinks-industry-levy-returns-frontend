@@ -15,6 +15,7 @@ site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.updateReg = Update registration
+site.print = Print this page
 
 date.day = Day
 date.month = Month
@@ -53,7 +54,6 @@ journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
 journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
 journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
-
 
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
@@ -410,3 +410,36 @@ secondaryWarehouseDetails.error.required = Select yes if you want to add another
 secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
 secondaryWarehouseDetails.remove.hidden = remove UK warehouse
+
+reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site
+exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?
+ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site
+broughtIntoUK.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
+
+returnSent.title = Return sent
+returnSent.panel.returnMessage = Soft Drinks Industry Levy return {0} to {1} {2} for the {3}
+returnSent.returnsDoneMessage = Your Soft Drinks Industry Levy return from {0} to {1} {2} for {3} was sent at {4} on the {5}.
+returnSent.headerOne = What you need to do next
+
+returnSent.paymentsBlurb.payby=You need to pay {0} by {1}.
+returnSent.paymentsBlurb.payby.info=Make sure you include your Soft Drinks Industry Levy reference {0} when making a payment.
+retutnSent.paymentBlurb.paybyLink = See how to pay the levy (opens in a new tab)
+returnSent.paymentsBlurb.nothingOwed=You do not need to do anything else.
+returnSent.paymentsBlurb.credited = We will take the payment from your Soft Drinks Industry Levy account shortly.
+returnSent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must send this return and make any \
+                      payments by {2}.
+returnSent.headerTwo = Help using the service
+returnSent.list1 = check your account balance
+returnSent.list2 = correct an error in your return
+returnSent.list3 = update warehouses or packaging sites
+returnSent.list4 = send your next return
+returnSent.points = If you want to:
+returnSent.help.link = You can go to your Soft Drinks Industry Levy account
+returnSent.ownBrands = Own brands packaged at your own site
+returnSent.packagedContractPacker = Contract packed at your own site
+returnSent.exemptionsForSmallProducers = Contract packed for registered small producers
+returnSent.broughtIntoUk = Brought into the UK
+returnSent.broughtIntoUkSmallProducer = Brought into the UK from small producers
+returnSent.exported = Exported
+returnSent.lostDestroyed = Lost or destroyed
+returnSent.amountToPay = Amount to pay

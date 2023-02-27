@@ -26,7 +26,7 @@ import viewmodels.implicits._
 
 object BroughtIntoUkFromSmallProducersSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(BroughtIntoUkFromSmallProducersPage).map {
       answer =>
 
@@ -35,10 +35,10 @@ object BroughtIntoUkFromSmallProducersSummary  {
         SummaryListRowViewModel(
           key     = "broughtIntoUkFromSmallProducers.checkYourAnswersLabel",
           value   = ValueViewModel(value),
-          actions = Seq(
+          actions = if(checkAnswers == true){Seq(
             ActionItemViewModel("site.change", routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("broughtIntoUkFromSmallProducers.change.hidden"))
-          )
+          )}else{Seq()}
         )
     }
 }
