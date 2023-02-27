@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -57,8 +57,6 @@ class CheckYourAnswersController @Inject()(
           }
         case None => throw new RuntimeException("No return period returned")
       }
-
-      println(Console.YELLOW + userAnswers + Console.WHITE)
 
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
@@ -100,11 +98,20 @@ class CheckYourAnswersController @Inject()(
         HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten)
 
+      val claimCreditsForExportsAnswers = SummaryListViewModel(rows = Seq(
+        ClaimCreditsForExportsSummary.row(userAnswers)
+//        HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandRow(userAnswers),
+//        HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+//        HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandRow(userAnswers),
+//        HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+      ).flatten)
+
       Ok(view(request.orgName, returnPeriod, ownBrandsAnswers,
         packagedContractPackerAnswers,
         exemptionsForSmallProducersAnswers,
         broughtIntoTheUKAnswers,
-        broughtIntoTheUKSmallProducersAnswers
+        broughtIntoTheUKSmallProducersAnswers,
+        claimCreditsForExportsAnswers
       ))
   }
 

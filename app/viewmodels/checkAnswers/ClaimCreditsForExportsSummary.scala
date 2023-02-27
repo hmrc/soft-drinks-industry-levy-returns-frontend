@@ -33,12 +33,14 @@ object ClaimCreditsForExportsSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "claimCreditsForExports.checkYourAnswersLabel",
+          key     = "claimingCreditForExportedLiableDrinks",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-exports")
               .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
           )
         )
     }
+
 }
