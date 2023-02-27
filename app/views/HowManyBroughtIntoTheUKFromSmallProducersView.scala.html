@@ -27,12 +27,12 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 @htmlContent = {
-<p class ="govuk-body">@messages("howManyAsAContract.detailsContent1")</p>
-<p class ="govuk-body">@messages("howManyAsAContract.detailsContent2")</p>
+<p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent1")</p>
+<p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent2")</p>
 <ul class="govuk-list govuk-list--bullet">
-    <li >@messages("howManyAsAContract.detailsContent3")</li>
-    <li>@messages("howManyAsAContract.detailsContent4")</li>
-    <li>@messages("howManyAsAContract.detailsContent5")</li>
+    <li >@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent3")</li>
+    <li>@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent4")</li>
+    <li>@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent5")</li>
 </ul>
 }
 @layout(pageTitle = title(form, messages("howManyBroughtIntoTheUKFromSmallProducers.title"))) {
@@ -65,7 +65,7 @@
         )
 
         @govukDetails(Details(
-            summary = Text(messages("howManyBroughtIntoTheUKFromSmallProducers.detailsLink")),
+            summary = Text(messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsLink")),
             content = HtmlContent(htmlContent)
         ))
 
