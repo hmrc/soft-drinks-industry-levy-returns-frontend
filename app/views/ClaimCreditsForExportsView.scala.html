@@ -47,7 +47,7 @@
         content = Text(messages("claimCreditsForExports.warning"))
     ))
 
-    @formHelper(action = routes.ClaimCreditsForExportsController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.ClaimCreditsForExportsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

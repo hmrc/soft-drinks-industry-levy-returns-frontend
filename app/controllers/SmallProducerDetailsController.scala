@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.SmallProducerDetailsFormProvider
-import viewmodels.checkAnswers.SmallProducerDetailsSummary
+import viewmodels.checkAnswers.{AddASmallProducerSummary, SmallProducerDetailsSummary}
 import views.html.SmallProducerDetailsView
 import models.{Mode, SmallProducer}
 import navigation.Navigator
@@ -49,6 +49,7 @@ class SmallProducerDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
       val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
         case None => form
@@ -73,7 +74,6 @@ class SmallProducerDetailsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, list))),
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SmallProducerDetailsPage, value))

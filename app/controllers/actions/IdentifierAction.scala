@@ -73,46 +73,6 @@ class AuthenticatedIdentifierAction @Inject()(
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
       case _: AuthorisationException =>
-        Redirect(routes.UnauthorisedController.onPageLoad)
+        Redirect(routes.UnauthorisedController.onPageLoad())
     }
   }
-
-//    authorised(AuthProviders(GovernmentGateway)).retrieve(retrieval) { enrolments =>
-//      (getSdilEnrolment(enrolments), getUtr(enrolments)) match {
-//        case (Some(e), _) => block(IdentifierRequest(request, e.value))
-//        case (None, Some(utr)) =>  sdilConnector.retrieveSubscription(utr, "utr").flatMap {
-//          case Some(subscription) =>
-//            sdilConnector.oldestPendingReturnPeriod(utr).flatMap { returnPeriod =>
-//              block(IdentifierRequest(request, EnrolmentIdentifier("sdil", subscription.sdilRef).value,List.empty,returnPeriod))
-//            }
-//          case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
-//        }
-//        case _ => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
-//      }
-//    } recover {
-//      case _: NoActiveSession =>
-//        Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
-//      case _: AuthorisationException =>
-//        Redirect(routes.UnauthorisedController.onPageLoad)
-//    }
-//  }
-
-}
-
-//class SessionIdentifierAction @Inject()(
-//                                         val parser: BodyParsers.Default
-//                                       )
-//                                       (implicit val executionContext: ExecutionContext) extends IdentifierAction {
-//
-//  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
-//
-//    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-//
-//    hc.sessionId match {
-//      case Some(session) =>
-//        block(IdentifierRequest(request, session.value))
-//      case None =>
-//        Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-//    }
-//  }
-//}

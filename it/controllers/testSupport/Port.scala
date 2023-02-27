@@ -1,10 +1,8 @@
 package controllers.testSupport
 
 import play.api.Logging
-
 import java.net.ServerSocket
 import scala.annotation.tailrec
-import scala.language.postfixOps
 
 object Port extends Logging {
   val rnd = new scala.util.Random
@@ -13,7 +11,7 @@ object Port extends Logging {
 
   @tailrec
   def randomAvailable: Int = {
-    range(rnd.nextInt(range length)) match {
+    range(rnd.nextInt(range.length)) match {
       case 8080 => randomAvailable
       case 8090 => randomAvailable
       case p: Int => {

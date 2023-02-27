@@ -3,22 +3,25 @@ package controllers.testSupport
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, DataRetrievalActionImpl, IdentifierAction}
 import models.UserAnswers
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite, TestSuite}
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite, TestSuite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
+import play.api.{Application, Environment, Mode}
+import play.api.inject._
 import repositories.SessionRepository
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.health.HealthController
 
-import scala.collection.JavaConverters._
+import java.time.{Clock, ZoneOffset}
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.jdk.CollectionConverters._
 
 trait TestConfiguration
   extends GuiceOneServerPerSuite
@@ -27,7 +30,7 @@ trait TestConfiguration
     with BeforeAndAfterEach
     with BeforeAndAfterAll {
 
-  me: Suite with TestSuite ⇒
+  me: Suite with TestSuite =>
 
   val wiremockHost: String = "localhost"
   val wiremockPort: Int = Port.randomAvailable
@@ -66,27 +69,36 @@ trait TestConfiguration
       timeout = Span(4, Seconds),
       interval = Span(50, Millis))
 
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(replaceWithWiremock(Seq(
-      "auth",
-      "auth.bas-gateway",
-      "soft-drinks-industry-levy"
-    )))
-    .build()
-  app.injector.instanceOf[HealthController]
+  lazy val config = Map(
+    s"microservice.services.auth.host" -> s"$wiremockHost",
+    s"microservice.services.auth.port" -> s"$wiremockPort",
+    s"microservice.services.auth.bas-gateway.host" -> s"$wiremockHost",
+    s"microservice.services.auth.bas-gateway.port" -> s"$wiremockPort",
+    s"microservice.services.soft-drinks-industry-levy.host" -> s"$wiremockHost",
+    s"microservice.services.soft-drinks-industry-levy.port" -> s"$wiremockPort",
+    "play.filters.csrf.header.bypassHeaders.X-Requested-With" -> "*",
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
+    "json.encryption.key" -> "fqpLDZ4sumDsekHkeEBlCA==",
+    "json.encryption.previousKeys" -> "[]"
+  )
 
 
-  private def replaceWithWiremock(services: Seq[String]) =
-    services.foldLeft(Map.empty[String, Any]) { (configMap, service) =>
-      configMap + (
-        s"microservice.services.$service.host" -> wiremockHost,
-        s"microservice.services.$service.port" -> wiremockPort,
-        s"play.filters.csrf.header.bypassHeaders.X-Requested-With" -> "*",
-        s"play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
-        s"json.encryption.key" -> "fqpLDZ4sumDsekHkeEBlCA==",
-        s"json.encryption.previousKeys" -> List.empty
+  override implicit lazy val app: Application = {
+    new GuiceApplicationBuilder()
+      .in(Environment.simple(mode = Mode.Dev))
+      .configure(config)
+      .overrides(
+        bind[DataRetrievalAction].to[DataRetrievalActionImpl],
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[IdentifierAction].to[AuthenticatedIdentifierAction],
+        bind[Clock].toInstance(Clock.systemDefaultZone().withZone(ZoneOffset.UTC))
       )
-    }
+      .build()
+
+  }
+
+
+  app.injector.instanceOf[HealthController]
 
   val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))
 
