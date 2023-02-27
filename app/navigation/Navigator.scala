@@ -135,11 +135,9 @@ class Navigator @Inject()() {
 
   private def claimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
-      routes.ReturnSentController.onPageLoad
-      //routes.HowManyCreditsForExportController.onPageLoad(NormalMode)
+      routes.HowManyCreditsForExportController.onPageLoad(NormalMode)
     } else {
-      routes.ReturnSentController.onPageLoad
-      //routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+      routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     }
   }
 
@@ -153,10 +151,9 @@ class Navigator @Inject()() {
         case (Some(sdilReturn), Some(subscription)) =>
           val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
           val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-          if(isNewImporter || isNewPacker) routes.ReturnChangeRegistrationController.onPageLoad() else routes.IndexController.onPageLoad()
+          if(isNewImporter || isNewPacker) routes.ReturnChangeRegistrationController.onPageLoad() else routes.ReturnSentController.onPageLoad
           //TODO IndexController to be replaced with CYA page
-
-        case _ => routes.IndexController.onPageLoad() //TODO to be replaced with CYA page
+        case _ => routes.ReturnSentController.onPageLoad //TODO to be replaced with CYA page
       }
     }
   }

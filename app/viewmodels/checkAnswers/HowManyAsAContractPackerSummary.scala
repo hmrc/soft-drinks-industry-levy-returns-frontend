@@ -28,7 +28,7 @@ import viewmodels.implicits._
 
 object HowManyAsAContractPackerSummary  {
 
-  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def lowBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyAsAContractPackerPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
@@ -36,13 +36,15 @@ object HowManyAsAContractPackerSummary  {
           key = "litresInTheLowBand",
           value = ValueViewModel(HtmlContent(value)),
           classes = "govuk-summary-list__row--no-border",
-          actions = Some(Actions("",
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
             items =
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
                   .withAttribute("id", "change-lowband-literage")
                   .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
-              )))
+              )))}else None
         )
     }
 
@@ -62,7 +64,7 @@ object HowManyAsAContractPackerSummary  {
     }
   }
 
-  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def highBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyAsAContractPackerPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
@@ -71,14 +73,15 @@ object HowManyAsAContractPackerSummary  {
           key = "litresInTheHighBand",
           value = ValueViewModel(HtmlContent(value)),
           classes = "govuk-summary-list__row--no-border",
-          actions = Some(
-            Actions("",
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
               items =
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
                     .withAttribute("id", "change-highband-literage")
                     .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
-                )))
+                )))}else None
         )
     }
 

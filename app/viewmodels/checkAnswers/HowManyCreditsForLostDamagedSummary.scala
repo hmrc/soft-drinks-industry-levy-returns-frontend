@@ -21,6 +21,7 @@ import models.{CheckMode, UserAnswers}
 import pages.HowManyCreditsForLostDamagedPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -28,19 +29,72 @@ import viewmodels.implicits._
 
 object HowManyCreditsForLostDamagedSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def lowBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyCreditsForLostDamagedPage).map {
       answer =>
+        val value = HtmlFormat.escape(answer.lowBand.toString).toString
+        SummaryListRow(
+          key = "litresInTheLowBand",
+          value = ValueViewModel(HtmlContent(value)),
+          classes = "govuk-summary-list__row--no-border",
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+                items =
+                  Seq(
+                    ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
+                      .withAttribute("id", "change-lowband-literage")
+                      .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                  )))}else None
+        )
+    }
 
-      val value = HtmlFormat.escape(answer.lowBand.toString).toString + "<br/>" + HtmlFormat.escape(answer.highBand.toString).toString
+  def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
+
+    answers.get(HowManyCreditsForLostDamagedPage).map {
+      answer =>
+        val levy = "£" + String.format("%,.2f", (answer.lowBand * lowBandCostPerLitre.toDouble))
+        val value = HtmlFormat.escape(levy).toString
 
         SummaryListRowViewModel(
-          key     = "howManyCreditsForLostDamaged.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(value)),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("howManyCreditsForLostDamaged.change.hidden"))
-          )
+          key = "lowBandLevy",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq()
+        )
+    }
+  }
+
+  def highBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(HowManyCreditsForLostDamagedPage).map {
+      answer =>
+        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
+
+        SummaryListRow(
+          key = "litresInTheHighBand",
+          value = ValueViewModel(HtmlContent(value)),
+          classes = "govuk-summary-list__row--no-border",
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+                items =
+                  Seq(
+                    ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
+                      .withAttribute("id", "change-highband-literage")
+                      .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                  )))}else None
+        )
+    }
+
+  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(HowManyCreditsForLostDamagedPage).map {
+      answer =>
+        val levy = "£" + String.format("%,.2f", (answer.highBand * highBandCostPerLitre.toDouble))
+        val value = HtmlFormat.escape(levy).toString
+
+        SummaryListRowViewModel(
+          key = "highBandLevy",
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq()
         )
     }
 }

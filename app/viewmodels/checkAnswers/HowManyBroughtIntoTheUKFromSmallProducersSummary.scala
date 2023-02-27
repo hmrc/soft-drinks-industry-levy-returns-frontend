@@ -21,15 +21,14 @@ import models.{CheckMode, UserAnswers}
 import pages.HowManyBroughtIntoTheUKFromSmallProducersPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
 
-  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def lowBandRow(answers: UserAnswers, checkAnswers:Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
@@ -37,13 +36,15 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
           key = "litresInTheLowBand",
           value = ValueViewModel(HtmlContent(value)),
           classes = "govuk-summary-list__row--no-border",
-          actions = Some(Actions("",
-            items =
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+                items =
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode).url)
                   .withAttribute("id", "change-lowband-literage")
                   .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
-              )))
+              )))}else None
         )
     }
 
@@ -62,7 +63,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
     }
   }
 
-  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def highBandRow(answers: UserAnswers, checkAnswers:Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
@@ -71,14 +72,15 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
           key = "litresInTheHighBand",
           value = ValueViewModel(HtmlContent(value)),
           classes = "govuk-summary-list__row--no-border",
-          actions = Some(
-            Actions("",
-              items =
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+                items =
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode).url)
                     .withAttribute("id", "change-highband-literage")
                     .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
-                )))
+                )))}else None
         )
     }
 

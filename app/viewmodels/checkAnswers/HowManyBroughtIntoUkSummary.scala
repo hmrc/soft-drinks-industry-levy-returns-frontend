@@ -28,7 +28,7 @@ import viewmodels.implicits._
 
 object HowManyBroughtIntoUkSummary  {
 
-  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def lowBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoUkPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
@@ -36,13 +36,15 @@ object HowManyBroughtIntoUkSummary  {
           key = "litresInTheLowBand",
           value = ValueViewModel(HtmlContent(value)),
           classes = "govuk-summary-list__row--no-border",
-          actions = Some(Actions("",
-            items =
-              Seq(
-                ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-literage")
-                  .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
-              )))
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+              items =
+                Seq(
+                  ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
+                    .withAttribute("id", "change-lowband-literage")
+                    .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                )))}else None
         )
     }
 
@@ -61,7 +63,7 @@ object HowManyBroughtIntoUkSummary  {
     }
   }
 
-  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def highBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoUkPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
@@ -70,14 +72,15 @@ object HowManyBroughtIntoUkSummary  {
           key = "litresInTheHighBand",
           value = ValueViewModel(HtmlContent(value)),
           classes = "govuk-summary-list__row--no-border",
-          actions = Some(
-            Actions("",
-              items =
-                Seq(
-                  ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
-                    .withAttribute("id", "change-highband-literage")
-                    .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
-                )))
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+                items =
+                  Seq(
+                    ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
+                      .withAttribute("id", "change-highband-literage")
+                      .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                  )))}else None
         )
     }
 

@@ -37,7 +37,9 @@
   packagedContractPackerAnswers: SummaryList,
   exemptionsForSmallProducersAnswers: SummaryList,
   broughtIntoUkAnswers: SummaryList,
-  broughtIntoUkSmallProducerAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
+  broughtIntoUkSmallProducerAnswers: SummaryList,
+  claimCreditsForExportsAnswers: SummaryList,
+  claimCreditsForLostDamagedAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("returnSent.title"))) {
 
@@ -148,13 +150,23 @@
         </p>
     </div>
 
-    <h2 class="govuk-heading-m">
-        @messages("returnSent.exported")
-    </h2>
+    <div class = "claimCreditsForExports">
+        <h2 class="govuk-heading-m">
+            @messages("returnSent.exported")
+        </h2>
+        <p class="govuk-body">
+            @govukSummaryList(claimCreditsForExportsAnswers)
+        </p>
+    </div>
 
-    <h2 class="govuk-heading-m">
-        @messages("returnSent.lostDestroyed")
-    </h2>
+    <div class = "claimCreditsForLostDamagedAnswers">
+        <h2 class="govuk-heading-m">
+            @messages("returnSent.lostDestroyed")
+        </h2>
+        <p class="govuk-body">
+            @govukSummaryList(claimCreditsForLostDamagedAnswers)
+        </p>
+    </div>
 
     <h2 class="govuk-heading-m">
         @messages("returnSent.amountToPay")

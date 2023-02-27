@@ -247,7 +247,6 @@ claimCreditsForLostDamaged.detailsContent5 = reprocessed
 claimCreditsForLostDamaged.detailsContent6 = lost
 claimCreditsForLostDamaged.detailsContent7 = spilled and can’t be used
 claimCreditsForLostDamaged.detailsContent8 = To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.
-claimCreditsForLostDamaged.checkYourAnswersLabel = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 claimCreditsForLostDamaged.error.required = Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed
 claimCreditsForLostDamaged.change.hidden = ClaimCreditsForLostDamaged
 
@@ -415,6 +414,7 @@ reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract 
 exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?
 ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site
 broughtIntoUK.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
+claimCreditsForLostDamaged.checkYourAnswersLabel = Claiming credit for lost or destroyed liable drinks?
 
 returnSent.title = Return sent
 returnSent.panel.returnMessage = Soft Drinks Industry Levy return {0} to {1} {2} for the {3}
