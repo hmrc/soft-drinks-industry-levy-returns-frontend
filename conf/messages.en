@@ -200,15 +200,15 @@ howManyBoughtIntoUk.error.highBand.outOfMaxVal = Number of litres in the high ba
 howManyBoughtIntoUk.lowBand.change.hidden = Litres in the low band
 howManyBoughtIntoUk.highBand.change.hidden = Litres in the high band
 
-broughtIntoUK.title = Are you reporting liable drinks you have brought into the UK from anywhere outside the UK?
-broughtIntoUK.heading = Are you reporting liable drinks you have brought into the UK from anywhere outside the UK?
+broughtIntoUK.title = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
+broughtIntoUK.heading = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 broughtIntoUK.subHeading = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
 broughtIntoUK.detailsLink = What is a small producer?
 broughtIntoUK.detailsContent1 = A business is a small producer if it:
 broughtIntoUK.detailsContent2 = has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months
 broughtIntoUK.detailsContent3 = will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days
 broughtIntoUK.checkYourAnswersLabel = broughtIntoUK
-broughtIntoUK.error.required = Select yes if you are reporting liable drinks you have brought into the UK from anywhere outside the UK
+broughtIntoUK.error.required = Select yes if you are reporting liable drinks you have brought into the UK from anywhere outside of the UK
 broughtIntoUK.change.hidden = BroughtIntoUK
 
 howManyCreditsForExport.title = How many credits do you want to claim for liable drinks that have been exported?
@@ -284,7 +284,7 @@ howManyCreditsForLostDamaged.highBand.change.hidden = highBand
 
 howManyBroughtIntoTheUKFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
 howManyBroughtIntoTheUKFromSmallProducers.heading = How many litres of liable drinks have you brought into the UK from small producers?
-howManyBroughtIntoTheUKFromSmallProducers.subtext = Include your own brands of liable drinks produced outside the UK.
+howManyBroughtIntoTheUKFromSmallProducers.subtext = Include your own brands of liable drinks produced outside of the UK.
 howManyBroughtIntoTheUKFromSmallProducers.lowBand = Litres in the low band
 howManyBroughtIntoTheUKFromSmallProducers.hint1 = At least 5 grams of sugar per 100 millilitres
 howManyBroughtIntoTheUKFromSmallProducers.highBand = Litres in high band
