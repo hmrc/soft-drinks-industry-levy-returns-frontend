@@ -60,7 +60,6 @@ class OwnBrandsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(answers.set(OwnBrandsPage, value))

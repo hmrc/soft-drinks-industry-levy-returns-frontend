@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
-import pages.{BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage}
+import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, QuestionPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -28,6 +28,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
+
+import scala.util.{Failure, Success}
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -42,7 +44,7 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val userAnswers = request.userAnswers
+      val userAnswers = cleanUpUserAnswers(request.userAnswers)
       val lowerBandCostPerLitre = config.lowerBandCostPerLitre
       val higherBandCostPerLitre = config.higherBandCostPerLitre
 
@@ -57,7 +59,9 @@ class CheckYourAnswersController @Inject()(
           }
         case None => throw new RuntimeException("No return period returned")
       }
-      
+
+      println(Console.YELLOW + userAnswers + Console.WHITE)
+
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
         BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
@@ -127,6 +131,40 @@ class CheckYourAnswersController @Inject()(
         claimCreditsForExportsAnswers,
         claimCreditsForLostOrDamagedAnswers
       ))
+  }
+
+  def cleanUpUserAnswers(userAnswers: UserAnswers): UserAnswers = {
+
+    if(!userAnswers.get(OwnBrandsPage).getOrElse(false)) {
+      removePageData(userAnswers, BrandsPackagedAtOwnSitesPage)
+    }
+
+    if (!userAnswers.get(PackagedContractPackerPage).getOrElse(false)) {
+      println(Console.YELLOW + "I expect to be here" + Console.WHITE)
+      removePageData(userAnswers, HowManyAsAContractPackerPage)
+    }
+
+    if (!userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)) {
+      removePageData(userAnswers, AddASmallProducerPage)
+    } else if (!userAnswers.get(BroughtIntoUKPage).getOrElse(false)) {
+      removePageData(userAnswers, HowManyBroughtIntoUkPage)
+    } else if (!userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false)) {
+      removePageData(userAnswers, HowManyBroughtIntoTheUKFromSmallProducersPage)
+    } else if (!userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false)) {
+      removePageData(userAnswers, HowManyCreditsForExportPage)
+    } else if (!userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false)) {
+      removePageData(userAnswers, HowManyCreditsForLostDamagedPage)
+    } else {
+      userAnswers
+    }
+  }
+
+  def removePageData(userAnswers: UserAnswers, page:QuestionPage[_]) = {
+    userAnswers.remove(page) match {
+      case Success(updatedAnswers) => updatedAnswers
+      case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}")
+        userAnswers
+    }
   }
 
 }
