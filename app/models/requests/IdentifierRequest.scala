@@ -23,5 +23,4 @@ import play.api.mvc.{Request, WrappedRequest}
 case class IdentifierRequest[A] (request: Request[A],
                                  sdilEnrolment: String,
                                  subscription: RetrievedSubscription,
-                                 //smallProducerList :List[SmallProducer] = List.empty,
                                  returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
