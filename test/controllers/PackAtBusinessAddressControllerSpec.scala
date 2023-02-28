@@ -144,7 +144,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
         page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
-        page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.required"))
+        page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.error.required"))
 
       }
     }
