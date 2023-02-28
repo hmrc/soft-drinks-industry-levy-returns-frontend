@@ -17,14 +17,15 @@
 package forms.behaviours
 
 import play.api.data.{Form, FormError}
+import views.html.helper.form
 
 class LitresFieldBehaviour extends FieldBehaviours {
 
   def litresField(form: Form[_],
                   fieldName: String): Unit = {
-    val nonNumericError = FormError(fieldName, s"brandsPackagedAtOwnSites.error.$fieldName.nonNumeric")
-    val negativeNumberError = FormError(fieldName, s"brandsPackagedAtOwnSites.error.$fieldName.negative")
-    val wholeNumberError = FormError(fieldName, s"brandsPackagedAtOwnSites.error.$fieldName.wholeNumber")
+    val nonNumericError = FormError(fieldName, s"litres.error.$fieldName.nonNumeric")
+    val negativeNumberError = FormError(fieldName, s"litres.error.$fieldName.negative")
+    val wholeNumberError = FormError(fieldName, s"litres.error.$fieldName.wholeNumber")
 
     "not bind non-numeric numbers" in {
 
@@ -56,11 +57,11 @@ class LitresFieldBehaviour extends FieldBehaviours {
   def litresFieldWithMaximum(form: Form[_],
                              fieldName: String): Unit = {
     val maximum = 100000000000000L
-    val expectedError = FormError(fieldName, s"brandsPackagedAtOwnSites.error.$fieldName.outOfMaxVal")
+    val expectedError = FormError(fieldName, s"litres.error.$fieldName.outOfMaxVal")
 
     s"not bind long above $maximum" in {
 
-      forAll(longAboveValue(maximum) -> "outOfMaxVal") {
+      forAll(longAboveValue (maximum) -> "outOfMaxVal") {
         number: Long =>
           val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
           result.errors must contain only expectedError
@@ -69,14 +70,14 @@ class LitresFieldBehaviour extends FieldBehaviours {
     s"not bind long above $maximum when value entered is more then Long range" in {
 
       val result = form.bind(Map(fieldName -> "9223372036854775808")).apply(fieldName)
-      result.errors.head.key mustBe  expectedError.key
+      result.errors.head.key mustBe expectedError.key
 
     }
 
     s"not bind long above $maximum when value entered is more then Long range and decimal" in {
 
       val result = form.bind(Map(fieldName -> "92233720368547758089.6767")).apply(fieldName)
-      result.errors.head.key mustBe  expectedError.key
+      result.errors.head.key mustBe expectedError.key
 
     }
   }

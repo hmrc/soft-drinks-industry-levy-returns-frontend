@@ -52,20 +52,20 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
         ).verifying(
             checkSDILReference()),
         "lowBand" -> long(
-          "addASmallProducer.error.lowBand.required",
-          "addASmallProducer.error.lowBand.negative",
-          "addASmallProducer.error.lowBand.nonNumeric",
-          "addASmallProducer.error.lowBand.wholeNumber",
-          "addASmallProducer.error.lowBand.outOfMaxVal")
-          .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.lowBand.outOfMaxVal")),
+          "litres.error.lowBand.required",
+          "litres.error.lowBand.negative",
+          "litres.error.lowBand.nonNumeric",
+          "litres.error.lowBand.wholeNumber",
+          "litres.error.lowBand.outOfMaxVal")
+          .verifying(maximumValueNotEqual(100000000000000L, "litres.error.lowBand.outOfMaxVal")),
 
         "highBand" -> long(
-          "addASmallProducer.error.highBand.required",
-          "addASmallProducer.error.highBand.negative",
-          "addASmallProducer.error.highBand.nonNumeric",
-          "addASmallProducer.error.highBand.wholeNumber",
-          "addASmallProducer.error.highBand.outOfMaxVal")
-          .verifying(maximumValueNotEqual(100000000000000L, "addASmallProducer.error.highBand.outOfMaxVal"))
+          "litres.error.lowBand.required",
+          "litres.error.lowBand.negative",
+          "litres.error.lowBand.nonNumeric",
+          "litres.error.lowBand.wholeNumber",
+          "litres.error.lowBand.outOfMaxVal")
+          .verifying(maximumValueNotEqual(100000000000000L, "litres.error.lowBand.outOfMaxVal"))
       )(AddASmallProducer.apply)(AddASmallProducer.unapply)
     )
   }

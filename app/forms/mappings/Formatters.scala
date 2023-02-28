@@ -46,7 +46,7 @@ trait Formatters {
       val outOfRangeKey = s"litres.error.$band.outOfMaxVal"
       val negativeNumber = s"litres.error.$band.negative"
       val wholeNumberKey = s"litres.error.$band.wholeNumber"
-      val nonNumericKey = s"litres.error.$band.outOfMaxVal"
+      val nonNumericKey = s"litres.error.$band.nonNumeric"
 
 
       val decimalRegexp = """^-?(\d*\.\d*)$"""

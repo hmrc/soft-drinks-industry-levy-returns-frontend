@@ -24,7 +24,7 @@ trait LitresHelper extends LitresFieldBehaviour {
   def testLitres(form: Form[_], fieldName: String) = {
     s".$fieldName" - {
 
-      val requiredKey = s"brandsPackagedAtOwnSites.error.$fieldName.required"
+      val requiredKey = s"litres.error.$fieldName.required"
       val maxValue = 100000000000000L
       val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -51,5 +51,4 @@ trait LitresHelper extends LitresFieldBehaviour {
       )
     }
   }
-
 }
