@@ -48,6 +48,8 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
+    case OwnBrandsPage => userAnswers => ownBrandPageCheckNavigation(userAnswers)
+    case BrandsPackagedAtOwnSitesPage => _ => routes.CheckYourAnswersController.onPageLoad()
     case _ => _ => routes.CheckYourAnswersController.onPageLoad()
   }
 
@@ -72,6 +74,14 @@ class Navigator @Inject()() {
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
       routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def ownBrandPageCheckNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = OwnBrandsPage).contains(true)) {
+      routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode)
     } else {
       routes.PackagedContractPackerController.onPageLoad(NormalMode)
     }

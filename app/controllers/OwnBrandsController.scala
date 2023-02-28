@@ -20,16 +20,18 @@ import controllers.actions._
 import forms.OwnBrandsFormProvider
 
 import javax.inject.Inject
-import models.{CheckMode, Mode, UserAnswers}
+import models.{BrandsPackagedAtOwnSites, CheckMode, Mode, UserAnswers}
 import navigation.Navigator
-import pages.OwnBrandsPage
+import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.OwnBrandsView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class OwnBrandsController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -64,8 +66,20 @@ class OwnBrandsController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(answers.set(OwnBrandsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (value) {
+              Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers))
+            } else {
+              val answersWithLitresRemoved =
+                updatedAnswers.remove(BrandsPackagedAtOwnSitesPage) match {
+                  case Success(updatedAnswers) => updatedAnswers
+                  case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+              }
+              sessionRepository.set(answersWithLitresRemoved)
+              Redirect(navigator.nextPage(OwnBrandsPage, mode, answersWithLitresRemoved))
+            }
+          }
       )
   }
 }

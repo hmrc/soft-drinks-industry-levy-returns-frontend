@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val userAnswers = request.userAnswers
+      val userAnswers = cleanUpUserAnswers(request.userAnswers)
       val lowerBandCostPerLitre = config.lowerBandCostPerLitre
       val higherBandCostPerLitre = config.higherBandCostPerLitre
 
@@ -63,6 +63,7 @@ class CheckYourAnswersController @Inject()(
 
       //println(Console.YELLOW + userAnswers + Console.WHITE)
 
+      // we want to update user answers to not contain the brands litres if this answer has been changed to no
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
           OwnBrandsSummary.row(request.userAnswers),
           BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
@@ -134,6 +135,22 @@ class CheckYourAnswersController @Inject()(
       ))
   }
 
+  def cleanUpUserAnswers(userAnswers: UserAnswers): UserAnswers = {
+    if (!userAnswers.get(OwnBrandsPage).getOrElse(false)) {
+      removePageData(userAnswers, BrandsPackagedAtOwnSitesPage)
+    } else {
+      userAnswers
+    }
+  }
+
+
+  def removePageData(userAnswers: UserAnswers, page: QuestionPage[_]) = {
+    userAnswers.remove(page) match {
+      case Success(updatedAnswers) => updatedAnswers
+      case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}")
+        userAnswers
+    }
+  }
 
 
 }
