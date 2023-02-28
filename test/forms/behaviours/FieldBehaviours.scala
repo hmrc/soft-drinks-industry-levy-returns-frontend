@@ -17,7 +17,6 @@
 package forms.behaviours
 
 import forms.FormSpec
-
 import generators.Generators
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
