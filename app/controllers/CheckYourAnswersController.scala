@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
-import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, QuestionPage}
+import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, QuestionPage, SmallProducerDetailsPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -29,6 +29,7 @@ import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSu
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 class CheckYourAnswersController @Inject()(
@@ -44,7 +45,7 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val userAnswers = cleanUpUserAnswers(request.userAnswers)
+      val userAnswers = request.userAnswers
       val lowerBandCostPerLitre = config.lowerBandCostPerLitre
       val higherBandCostPerLitre = config.higherBandCostPerLitre
 
@@ -60,15 +61,15 @@ class CheckYourAnswersController @Inject()(
         case None => throw new RuntimeException("No return period returned")
       }
 
-      println(Console.YELLOW + userAnswers + Console.WHITE)
+      //println(Console.YELLOW + userAnswers + Console.WHITE)
 
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
-        OwnBrandsSummary.row(request.userAnswers),
-        BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
-        BrandsPackagedAtOwnSitesSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-        BrandsPackagedAtOwnSitesSummary.highBandRow(userAnswers),
-        BrandsPackagedAtOwnSitesSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-      ).flatten)
+          OwnBrandsSummary.row(request.userAnswers),
+          BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
+          BrandsPackagedAtOwnSitesSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+          BrandsPackagedAtOwnSitesSummary.highBandRow(userAnswers),
+          BrandsPackagedAtOwnSitesSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+        ).flatten)
 
       val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
         PackagedContractPackerSummary.row(userAnswers),
@@ -79,7 +80,7 @@ class CheckYourAnswersController @Inject()(
       ).flatten)
 
       val exemptionsForSmallProducersAnswers =
-        if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false) == true){
+        if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)){
           SummaryListViewModel(rows = Seq(
             ExemptionsForSmallProducersSummary.row(userAnswers),
             SmallProducerDetailsSummary.lowBandRow(userAnswers),
@@ -133,38 +134,6 @@ class CheckYourAnswersController @Inject()(
       ))
   }
 
-  def cleanUpUserAnswers(userAnswers: UserAnswers): UserAnswers = {
 
-    if(!userAnswers.get(OwnBrandsPage).getOrElse(false)) {
-      removePageData(userAnswers, BrandsPackagedAtOwnSitesPage)
-    }
-
-    if (!userAnswers.get(PackagedContractPackerPage).getOrElse(false)) {
-      println(Console.YELLOW + "I expect to be here" + Console.WHITE)
-      removePageData(userAnswers, HowManyAsAContractPackerPage)
-    }
-
-    if (!userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)) {
-      removePageData(userAnswers, AddASmallProducerPage)
-    } else if (!userAnswers.get(BroughtIntoUKPage).getOrElse(false)) {
-      removePageData(userAnswers, HowManyBroughtIntoUkPage)
-    } else if (!userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false)) {
-      removePageData(userAnswers, HowManyBroughtIntoTheUKFromSmallProducersPage)
-    } else if (!userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false)) {
-      removePageData(userAnswers, HowManyCreditsForExportPage)
-    } else if (!userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false)) {
-      removePageData(userAnswers, HowManyCreditsForLostDamagedPage)
-    } else {
-      userAnswers
-    }
-  }
-
-  def removePageData(userAnswers: UserAnswers, page:QuestionPage[_]) = {
-    userAnswers.remove(page) match {
-      case Success(updatedAnswers) => updatedAnswers
-      case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}")
-        userAnswers
-    }
-  }
 
 }

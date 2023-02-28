@@ -122,6 +122,31 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("h2").text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
         page.getElementsByTag("dt").text() must include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
         page.getElementById("change-own-brands").attributes().get("href") mustEqual s"$baseUrl/change-own-brands-packaged-at-own-sites"
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+      }
+    }
+
+    "must show own brands packaged at own site row when no selected but previous data exists on user answers" in {
+      val userAnswersData = Json.obj(
+        "ownBrands" -> false,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
+      )
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
+        page.getElementsByTag("dt").text() must include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
+        page.getElementById("change-own-brands").attributes().get("href") mustEqual s"$baseUrl/change-own-brands-packaged-at-own-sites"
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
       }
     }
 
@@ -244,8 +269,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
         page.getElementById("change-exemption-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-exemptions-for-small-producers"
-
-
       }
     }
 
