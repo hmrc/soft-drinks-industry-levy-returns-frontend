@@ -59,9 +59,6 @@ class OwnBrandsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-
-      println(Console.YELLOW + s"Mode is $mode" + Console.WHITE)
-
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -74,7 +71,6 @@ class OwnBrandsController @Inject()(
             if (value) {
               Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers))
             } else {
-              println(Console.YELLOW + s"Mode is $mode in the no/false" + Console.WHITE)
               val answersWithLitresRemoved =
                 updatedAnswers.remove(BrandsPackagedAtOwnSitesPage) match {
                   case Success(updatedAnswers) => updatedAnswers
