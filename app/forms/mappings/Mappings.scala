@@ -42,6 +42,11 @@ trait Mappings extends Formatters with Constraints {
                      args: Seq[String] = Seq.empty): FieldMapping[Long] =
     of(longFormatter(requiredKey, negativeNumber, nonNumericKey, wholeNumberKey,outOfRangeKey, args))
 
+  protected def litres(band: String,
+                       args: Seq[String] = Seq.empty): FieldMapping[Long] =
+    of(litresFormatter(band, args))
+      .verifying(maximumValueNotEqual(100000000000000L, s"litres.error.$band.outOfMaxVal"))
+
   protected def boolean(requiredKey: String = "error.required",
                         invalidKey: String = "error.boolean",
                         args: Seq[String] = Seq.empty): FieldMapping[Boolean] =

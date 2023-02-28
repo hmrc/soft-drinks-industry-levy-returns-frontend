@@ -38,6 +38,46 @@ trait Formatters {
       Map(key -> value)
   }
 
+  private[mappings] def litresFormatter(band: String,
+                                        args: Seq[String] = Seq.empty): Formatter[Long] =
+    new Formatter[Long] {
+
+      val requiredKey = s"litres.error.$band.required"
+      val outOfRangeKey = s"litres.error.$band.outOfMaxVal"
+      val negativeNumber = s"litres.error.$band.negative"
+      val wholeNumberKey = s"litres.error.$band.wholeNumber"
+      val nonNumericKey = s"litres.error.$band.outOfMaxVal"
+
+
+      val decimalRegexp = """^-?(\d*\.\d*)$"""
+      val numberRegexp = """^\d+$*"""
+      private val baseFormatter = stringFormatter(requiredKey, args)
+
+      override def bind(key: String, data: Map[String, String]) =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(",", ""))
+          .flatMap {
+            case s if s.matches(numberRegexp) =>
+              nonFatalCatch
+                .either(s.toLong)
+                .left.map(_ => Seq(FormError(key, outOfRangeKey, args)))
+            case s if s.startsWith("-") =>
+              Left(Seq(FormError(key, negativeNumber, args)))
+            case s if s.matches(decimalRegexp) =>
+              Try(s.split("\\.")(0).toLong)
+                .fold(_ => Left(Seq(FormError(key, outOfRangeKey, args))),
+                  _ => Left(Seq(FormError(key, wholeNumberKey, args))))
+            case s =>
+              nonFatalCatch
+                .either(s.toLong)
+                .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
+          }
+
+      override def unbind(key: String, value: Long) =
+        baseFormatter.unbind(key, value.toString)
+    }
+
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty): Formatter[Boolean] =
     new Formatter[Boolean] {
 
