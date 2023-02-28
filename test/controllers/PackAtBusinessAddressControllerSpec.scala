@@ -39,7 +39,7 @@ import play.api.mvc.Call
 import scala.concurrent.Future
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
-  def onwardRoute = Call("GET", "#")
+
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form = formProvider()
   val mockSessionRepository = mock[SessionRepository]
@@ -105,7 +105,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-//            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
