@@ -49,11 +49,11 @@ class PackAtBusinessAddressController @Inject()(
     implicit request =>
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address
-        lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Ok(view(preparedForm, businessName, businessAddress, mode))
+      lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
+        case None => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -63,7 +63,7 @@ class PackAtBusinessAddressController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, businessName: String, businessAddress: UkAddress, mode))),
+          Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
 
         value =>
           for {
