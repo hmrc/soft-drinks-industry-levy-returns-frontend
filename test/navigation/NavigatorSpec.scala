@@ -31,7 +31,7 @@ class NavigatorSpec extends SpecBase {
   val superJuiceProducerAlias = "Super Juice Ltd"
   val referenceNumber1 = "XZSDIL000000234"
   val referenceNumber2 = "XZSDIL000000235"
-  val literage = (10L, 20L)
+  val litreage = (10L, 20L)
 
   "Navigator" - {
 
@@ -124,7 +124,7 @@ class NavigatorSpec extends SpecBase {
               val result = navigator.nextPage(ExemptionsForSmallProducersPage,
                 NormalMode,
                 UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true),
-                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage)))
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage)))
               )
 
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
@@ -277,7 +277,7 @@ class NavigatorSpec extends SpecBase {
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
                 val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.IndexController.onPageLoad() //TODO change it to check your answers page once ready
+                result mustBe routes.CheckYourAnswersController.onPageLoad() //TODO change it to check your answers page once ready
               }
 
             }
@@ -310,7 +310,7 @@ class NavigatorSpec extends SpecBase {
               val result = navigator.nextPage(SmallProducerDetailsPage,
                 NormalMode,
                 UserAnswers(id, Json.obj("smallProducerDetails" -> false),
-                smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))))
+                smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))))
 
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
 
@@ -343,7 +343,7 @@ class NavigatorSpec extends SpecBase {
                 UserAnswers(
                   id,
                   Json.obj("removeSmallProducerConfirm" -> true),
-                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))
                 ))
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
             }
@@ -358,8 +358,8 @@ class NavigatorSpec extends SpecBase {
                   id,
                   Json.obj("removeSmallProducerConfirm" -> true),
                   smallProducerList = List(
-                    SmallProducer(superColaProducerAlias, referenceNumber1, literage),
-                    SmallProducer(superJuiceProducerAlias, referenceNumber2, literage))
+                    SmallProducer(superColaProducerAlias, referenceNumber1, litreage),
+                    SmallProducer(superJuiceProducerAlias, referenceNumber2, litreage))
                 ))
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
             }
@@ -387,7 +387,7 @@ class NavigatorSpec extends SpecBase {
                 UserAnswers(
                   id,
                   Json.obj("removeSmallProducerConfirm" -> false),
-                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))
                 ))
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
             }
@@ -402,8 +402,8 @@ class NavigatorSpec extends SpecBase {
                   id,
                   Json.obj("removeSmallProducerConfirm" -> false),
                   smallProducerList = List(
-                    SmallProducer(superColaProducerAlias, referenceNumber1, literage),
-                    SmallProducer(superJuiceProducerAlias, referenceNumber2, literage))
+                    SmallProducer(superColaProducerAlias, referenceNumber1, litreage),
+                    SmallProducer(superJuiceProducerAlias, referenceNumber2, litreage))
                 )
               )
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)

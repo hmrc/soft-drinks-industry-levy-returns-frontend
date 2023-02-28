@@ -67,16 +67,16 @@ object SmallProducerDetailsSummary  {
   }
 
   def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    val literageTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._1).sum
+    val litreageTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._1).sum
     Some(SummaryListRow(
       key = "litresInTheLowBand",
-      value = ValueViewModel(HtmlContent(literageTotal.toString)),
+      value = ValueViewModel(HtmlContent(litreageTotal.toString)),
       classes = "govuk-summary-list__row--no-border",
       actions = Some(Actions("",
         items =
           Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-lowband-literage-small-producers")
+              .withAttribute("id", "change-lowband-litreage-small-producers")
               .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
           )))))
   }
@@ -95,16 +95,16 @@ object SmallProducerDetailsSummary  {
   }
 
   def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    val literageTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._2).sum
+    val litreageTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._2).sum
     Some(SummaryListRow(
       key = "litresInTheHighBand",
-      value = ValueViewModel(HtmlContent(literageTotal.toString)),
+      value = ValueViewModel(HtmlContent(litreageTotal.toString)),
       classes = "govuk-summary-list__row--no-border",
       actions = Some(Actions("",
         items =
           Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-highband-literage-small-producers")
+              .withAttribute("id", "change-highband-litreage-small-producers")
               .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
           )))))
   }

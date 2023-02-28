@@ -101,7 +101,7 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")//TODO change it to CYA page later
+              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/check-your-answers")
             }
 
           }

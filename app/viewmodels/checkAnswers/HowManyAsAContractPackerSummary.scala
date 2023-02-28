@@ -40,7 +40,7 @@ object HowManyAsAContractPackerSummary  {
             items =
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-literage-contract-packer")
+                  .withAttribute("id", "change-lowband-litreage-contract-packer")
                   .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
               )))
         )
@@ -76,7 +76,7 @@ object HowManyAsAContractPackerSummary  {
               items =
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
-                    .withAttribute("id", "change-highband-literage-contract-packer")
+                    .withAttribute("id", "change-highband-litreage-contract-packer")
                     .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
                 )))
         )

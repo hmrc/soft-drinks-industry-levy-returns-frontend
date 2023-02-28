@@ -51,7 +51,7 @@ trait SpecBase
   val genericSmallProducerAlias = "Generic Producer LTD"
   val baseUrl = "/soft-drinks-industry-levy-returns-frontend"
   val baseAlias = "Jackson's Drinks"
-  val baseLiterage = 100L
+  val baseLitreage = 100L
   val sdilNumber: String = "XKSDIL000000022"
   val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
   val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
@@ -60,8 +60,8 @@ trait SpecBase
     Json.obj(
       "producerName" -> baseAlias,
       "referenceNumber" -> sdilNumber,
-      "lowBand" -> baseLiterage,
-      "highBand" -> baseLiterage
+      "lowBand" -> baseLitreage,
+      "highBand" -> baseLitreage
     )
 
   val aSubscription = RetrievedSubscription(

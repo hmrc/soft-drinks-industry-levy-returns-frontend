@@ -149,13 +149,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
-        page.getElementById("change-lowband-literage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
+        page.getElementById("change-lowband-litreage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1800")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
-        page.getElementById("change-highband-literage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
+        page.getElementById("change-highband-litreage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4800")
       }
@@ -196,13 +196,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
-        page.getElementById("change-lowband-literage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
+        page.getElementById("change-lowband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1800")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
-        page.getElementById("change-highband-literage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
+        page.getElementById("change-highband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4800")
       }
@@ -285,13 +285,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
-        page.getElementById("change-lowband-literage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
+        page.getElementById("change-lowband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1800")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
-        page.getElementById("change-highband-literage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
+        page.getElementById("change-highband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4800")
       }
@@ -332,13 +332,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
-        page.getElementById("change-lowband-literage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
+        page.getElementById("change-lowband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1800")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
-        page.getElementById("change-highband-literage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
+        page.getElementById("change-highband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4800")
       }
