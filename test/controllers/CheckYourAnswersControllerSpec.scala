@@ -218,6 +218,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
         page.getElementById("change-exemption-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-exemptions-for-small-producers"
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
       }
     }
 
@@ -242,17 +245,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
         page.getElementById("change-exemption-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-exemptions-for-small-producers"
 
-        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("4000")
-        page.getElementById("change-lowband-literage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
-        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£720")
 
-        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("6000")
-        page.getElementById("change-highband-literage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
-        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£1440")
       }
     }
 

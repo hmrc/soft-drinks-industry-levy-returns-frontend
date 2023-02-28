@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
-import pages.BrandsPackagedAtOwnSitesPage
+import pages.{BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -74,13 +74,18 @@ class CheckYourAnswersController @Inject()(
         HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten)
 
-      val exemptionsForSmallProducersAnswers = SummaryListViewModel(rows = Seq(
-        ExemptionsForSmallProducersSummary.row(userAnswers),
-        SmallProducerDetailsSummary.lowBandRow(userAnswers),
-        SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-        SmallProducerDetailsSummary.highBandRow(userAnswers),
-        SmallProducerDetailsSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-      ).flatten)
+      val exemptionsForSmallProducersAnswers =
+        if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false) == true){
+          SummaryListViewModel(rows = Seq(
+            ExemptionsForSmallProducersSummary.row(userAnswers),
+            SmallProducerDetailsSummary.lowBandRow(userAnswers),
+            SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+            SmallProducerDetailsSummary.highBandRow(userAnswers),
+            SmallProducerDetailsSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+          ).flatten)
+        } else {
+          SummaryListViewModel(rows = Seq(ExemptionsForSmallProducersSummary.row(userAnswers)).flatten)
+        }
 
       val broughtIntoTheUKAnswers = SummaryListViewModel(rows = Seq(
         BroughtIntoUKSummary.row(userAnswers),
