@@ -159,6 +159,14 @@ class Navigator @Inject()() {
     }
   }
 
+  private def packAtBusinessAddressPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = PackAtBusinessAddressPage).contains(true)) {
+      routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+    } else {
+      routes.BroughtIntoUKController.onPageLoad(NormalMode)
+    }
+  }
+
 
 
 }

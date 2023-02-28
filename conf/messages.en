@@ -54,6 +54,7 @@ journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
 journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
 
+
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
@@ -62,8 +63,11 @@ unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
 packAtBusinessAddress.title = Is this address a UK packaging site you operate to produce liable drinks?
-packAtBusinessAddress.required = Select yes if your registered business address is a UK \
-   packaging site that you operate to produce liable drinks
+packAtBusinessAddress.error.required = Select yes if your registered business address is a UK packaging site that you operate to produce liable drinks
+packAtBusinessAddress.detailsLink = Why we need these details
+packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
+packAtBusinessAddress.nameText = The business name is
+packAtBusinessAddress.addressText = The business address is
 
 packagedContractPacker.title = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
 packagedContractPacker.heading = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
@@ -121,6 +125,7 @@ howManyAsAContractPacker.title = How many litres of liable drinks have you packa
 howManyAsAContractPacker.heading = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
 howManyAsAContractPacker.subtext = Do not include liable drinks you have packaged for registered \
                                     small producers.
+
 howManyAsAContractPacker.lowBand = Litres in the low band
 howManyAsAContractPacker.hint1 = At least 5 grams of sugar per 100 millilitres
 howManyAsAContractPacker.highBand = Litres in the high band
@@ -129,6 +134,7 @@ howManyAsAContractPacker.detailsLink = What is a small producer?
 howManyAsAContract.detailsContent1 = A business is a small producer if it:
 howManyAsAContract.detailsContent2 = has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months
 howManyAsAContract.detailsContent3 = will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days
+
 howManyAsAContractPacker.checkYourAnswersLabel = HowManyAsAContractPacker
 howManyAsAContractPacker.error.lowBand.required = Enter the number of litres in the low band
 howManyAsAContractPacker.error.highBand.required = Enter the number of litres in the high band
@@ -210,17 +216,10 @@ broughtIntoUK.change.hidden = BroughtIntoUK
 howManyCreditsForExport.title = How many credits do you want to claim for liable drinks that have been exported?
 howManyCreditsForExport.heading = How many credits do you want to claim for liable drinks that have been exported?
 howManyCreditsForExport.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
+
 howManyCreditsForExport.lowBand = Litres in the low band
 howManyCreditsForExport.hint1 = At least 5 grams of sugar per 100 millilitres
 howManyCreditsForExport.highBand = Litres in the high band
-howManyCreditsForExport.hint2 = At least 8 grams of sugar per 100 millilitres
-howManyCreditsForExport.detailsLink = What can I claim a credit for?
-howManyCreditsForExport.detailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
-howManyCreditsForExport.detailsContent2 = brand of the liable drinks
-howManyCreditsForExport.detailsContent3= supplier or consigner
-howManyCreditsForExport.detailsContent4 = customer and destination the liable drinks are supplied to
-howManyCreditsForExport.detailsContent5 = method of delivery
-howManyCreditsForExport.detailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
 howManyCreditsForExport.checkYourAnswersLabel = HowManyCreditsForExport
 howManyCreditsForExport.error.lowBand.required = Enter the number of litres in the low band
 howManyCreditsForExport.error.highBand.required = Enter the number of litres in the high band
@@ -240,7 +239,7 @@ claimCreditsForLostDamaged.title = Do you want to claim a credit for liable drin
 claimCreditsForLostDamaged.heading1 = Lost or destroyed drinks
 claimCreditsForLostDamaged.heading2 = Do you want to claim a credit for liable drinks which have been lost or destroyed?
 claimCreditsForLostDamaged.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
-claimCreditsForLostDamaged.warning = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
+claimCreditsForLostDamaged.warning = You can only claim credit if you?ve registered for the levy and paid it directly to HMRC. Claiming credits you?re not entitled to is a criminal offence.
 claimCreditsForLostDamaged.detailsLink = What can I claim a credit for?
 claimCreditsForLostDamaged.detailsContent1 = You can claim a credit for liable drinks that have been:
 claimCreditsForLostDamaged.detailsContent2 = lost
@@ -248,7 +247,7 @@ claimCreditsForLostDamaged.detailsContent3 = destroyed
 claimCreditsForLostDamaged.detailsContent4 = disposed of as waste
 claimCreditsForLostDamaged.detailsContent5 = reprocessed
 claimCreditsForLostDamaged.detailsContent6 = lost
-claimCreditsForLostDamaged.detailsContent7 = spilled and can’t be used
+claimCreditsForLostDamaged.detailsContent7 = spilled and can?t be used
 claimCreditsForLostDamaged.detailsContent8 = To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.
 claimCreditsForLostDamaged.checkYourAnswersLabel = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 claimCreditsForLostDamaged.error.required = Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed
@@ -268,7 +267,7 @@ howManyCreditsForLostDamaged.detailsContent3 = destroyed
 howManyCreditsForLostDamaged.detailsContent4 = disposed of as waste
 howManyCreditsForLostDamaged.detailsContent5 = reprocessed
 howManyCreditsForLostDamaged.detailsContent6 = lost
-howManyCreditsForLostDamaged.detailsContent7 = spilled and can’t be used
+howManyCreditsForLostDamaged.detailsContent7 = spilled and can?t be used
 howManyCreditsForLostDamaged.detailsContent8 = To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.
 howManyCreditsForLostDamaged.checkYourAnswersLabel = HowManyCreditsForLostDamaged
 howManyCreditsForLostDamaged.error.lowBand.required = Enter the number of litres in the low band
@@ -340,7 +339,7 @@ claimCreditsForExports.title = Exported drinks
 claimCreditsForExports.heading1 = Exported drinks
 claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
 claimCreditsForExports.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
-claimCreditsForExports.warning = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
+claimCreditsForExports.warning = You can only claim credit if you?ve registered for the levy and paid it directly to HMRC. Claiming credits you?re not entitled to is a criminal offence.
 claimCreditsForExports.detailsLink = What can I claim a credit for?
 claimCreditsForExports.detailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
 claimCreditsForExports.detailsContent2 = brand of the liable drinks
@@ -367,7 +366,7 @@ returnChangeRegistration.heading = You changed your soft drinks business activit
 returnChangeRegistration.subtext1 = In this return, you told us that you have packaged liable drinks in the UK.
 returnChangeRegistration.subtext2 = This is different to your registered business activity, so we will update your registration.
 returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
-returnChangeRegistration.subtext4 = If you’re happy with the change, select Update Registration.
+returnChangeRegistration.subtext4 = If you?re happy with the change, select Update Registration.
 
 removeSmallProducerConfirm.title = Are you sure you want to remove this small producer?
 removeSmallProducerConfirm.heading = Are you sure you want to remove this small producer?
@@ -376,8 +375,8 @@ removeSmallProducerConfirm.error.required = Select yes if you want to remove thi
 removeSmallProducerConfirm.change.hidden = removeSmallProducerConfirm
 
 
-addASmallProducer.title = Enter the registered small producer’s details
-addASmallProducer.heading = Enter the registered small producer’s details
+addASmallProducer.title = Enter the registered small producer?s details
+addASmallProducer.heading = Enter the registered small producer?s details
 addASmallProducer.hint1 = Small producer name (optional)
 addASmallProducer.referenceNumber = Soft Drinks Industry Levy reference number
 addASmallProducer.hint2 = This is 6 letters then 9 numbers, like XCSDIL123456789
@@ -386,7 +385,7 @@ addASmallProducer.hint3 = At least 5 grams of sugar per 100 millilitres
 addASmallProducer.highBand = Litres in the high band
 addASmallProducer.hint4 = At least 8 grams of sugar per 100 millilitres
 addASmallProducer.checkYourAnswersLabel = AddASmallProducer
-addASmallProducer.error.referenceNumber.required = Enter the small producer’s reference number
+addASmallProducer.error.referenceNumber.required = Enter the small producer?s reference number
 addASmallProducer.error.referenceNumber.invalid = Small producer reference number must be 6 letters and 9 numbers
 addASmallProducer.error.referenceNumber.same = Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
 addASmallProducer.error.referenceNumber.exists = Small producer reference number must be different to a small producer reference number you have already added

@@ -36,7 +36,7 @@ class $className$FormProviderSpec extends LongFieldBehaviour {
       form,
       fieldName,
       maxValue,
-       FormError(fieldName, maxValueKey, Seq(maxValue))
+      FormError(fieldName, maxValueKey, Seq(maxValue))
     )
 
     behave like mandatoryField(

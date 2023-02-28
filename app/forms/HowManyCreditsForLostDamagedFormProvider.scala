@@ -28,6 +28,7 @@ class HowManyCreditsForLostDamagedFormProvider @Inject() extends Mappings {
    def apply(): Form[HowManyCreditsForLostDamaged] = Form(
      mapping(
       "lowBand" -> long(
+
         "howManyCreditsForLostDamaged.error.lowBand.required",
                     "howManyCreditsForLostDamaged.error.lowBand.negative",
                     "howManyCreditsForLostDamaged.error.lowBand.nonNumeric",

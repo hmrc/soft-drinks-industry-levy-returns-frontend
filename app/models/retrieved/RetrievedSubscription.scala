@@ -39,8 +39,7 @@ object RetrievedActivity {
   implicit val format = Json.format[RetrievedActivity]
 }
 
-case class RetrievedSubscription(
-                                  utr: String,
+case class RetrievedSubscription( utr: String,
                                   sdilRef: String,
                                   orgName: String,
                                   address: UkAddress,
