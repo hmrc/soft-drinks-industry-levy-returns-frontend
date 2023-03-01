@@ -299,7 +299,7 @@ class NavigatorSpec extends SpecBase {
               }
 
             }
-            
+
             "select No to navigate to Index controller page " - {
               "when user is a not a new Importer" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,

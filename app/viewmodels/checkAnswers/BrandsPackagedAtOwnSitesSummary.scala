@@ -41,7 +41,7 @@ object BrandsPackagedAtOwnSitesSummary  {
               Seq(
                 ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
                   .withAttribute("id", "change-lowband-litreage-own-site")
-                  .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                  .withVisuallyHiddenText(messages("ownBrandsPackagedAtYourOwnSite.lowband.hidden"))
               )))
         )
     }
@@ -77,7 +77,7 @@ object BrandsPackagedAtOwnSitesSummary  {
                 Seq(
                   ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
                     .withAttribute("id", "change-highband-litreage-own-site")
-                    .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                    .withVisuallyHiddenText(messages("ownBrandsPackagedAtYourOwnSite.highband.hidden"))
                 )))
         )
     }

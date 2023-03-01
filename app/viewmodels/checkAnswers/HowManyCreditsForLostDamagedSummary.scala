@@ -41,7 +41,7 @@ object HowManyCreditsForLostDamagedSummary  {
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url)
                   .withAttribute("id", "change-lowband-lost-destroyed")
-                  .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                  .withVisuallyHiddenText(messages("lostOrDestroyed.lowband.hidden"))
               )))
         )
     }
@@ -77,7 +77,7 @@ object HowManyCreditsForLostDamagedSummary  {
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url)
                     .withAttribute("id", "change-highband-lost-destroyed")
-                    .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                    .withVisuallyHiddenText(messages("lostOrDestroyed.highband.hidden"))
                 )))
         )
     }

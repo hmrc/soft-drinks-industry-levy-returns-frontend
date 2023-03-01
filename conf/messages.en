@@ -427,24 +427,38 @@ highBandLevy = High band levy
 
 ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
 reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
+ownBrandsPackagedAtYourOwnSite.lowband.hidden = low band litres of own brands packaged at your own site
+ownBrandsPackagedAtYourOwnSite.highband.hidden = high band litres of own brands packaged at your own site
 
 contractPackedAtYourOwnSite = Contract packed at your own site
 reportingContractPackedAtYourOwnSite = Reporting contract packed at your own sites?
+contractPackedAtYourOwnSite.lowband.hidden = low band litres of contract packed at your own site
+contractPackedAtYourOwnSite.highband.hidden = high band litres of contract packed at your own site
 
 contractPackedForRegisteredSmallProducers = Contract packed for registered small producers
 exemptionForRegisteredSmallProducers = Exemption for registered small producers?
+contractPackedForRegisteredSmallProducers.lowband.hidden = low band total litres of contract packed for registered small producers
+contractPackedForRegisteredSmallProducers.highband.hidden = high band total litres of contract packed for registered small producers
 
 broughtIntoTheUK = Brought into the UK
 reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK?
+broughtIntoTheUK.lowband.hidden = low band litres of liable drinks brought into the UK
+broughtIntoTheUK.highband.hidden = high band litres of liable drinks brought into the UK
 
 broughtIntoTheUKFromSmallProducers = Brought into the UK from small producers
 reportingLiableDrinksBroughtIntoTheUKFromSmallProducers = Reporting liable drinks brought into the UK from small producers
+broughtIntoTheUKFromSmallProducers.lowband.hidden = low band litres of liable drinks brought into the UK from small producers
+broughtIntoTheUKFromSmallProducers.highband.hidden = high band litres of liable drinks brought into the UK from small producers
 
 exported = Exported
 claimingCreditForExportedLiableDrinks = Claiming credit for exported liable drinks?
+exported.lowband.hidden = low band litres if claiming credit for exported liable drinks
+exported.highband.hidden = high band litres if claiming credit for exported liable drinks
 
 lostOrDestroyed = Lost or destroyed
 claimingCreditForLostOrDestroyedLiableDrinks = Claiming credit for lost or destroyed liable drinks?
+lostOrDestroyed.lowband.hidden = low band litres if claiming credit for lost or destroyed liable drinks
+lostOrDestroyed.highband.hidden = high band litres if claiming credit for lost or destroyed liable drinks
 
 amountToPay = Amount to pay
 totalThisQuarter = Total this quarter

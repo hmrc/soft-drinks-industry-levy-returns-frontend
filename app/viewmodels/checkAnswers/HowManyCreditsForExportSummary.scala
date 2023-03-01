@@ -41,7 +41,7 @@ object HowManyCreditsForExportSummary  {
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
                   .withAttribute("id", "change-lowband-export-credits")
-                  .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                  .withVisuallyHiddenText(messages("exported.lowband.hidden"))
               )))
         )
     }
@@ -77,7 +77,7 @@ object HowManyCreditsForExportSummary  {
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
                     .withAttribute("id", "change-highband-export-credits")
-                    .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                    .withVisuallyHiddenText(messages("exported.highband.hidden"))
                 )))
         )
     }

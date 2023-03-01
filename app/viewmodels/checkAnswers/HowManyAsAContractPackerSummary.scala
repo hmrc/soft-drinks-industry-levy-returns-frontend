@@ -41,7 +41,7 @@ object HowManyAsAContractPackerSummary  {
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
                   .withAttribute("id", "change-lowband-litreage-contract-packer")
-                  .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                  .withVisuallyHiddenText(messages("contractPackedAtYourOwnSite.lowband.hidden"))
               )))
         )
     }
@@ -77,7 +77,7 @@ object HowManyAsAContractPackerSummary  {
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
                     .withAttribute("id", "change-highband-litreage-contract-packer")
-                    .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+                    .withVisuallyHiddenText(messages("contractPackedAtYourOwnSite.highband.hidden"))
                 )))
         )
     }

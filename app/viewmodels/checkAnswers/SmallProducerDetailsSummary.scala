@@ -77,7 +77,7 @@ object SmallProducerDetailsSummary  {
           Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-lowband-litreage-small-producers")
-              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+              .withVisuallyHiddenText(messages("contractPackedForRegisteredSmallProducers.lowband.hidden"))
           )))))
   }
 
@@ -105,7 +105,7 @@ object SmallProducerDetailsSummary  {
           Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-highband-litreage-small-producers")
-              .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+              .withVisuallyHiddenText(messages("contractPackedForRegisteredSmallProducers.highband.hidden"))
           )))))
   }
 
