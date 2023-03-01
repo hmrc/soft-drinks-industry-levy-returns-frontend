@@ -51,7 +51,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
 
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        val levy = "£" + String.format("%.0f", (answer.lowBand * lowBandCostPerLitre.toDouble))
+        val levy = "£" + String.format("%.2f", (answer.lowBand * lowBandCostPerLitre.toDouble))
         val value = HtmlFormat.escape(levy).toString
 
         SummaryListRowViewModel(
@@ -85,7 +85,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        val levy = "£" + String.format("%.0f", (answer.highBand * highBandCostPerLitre.toDouble))
+        val levy = "£" + String.format("%.2f", (answer.highBand * highBandCostPerLitre.toDouble))
         val value = HtmlFormat.escape(levy).toString
 
         SummaryListRowViewModel(
