@@ -136,12 +136,12 @@ class ReturnSentControllerSpec extends SpecBase {
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£180")
+        page.getElementsByTag("dd").text() must include("£180.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£480")
+        page.getElementsByTag("dd").text() must include("£480.00")
       }
     }
 
@@ -177,10 +177,8 @@ class ReturnSentControllerSpec extends SpecBase {
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
 
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
-
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
-
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -197,12 +195,12 @@ class ReturnSentControllerSpec extends SpecBase {
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("4000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£720")
+        page.getElementsByTag("dd").text() must include("£720.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("6000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£1440")
+        page.getElementsByTag("dd").text() must include("£1440.00")
       }
     }
 
@@ -427,6 +425,45 @@ class ReturnSentControllerSpec extends SpecBase {
       }
     }
 
+    "must show producer added when a producer has been added" in {
+      val userAnswersData = Json.obj(
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
+      )
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
+
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
+
+
+
+      running(application) {
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("returnSent.RegisteredSites"))
+      }
+    }
+
+    "must show correct total for quarter " in {
+
+    }
+
+    "must show correct balance brought forward" in {
+
+    }
+
+    "must show correct total" in {
+
+    }
 
   }
 }

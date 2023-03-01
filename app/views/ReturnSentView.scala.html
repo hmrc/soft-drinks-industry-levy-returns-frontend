@@ -40,7 +40,11 @@
   broughtIntoUkAnswers: SummaryList,
   broughtIntoUkSmallProducerAnswers: SummaryList,
   claimCreditsForExportsAnswers: SummaryList,
-  claimCreditsForLostDamagedAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
+  claimCreditsForLostDamagedAnswers: SummaryList,
+  smallProducerCheck: Option[List[SmallProducer]],
+  warehouseCheck: Option[List[Warehouse]],
+  smallProducerAnswers: SummaryList,
+  warehouseAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
 
 
 @amountToPayTable = {
@@ -209,12 +213,24 @@
         </p>
     </div>
 
-    <h2 class="govuk-heading-m">
-        @messages("returnSent.amountToPay")
-    </h2>
-
+    <div class = "claimCreditsForLostDamagedAnswers">
+        if(smallProducerCheck != None || warehouseCheck != None){
+        <h2 class="govuk-heading-m">
+            @messages("returnSent.RegisteredSites")
+        </h2>
+        }
+        @if(smallProducerCheck != None){
+            <p class="govuk-body">
+                @govukSummaryList(smallProducerAnswers)
+            </p>
+        }
+        @if(warehouseCheck != None){
+            <p class="govuk-body">
+                @govukSummaryList(warehouseAnswers)
+            </p>
+        }
+    </div>
 </details>
 
-@amountToPayTable
-
+ @amountToPayTable
 }

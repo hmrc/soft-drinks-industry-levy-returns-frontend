@@ -29,6 +29,25 @@ import viewmodels.implicits._
 
 object SmallProducerDetailsSummary  {
 
+  def producerList(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(SmallProducerDetailsPage).map {
+      answer =>
+
+        val value = answers.smallProducerList.length.toString
+
+        SummaryListRow(
+          key     = "smallProducerDetails.producerList.checkYourAnswersLabel",
+          value   = ValueViewModel(value),
+          actions = if(checkAnswers == true) {  Some(
+            Actions("",
+              items =Seq(
+                ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+              ))
+          )}else None
+        )
+    }
+
   def lowBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SmallProducerDetailsPage).map {
       answer =>

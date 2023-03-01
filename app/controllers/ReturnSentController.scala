@@ -18,9 +18,10 @@ package controllers
 
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
-import models.ReturnPeriod
+import models.{Address, ReturnPeriod, SmallProducer, Warehouse}
 import pages.{BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, OwnBrandsPage, PackagedContractPackerPage}
 import viewmodels.govuk.summarylist._
+import scala.math.BigDecimal
 
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,11 +31,14 @@ import views.html.ReturnSentView
 
 import java.time.format.DateTimeFormatter
 import config.FrontendAppConfig
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 import java.time.{LocalTime, ZoneId}
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
+import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SecondaryWarehouseDetailsSummary, SmallProducerDetailsSummary}
+
+import java.util.Locale
 
 class ReturnSentController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -131,6 +135,15 @@ class ReturnSentController @Inject()(
           ).flatten)}else{ SummaryListViewModel(rows = Seq(
           ClaimCreditsForLostDamagedSummary.row(userAnswers, checkAnswers = false)).flatten)}
 
+      val smallProducerAnswers =
+          SummaryListViewModel(rows = Seq(
+            SmallProducerDetailsSummary.producerList(userAnswers, checkAnswers = false),
+          ).flatten)
+
+      val warehouseAnswers =
+        SummaryListViewModel(rows = Seq(
+          SecondaryWarehouseDetailsSummary.warehouseList(userAnswers, checkAnswers = false),
+        ).flatten)
 
 
       val amountOwed:String = "£100,000.00"
@@ -148,6 +161,27 @@ class ReturnSentController @Inject()(
         }
       }
 
+      //Warehouse TODO -> REMOVE WHEN WAREHOUSE LIST IS MADE!
+      val tradingName:String = "Soft Juice Ltd"
+      val line1: String = "3 Prospect St"
+      val line2: String = "Reading"
+      val line3: String = "Berkshire"
+      val line4: String = "United Kingdom"
+      val postcode: String = "CT44 0DF"
+      val warhouseList:List[Warehouse] = List(Warehouse(tradingName,Address(line1, line2, line3, line4, postcode)))
+
+            def smallProducerCheck(smallProducerList:List[SmallProducer]): Option[List[SmallProducer]] = {
+              if(smallProducerList.length > 0){
+                Some(smallProducerList)
+              }else None
+            }
+
+            def warehouseCheck(warehouseList:List[Warehouse]): Option[List[Warehouse]] = {
+              if(warehouseList.length > 0){
+                Some(warehouseList)
+              }else None
+            }
+
       Ok(view(returnDate,
               subscription,
               amountOwed,
@@ -161,6 +195,10 @@ class ReturnSentController @Inject()(
               broughtIntoUkSmallProducerAnswers,
               claimCreditsForExportsAnswers,
               claimCreditsForLostDamagedAnswers,
+              smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList):Option[List[SmallProducer]],
+              warehouseCheck = warehouseCheck(warhouseList):Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
+              smallProducerAnswers,
+              warehouseAnswers
               ))
   }
 }
