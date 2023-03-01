@@ -48,8 +48,12 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case OwnBrandsPage => userAnswers => ownBrandPageCheckNavigation(userAnswers)
+    case OwnBrandsPage => userAnswers => checkOwnBrandPageNavigation(userAnswers)
     case BrandsPackagedAtOwnSitesPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case PackagedContractPackerPage => userAnswers => checkPackagedContractPackerPageNavigation(userAnswers)
+    case HowManyAsAContractPackerPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case ClaimCreditsForExportsPage => userAnswers => checkClaimCreditsForExportPageNavigation(userAnswers)
+    case HowManyCreditsForExportPage => _ => routes.CheckYourAnswersController.onPageLoad()
     case _ => _ => routes.CheckYourAnswersController.onPageLoad()
   }
 
@@ -79,7 +83,7 @@ class Navigator @Inject()() {
     }
   }
 
-  private def ownBrandPageCheckNavigation(userAnswers: UserAnswers) = {
+  private def checkOwnBrandPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = OwnBrandsPage).contains(true)) {
       routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode)
     } else {
@@ -94,6 +98,16 @@ class Navigator @Inject()() {
       routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     }
   }
+
+  private def checkPackagedContractPackerPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = PackagedContractPackerPage).contains(true)) {
+      routes.HowManyAsAContractPackerController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+
 
   private def exemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
@@ -144,10 +158,18 @@ class Navigator @Inject()() {
  }
 
   private def claimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
-    if(userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
+    if (userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
       routes.HowManyCreditsForExportController.onPageLoad(NormalMode)
     } else {
       routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def checkClaimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
+      routes.HowManyCreditsForExportController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
     }
   }
 

@@ -22,7 +22,7 @@ import forms.ClaimCreditsForExportsFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.ClaimCreditsForExportsPage
+import pages.{ClaimCreditsForExportsPage, HowManyCreditsForExportPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ClaimCreditsForExportsView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class ClaimCreditsForExportsController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -67,7 +68,19 @@ class ClaimCreditsForExportsController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForExportsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, updatedAnswers))
+          } yield {
+            if (value) {
+              Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, updatedAnswers))
+            } else {
+              val answersWithLitresRemoved =
+                updatedAnswers.remove(HowManyCreditsForExportPage) match {
+                  case Success(updatedAnswers) => updatedAnswers
+                  case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+                }
+              sessionRepository.set(answersWithLitresRemoved)
+              Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, answersWithLitresRemoved))
+            }
+          }
       )
   }
 }
