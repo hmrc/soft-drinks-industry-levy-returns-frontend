@@ -24,7 +24,8 @@
         layout: templates.Layout,
         govukPanel : GovukPanel,
         govukSummaryList: GovukSummaryList,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        govukTable : GovukTable
 )
 
 @(returnDate:ReturnPeriod,
@@ -32,7 +33,7 @@
   amountOwed:String,
   balance: BigDecimal,
   paymentDate:ReturnPeriod,
-  pageAnswers: String,
+  financialStatus: String,
   ownBrandsAnswer: SummaryList,
   packagedContractPackerAnswers: SummaryList,
   exemptionsForSmallProducersAnswers: SummaryList,
@@ -40,6 +41,46 @@
   broughtIntoUkSmallProducerAnswers: SummaryList,
   claimCreditsForExportsAnswers: SummaryList,
   claimCreditsForLostDamagedAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
+
+
+@amountToPayTable = {
+@govukTable(Table(
+    rows = Seq(
+        Seq(
+            TableRow(
+                content = Text(messages("checkYourAnswers.amountToPay.quarter"))
+            ),
+            TableRow(
+                content = Text("")
+            )
+        ),
+        Seq(
+            TableRow(
+                content = Text(messages("checkYourAnswers.amountToPay.balanceBroughtForward"))
+            ),
+            TableRow(
+                content = Text("")
+            )
+        ),
+        Seq(
+            TableRow(
+                content = Text(messages("checkYourAnswers.amountToPay.total"))
+            ),
+            TableRow(
+                content = Text("")
+            )
+        )
+    ),
+    head = None,
+    caption =  financialStatus match {
+        case "amountToPay" =>  Some(messages("checkYourAnswers.amountToPay.title"))
+        case "creditedPay" =>  Some(messages("checkYourAnswers.creditedPay.title"))
+        case "noPayNeeded" =>  Some(messages("checkYourAnswers.noPayNeeded.title"))
+    },
+    captionClasses = "govuk-table__caption--m",
+    firstCellIsHeader = true
+    ))
+}
 
 @layout(pageTitle = titleNoForm(messages("returnSent.title"))) {
 
@@ -173,4 +214,7 @@
     </h2>
 
 </details>
+
+@amountToPayTable
+
 }

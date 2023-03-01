@@ -318,7 +318,6 @@ broughtIntoUkFromSmallProducers.detailsContent2 = If you bring liable drinks int
 broughtIntoUkFromSmallProducers.detailsContent3 = contact details, EU VAT number (if they have one) and website of the business
 broughtIntoUkFromSmallProducers.detailsContent4 = amount of litres of liable drinks packaged globally for brands the business owns in the past 12 months
 broughtIntoUkFromSmallProducers.detailsContent5 = signature of someone from the business, their position and the date of the signature
-broughtIntoUkFromSmallProducers.checkYourAnswersLabel = broughtIntoUkFromSmallProducers
 broughtIntoUkFromSmallProducers.error.required = Select yes if you are reporting liable drinks you have brought into the UK from small producers
 broughtIntoUkFromSmallProducers.change.hidden = BroughtIntoUkFromSmallProducers
 
@@ -415,6 +414,7 @@ exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered sm
 ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site
 broughtIntoUK.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
 claimCreditsForLostDamaged.checkYourAnswersLabel = Claiming credit for lost or destroyed liable drinks?
+broughtIntoUKFromSmallProducers.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
 
 returnSent.title = Return sent
 returnSent.panel.returnMessage = Soft Drinks Industry Levy return {0} to {1} {2} for the {3}
@@ -443,3 +443,13 @@ returnSent.broughtIntoUkSmallProducer = Brought into the UK from small producers
 returnSent.exported = Exported
 returnSent.lostDestroyed = Lost or destroyed
 returnSent.amountToPay = Amount to pay
+
+checkYourAnswers.amountToPay.title = Amount to pay
+checkYourAnswers.creditedPay.title = Amount you will be credited
+checkYourAnswers.noPayNeeded.title = You do not need to pay anything
+checkYourAnswers.amountToPay.quarter = Total this quarter
+
+litresInTheHighBand = Litres in the high band
+litresInTheLowBand = Litres in the low band
+highBandLevy = High band levy
+lowBandLevy = Low band levy

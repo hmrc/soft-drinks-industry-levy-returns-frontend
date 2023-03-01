@@ -33,8 +33,8 @@ object HowManyAsAContractPackerSummary  {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRow(
-          key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)),
+          key     = "litresInTheLowBand",
+          value   = ValueViewModel(HtmlContent(value)),
           classes = "govuk-summary-list__row--no-border",
           actions = if(checkAnswers == true) {
             Some(
@@ -53,7 +53,7 @@ object HowManyAsAContractPackerSummary  {
 
     answers.get(HowManyAsAContractPackerPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", (answer.lowBand * lowBandCostPerLitre.toDouble))
+        val levy = "£" + String.format("%,.2f", answer.lowBand * lowBandCostPerLitre.toDouble)
         val value = HtmlFormat.escape(levy).toString
 
         SummaryListRowViewModel(

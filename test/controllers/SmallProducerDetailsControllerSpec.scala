@@ -41,9 +41,6 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
   def onwardRoute = Call("GET", "/foo")
 
-  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
-  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
-
   val formProvider = new SmallProducerDetailsFormProvider()
   val form = formProvider()
 

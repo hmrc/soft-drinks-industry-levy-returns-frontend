@@ -53,7 +53,7 @@ object BrandsPackagedAtOwnSitesSummary  {
 
     answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f",(answer.lowBand * lowBandCostPerLitre.toDouble))
+        val levy = "£" + String.format("%,.2f", answer.lowBand * lowBandCostPerLitre.toDouble)
         val value = HtmlFormat.escape(levy).toString
 
         SummaryListRowViewModel(

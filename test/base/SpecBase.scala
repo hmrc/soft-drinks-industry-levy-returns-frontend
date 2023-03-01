@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.{ReturnPeriod, UserAnswers}
+import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -89,7 +89,13 @@ trait SpecBase
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
 
+  val returnPeriod = ReturnPeriod(2022,1)
   val genericSmallProducerAlias = "Generic Producer LTD"
+  val baseUrl = "/soft-drinks-industry-levy-returns-frontend"
+  val baseAlias = "Jackson's Drinks"
+  val baseLiterage = 100L
+  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
+  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
   val sdilNumber: String = "XKSDIL000000022"
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",

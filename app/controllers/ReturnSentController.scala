@@ -19,7 +19,7 @@ package controllers
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import models.ReturnPeriod
-import pages.{BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, OwnBrandsPage}
+import pages.{BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, OwnBrandsPage, PackagedContractPackerPage}
 import viewmodels.govuk.summarylist._
 
 import javax.inject.Inject
@@ -49,12 +49,7 @@ class ReturnSentController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id,"sdil"),20.seconds).get
-
-      val pageAnswers = request.userAnswers.get(OwnBrandsPage).map(answers =>  answers match {
-        case answers if answers == true => "Yes"
-        case _ => "False"
-      }).getOrElse("False")
+      val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id,"sdil"),4.seconds).get
 
       val userAnswers = request.userAnswers
 
@@ -71,9 +66,9 @@ class ReturnSentController @Inject()(
       }
 
       val packagedContractPackerAnswers =
-        if(userAnswers.get(OwnBrandsPage).getOrElse(false) == true){
+        if(userAnswers.get(PackagedContractPackerPage).getOrElse(false) == true){
         SummaryListViewModel(rows = Seq(
-        PackagedContractPackerSummary.row(request.userAnswers, checkAnswers = false),
+        PackagedContractPackerSummary.row(userAnswers, checkAnswers = false),
         HowManyAsAContractPackerSummary.lowBandRow(userAnswers, checkAnswers = false),
         HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
         HowManyAsAContractPackerSummary.highBandRow(userAnswers, checkAnswers = false),
@@ -82,79 +77,90 @@ class ReturnSentController @Inject()(
           PackagedContractPackerSummary.row(request.userAnswers, checkAnswers = false)).flatten)}
 
       val exemptionsForSmallProducersAnswers =
-        if(userAnswers.get(OwnBrandsPage).getOrElse(false) == true){
+        if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false) == true){
           SummaryListViewModel(rows = Seq(
-            ExemptionsForSmallProducersSummary.row(request.userAnswers, checkAnswers = false),
+            ExemptionsForSmallProducersSummary.row(userAnswers, checkAnswers = false),
             SmallProducerDetailsSummary.lowBandRow(userAnswers, checkAnswers = false),
             SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
             SmallProducerDetailsSummary.highBandRow(userAnswers, checkAnswers = false),
             SmallProducerDetailsSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
           ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          ExemptionsForSmallProducersSummary.row(request.userAnswers, checkAnswers = false)).flatten)}
+          ExemptionsForSmallProducersSummary.row(userAnswers, checkAnswers = false)).flatten)}
 
       val broughtIntoUkAnswers =
         if(userAnswers.get(BroughtIntoUKPage).getOrElse(false) == true){
           SummaryListViewModel(rows = Seq(
-            BroughtIntoUKSummary.row(request.userAnswers, checkAnswers = false),
+            BroughtIntoUKSummary.row(userAnswers, checkAnswers = false),
             HowManyBroughtIntoUkSummary.lowBandRow(userAnswers, checkAnswers = false),
             HowManyBroughtIntoUkSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
             HowManyBroughtIntoUkSummary.highBandRow(userAnswers, checkAnswers = false),
             HowManyBroughtIntoUkSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
           ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          BroughtIntoUKSummary.row(request.userAnswers, checkAnswers = false)).flatten)}
+          BroughtIntoUKSummary.row(userAnswers, checkAnswers = false)).flatten)}
 
       val broughtIntoUkSmallProducerAnswers =
         if(userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false) == true){
           SummaryListViewModel(rows = Seq(
-            BroughtIntoUkFromSmallProducersSummary.row(request.userAnswers, checkAnswers = false),
+            BroughtIntoUkFromSmallProducersSummary.row(userAnswers, checkAnswers = false),
             HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandRow(userAnswers, checkAnswers = false),
             HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
             HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandRow(userAnswers, checkAnswers = false),
             HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
           ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          BroughtIntoUkFromSmallProducersSummary.row(request.userAnswers, checkAnswers = false)).flatten)}
+          BroughtIntoUkFromSmallProducersSummary.row(userAnswers, checkAnswers = false)).flatten)}
 
       val claimCreditsForExportsAnswers =
         if(userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false) == true){
           SummaryListViewModel(rows = Seq(
-            ClaimCreditsForExportsSummary.row(request.userAnswers, checkAnswers = false),
+            ClaimCreditsForExportsSummary.row(userAnswers, checkAnswers = false),
             HowManyCreditsForExportSummary.lowBandRow(userAnswers, checkAnswers = false),
             HowManyCreditsForExportSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
             HowManyCreditsForExportSummary.highBandRow(userAnswers, checkAnswers = false),
             HowManyCreditsForExportSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
           ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          ClaimCreditsForExportsSummary.row(request.userAnswers, checkAnswers = false)).flatten)}
+          ClaimCreditsForExportsSummary.row(userAnswers, checkAnswers = false)).flatten)}
 
       val claimCreditsForLostDamagedAnswers =
         if(userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false) == true){
           SummaryListViewModel(rows = Seq(
-            ClaimCreditsForLostDamagedSummary.row(request.userAnswers, checkAnswers = false),
+            ClaimCreditsForLostDamagedSummary.row(userAnswers, checkAnswers = false),
             HowManyCreditsForLostDamagedSummary.lowBandRow(userAnswers, checkAnswers = false),
             HowManyCreditsForLostDamagedSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
             HowManyCreditsForLostDamagedSummary.highBandRow(userAnswers, checkAnswers = false),
             HowManyCreditsForLostDamagedSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
           ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          ClaimCreditsForLostDamagedSummary.row(request.userAnswers, checkAnswers = false)).flatten)}
+          ClaimCreditsForLostDamagedSummary.row(userAnswers, checkAnswers = false)).flatten)}
 
-      println("Own Brands = "+ pageAnswers)
+
+
       val amountOwed:String = "£100,000.00"
-      val balance = 0
+      val balance:BigDecimal = 0
       val paymentDate = ReturnPeriod(2022,1)
       val returnDate = ReturnPeriod(2022,1)
       LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
+
+
+      def financialStatus (total :BigDecimal):String = {
+        total match {
+          case total if total > 0 => "amountToPay"
+          case total if total < 0 => "creditedPay"
+          case total if total == 0 => "noPayNeeded"
+        }
+      }
 
       Ok(view(returnDate,
               subscription,
               amountOwed,
               balance,
               paymentDate,
-              pageAnswers,
+              financialStatus = financialStatus(balance): String,
               ownBrandsAnswer,
               packagedContractPackerAnswers,
               exemptionsForSmallProducersAnswers,
               broughtIntoUkAnswers,
               broughtIntoUkSmallProducerAnswers,
               claimCreditsForExportsAnswers,
-              claimCreditsForLostDamagedAnswers))
+              claimCreditsForLostDamagedAnswers,
+              ))
   }
 }

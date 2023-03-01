@@ -20,7 +20,7 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.BroughtIntoUkFromSmallProducersPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -32,13 +32,17 @@ object BroughtIntoUkFromSmallProducersSummary  {
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = "broughtIntoUkFromSmallProducers.checkYourAnswersLabel",
+        SummaryListRow(
+          key     = "broughtIntoUKFromSmallProducers.checkYourAnswersLabel",
           value   = ValueViewModel(value),
-          actions = if(checkAnswers == true){Seq(
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+                items =
+                  Seq(
             ActionItemViewModel("site.change", routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("broughtIntoUkFromSmallProducers.change.hidden"))
-          )}else{Seq()}
+          )))}else None
         )
     }
 }
