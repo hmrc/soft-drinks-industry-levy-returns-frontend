@@ -63,6 +63,7 @@ class AddASmallProducerController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
       val userAnswers = request.userAnswers
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
 
@@ -118,7 +119,6 @@ class AddASmallProducerController @Inject()(
   def onEditPageSubmit(mode: Mode, sdilReference: String): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-
         val userAnswers = request.userAnswers
         val returnPeriod = request.returnPeriod
         val form = formProvider(userAnswers)

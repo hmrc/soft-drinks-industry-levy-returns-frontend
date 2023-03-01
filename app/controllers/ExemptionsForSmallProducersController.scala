@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.ExemptionsForSmallProducersFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.ExemptionsForSmallProducersPage
+import pages.{AddASmallProducerPage, ExemptionsForSmallProducersPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +29,7 @@ import views.html.ExemptionsForSmallProducersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class ExemptionsForSmallProducersController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -57,6 +58,8 @@ class ExemptionsForSmallProducersController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
@@ -65,7 +68,19 @@ class ExemptionsForSmallProducersController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptionsForSmallProducersPage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
+          } yield {
+            if (value) {
+              Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
+            } else {
+              val answersWithLitresRemoved =
+                updatedAnswers.remove(AddASmallProducerPage) match {
+                  case Success(updatedAnswers) => updatedAnswers.copy(smallProducerList = List())
+                  case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+                }
+              sessionRepository.set(answersWithLitresRemoved)
+              Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, answersWithLitresRemoved))
+            }
+          }
       )
   }
 

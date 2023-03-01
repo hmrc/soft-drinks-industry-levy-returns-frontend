@@ -22,7 +22,7 @@ import forms.BroughtIntoUKFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.BroughtIntoUKPage
+import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BroughtIntoUKView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class BroughtIntoUKController @Inject()(
                                         override val messagesApi: MessagesApi,
@@ -67,7 +68,19 @@ class BroughtIntoUKController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(BroughtIntoUKPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers))
+          } yield {
+            if (value) {
+              Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers))
+            } else {
+              val answersWithLitresRemoved =
+                updatedAnswers.remove(HowManyBroughtIntoUkPage) match {
+                  case Success(updatedAnswers) => updatedAnswers
+                  case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+                }
+              sessionRepository.set(answersWithLitresRemoved)
+              Redirect(navigator.nextPage(BroughtIntoUKPage, mode, answersWithLitresRemoved))
+            }
+          }
       )
   }
 }
