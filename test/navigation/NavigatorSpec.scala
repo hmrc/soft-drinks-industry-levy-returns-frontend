@@ -49,8 +49,8 @@ class NavigatorSpec extends SpecBase {
 
           "Own brand packaged at own site page" - {
 
-             def navigate(value: Boolean) = navigator.nextPage(OwnBrandsPage,
-              NormalMode,
+             def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(OwnBrandsPage,
+               mode,
               UserAnswers(id, Json.obj("ownBrands" -> value)))
 
             "select Yes to navigate to How Many own brands packaged at own sites page" in {
@@ -62,6 +62,12 @@ class NavigatorSpec extends SpecBase {
               val result = navigate(false)
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
           }
 
           "How many own brands packaged at own sites" - {
@@ -79,8 +85,8 @@ class NavigatorSpec extends SpecBase {
 
           "Packaged as a contract packer" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(PackagedContractPackerPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(PackagedContractPackerPage,
+              mode,
               UserAnswers(id, Json.obj("packagedContractPacker" -> value)))
 
             "select Yes to navigate to How Many packaged as contract packer" in {
@@ -91,6 +97,11 @@ class NavigatorSpec extends SpecBase {
             "select No to navigate to exemptions for small producers page" in {
               val result = navigate(false)
               result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+            }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
 
           }
@@ -110,15 +121,14 @@ class NavigatorSpec extends SpecBase {
 
           "Exemptions for small producers" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(ExemptionsForSmallProducersPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(ExemptionsForSmallProducersPage,
+              mode,
               UserAnswers(sdilNumber, Json.obj("exemptionsForSmallProducers" -> value)))
 
             "select Yes to navigate to Add small producer pager" in {
               val result = navigate(true)
               result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
             }
-
 
             "should navigate to small producer details page when yes is selected and there are is greater than 0 small producers" in {
               val result = navigator.nextPage(ExemptionsForSmallProducersPage,
@@ -135,12 +145,17 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
             }
 
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
           }
 
           "Brought into UK" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(BroughtIntoUKPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(BroughtIntoUKPage,
+              mode,
               UserAnswers(sdilNumber, Json.obj("broughtIntoUK" -> value)))
 
             "select Yes to navigate to How many brought into UK pager" in {
@@ -151,6 +166,11 @@ class NavigatorSpec extends SpecBase {
             "select No to navigate to brought into uk page" in {
               val result = navigate(false)
               result mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
+            }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
 
           }
@@ -170,8 +190,8 @@ class NavigatorSpec extends SpecBase {
 
           "Brought into UK from small producers" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(BroughtIntoUkFromSmallProducersPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(BroughtIntoUkFromSmallProducersPage,
+              mode,
               UserAnswers(sdilNumber, Json.obj("broughtIntoUkFromSmallProducers" -> value)))
 
             "select Yes to navigate to How many brought into UK pager" in {
@@ -182,6 +202,11 @@ class NavigatorSpec extends SpecBase {
             "select No to navigate to brought into uk page" in {
               val result = navigate(false)
               result mustBe routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
+            }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
 
           }
@@ -199,8 +224,8 @@ class NavigatorSpec extends SpecBase {
 
           "Claim credits for export" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(ClaimCreditsForExportsPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(ClaimCreditsForExportsPage,
+              mode,
               UserAnswers(sdilNumber, Json.obj("claimCreditsForExports" -> value)))
 
             "select Yes to navigate to How many credits for export page" in {
@@ -211,6 +236,11 @@ class NavigatorSpec extends SpecBase {
             "select No to navigate to brought into uk page" in {
               val result = navigate(false)
               result mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+            }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
           }
 
@@ -269,7 +299,7 @@ class NavigatorSpec extends SpecBase {
               }
 
             }
-            //TODO change Index controller page to check your answers page once ready
+            
             "select No to navigate to Index controller page " - {
               "when user is a not a new Importer" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
@@ -277,7 +307,7 @@ class NavigatorSpec extends SpecBase {
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
                 val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.CheckYourAnswersController.onPageLoad() //TODO change it to check your answers page once ready
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
               }
 
             }

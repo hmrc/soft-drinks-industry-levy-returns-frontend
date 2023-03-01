@@ -51,9 +51,11 @@ class Navigator @Inject()() {
   private val checkRouteMap: Page => UserAnswers => Call = {
     case OwnBrandsPage => userAnswers => checkOwnBrandPageNavigation(userAnswers)
     case BrandsPackagedAtOwnSitesPage => _ => routes.CheckYourAnswersController.onPageLoad()
+
     case PackagedContractPackerPage => userAnswers => checkPackagedContractPackerPageNavigation(userAnswers)
     case HowManyAsAContractPackerPage => _ => routes.CheckYourAnswersController.onPageLoad()
 
+    //TODO ---------
     case ExemptionsForSmallProducersPage => userAnswers => checkExemptionForSmallProducersPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.CheckYourAnswersController.onPageLoad()
 
@@ -127,7 +129,8 @@ class Navigator @Inject()() {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }else routes.SmallProducerDetailsController.onPageLoad(NormalMode)
   }
-  // TODO - sort out the logic
+
+  //TODO ---------
   private def checkExemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
       routes.SmallProducerDetailsController.onPageLoad(CheckMode)
