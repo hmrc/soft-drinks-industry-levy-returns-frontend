@@ -121,8 +121,6 @@ class Navigator @Inject()() {
   }
 
   private def exemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
-    println(Console.YELLOW + "normal navigator called" + Console.WHITE)
-
     if(userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
       routes.AddASmallProducerController.onPageLoad(NormalMode)
     } else if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(false)) {
