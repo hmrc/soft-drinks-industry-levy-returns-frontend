@@ -86,8 +86,13 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def intsAboveValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat(_ > value)
 
-  def longAboveValue(value: Long): Gen[Long] =
-    arbitrary[Long] suchThat(_ >= value)
+  def longAboveValue(value: Long): Gen[Long] = {
+    println("£DDDDDD ")
+    println(value)
+    val numbers = arbitrary[Long].suchThat(_ >= value)
+    numbers.map(l => println(l))
+    numbers
+  }
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
     arbitrary[Int] suchThat(x => x < min || x > max)

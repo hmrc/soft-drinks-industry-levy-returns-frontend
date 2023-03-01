@@ -16,39 +16,10 @@
 
 package forms
 
-import forms.behaviours.LitresFieldBehaviour
+import forms.behaviours.LongFieldBehaviour
 import play.api.data.{Form, FormError}
 
-trait LitresHelper extends LitresFieldBehaviour {
+trait LitresHelper extends LongFieldBehaviour {
 
-  def testLitres(form: Form[_], fieldName: String) = {
-    s".$fieldName" - {
 
-      val requiredKey = s"litres.error.$fieldName.required"
-      val maxValue = 100000000000000L
-      val validDataGenerator = longInRangeWithCommas(0, maxValue)
-
-      behave like fieldThatBindsValidData(
-        form,
-        fieldName,
-        validDataGenerator
-      )
-
-      behave like litresField(
-        form,
-        fieldName
-      )
-
-      behave like litresFieldWithMaximum(
-        form,
-        fieldName
-      )
-
-      behave like mandatoryField(
-        form,
-        fieldName,
-        requiredError = FormError(fieldName, requiredKey)
-      )
-    }
-  }
 }
