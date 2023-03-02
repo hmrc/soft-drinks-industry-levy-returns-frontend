@@ -20,6 +20,7 @@ import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
 import javax.inject.Inject
 import models.Mode
+import models.backend.UkAddress
 import navigation.Navigator
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -27,8 +28,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackAtBusinessAddressView
-
 import scala.concurrent.{ExecutionContext, Future}
+
 
 class PackAtBusinessAddressController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -46,21 +47,23 @@ class PackAtBusinessAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
+      val businessName = request.subscription.orgName
+      val businessAddress = request.subscription.address
+      lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val businessName = request.subscription.orgName
+      val businessAddress = request.subscription.address
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
 
         value =>
           for {

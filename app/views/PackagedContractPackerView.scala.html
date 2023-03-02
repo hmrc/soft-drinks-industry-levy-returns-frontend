@@ -24,6 +24,7 @@
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+
 @htmlContent = {
     <p class ="govuk-body">@messages("whatIsASmallProducer.detailsContent1")</p>
     <ul class="govuk-list govuk-list--bullet">
@@ -45,7 +46,7 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("packagedContractPacker.subHeading")), None
-        ))
+            ))
         @govukDetails(Details(
 
             summary = Text(messages("whatIsASmallProducer.detailsLink")),

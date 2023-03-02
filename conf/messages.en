@@ -51,6 +51,7 @@ checkYourAnswers.heading = Check Your Answers
 journeyRecovery.title = Sorry, there is a problem with the service
 journeyRecovery.guidance = [Add content to explain how to proceed.]
 
+
 signedOut.title = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
 
@@ -58,6 +59,11 @@ unauthorised.title = You can’t access this service with this account
 
 packAtBusinessAddress.title = Is this address a UK packaging site you operate to produce liable drinks?
 packAtBusinessAddress.error.required = Select yes if your registered business address is a UK packaging site that you operate to produce liable drinks
+
+packAtBusinessAddress.detailsLink = Why we need these details
+packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
+packAtBusinessAddress.nameText = The business name is
+packAtBusinessAddress.addressText = The business address is
 
 packagedContractPacker.title = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
 packagedContractPacker.subHeading = Do not include liable drinks you have packaged for registered small producers.
@@ -159,8 +165,8 @@ howManyCreditsForLostDamaged.checkYourAnswersLabel = HowManyCreditsForLostDamage
 
 howManyBroughtIntoTheUKFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
 howManyBroughtIntoTheUKFromSmallProducers.subtext = Include your own brands of liable drinks produced outside of the UK.
-
 howManyBroughtIntoTheUKFromSmallProducers.checkYourAnswersLabel = HowManyBroughtIntoTheUKFromSmallProducers
+
 
 broughtIntoUkFromSmallProducers.title = Are you reporting liable drinks you have brought into the UK from small producers?
 broughtIntoUkFromSmallProducers.subHeading = Include your own brands of liable drinks produced outside of the UK.
@@ -189,7 +195,7 @@ askSecondaryWarehouseInReturn.change.hidden = AskSecondaryWarehouseInReturn
 claimCreditsForExports.title = Exported drinks
 claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
 claimCreditsForExports.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
-claimCreditsForExports.warning = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
+claimCreditsForExports.warning = You can only claim credit if you?ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
 claimCreditsForExports.detailsLink = What can I claim a credit for?
 claimCreditsForExports.detailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
 claimCreditsForExports.detailsContent2 = brand of the liable drinks

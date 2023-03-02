@@ -94,11 +94,11 @@ import play.api.data.FormError
           FormError(fieldName, maxValueKey, Seq(maxValue))
         )
 
-        behave like mandatoryField(
-          form,
-          fieldName,
-          requiredError = FormError(fieldName, requiredKey)
-        )
-      }
+      behave like mandatoryField(
+        form,
+        fieldName,
+        requiredError = FormError(fieldName, requiredKey)
+      )
+  }
+}
 
-    }

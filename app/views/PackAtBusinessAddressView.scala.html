@@ -14,15 +14,19 @@
  * limitations under the License.
  *@
 
+@import models.backend.UkAddress
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    govukSummaryList: GovukSummaryList,
+    govukDetails: GovukDetails
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], businessName: String, businessAddress: UkAddress, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("packAtBusinessAddress.title"))) {
 
@@ -32,18 +36,27 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-@*       <h1 class="govuk-heading-m">@messages("packAtBusinessAddress.title")</h1>*@
+       <h1 class="govuk-heading-m">@messages("packAtBusinessAddress.title") </h1>
+
+        <p class="govuk-body-m"> <span class="govuk-visually-hidden">@messages("packAtBusinessAddress.nameText")</span> @businessName</p>
+        <p class="govuk-body-m"> <span class="govuk-visually-hidden">@messages("packAtBusinessAddress.addressText")</span> @businessAddress.lines.head, @businessAddress.lines.last, @businessAddress.postCode</p>
+
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("packAtBusinessAddress.title")).asPageHeading(),
+                legend = LegendViewModel(messages("packAtBusinessAddress.title")).withCssClass("govuk-visually-hidden"),
                 hint = None
             )
         )
 
+        @govukDetails(Details(
+            summary = Text(messages("packAtBusinessAddress.detailsLink")),
+            content = Text(messages("packAtBusinessAddress.detailsContent"))
+        ))
+
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.saveContinue"))
         )
     }
 }
