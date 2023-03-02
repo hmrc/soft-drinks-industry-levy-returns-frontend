@@ -51,26 +51,20 @@ class Navigator @Inject()() {
   private val checkRouteMap: Page => UserAnswers => Call = {
     case OwnBrandsPage => userAnswers => checkOwnBrandPageNavigation(userAnswers)
     case BrandsPackagedAtOwnSitesPage => _ => routes.CheckYourAnswersController.onPageLoad()
-
     case PackagedContractPackerPage => userAnswers => checkPackagedContractPackerPageNavigation(userAnswers)
     case HowManyAsAContractPackerPage => _ => routes.CheckYourAnswersController.onPageLoad()
-
-    //TODO ---------
     case ExemptionsForSmallProducersPage => userAnswers => checkExemptionForSmallProducersPageNavigation(userAnswers)
-    case AddASmallProducerPage => _ => routes.CheckYourAnswersController.onPageLoad()
-
+    case SmallProducerDetailsPage => userAnswers => checkSmallProducerDetailsPageNavigation(userAnswers)
+    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad()
-
     case BroughtIntoUkFromSmallProducersPage => userAnswers => checkBroughtIntoUkfromSmallProducersPageNavigation(userAnswers)
     case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => routes.CheckYourAnswersController.onPageLoad()
-
     case ClaimCreditsForExportsPage => userAnswers => checkClaimCreditsForExportPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => routes.CheckYourAnswersController.onPageLoad()
-
     case ClaimCreditsForLostDamagedPage => userAnswers => checkClaimCreditsForLostDamagedPageNavigation(userAnswers)
     case HowManyCreditsForLostDamagedPage => _ => routes.CheckYourAnswersController.onPageLoad()
-
     case _ => _ => routes.CheckYourAnswersController.onPageLoad()
   }
 
@@ -127,10 +121,11 @@ class Navigator @Inject()() {
       routes.AddASmallProducerController.onPageLoad(NormalMode)
     } else if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(false)) {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
-    }else routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    }else {
+      routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    }
   }
 
-  //TODO ---------
   private def checkExemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
       routes.SmallProducerDetailsController.onPageLoad(CheckMode)
@@ -151,8 +146,16 @@ class Navigator @Inject()() {
           routes.BroughtIntoUKController.onPageLoad(NormalMode)
         }
     }
-
   }
+
+  private def checkSmallProducerDetailsPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
+      routes.AddASmallProducerController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
   private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
       routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)

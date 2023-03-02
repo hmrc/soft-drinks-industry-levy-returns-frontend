@@ -73,7 +73,7 @@ class BroughtIntoUkFromSmallProducersController @Inject()(
             } else {
               val answersWithLitresRemoved =
                 updatedAnswers.remove(HowManyBroughtIntoTheUKFromSmallProducersPage) match {
-                  case Success(updatedAnswers) => updatedAnswers.copy(smallProducerList = List())
+                  case Success(updatedAnswers) => updatedAnswers
                   case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
                 }
               sessionRepository.set(answersWithLitresRemoved)
