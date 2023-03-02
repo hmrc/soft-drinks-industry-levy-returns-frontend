@@ -18,7 +18,7 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers, Warehouse}
-import pages.{SecondaryWarehouseDetailsPage, SmallProducerDetailsPage}
+import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

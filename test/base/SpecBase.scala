@@ -16,11 +16,10 @@
 
 package base
 
-import akka.http.scaladsl.model.headers.Date
 import controllers.actions._
-import models.{FinancialLineItem, ReturnPeriod, SmallProducer, UserAnswers}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

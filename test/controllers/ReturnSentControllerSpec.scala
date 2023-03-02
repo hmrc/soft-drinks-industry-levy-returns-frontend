@@ -190,47 +190,6 @@ class ReturnSentControllerSpec extends SpecBase {
       }
     }
 
-    "must show exemption for small producers row when yes is selected" in {
-      val userAnswersData = Json.obj(
-        "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
-      )
-
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
-
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-      ).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
-        page.getElementsByTag("dt").text() must include(Messages("exemptionsForSmallProducers.checkYourAnswersLabel"))
-
-        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("4000")
-        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£720.00")
-
-        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("6000")
-        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£1440.00")
-      }
-    }
-
     "must show brought into uk with answer no, when answered" in {
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
@@ -527,7 +486,7 @@ class ReturnSentControllerSpec extends SpecBase {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
+      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
       when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
@@ -540,7 +499,9 @@ class ReturnSentControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("checkYourAnswers.creditedPay.title"))
+        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.noPayNeeded.title"))
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text() must include("£660.00")
       }
     }
 
@@ -555,7 +516,7 @@ class ReturnSentControllerSpec extends SpecBase {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
+      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
       when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
@@ -568,7 +529,9 @@ class ReturnSentControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.noPayNeeded.title"))
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text() must include("£0")
       }
     }
 
@@ -584,7 +547,7 @@ class ReturnSentControllerSpec extends SpecBase {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
+      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
       when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
 
@@ -598,8 +561,9 @@ class ReturnSentControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.noPayNeeded.title"))
         page.getElementsByTag("dt").text() must include(Messages("total.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text() must include("£660.00")
       }
     }
 

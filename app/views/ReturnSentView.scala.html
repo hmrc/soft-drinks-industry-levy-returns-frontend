@@ -177,19 +177,19 @@
     </div>
 </details>
 <div class = "claimCreditsForLostDamagedAnswers">
-    <h2 class="govuk-heading-m">
+    <h2 class="govuk-heading-m" id="amountDue">
         @(financialStatus match {case "amountToPay" =>  Some(messages("checkYourAnswers.amountToPay.title"))
         case "creditedPay" =>  Some(messages("checkYourAnswers.creditedPay.title"))
         case "noPayNeeded" =>  Some(messages("checkYourAnswers.noPayNeeded.title"))
         })
     </h2>
-    <p class="govuk-body">
+    <p class="govuk-body" id = "quarter">
         @govukSummaryList(quarter)
     </p>
-    <p class="govuk-body">
+    <p class="govuk-body" id = "balanceBroughtForward">
         @govukSummaryList(balanceBroughtForward)
     </p>
-    <p class="govuk-body">
+    <p class="govuk-body" id = "total">
         @govukSummaryList(total)
     </p>
 </div>
@@ -207,7 +207,6 @@
     }
     @if(warehouseCheck != None){
     <p class="govuk-body">
-        @govukSummaryList(smallProducerAnswers)
         @govukSummaryList(warehouseAnswers)
     </p>
     }

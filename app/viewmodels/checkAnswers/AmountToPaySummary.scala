@@ -54,9 +54,7 @@ object AmountToPaySummary {
 
 
     val smallProducerDetailsAnswers = answers.smallProducerList
-    val smallProducerDetailsLowBand = smallProducerDetailsAnswers.map(answer => answer.litreage._1).sum
     val smallProducerDetailsLowBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._1 * lowBandCostPerLitre * 0).sum
-    val smallProducerDetailsHighBand = smallProducerDetailsAnswers.map(answer => answer.litreage._2).sum
     val smallProducerDetailsHighBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._2 * lowBandCostPerLitre * 0).sum
     val smallProducerDetailsTotal = smallProducerDetailsLowBandCost + smallProducerDetailsHighBandCost
 

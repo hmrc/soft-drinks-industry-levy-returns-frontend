@@ -72,7 +72,7 @@ object SmallProducerDetailsSummary  {
 
     answers.get(SmallProducerDetailsPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", (answers.smallProducerList.map(lowBand => lowBand.litreage._1).sum * lowBandCostPerLitre.toDouble))
+        val levy = "£" + String.format("%,.2f", (answers.smallProducerList.map(lowBand => lowBand.litreage._1).sum * lowBandCostPerLitre.toDouble * 0))
         val value = HtmlFormat.escape(levy).toString
 
         SummaryListRowViewModel(
@@ -107,7 +107,7 @@ object SmallProducerDetailsSummary  {
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SmallProducerDetailsPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", (answers.smallProducerList.map(highBand => highBand.litreage._2).sum * highBandCostPerLitre.toDouble))
+        val levy = "£" + String.format("%,.2f", (answers.smallProducerList.map(highBand => highBand.litreage._2).sum * highBandCostPerLitre.toDouble * 0))
         val value = HtmlFormat.escape(levy).toString
 
         SummaryListRowViewModel(
