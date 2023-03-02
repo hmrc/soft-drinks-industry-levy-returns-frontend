@@ -37,14 +37,13 @@ object AmountToPaySummary  {
 
     val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre, smallProducer)
     val formattedTotalForQuarter = "£" + String.format("%.2f", totalForQuarter.toDouble)
-    
+
     SummaryListRowViewModel(
       key = "totalThisQuarter",
       value = ValueViewModel(HtmlContent(formattedTotalForQuarter)).withCssClass("total-for-quarter"),
       actions = Seq()
     )
   }
-
 
 //  def balanceBroughtForwardRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
 //
@@ -101,8 +100,7 @@ object AmountToPaySummary  {
     if(!smallProducer) {
       val ownBrands = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
       (total + ownBrands - totalCredits) * lowBandCostPerLitre
-    } else
-      (total - totalCredits) * lowBandCostPerLitre
+    } else (total - totalCredits) * lowBandCostPerLitre
   }
 
   private def calculateHighBandTotalForQuarter(userAnswers: UserAnswers, highBandCostPerLitre: BigDecimal, smallProducer: Boolean): BigDecimal = {
@@ -117,9 +115,7 @@ object AmountToPaySummary  {
     if (!smallProducer){
       val ownBrands = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
       (total + ownBrands - totalCredits) * highBandCostPerLitre
-    }
-    else
-      (total - totalCredits) * highBandCostPerLitre
+    } else (total - totalCredits) * highBandCostPerLitre
   }
 }
 

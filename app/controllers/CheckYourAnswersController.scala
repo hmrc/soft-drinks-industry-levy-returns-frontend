@@ -62,7 +62,6 @@ class CheckYourAnswersController @Inject()(
       }
       // TODO - change this to nonblocking
       val isSmallProducer = Await.result(connector.checkSmallProducerStatus(request.sdilEnrolment, returnPeriod),4.seconds).get
-      println(Console.YELLOW + isSmallProducer + Console.WHITE)
 
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
