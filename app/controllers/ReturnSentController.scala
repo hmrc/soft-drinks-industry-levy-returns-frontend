@@ -16,13 +16,16 @@
 
 package controllers
 
+import scala.concurrent.{Await, ExecutionContext, Future}
+import java.util.Locale
+import scala.concurrent.duration.DurationInt
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
-import models.{Address, ReturnPeriod, SmallProducer, Warehouse}
-import pages.{BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, OwnBrandsPage, PackagedContractPackerPage}
+import models.{Address, FinancialLineItem, ReturnPeriod, SmallProducer, Warehouse}
+import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage}
 import viewmodels.govuk.summarylist._
-import scala.math.BigDecimal
 
+import scala.math.BigDecimal
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,25 +34,23 @@ import views.html.ReturnSentView
 
 import java.time.format.DateTimeFormatter
 import config.FrontendAppConfig
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import play.api.Configuration
 
 import java.time.{LocalTime, ZoneId}
-import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SecondaryWarehouseDetailsSummary, SmallProducerDetailsSummary}
+import viewmodels.checkAnswers.{AmountToPaySummary, BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SecondaryWarehouseDetailsSummary, SmallProducerDetailsSummary}
 
-import java.util.Locale
 
 class ReturnSentController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        config:FrontendAppConfig,
+                                       configuration: Configuration,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        connector: SoftDrinksIndustryLevyConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: ReturnSentView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -137,13 +138,13 @@ class ReturnSentController @Inject()(
 
       val smallProducerAnswers =
           SummaryListViewModel(rows = Seq(
-            SmallProducerDetailsSummary.producerList(userAnswers, checkAnswers = false),
+            SmallProducerDetailsSummary.producerList(userAnswers, checkAnswers = false)
           ).flatten)
 
       val warehouseAnswers =
         SummaryListViewModel(rows = Seq(
-          SecondaryWarehouseDetailsSummary.warehouseList(userAnswers, checkAnswers = false),
-        ).flatten)
+          SecondaryWarehouseDetailsSummary.warehouseList(userAnswers, checkAnswers = false)
+        ))
 
 
       val amountOwed:String = "£100,000.00"
@@ -182,6 +183,47 @@ class ReturnSentController @Inject()(
               }else None
             }
 
+      //Quarter
+
+            def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] = {
+              connector.checkSmallProducerStatus(sdilRef, period)
+            }
+
+            val smallProducerStatus:Boolean = !Await.result(checkSmallProducerStatus(request.sdilEnrolment,request.returnPeriod.get),20.seconds).getOrElse(true)
+
+            val totalThisQuarterAnswer =
+              SummaryListViewModel(rows = Seq(
+                AmountToPaySummary.totalThisQuarter(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus)))
+
+      //Balance Brought Forward
+
+            def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
+              items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
+                (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
+              }
+
+            def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
+              l.headOption.fold(BigDecimal(0))(_._2)
+
+            val broughtForward = if(configuration.underlying.getBoolean("balanceAllEnabled")) {
+              connector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x =>
+                extractTotal(listItemsWithTotal(x))
+              }
+            }else {
+                connector.balance(request.sdilEnrolment, withAssessment = false)
+            }
+            val balanceBroughtForward = Await.result(broughtForward ,20.seconds)
+
+      val balanceBroughtForwardAnswer =
+        SummaryListViewModel(rows = Seq(
+          AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
+
+      val totalAnswer =
+        SummaryListViewModel(rows = Seq(
+          AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus,balanceBroughtForward)))
+
+
+
       Ok(view(returnDate,
               subscription,
               amountOwed,
@@ -198,7 +240,10 @@ class ReturnSentController @Inject()(
               smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList):Option[List[SmallProducer]],
               warehouseCheck = warehouseCheck(warhouseList):Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
               smallProducerAnswers,
-              warehouseAnswers
+              warehouseAnswers,
+              totalThisQuarterAnswer,
+              balanceBroughtForwardAnswer,
+              totalAnswer
               ))
   }
 }

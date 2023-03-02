@@ -450,7 +450,9 @@ returnSent.RegisteredSites = Registered UK sites
 checkYourAnswers.amountToPay.title = Amount to pay
 checkYourAnswers.creditedPay.title = Amount you will be credited
 checkYourAnswers.noPayNeeded.title = You do not need to pay anything
-checkYourAnswers.amountToPay.quarter = Total this quarter
+totalThisQuarter.checkYourAnswersLabel = Total this quarter
+balanceBroughtForward.checkYourAnswersLabel = Balance brought forward
+total.checkYourAnswersLabel = Total
 
 litresInTheHighBand = Litres in the high band
 litresInTheLowBand = Litres in the low band

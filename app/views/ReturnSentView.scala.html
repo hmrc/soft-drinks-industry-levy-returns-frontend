@@ -44,47 +44,10 @@
   smallProducerCheck: Option[List[SmallProducer]],
   warehouseCheck: Option[List[Warehouse]],
   smallProducerAnswers: SummaryList,
-  warehouseAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
-
-
-@amountToPayTable = {
-@govukTable(Table(
-    rows = Seq(
-        Seq(
-            TableRow(
-                content = Text(messages("checkYourAnswers.amountToPay.quarter"))
-            ),
-            TableRow(
-                content = Text("")
-            )
-        ),
-        Seq(
-            TableRow(
-                content = Text(messages("checkYourAnswers.amountToPay.balanceBroughtForward"))
-            ),
-            TableRow(
-                content = Text("")
-            )
-        ),
-        Seq(
-            TableRow(
-                content = Text(messages("checkYourAnswers.amountToPay.total"))
-            ),
-            TableRow(
-                content = Text("")
-            )
-        )
-    ),
-    head = None,
-    caption =  financialStatus match {
-        case "amountToPay" =>  Some(messages("checkYourAnswers.amountToPay.title"))
-        case "creditedPay" =>  Some(messages("checkYourAnswers.creditedPay.title"))
-        case "noPayNeeded" =>  Some(messages("checkYourAnswers.noPayNeeded.title"))
-    },
-    captionClasses = "govuk-table__caption--m",
-    firstCellIsHeader = true
-    ))
-}
+  warehouseAnswers: SummaryList,
+  quarter: SummaryList,
+  balanceBroughtForward: SummaryList,
+  total: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("returnSent.title"))) {
 
@@ -212,25 +175,42 @@
             @govukSummaryList(claimCreditsForLostDamagedAnswers)
         </p>
     </div>
-
-    <div class = "claimCreditsForLostDamagedAnswers">
-        if(smallProducerCheck != None || warehouseCheck != None){
-        <h2 class="govuk-heading-m">
-            @messages("returnSent.RegisteredSites")
-        </h2>
-        }
-        @if(smallProducerCheck != None){
-            <p class="govuk-body">
-                @govukSummaryList(smallProducerAnswers)
-            </p>
-        }
-        @if(warehouseCheck != None){
-            <p class="govuk-body">
-                @govukSummaryList(warehouseAnswers)
-            </p>
-        }
-    </div>
 </details>
+<div class = "claimCreditsForLostDamagedAnswers">
+    <h2 class="govuk-heading-m">
+        @(financialStatus match {case "amountToPay" =>  Some(messages("checkYourAnswers.amountToPay.title"))
+        case "creditedPay" =>  Some(messages("checkYourAnswers.creditedPay.title"))
+        case "noPayNeeded" =>  Some(messages("checkYourAnswers.noPayNeeded.title"))
+        })
+    </h2>
+    <p class="govuk-body">
+        @govukSummaryList(quarter)
+    </p>
+    <p class="govuk-body">
+        @govukSummaryList(balanceBroughtForward)
+    </p>
+    <p class="govuk-body">
+        @govukSummaryList(total)
+    </p>
+</div>
 
- @amountToPayTable
+<div class = "Registered Sites">
+    @if(smallProducerCheck != None || warehouseCheck != None){
+    <h2 class="govuk-heading-m">
+        @messages("returnSent.RegisteredSites")
+    </h2>
+    }
+    @if(smallProducerCheck != None){
+    <p class="govuk-body">
+        @govukSummaryList(smallProducerAnswers)
+    </p>
+    }
+    @if(warehouseCheck != None){
+    <p class="govuk-body">
+        @govukSummaryList(smallProducerAnswers)
+        @govukSummaryList(warehouseAnswers)
+    </p>
+    }
+</div>
+
 }

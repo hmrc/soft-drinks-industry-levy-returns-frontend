@@ -28,24 +28,24 @@ import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary  {
 
-  def warehouseList(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SmallProducerDetailsPage).map {
-      answer =>
+  def warehouseList(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
 
-        val value = answers.smallProducerList.length.toString
+    val value = 1.toString //answers.warehouseList.length.toString
 
-        SummaryListRow(
-          key     = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = if(checkAnswers == true) {  Some(
-            Actions("",
-              items =Seq(
-                ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
-              ))
-          )}else None
+    SummaryListRow(
+      key = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
+      value = ValueViewModel(value),
+      actions = if (checkAnswers == true) {
+        Some(
+          Actions("",
+            items = Seq(
+              ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+            ))
         )
-    }
+      } else None
+    )
+  }
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SecondaryWarehouseDetailsPage).map {

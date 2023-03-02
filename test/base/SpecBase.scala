@@ -16,8 +16,9 @@
 
 package base
 
+import akka.http.scaladsl.model.headers.Date
 import controllers.actions._
-import models.{ReturnPeriod, SmallProducer, UserAnswers}
+import models.{FinancialLineItem, ReturnPeriod, SmallProducer, UserAnswers}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -89,6 +90,7 @@ trait SpecBase
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
 
+  //val financialLineItem = FinancialLineItem(Date(Jan,))
   val returnPeriod = ReturnPeriod(2022,1)
   val genericSmallProducerAlias = "Generic Producer LTD"
   val baseUrl = "/soft-drinks-industry-levy-returns-frontend"
