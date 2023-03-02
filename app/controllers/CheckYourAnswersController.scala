@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.{BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
+import viewmodels.checkAnswers.{AmountToPaySummary, BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SmallProducerDetailsSummary}
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
@@ -42,13 +42,14 @@ class CheckYourAnswersController @Inject()(
                                             view: CheckYourAnswersView
                                           ) extends FrontendBaseController with I18nSupport {
 
+
+
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val userAnswers = request.userAnswers
       val lowerBandCostPerLitre = config.lowerBandCostPerLitre
       val higherBandCostPerLitre = config.higherBandCostPerLitre
-
+      val userAnswers = request.userAnswers
       val returnPeriod = request.returnPeriod match {
         case Some(returnPeriod) =>
           val year = returnPeriod.year
@@ -124,13 +125,18 @@ class CheckYourAnswersController @Inject()(
         HowManyCreditsForLostDamagedSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
       ).flatten)
 
+      val amountToPay = SummaryListViewModel(rows = Seq(
+        AmountToPaySummary.totalForQuarterRow(userAnswers, lowerBandCostPerLitre, higherBandCostPerLitre),
+      ))
+
       Ok(view(request.orgName, returnPeriod, ownBrandsAnswers,
         packagedContractPackerAnswers,
         exemptionsForSmallProducersAnswers,
         broughtIntoTheUKAnswers,
         broughtIntoTheUKSmallProducersAnswers,
         claimCreditsForExportsAnswers,
-        claimCreditsForLostOrDamagedAnswers
+        claimCreditsForLostOrDamagedAnswers,
+        amountToPay
       ))
   }
 

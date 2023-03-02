@@ -28,12 +28,13 @@
   broughtIntoTheUKAnswers: SummaryList,
   broughtIntoTheUKSmallProducersAnswers: SummaryList,
   claimCreditsForExportsAnswers: SummaryList,
-  claimCreditsForLostOrDamagedAnswers: SummaryList)(implicit request: Request[_], messages: Messages)
+  claimCreditsForLostOrDamagedAnswers: SummaryList,
+  amountToPay: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
     <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
     <h2 class="govuk-heading-m">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
     @govukSummaryList(ownBrandsAnswers)
@@ -56,5 +57,7 @@
     <h2 class="govuk-heading-m">@messages("lostOrDestroyed")</h2>
     @govukSummaryList(claimCreditsForLostOrDamagedAnswers)
 
+    <h2 class="govuk-heading-m">@messages("amountToPay")</h2>
+    @govukSummaryList(amountToPay)
 
 }
