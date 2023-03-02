@@ -90,32 +90,35 @@ object AmountToPaySummary  {
   }
 
   private def calculateLowBandTotalForQuarter(userAnswers: UserAnswers, lowBandCostPerLitre: BigDecimal, smallProducer: Boolean): BigDecimal = {
+    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
+    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
+    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
+    val litresExported = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
+    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
 
-    val total = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L) +
-      userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
+    val total =  litresBroughtIntoTheUk + litresAsContractPacker
+    val totalCredits =  litresExported + litresLostOrDamaged
 
-    val totalCredits = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L) +
-      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
-
-    if(!smallProducer) {
-      val ownBrands = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
-      (total + ownBrands - totalCredits) * lowBandCostPerLitre
-    } else (total - totalCredits) * lowBandCostPerLitre
+    smallProducer match {
+      case true => (total - totalCredits) * lowBandCostPerLitre
+      case _ => (total + litresPackedAtOwnSite - totalCredits) * lowBandCostPerLitre
+    }
   }
 
   private def calculateHighBandTotalForQuarter(userAnswers: UserAnswers, highBandCostPerLitre: BigDecimal, smallProducer: Boolean): BigDecimal = {
+    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
+    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
+    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
+    val litresExported = userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
+    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
 
-    val total = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L) +
-      userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
+    val total = litresBroughtIntoTheUk + litresAsContractPacker
+    val totalCredits = litresExported + litresLostOrDamaged
 
-    val totalCredits =
-      userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L) +
-      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
-
-    if (!smallProducer){
-      val ownBrands = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
-      (total + ownBrands - totalCredits) * highBandCostPerLitre
-    } else (total - totalCredits) * highBandCostPerLitre
+    smallProducer match {
+      case true => (total - totalCredits) * highBandCostPerLitre
+      case _ => (total + litresPackedAtOwnSite - totalCredits) * highBandCostPerLitre
+    }
   }
 }
 
