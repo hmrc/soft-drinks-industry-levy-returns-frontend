@@ -37,9 +37,7 @@ object AmountToPaySummary  {
 
     val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre, smallProducer)
     val formattedTotalForQuarter = "£" + String.format("%.2f", totalForQuarter.toDouble)
-
-    println(Console.YELLOW + totalForQuarter + Console.WHITE)
-
+    
     SummaryListRowViewModel(
       key = "totalThisQuarter",
       value = ValueViewModel(HtmlContent(formattedTotalForQuarter)).withCssClass("total-for-quarter"),
