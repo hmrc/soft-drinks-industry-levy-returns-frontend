@@ -20,21 +20,16 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.PackAtBusinessAddressFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.PackAtBusinessAddressView
-import models.{BlankMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
-import play.api.i18n.Messages
-import play.api.i18n.Messages.implicitMessagesProviderToMessages
 
 import scala.concurrent.Future
 

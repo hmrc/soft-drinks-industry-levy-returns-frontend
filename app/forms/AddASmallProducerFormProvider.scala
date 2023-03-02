@@ -51,21 +51,10 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
           "addASmallProducer.error.referenceNumber.required"
         ).verifying(
             checkSDILReference()),
-        "lowBand" -> long(
-          "litres.error.lowBand.required",
-          "litres.error.lowBand.negative",
-          "litres.error.lowBand.nonNumeric",
-          "litres.error.lowBand.wholeNumber",
-          "litres.error.lowBand.outOfMaxVal")
-          .verifying(maximumValueNotEqual(100000000000000L, "litres.error.lowBand.outOfMaxVal")),
-
-        "highBand" -> long(
-          "litres.error.highBand.required",
-          "litres.error.highBand.negative",
-          "litres.error.highBand.nonNumeric",
-          "litres.error.highBand.wholeNumber",
-          "litres.error.highBand.outOfMaxVal")
-          .verifying(maximumValueNotEqual(100000000000000L, "litres.error.lowBand.outOfMaxVal"))
+        "lowBand" -> litres (
+          "lowBand"),
+        "highBand" -> litres (
+          "highBand")
       )(AddASmallProducer.apply)(AddASmallProducer.unapply)
     )
   }
