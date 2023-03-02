@@ -32,9 +32,10 @@ object AmountToPaySummary  {
 
   def totalForQuarterRow(answers: UserAnswers,
                          lowBandCostPerLitre: BigDecimal,
-                         highBandCostPerLitre: BigDecimal)(implicit messages: Messages): SummaryListRow = {
+                         highBandCostPerLitre: BigDecimal,
+                         smallProducer: Boolean)(implicit messages: Messages): SummaryListRow = {
 
-    val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre)
+    val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre, smallProducer)
     val formattedTotalForQuarter = "£" + String.format("%.2f", totalForQuarter.toDouble)
 
     println(Console.YELLOW + totalForQuarter + Console.WHITE)
@@ -84,51 +85,41 @@ object AmountToPaySummary  {
 
   private def calculateTotalForQuarter(userAnswers: UserAnswers,
                                        lowBandCostPerLitre: BigDecimal,
-                                       highBandCostPerLitre: BigDecimal) = {
+                                       highBandCostPerLitre: BigDecimal,
+                                       smallProducer: Boolean) = {
 
-    calculateLowBandTotalForQuarter(userAnswers, lowBandCostPerLitre) +
-    calculateHighBandTotalForQuarter(userAnswers, highBandCostPerLitre)
+    calculateLowBandTotalForQuarter(userAnswers, lowBandCostPerLitre, smallProducer) +
+    calculateHighBandTotalForQuarter(userAnswers, highBandCostPerLitre, smallProducer)
   }
 
-  private def calculateLowBandTotalForQuarter(userAnswers: UserAnswers, lowBandCostPerLitre: BigDecimal): BigDecimal = {
+  private def calculateLowBandTotalForQuarter(userAnswers: UserAnswers, lowBandCostPerLitre: BigDecimal, smallProducer: Boolean): BigDecimal = {
 
-    // TODO - Add own brands to total if large producer
-    val ownBrands = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
-
-    val total =
-      userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L) +
+    val total = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L) +
       userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
 
-    val totalCredits =
-      userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L) +
+    val totalCredits = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L) +
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
 
-//    if(!smallProducer)
-    if(true)
+    if(!smallProducer) {
+      val ownBrands = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
       (total + ownBrands - totalCredits) * lowBandCostPerLitre
-    else
+    } else
       (total - totalCredits) * lowBandCostPerLitre
   }
 
+  private def calculateHighBandTotalForQuarter(userAnswers: UserAnswers, highBandCostPerLitre: BigDecimal, smallProducer: Boolean): BigDecimal = {
 
-
-  private def calculateHighBandTotalForQuarter(userAnswers: UserAnswers, highBandCostPerLitre: BigDecimal): BigDecimal = {
-
-    // TODO - Add own brands to total if large producer
-    val ownBrands = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
-
-    val total =
-      userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L) +
+    val total = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L) +
       userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
-
 
     val totalCredits =
       userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L) +
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
 
-//    if (!smallProducer)
-    if (true)
+    if (!smallProducer){
+      val ownBrands = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
       (total + ownBrands - totalCredits) * highBandCostPerLitre
+    }
     else
       (total - totalCredits) * highBandCostPerLitre
   }

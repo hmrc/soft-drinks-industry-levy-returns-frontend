@@ -18,6 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
 import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, QuestionPage, SmallProducerDetailsPage}
@@ -29,8 +30,7 @@ import viewmodels.checkAnswers.{AmountToPaySummary, BrandsPackagedAtOwnSitesSumm
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -39,10 +39,9 @@ class CheckYourAnswersController @Inject()(
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
-                                            view: CheckYourAnswersView
-                                          ) extends FrontendBaseController with I18nSupport {
-
-
+                                            view: CheckYourAnswersView,
+                                            connector: SoftDrinksIndustryLevyConnector,
+                                          ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -50,21 +49,24 @@ class CheckYourAnswersController @Inject()(
       val lowerBandCostPerLitre = config.lowerBandCostPerLitre
       val higherBandCostPerLitre = config.higherBandCostPerLitre
       val userAnswers = request.userAnswers
+
       val returnPeriod = request.returnPeriod match {
-        case Some(returnPeriod) =>
-          val year = returnPeriod.year
-          returnPeriod.quarter match {
-            case 0 => s"${Messages("firstQuarter")} $year"
-            case 1 => s"${Messages("secondQuarter")} $year"
-            case 2 => s"${Messages("thirdQuarter")} $year"
-            case 3 => s"${Messages("fourthQuarter")} $year"
-          }
+        case Some(returnPeriod) => returnPeriod
         case None => throw new RuntimeException("No return period returned")
       }
 
-      //println(Console.YELLOW + userAnswers + Console.WHITE)
+      val returnPeriodAsString = returnPeriod match {
+        case 0 => s"${Messages("firstQuarter")} ${returnPeriod.year}"
+        case 1 => s"${Messages("secondQuarter")} ${returnPeriod.year}"
+        case 2 => s"${Messages("thirdQuarter")} ${returnPeriod.year}"
+        case 3 => s"${Messages("fourthQuarter")} ${returnPeriod.year}"
+      }
 
-      val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
+      for{
+        isSmallProducer <- connector.checkSmallProducerStatus(request.sdilEnrolment, returnPeriod)
+      } yield{
+
+        val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
           OwnBrandsSummary.row(request.userAnswers),
           BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
           BrandsPackagedAtOwnSitesSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
@@ -72,72 +74,81 @@ class CheckYourAnswersController @Inject()(
           BrandsPackagedAtOwnSitesSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
         ).flatten)
 
-      val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
-        PackagedContractPackerSummary.row(userAnswers),
-        HowManyAsAContractPackerSummary.lowBandRow(userAnswers),
-        HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-        HowManyAsAContractPackerSummary.highBandRow(userAnswers),
-        HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-      ).flatten)
+        val packagedContractPackerAnswers = SummaryListViewModel(rows = Seq(
+          PackagedContractPackerSummary.row(userAnswers),
+          HowManyAsAContractPackerSummary.lowBandRow(userAnswers),
+          HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+          HowManyAsAContractPackerSummary.highBandRow(userAnswers),
+          HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+        ).flatten)
 
-      val exemptionsForSmallProducersAnswers =
-        if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)){
-          SummaryListViewModel(rows = Seq(
-            ExemptionsForSmallProducersSummary.row(userAnswers),
-            SmallProducerDetailsSummary.lowBandRow(userAnswers),
-            SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-            SmallProducerDetailsSummary.highBandRow(userAnswers),
-            SmallProducerDetailsSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-          ).flatten)
-        } else {
-          SummaryListViewModel(rows = Seq(ExemptionsForSmallProducersSummary.row(userAnswers)).flatten)
-        }
+        val exemptionsForSmallProducersAnswers =
+          if (userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)) {
+            SummaryListViewModel(rows = Seq(
+              ExemptionsForSmallProducersSummary.row(userAnswers),
+              SmallProducerDetailsSummary.lowBandRow(userAnswers),
+              SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+              SmallProducerDetailsSummary.highBandRow(userAnswers),
+              SmallProducerDetailsSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+            ).flatten)
+          } else {
+            SummaryListViewModel(rows = Seq(ExemptionsForSmallProducersSummary.row(userAnswers)).flatten)
+          }
 
-      val broughtIntoTheUKAnswers = SummaryListViewModel(rows = Seq(
-        BroughtIntoUKSummary.row(userAnswers),
-        HowManyBroughtIntoUkSummary.lowBandRow(userAnswers),
-        HowManyBroughtIntoUkSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-        HowManyBroughtIntoUkSummary.highBandRow(userAnswers),
-        HowManyBroughtIntoUkSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-      ).flatten)
+        val broughtIntoTheUKAnswers = SummaryListViewModel(rows = Seq(
+          BroughtIntoUKSummary.row(userAnswers),
+          HowManyBroughtIntoUkSummary.lowBandRow(userAnswers),
+          HowManyBroughtIntoUkSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+          HowManyBroughtIntoUkSummary.highBandRow(userAnswers),
+          HowManyBroughtIntoUkSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+        ).flatten)
 
-      val broughtIntoTheUKSmallProducersAnswers = SummaryListViewModel(rows = Seq(
-        BroughtIntoUkFromSmallProducersSummary.row(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandRow(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandRow(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-      ).flatten)
+        val broughtIntoTheUKSmallProducersAnswers = SummaryListViewModel(rows = Seq(
+          BroughtIntoUkFromSmallProducersSummary.row(userAnswers),
+          HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandRow(userAnswers),
+          HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+          HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandRow(userAnswers),
+          HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+        ).flatten)
 
-      val claimCreditsForExportsAnswers = SummaryListViewModel(rows = Seq(
-        ClaimCreditsForExportsSummary.row(userAnswers),
-        HowManyCreditsForExportSummary.lowBandRow(userAnswers),
-        HowManyCreditsForExportSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-        HowManyCreditsForExportSummary.highBandRow(userAnswers),
-        HowManyCreditsForExportSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-      ).flatten)
+        val claimCreditsForExportsAnswers = SummaryListViewModel(rows = Seq(
+          ClaimCreditsForExportsSummary.row(userAnswers),
+          HowManyCreditsForExportSummary.lowBandRow(userAnswers),
+          HowManyCreditsForExportSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+          HowManyCreditsForExportSummary.highBandRow(userAnswers),
+          HowManyCreditsForExportSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+        ).flatten)
 
-      val claimCreditsForLostOrDamagedAnswers = SummaryListViewModel(rows = Seq(
-        ClaimCreditsForLostDamagedSummary.row(userAnswers),
-        HowManyCreditsForLostDamagedSummary.lowBandRow(userAnswers),
-        HowManyCreditsForLostDamagedSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
-        HowManyCreditsForLostDamagedSummary.highBandRow(userAnswers),
-        HowManyCreditsForLostDamagedSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
-      ).flatten)
+        val claimCreditsForLostOrDamagedAnswers = SummaryListViewModel(rows = Seq(
+          ClaimCreditsForLostDamagedSummary.row(userAnswers),
+          HowManyCreditsForLostDamagedSummary.lowBandRow(userAnswers),
+          HowManyCreditsForLostDamagedSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+          HowManyCreditsForLostDamagedSummary.highBandRow(userAnswers),
+          HowManyCreditsForLostDamagedSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+        ).flatten)
 
-      val amountToPay = SummaryListViewModel(rows = Seq(
-        AmountToPaySummary.totalForQuarterRow(userAnswers, lowerBandCostPerLitre, higherBandCostPerLitre),
-      ))
+        val amountToPay = SummaryListViewModel(rows = Seq(
+          AmountToPaySummary.totalForQuarterRow(userAnswers, lowerBandCostPerLitre, higherBandCostPerLitre, isSmallProducer.get)))
 
-      Ok(view(request.orgName, returnPeriod, ownBrandsAnswers,
-        packagedContractPackerAnswers,
-        exemptionsForSmallProducersAnswers,
-        broughtIntoTheUKAnswers,
-        broughtIntoTheUKSmallProducersAnswers,
-        claimCreditsForExportsAnswers,
-        claimCreditsForLostOrDamagedAnswers,
-        amountToPay
-      ))
+        Ok(view(request.orgName, returnPeriodAsString, ownBrandsAnswers,
+          packagedContractPackerAnswers,
+          exemptionsForSmallProducersAnswers,
+          broughtIntoTheUKAnswers,
+          broughtIntoTheUKSmallProducersAnswers,
+          claimCreditsForExportsAnswers,
+          claimCreditsForLostOrDamagedAnswers,
+          amountToPay
+        ))
+
+      }
+
+
+
+
+
+      //println(Console.YELLOW + userAnswers + Console.WHITE)
+
+
   }
 
 }
