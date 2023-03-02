@@ -62,7 +62,7 @@ class CheckYourAnswersController @Inject()(
         case None => throw new RuntimeException("No return period returned")
       }
 
-      println(Console.YELLOW + userAnswers + Console.WHITE)
+      //println(Console.YELLOW + userAnswers + Console.WHITE)
 
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
           OwnBrandsSummary.row(request.userAnswers),
