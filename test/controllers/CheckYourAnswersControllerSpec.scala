@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import models.{ReturnPeriod, SmallProducer, UserAnswers}
+import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -38,8 +38,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
   val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-  // The following can be overwritten in individual tests
+
+  val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
+  val financialItem = new ReturnCharge(returnPeriods.head, BigDecimal(12))
+  val financialItemList = List(financialItem)
+
   when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+  when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
+  when(mockSdilConnector.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(100)))
 
   "Check Your Answers Controller" - {
 

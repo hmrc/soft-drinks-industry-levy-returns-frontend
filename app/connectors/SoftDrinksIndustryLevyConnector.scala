@@ -16,15 +16,17 @@
 
 package connectors
 
-import models.ReturnPeriod
+import models.{FinancialLineItem, ReturnPeriod}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.retrieved.RetrievedSubscription
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import java.time.{LocalDate => Date}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
     val http: HttpClient,
@@ -54,5 +56,15 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     val returnPeriods = http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
     returnPeriods.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
   }
+
+  def balance(sdilRef: String, withAssessment: Boolean)(implicit hc: HeaderCarrier): Future[BigDecimal] =
+    http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
+
+  def balanceHistory(sdilRef: String, withAssessment: Boolean)(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+    import models.FinancialLineItem.formatter
+    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
+  }
+
+
 
 }

@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{extractTotal, listItemsWithTotal}
 import pages.ExemptionsForSmallProducersPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -62,6 +63,13 @@ class CheckYourAnswersController @Inject()(
       }
       // TODO - change this to nonblocking
       val isSmallProducer = Await.result(connector.checkSmallProducerStatus(request.sdilEnrolment, returnPeriod),4.seconds).get
+      val balanceBroughtForward = Await.result(
+        if (true) { // TODO - config.balanceAllEnabled???
+          connector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x => extractTotal(listItemsWithTotal(x))}
+        } else {
+          connector.balance(request.sdilEnrolment, withAssessment = false)
+        },4.seconds)
+
 
       val ownBrandsAnswers = SummaryListViewModel(rows = Seq(
         OwnBrandsSummary.row(request.userAnswers),
@@ -125,7 +133,7 @@ class CheckYourAnswersController @Inject()(
       ).flatten)
 
       val amountToPay = SummaryListViewModel(rows = Seq(
-        AmountToPaySummary.amountToPayRow(userAnswers, lowerBandCostPerLitre, higherBandCostPerLitre, isSmallProducer, BigDecimal(100))
+        AmountToPaySummary.amountToPayRow(userAnswers, lowerBandCostPerLitre, higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
       ).flatten)
 
       Ok(view(request.orgName, returnPeriodAsString, ownBrandsAnswers,
