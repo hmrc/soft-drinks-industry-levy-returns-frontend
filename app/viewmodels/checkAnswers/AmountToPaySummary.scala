@@ -186,5 +186,27 @@ object AmountToPaySummary {
     )
   }
 
-
+  def balance(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal, smallProducerStatus:Boolean, balanceBroughtForward:BigDecimal):BigDecimal ={
+    val smallProducerAnswerListTotal = calculatChargeFromPages(answers, lowBandCostPerLitre, highBandCostPerLitre)
+    def calculateSubtotal(
+                           costLower:BigDecimal,
+                           costHigher:BigDecimal,
+                           smallProducerAnswerListTotal:List[BigDecimal]
+                         ): BigDecimal = {
+      if(smallProducerStatus){
+        smallProducerAnswerListTotal.sum
+      }else{
+        val ownBranduserAnswers = answers.get(BrandsPackagedAtOwnSitesPage)
+        val lowBand = ownBranduserAnswers.map(answer => answer.lowBand).getOrElse(0L)
+        val highBand = ownBranduserAnswers.map(answer => answer.highBand).getOrElse(0L)
+        val ownBrandTotal = costLower * lowBand * 1 + costHigher * highBand * 1
+        val largeProducerListTotal =   ownBrandTotal + smallProducerAnswerListTotal.sum
+        largeProducerListTotal
+      }
+    }
+    calculateSubtotal(lowBandCostPerLitre,
+      highBandCostPerLitre,
+      smallProducerAnswerListTotal
+    ) - balanceBroughtForward
+  }
 }

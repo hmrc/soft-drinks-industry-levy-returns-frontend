@@ -148,7 +148,6 @@ class ReturnSentController @Inject()(
 
 
       val amountOwed:String = "£100,000.00"
-      val balance:BigDecimal = 0
       val paymentDate = ReturnPeriod(2022,1)
       val returnDate = ReturnPeriod(2022,1)
       LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
@@ -222,6 +221,7 @@ class ReturnSentController @Inject()(
         SummaryListViewModel(rows = Seq(
           AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus,balanceBroughtForward)))
 
+      val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus, balanceBroughtForward)
 
 
       Ok(view(returnDate,
