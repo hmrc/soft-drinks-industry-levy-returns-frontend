@@ -40,8 +40,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
-  val financialItem = new ReturnCharge(returnPeriods.head, BigDecimal(12))
-  val financialItemList = List(financialItem)
+  val financialItem1 = new ReturnCharge(returnPeriods.head, BigDecimal(100))
+  val financialItem2 = new ReturnCharge(returnPeriods.head, BigDecimal(200))
+  val financialItemList = List(financialItem1, financialItem2)
 
   when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
   when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
@@ -557,9 +558,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
         page.getElementsByClass("total-for-quarter").text() must include("£660.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
-        page.getElementsByClass("balance-brought-forward").text() must include("£100.00")
+        page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
         page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("£760.00")
+        page.getElementsByClass("total").text() must include("£960.00")
       }
     }
 
@@ -598,9 +599,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
         page.getElementsByClass("total-for-quarter").text() must include("£1188.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
-        page.getElementsByClass("balance-brought-forward").text() must include("£100.00")
+        page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
         page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("£1288.00")
+        page.getElementsByClass("total").text() must include("£1488.00")
 
       }
     }

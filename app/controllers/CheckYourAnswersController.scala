@@ -48,6 +48,7 @@ class CheckYourAnswersController @Inject()(
 
       val lowerBandCostPerLitre = config.lowerBandCostPerLitre
       val higherBandCostPerLitre = config.higherBandCostPerLitre
+      val balanceAllEnabled = config.balanceAllEnabled
       val userAnswers = request.userAnswers
 
       val returnPeriod = request.returnPeriod match {
@@ -64,8 +65,10 @@ class CheckYourAnswersController @Inject()(
       // TODO - change this to nonblocking
       val isSmallProducer = Await.result(connector.checkSmallProducerStatus(request.sdilEnrolment, returnPeriod),4.seconds).get
       val balanceBroughtForward = Await.result(
-        if (true) { // TODO - config.balanceAllEnabled???
-          connector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x => extractTotal(listItemsWithTotal(x))}
+        if (balanceAllEnabled) {
+          connector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { financialItem =>
+            extractTotal(listItemsWithTotal(financialItem))
+          }
         } else {
           connector.balance(request.sdilEnrolment, withAssessment = false)
         },4.seconds)

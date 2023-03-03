@@ -56,4 +56,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val lowerBandCostPerLitre: BigDecimal = BigDecimal(configuration.get[String]("lowerBandCostPerLitre"))
   val higherBandCostPerLitre: BigDecimal = BigDecimal(configuration.get[String]("higherBandCostPerLitre"))
+
+  val balanceAllEnabled: Boolean = configuration.get[Boolean]("balanceAll.enabled")
 }

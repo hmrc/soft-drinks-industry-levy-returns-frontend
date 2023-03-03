@@ -148,6 +148,6 @@ package object models {
       (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
     }
 
-  def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
-    l.headOption.fold(BigDecimal(0))(_._2)
+  def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
+
 }
