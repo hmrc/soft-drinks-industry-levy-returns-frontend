@@ -125,7 +125,8 @@ class CheckYourAnswersController @Inject()(
       ).flatten)
 
       val amountToPay = SummaryListViewModel(rows = Seq(
-        AmountToPaySummary.totalForQuarterRow(userAnswers, lowerBandCostPerLitre, higherBandCostPerLitre, isSmallProducer)))
+        AmountToPaySummary.amountToPayRow(userAnswers, lowerBandCostPerLitre, higherBandCostPerLitre, isSmallProducer, BigDecimal(100))
+      ).flatten)
 
       Ok(view(request.orgName, returnPeriodAsString, ownBrandsAnswers,
         packagedContractPackerAnswers,

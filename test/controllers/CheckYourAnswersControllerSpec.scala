@@ -548,11 +548,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
         page.getElementsByClass("total-for-quarter").text() must include("£660.00")
-        //        page.getElementById("total-this-quarter").`val`() mustEqual (Messages("totalThisQuarter"))
-        //        page.getElementById("balance-brought-forward").`val`() mustEqual (Messages("balanceBroughtForward"))
-        //        page.getElementById("total").`val`() mustEqual (Messages("total"))
-
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("£100.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("£760.00")
       }
     }
 
@@ -590,9 +591,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("h2").text() must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
         page.getElementsByClass("total-for-quarter").text() must include("£1188.00")
-        //        page.getElementById("total-this-quarter").`val`() mustEqual (Messages("totalThisQuarter"))
-        //        page.getElementById("balance-brought-forward").`val`() mustEqual (Messages("balanceBroughtForward"))
-        //        page.getElementById("total").`val`() mustEqual (Messages("total"))
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("£100.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("£1288.00")
 
       }
     }
