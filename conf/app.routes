@@ -119,3 +119,8 @@ GET        /pack-at-business-address-in-return                        controller
 POST       /pack-at-business-address-in-return                       controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /change-pack-at-business-address-in-return                  controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-pack-at-business-address-in-return                 controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /production-site-details                        controllers.ProductionSiteDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /production-site-details                        controllers.ProductionSiteDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-production-site-details                  controllers.ProductionSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-production-site-details                  controllers.ProductionSiteDetailsController.onSubmit(mode: Mode = CheckMode)

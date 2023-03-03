@@ -410,3 +410,11 @@ secondaryWarehouseDetails.error.required = Select yes if you want to add another
 secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
 secondaryWarehouseDetails.remove.hidden = remove UK warehouse
+
+productionSiteDetails.title = You added {0} UK packaging sites
+productionSiteDetails.subHeading = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+productionSiteDetails.detailsLink = productionSiteDetails
+productionSiteDetails.detailsContent = productionSiteDetails
+productionSiteDetails.checkYourAnswersLabel = productionSiteDetails
+productionSiteDetails.error.required = Select yes if productionSiteDetails
+productionSiteDetails.change.hidden = productionSiteDetails

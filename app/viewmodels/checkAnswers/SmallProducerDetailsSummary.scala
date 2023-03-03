@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import controllers.routes
-import models.{CheckMode, SmallProducer, UserAnswers}
+import models.{CheckMode, ProductionSite, SmallProducer, UserAnswers}
 import pages.SmallProducerDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -65,6 +65,4 @@ object SmallProducerDetailsSummary  {
       )
   }
   }
-
-
 }
