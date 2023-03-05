@@ -75,23 +75,15 @@ class CheckYourAnswersController @Inject()(
             connector.balance(request.sdilEnrolment, withAssessment = false)
       } yield {
 
-        val ownBrandsAnswers = ownBrands(userAnswers)
-        val packagedContractPackerAnswers = contractPacker(userAnswers)
-        val exemptionsForSmallProducersAnswers = exemptionForSmallProducers(userAnswers)
-        val broughtIntoTheUKAnswers = broughtIntoUK(userAnswers)
-        val broughtIntoTheUKSmallProducersAnswers = broughtIntoUKSmallProducers(userAnswers)
-        val claimCreditsForExportsAnswers = claimCreditsForExports(userAnswers)
-        val claimCreditsForLostOrDamagedAnswers = claimCreditsForLostOrDamaged(userAnswers)
-        val amountToPay = amountToPaySummary(userAnswers, isSmallProducer, balanceBroughtForward)
-
-        Ok(view(request.orgName, returnPeriodAsString, ownBrandsAnswers,
-          packagedContractPackerAnswers,
-          exemptionsForSmallProducersAnswers,
-          broughtIntoTheUKAnswers,
-          broughtIntoTheUKSmallProducersAnswers,
-          claimCreditsForExportsAnswers,
-          claimCreditsForLostOrDamagedAnswers,
-          amountToPay
+        Ok(view(request.orgName, returnPeriodAsString,
+          ownBrandsAnswers(userAnswers),
+          packagedContractPackerAnswers(userAnswers),
+          exemptionsForSmallProducersAnswers(userAnswers),
+          broughtIntoTheUKAnswers(userAnswers),
+          broughtIntoTheUKSmallProducersAnswers(userAnswers),
+          claimCreditsForExportsAnswers(userAnswers),
+          claimCreditsForLostOrDamagedAnswers(userAnswers),
+          amountToPaySummary(userAnswers, isSmallProducer, balanceBroughtForward)
         ))
       }
   }
@@ -107,7 +99,7 @@ class CheckYourAnswersController @Inject()(
     ).flatten)
   }
 
-  private def claimCreditsForLostOrDamaged(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  private def claimCreditsForLostOrDamagedAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(
       ClaimCreditsForLostDamagedSummary.row(userAnswers),
       HowManyCreditsForLostDamagedSummary.lowBandRow(userAnswers),
@@ -117,7 +109,7 @@ class CheckYourAnswersController @Inject()(
     ).flatten)
   }
 
-  private def claimCreditsForExports(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  private def claimCreditsForExportsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(
       ClaimCreditsForExportsSummary.row(userAnswers),
       HowManyCreditsForExportSummary.lowBandRow(userAnswers),
@@ -127,7 +119,7 @@ class CheckYourAnswersController @Inject()(
     ).flatten)
   }
 
-  private def broughtIntoUKSmallProducers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  private def broughtIntoTheUKSmallProducersAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(
       BroughtIntoUkFromSmallProducersSummary.row(userAnswers),
       HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandRow(userAnswers),
@@ -137,7 +129,7 @@ class CheckYourAnswersController @Inject()(
     ).flatten)
   }
 
-  private def broughtIntoUK(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  private def broughtIntoTheUKAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(
       BroughtIntoUKSummary.row(userAnswers),
       HowManyBroughtIntoUkSummary.lowBandRow(userAnswers),
@@ -147,7 +139,7 @@ class CheckYourAnswersController @Inject()(
     ).flatten)
   }
 
-  private def exemptionForSmallProducers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  private def exemptionsForSmallProducersAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     if (userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)) {
       SummaryListViewModel(rows = Seq(
         ExemptionsForSmallProducersSummary.row(userAnswers),
@@ -161,7 +153,7 @@ class CheckYourAnswersController @Inject()(
     }
   }
 
-  private def contractPacker(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  private def packagedContractPackerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(
       PackagedContractPackerSummary.row(userAnswers),
       HowManyAsAContractPackerSummary.lowBandRow(userAnswers),
@@ -171,7 +163,7 @@ class CheckYourAnswersController @Inject()(
     ).flatten)
   }
 
-  private def ownBrands(userAnswers: UserAnswers)(implicit messages: Messages) = {
+  private def ownBrandsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(
       OwnBrandsSummary.row(userAnswers),
       BrandsPackagedAtOwnSitesSummary.lowBandRow(userAnswers),
