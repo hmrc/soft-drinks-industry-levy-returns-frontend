@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import models.{UserAnswers, extractTotal, listItemsWithTotal}
+import models.{ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
 import pages.ExemptionsForSmallProducersPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
@@ -49,21 +49,10 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad() = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-
       val balanceAllEnabled = config.balanceAllEnabled
       val userAnswers = request.userAnswers
+      val returnPeriod = currentReturnPeriod(request)
 
-      val returnPeriod = request.returnPeriod match {
-        case Some(returnPeriod) => returnPeriod
-        case None => throw new RuntimeException("No return period returned")
-      }
-
-      val returnPeriodAsString = returnPeriod.quarter match {
-        case 0 => s"${Messages("firstQuarter")} ${returnPeriod.year}"
-        case 1 => s"${Messages("secondQuarter")} ${returnPeriod.year}"
-        case 2 => s"${Messages("thirdQuarter")} ${returnPeriod.year}"
-        case 3 => s"${Messages("fourthQuarter")} ${returnPeriod.year}"
-      }
       for {
         isSmallProducer <- connector.checkSmallProducerStatus(request.sdilEnrolment, returnPeriod)
         balanceBroughtForward <-
@@ -74,8 +63,8 @@ class CheckYourAnswersController @Inject()(
           } else
             connector.balance(request.sdilEnrolment, withAssessment = false)
       } yield {
-
-        Ok(view(request.orgName, returnPeriodAsString,
+        Ok(view(request.orgName,
+          formattedReturnPeriodQuarter(returnPeriod),
           ownBrandsAnswers(userAnswers),
           packagedContractPackerAnswers(userAnswers),
           exemptionsForSmallProducersAnswers(userAnswers),
@@ -88,7 +77,25 @@ class CheckYourAnswersController @Inject()(
       }
   }
 
-  private def amountToPaySummary(userAnswers: UserAnswers, isSmallProducer: Option[Boolean], balanceBroughtForward: BigDecimal)(implicit messages: Messages) = {
+  private def currentReturnPeriod(request: DataRequest[AnyContent]) = {
+    request.returnPeriod match {
+      case Some(returnPeriod) => returnPeriod
+      case None => throw new RuntimeException("No return period returned")
+    }
+  }
+
+  private def formattedReturnPeriodQuarter(returnPeriod: ReturnPeriod)(implicit messages: Messages) = {
+    returnPeriod.quarter match {
+      case 0 => s"${Messages("firstQuarter")} ${returnPeriod.year}"
+      case 1 => s"${Messages("secondQuarter")} ${returnPeriod.year}"
+      case 2 => s"${Messages("thirdQuarter")} ${returnPeriod.year}"
+      case 3 => s"${Messages("fourthQuarter")} ${returnPeriod.year}"
+    }
+  }
+
+  private def amountToPaySummary(userAnswers: UserAnswers,
+                                 isSmallProducer: Option[Boolean],
+                                 balanceBroughtForward: BigDecimal)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(
       AmountToPaySummary.amountToPayRow(
         userAnswers,
