@@ -16,11 +16,11 @@
 
 package models
 
-import java.time.LocalDateTime
 import cats.implicits._
-import SdilReturn._
 import models.requests.DataRequest
-import pages._
+import pages.{BrandsPackagedAtOwnSitesPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage}
+
+import java.time.LocalDateTime
 
 
 case class SdilReturn(
@@ -39,8 +39,7 @@ case class SdilReturn(
 
   private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
 
-  def total: BigDecimal =
-    sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
+  def total: BigDecimal = sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
 
   type Litres = Long
   type LitreBands = (Litres, Litres)
@@ -52,6 +51,7 @@ case class SdilReturn(
   }
 }
 
+// TODO - this is used by the penultimate controller to the CYA page (LostOrDamaged submit)
 object SdilReturn {
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll

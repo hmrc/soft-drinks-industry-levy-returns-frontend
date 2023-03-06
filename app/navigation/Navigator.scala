@@ -210,13 +210,13 @@ class Navigator @Inject()() {
   }
 
   private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers,
-                                                       sdilReturnOpt: Option[SdilReturn],
-                                                       subscriptionOpt: Option[RetrievedSubscription]) = {
+                                                       sdilReturn: Option[SdilReturn],
+                                                       subscription: Option[RetrievedSubscription]) = {
 
     if(userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
     } else {
-      (sdilReturnOpt, subscriptionOpt)  match {
+      (sdilReturn, subscription)  match {
         case (Some(sdilReturn), Some(subscription)) =>
           val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
           val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
@@ -236,5 +236,4 @@ class Navigator @Inject()() {
       routes.CheckYourAnswersController.onPageLoad()
     }
   }
-
 }

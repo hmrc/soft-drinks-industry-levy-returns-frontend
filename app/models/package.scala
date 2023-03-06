@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import cats.implicits.toFoldableOps
 import play.api.libs.json._
 
 package object models {
@@ -141,6 +142,10 @@ package object models {
           }
       }
     }
+  }
+
+  implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
+    def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
 
   def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =

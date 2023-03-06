@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import models.{ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
+import models.{ReturnPeriod, SdilReturn, UserAnswers, extractTotal, listItemsWithTotal}
 import pages.ExemptionsForSmallProducersPage
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -58,16 +58,13 @@ class CheckYourAnswersController @Inject()(
       val sdilEnrolment = request.sdilEnrolment
 
       (for {
-        subscription <- connector.retrieveSubscription(sdilEnrolment).map {_.get}
-        pendingReturns <- connector.returns_pending(subscription.utr)
         isSmallProducer <- connector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
         balanceBroughtForward <-
           if (balanceAllEnabled) {
             connector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
               extractTotal(listItemsWithTotal(financialItem))
             }
-          } else
-            connector.balance(sdilEnrolment, withAssessment = false)
+          } else connector.balance(sdilEnrolment, withAssessment = false)
       } yield {
         Ok(view(request.orgName,
           formattedReturnPeriodQuarter(returnPeriod),
