@@ -608,5 +608,26 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must show submit returns section when a return is available" in {
+      val userAnswersData = Json.obj(
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
+      )
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("sendYourReturn"))
+        page.getElementsByTag("p").text() must include(Messages("sendYourReturnConfirmation"))
+        page.getElementById("confirm-and-submit").text() must include(Messages("confirmDetailsAndSendReturn"))
+        page.getElementById("confirm-and-submit").attributes().get("href") mustEqual s"$baseUrl/check-your-answers"
+      }
+    }
+
   }
 }

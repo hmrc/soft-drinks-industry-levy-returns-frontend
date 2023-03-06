@@ -51,7 +51,6 @@ case class SdilReturn(
   }
 }
 
-// TODO - this is used by the penultimate controller to the CYA page (LostOrDamaged submit)
 object SdilReturn {
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
