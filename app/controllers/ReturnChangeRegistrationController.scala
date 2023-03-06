@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import models.{NormalMode, UserAnswers}
 import navigation.Navigator
-import pages.PackagedContractPackerPage
+import pages.{PackAtBusinessAddressPage, PackagedContractPackerPage}
 
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -46,6 +46,6 @@ class ReturnChangeRegistrationController @Inject()(
   def onSubmit(): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
       val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
-      Redirect(navigator.nextPage(PackagedContractPackerPage, NormalMode, answers))
+      Redirect(navigator.nextPage(PackAtBusinessAddressPage, NormalMode, answers))
   }
 }
