@@ -21,6 +21,7 @@ import forms.ExemptionsForSmallProducersFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.{AddASmallProducerPage, ExemptionsForSmallProducersPage}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -44,6 +45,7 @@ class ExemptionsForSmallProducersController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -75,7 +77,7 @@ class ExemptionsForSmallProducersController @Inject()(
               val answersWithLitresRemoved =
                 updatedAnswers.remove(AddASmallProducerPage) match {
                   case Success(updatedAnswers) => updatedAnswers.copy(smallProducerList = List())
-                  case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
                 }
               sessionRepository.set(answersWithLitresRemoved)
               Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, answersWithLitresRemoved))

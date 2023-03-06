@@ -23,6 +23,7 @@ import javax.inject.Inject
 import models.{BrandsPackagedAtOwnSites, CheckMode, Mode, UserAnswers}
 import navigation.Navigator
 import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,6 +46,7 @@ class OwnBrandsController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
@@ -74,7 +76,7 @@ class OwnBrandsController @Inject()(
               val answersWithLitresRemoved =
                 updatedAnswers.remove(BrandsPackagedAtOwnSitesPage) match {
                   case Success(updatedAnswers) => updatedAnswers
-                  case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
               }
               sessionRepository.set(answersWithLitresRemoved)
               Redirect(navigator.nextPage(OwnBrandsPage, mode, answersWithLitresRemoved))

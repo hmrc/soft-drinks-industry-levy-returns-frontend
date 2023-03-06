@@ -23,6 +23,7 @@ import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,6 +46,7 @@ class PackagedContractPackerController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -75,7 +77,7 @@ class PackagedContractPackerController @Inject()(
               val answersWithLitresRemoved =
                 updatedAnswers.remove(HowManyAsAContractPackerPage) match {
                   case Success(updatedAnswers) => updatedAnswers
-                  case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
                 }
               sessionRepository.set(answersWithLitresRemoved)
               Redirect(navigator.nextPage(PackagedContractPackerPage, mode, answersWithLitresRemoved))

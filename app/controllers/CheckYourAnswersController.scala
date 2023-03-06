@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import models.{ReturnPeriod, SdilReturn, UserAnswers, extractTotal, listItemsWithTotal}
+import models.{ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
 import pages.ExemptionsForSmallProducersPage
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}

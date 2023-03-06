@@ -36,10 +36,6 @@ object AmountToPaySummary  {
     val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre, smallProducer)
     val total = totalForQuarter + balanceBroughtForward
 
-//    println(Console.YELLOW + totalForQuarter + Console.WHITE)
-//    println(Console.YELLOW + balanceBroughtForward + Console.WHITE)
-//    println(Console.YELLOW + total + Console.WHITE)
-
     Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
