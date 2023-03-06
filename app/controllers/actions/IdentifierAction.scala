@@ -23,7 +23,6 @@ import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
@@ -78,20 +77,3 @@ class AuthenticatedIdentifierAction @Inject()(
   }
 }
 
-//class SessionIdentifierAction @Inject()(
-//                                         val parser: BodyParsers.Default
-//                                       )
-//                                       (implicit val executionContext: ExecutionContext) extends IdentifierAction {
-//
-//  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
-//
-//    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-//
-//    hc.sessionId match {
-//      case Some(session) =>
-//        block(IdentifierRequest(request, session.value, session.value))
-//      case None =>
-//        Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-//    }
-//  }
-//}

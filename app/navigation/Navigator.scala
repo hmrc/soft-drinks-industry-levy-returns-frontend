@@ -16,12 +16,13 @@
 
 package navigation
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.Call
 import controllers.routes
-import pages._
 import models._
 import models.retrieved.RetrievedSubscription
+import pages._
+import play.api.mvc.Call
+
+import javax.inject.{Inject, Singleton}
 
 
 @Singleton

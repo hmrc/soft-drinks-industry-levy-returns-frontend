@@ -16,16 +16,15 @@
 
 package connectors
 
-import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
+import models.retrieved.RetrievedSubscription
+import models.{FinancialLineItem, ReturnPeriod}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import models.retrieved.RetrievedSubscription
-import play.api.i18n.Messages
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import java.time.{LocalDate => Date}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
     http: HttpClient,

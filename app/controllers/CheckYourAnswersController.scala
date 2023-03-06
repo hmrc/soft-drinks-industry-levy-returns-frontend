@@ -66,7 +66,7 @@ class CheckYourAnswersController @Inject()(
             }
           } else connector.balance(sdilEnrolment, withAssessment = false)
       } yield {
-        Ok(view(request.orgName,
+        Ok(view(request.subscription.orgName,
           formattedReturnPeriodQuarter(returnPeriod),
           ownBrandsAnswers(userAnswers),
           packagedContractPackerAnswers(userAnswers),

@@ -18,19 +18,17 @@ package controllers
 
 import controllers.actions._
 import forms.OwnBrandsFormProvider
-
-import javax.inject.Inject
-import models.{BrandsPackagedAtOwnSites, CheckMode, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.OwnBrandsView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
