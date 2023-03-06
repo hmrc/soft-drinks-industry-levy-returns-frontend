@@ -74,7 +74,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
             retrievedSubs <- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
           } yield {
             if (value) {
-              Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers))
+              Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
             } else {
               val answersWithLitresRemoved =
                 updatedAnswers.remove(HowManyCreditsForLostDamagedPage) match {
@@ -82,9 +82,8 @@ class ClaimCreditsForLostDamagedController @Inject()(
                   case Failure(exception) => println(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
                 }
               sessionRepository.set(answersWithLitresRemoved)
-              Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, answersWithLitresRemoved))
+              Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, answersWithLitresRemoved, Some(sdilReturn), retrievedSubs))
             }
-            Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
           }
       )
   }
