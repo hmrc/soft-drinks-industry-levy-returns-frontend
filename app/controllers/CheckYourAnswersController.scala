@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits.catsSyntaxApplicativeId
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
@@ -23,6 +24,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.requests.DataRequest
 import models.{ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
 import pages.ExemptionsForSmallProducersPage
+import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -30,7 +32,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -45,6 +47,7 @@ class CheckYourAnswersController @Inject()(
 
   val lowerBandCostPerLitre = config.lowerBandCostPerLitre
   val higherBandCostPerLitre = config.higherBandCostPerLitre
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad() = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -52,16 +55,17 @@ class CheckYourAnswersController @Inject()(
       val balanceAllEnabled = config.balanceAllEnabled
       val userAnswers = request.userAnswers
       val returnPeriod = currentReturnPeriod(request)
+      val sdilEnrolment = request.sdilEnrolment
 
-      for {
-        isSmallProducer <- connector.checkSmallProducerStatus(request.sdilEnrolment, returnPeriod)
+      (for {
+        isSmallProducer <- connector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
         balanceBroughtForward <-
           if (balanceAllEnabled) {
-            connector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { financialItem =>
+            connector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
               extractTotal(listItemsWithTotal(financialItem))
             }
           } else
-            connector.balance(request.sdilEnrolment, withAssessment = false)
+            connector.balance(sdilEnrolment, withAssessment = false)
       } yield {
         Ok(view(request.orgName,
           formattedReturnPeriodQuarter(returnPeriod),
@@ -74,6 +78,10 @@ class CheckYourAnswersController @Inject()(
           claimCreditsForLostOrDamagedAnswers(userAnswers),
           amountToPaySummary(userAnswers, isSmallProducer, balanceBroughtForward)
         ))
+      }) recoverWith {
+        case t: Throwable =>
+          logger.error(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
+          Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
       }
   }
 
