@@ -16,6 +16,7 @@
 
 package models
 
+import models.backend.Site
 import play.api.libs.json._
 import queries.{Gettable, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -27,7 +28,7 @@ final case class UserAnswers(
                               id: String,
                               data: JsObject = Json.obj(),
                               smallProducerList: List[SmallProducer] = List.empty,
-                              productionSiteList: List[ProductionSite] = List.empty,
+                              productionSiteList: List[Site] = List.empty,
                               lastUpdated: Instant = Instant.now
                             ) {
 
@@ -92,7 +93,7 @@ object UserAnswers {
       (__ \ "_id").read[String] and
         (__ \ "data").read[JsObject] and
         (__ \ "smallProducerList").read[List[SmallProducer]] and
-        (__ \ "productionSiteList").read[List[ProductionSite]] and
+        (__ \ "productionSiteList").read[List[Site]] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
       ) (UserAnswers.apply _)
   }
@@ -105,7 +106,7 @@ object UserAnswers {
       (__ \ "_id").write[String] and
         (__ \ "data").write[JsObject] and
         (__ \ "smallProducerList").write[List[SmallProducer]] and
-        (__ \ "productionSiteList").write[List[ProductionSite]] and
+        (__ \ "productionSiteList").write[List[Site]] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
       ) (unlift(UserAnswers.unapply))
   }

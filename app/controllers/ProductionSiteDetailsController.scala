@@ -29,10 +29,12 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.productionSiteDetailsView
 import models.ProductionSite
+import models.backend.{Site, UkAddress}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.checkAnswers.{SmallProducerDetailsSummary, productionSiteDetailsSummary}
 import viewmodels.govuk.summarylist._
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class ProductionSiteDetailsController @Inject()(
@@ -49,34 +51,45 @@ class ProductionSiteDetailsController @Inject()(
 
   val form = formProvider()
 
+  val superCola = Site(
+    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+    Some("88"),
+    Some("Wild Lemonade Group"),
+    Some(LocalDate.of(2018, 2, 26)))
+
+  val sparkyJuice = Site(
+    UkAddress(List("30 Rhes Priordy", "East London"), "E73 2RP"),
+    Some("10"),
+    Some("Sparky Juice Co"),
+    Some(LocalDate.of(2018, 2, 26)))
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val producetionSiteList: List[ProductionSite] = request.userAnswers.productionSiteList
+      val producetionSiteList: List[Site] = request.userAnswers.productionSiteList//request.userAnswers.productionSiteList
       val preparedForm = request.userAnswers.get(ProductionSiteDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val producetionSiteSummaryList: List[SummaryListRow] = productionSiteDetailsSummary.row2(producetionSiteList)
-      val list: SummaryList = SummaryListViewModel(
-        rows = producetionSiteSummaryList
+      val producetionSiteSummaryAliasList: List[SummaryListRow] = productionSiteDetailsSummary.row2(producetionSiteList)
+      val aliasList: SummaryList = SummaryListViewModel(
+        rows = producetionSiteSummaryAliasList
       )
 
-      Ok(view(preparedForm, mode, list))
+      Ok(view(preparedForm, mode, aliasList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      val producetionSiteList: List[ProductionSite] = request.userAnswers.productionSiteList
+      val producetionSiteList: List[Site] = request.userAnswers.productionSiteList
       val producetionSiteSummaryList: List[SummaryListRow] = productionSiteDetailsSummary.row2(producetionSiteList)
-      val list: SummaryList = SummaryListViewModel(
+      val siteList: SummaryList = SummaryListViewModel(
         rows = producetionSiteSummaryList
       )
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, list))),
+          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
         value =>
           for {

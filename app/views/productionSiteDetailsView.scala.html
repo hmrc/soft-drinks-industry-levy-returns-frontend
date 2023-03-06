@@ -24,7 +24,7 @@
         govukSummaryList: GovukSummaryList
 )
 
-@(form: Form[_], mode: Mode, productionSiteList: SummaryList)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, siteList: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("productionSiteDetails.title"))) {
 
@@ -34,9 +34,9 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m" >@messages("productionSiteDetails.title", productionSiteList.rows.size)</h1>
+        <h1 class="govuk-heading-m" >@messages("productionSiteDetails.title", siteList.rows.size)</h1>
         <p class="govuk-body-m">@messages("productionSiteDetails.subHeading")</p>
-        @govukSummaryList(productionSiteList)
+        @govukSummaryList(siteList)
 
 
 

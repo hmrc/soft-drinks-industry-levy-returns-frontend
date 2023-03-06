@@ -18,7 +18,8 @@ package controllers
 
 import base.SpecBase
 import forms.productionSiteDetailsFormProvider
-import models.{NormalMode, UserAnswers}
+import models.backend.{Site, UkAddress}
+import models.{NormalMode, ProductionSite, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -34,11 +35,24 @@ import viewmodels.checkAnswers.productionSiteDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.productionSiteDetailsView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class productionSiteDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency{
 
   def onwardRoute = Call("GET", "/foo")
+
+  val superCola = Site(
+    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+    Some("88"),
+    Some("Wild Lemonade Group"),
+    Some(LocalDate.of(2018, 2, 26)))
+
+  val sparkyJuice = Site(
+    UkAddress(List("30 Rhes Priordy", "East London"), "E73 2RP"),
+    Some("10"),
+    Some("Sparky Juice Co"),
+    Some(LocalDate.of(2018, 2, 26)))
 
   val formProvider = new productionSiteDetailsFormProvider()
   val form = formProvider()

@@ -71,7 +71,7 @@ class Navigator @Inject()() {
 
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
-      routes.ProductionSiteDetailsController.onPageLoad(NormalMode)
+      routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
     } else {
       routes.PackagedContractPackerController.onPageLoad(NormalMode)
     }

@@ -17,14 +17,18 @@
 package viewmodels.checkAnswers
 
 import controllers.routes
+import models.backend.Site
 import models.{CheckMode, ProductionSite, UserAnswers}
 import pages.ProductionSiteDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Content}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
+
+import scala.reflect.internal.util.NoSourceFile.content
 
 object productionSiteDetailsSummary  {
 
@@ -45,23 +49,28 @@ object productionSiteDetailsSummary  {
     }
 
 
-  def row2(productionSiteList: List[ProductionSite])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(productionSiteList: List[Site])(implicit messages: Messages): List[SummaryListRow] = {
     productionSiteList.map {
-      productionSite =>
+      site =>
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(productionSite.sites.map(address => address.address).head.toString)
+            HtmlFormat.escape(site.address.lines.toString())
           )
         )
-        SummaryListRowViewModel(
-          key     = productionSite.tradingName.get,
-          value   = value,
-          actions = Seq(
+        SummaryListRow(
+          key = Key(
+            content = HtmlContent(s"""${site.tradingName.get}<br>${HtmlFormat.escape(site.address.lines.mkString(", "))}<br>${HtmlFormat.escape(site.address.postCode)}"""),
+            classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
+          ),
+          actions = if(productionSiteList.length > 1){
+            Some(Actions("",Seq(
             ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url) //TODO
               .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")),
             ActionItemViewModel("site.remove", routes.IndexController.onPageLoad().url) //TODO
               .withVisuallyHiddenText(messages("smallProducerDetails.remove.hidden"))
-          )
+          )))}else    Some(Actions("",Seq(
+            ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url) //TODO
+              .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")))))
         )
     }
   }
