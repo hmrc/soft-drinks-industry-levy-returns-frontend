@@ -78,6 +78,26 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       val result = testForm.fill("foobar")
       result.apply("value").value.value mustEqual "foobar"
     }
+
+    "must remove leading whitespace and bind a valid string" in {
+        val result = testForm.bind(Map("value" -> " foobar"))
+        result.get mustEqual "foobar"
+      }
+
+    "must remove trailing whitespace and bind a valid string" in {
+      val result = testForm.bind(Map("value" -> "foobar "))
+      result.get mustEqual "foobar"
+    }
+
+    "must remove leading and trailing whitespace and bind a valid string" in {
+      val result = testForm.bind(Map("value" -> " foobar "))
+      result.get mustEqual "foobar"
+    }
+    "must remove leading and trailing whitespace but not between words, and bind a valid string" in {
+      val result = testForm.bind(Map("value" -> " foo bar "))
+      result.get mustEqual "foo bar"
+    }
+
   }
 
   "boolean" - {
@@ -127,6 +147,11 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
     "must bind a valid integer" in {
       val result = testForm.bind(Map("value" -> "1"))
+      result.get mustEqual 1
+    }
+
+    "must bind a valid integer regardless of leading and trailing whitespace" in {
+      val result = testForm.bind(Map("value" -> " 1 "))
       result.get mustEqual 1
     }
 
