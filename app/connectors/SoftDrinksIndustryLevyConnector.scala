@@ -38,7 +38,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
 
   private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
-  def retrieveSubscription(sdilNumber: String, identifierType: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
+  def retrieveSubscription(sdilNumber: String, identifierType: String= "sdil")(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
     http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).map {
       case Some(a) => Some(a)
       case _ => None
@@ -47,9 +47,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
 
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
-        http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
-        case Some(a) => Some(a)
-        case _ => None
+    http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
+      case Some(a) => Some(a)
+      case _ => None
   }
 
   def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {
@@ -65,6 +65,8 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
 
+  def returns_pending(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
 
 
 }

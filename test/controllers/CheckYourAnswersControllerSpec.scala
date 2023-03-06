@@ -40,14 +40,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
-  val financialItem1 = new ReturnCharge(returnPeriods.head, BigDecimal(100))
-  val financialItem2 = new ReturnCharge(returnPeriods.head, BigDecimal(200))
+  val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
+  val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
   val financialItemList = List(financialItem1, financialItem2)
 
+  when(mockSdilConnector.retrieveSubscription(any(), any())(any())).thenReturn(Future.successful(Some(aSubscription)))
+  when(mockSdilConnector.returns_pending(any())(any())).thenReturn(Future.successful(List.empty[ReturnPeriod]))
   when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
   when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
   when(mockSdilConnector.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(100)))
-
+  
   "Check Your Answers Controller" - {
 
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {

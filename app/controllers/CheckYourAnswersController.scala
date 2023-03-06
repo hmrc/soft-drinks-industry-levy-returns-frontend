@@ -58,6 +58,8 @@ class CheckYourAnswersController @Inject()(
       val sdilEnrolment = request.sdilEnrolment
 
       (for {
+        subscription <- connector.retrieveSubscription(sdilEnrolment).map {_.get}
+        pendingReturns <- connector.returns_pending(subscription.utr)
         isSmallProducer <- connector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
         balanceBroughtForward <-
           if (balanceAllEnabled) {
