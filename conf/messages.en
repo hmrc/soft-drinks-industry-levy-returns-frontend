@@ -457,6 +457,8 @@ lostOrDestroyed.lowband.hidden = low band litres if claiming credit for lost or 
 lostOrDestroyed.highband.hidden = high band litres if claiming credit for lost or destroyed liable drinks
 
 amountToPay = Amount to pay
+youDoNotNeedToPayAnything = You do not need to pay anything
+amountYouWillBeCredited = Amount you will be credited
 totalThisQuarter = Total this quarter
 balanceBroughtForward = Balance brought forward
 total = Total
@@ -466,4 +468,3 @@ sendYourReturn = Send your return
 sendYourReturnConfirmation = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 confirmDetailsAndSendReturn = Confirm details and send return
 
-youDoNotNeedToPayAnything = You do not need to pay anything
