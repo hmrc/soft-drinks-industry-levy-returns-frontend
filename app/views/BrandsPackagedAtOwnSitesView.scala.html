@@ -39,21 +39,28 @@
         <p class="govuk-body">@messages("brandsPackagedAtOwnSites.subtext")</p>
 
         @govukInput(
-            InputViewModel(
-                field = form("lowBand"),
-                label = LabelViewModel(messages("litres.lowBand"))
+            Input(
+                id = "lowBand",
+                name = "lowBand",
+                label = LabelViewModel(messages("litres.lowBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
+                    .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
         )
-
         @govukInput(
-            InputViewModel(
-                field = form("highBand"),
-                label = LabelViewModel(messages("litres.highBand"))
+            Input(
+                id = "highBand",
+                name = "highBand",
+                label = LabelViewModel(messages("litres.highBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("litres.highBandHint"))))
+                    .withHint(Hint(content = Text(messages("litres.highBandHint"))))
         )
 
         @govukButton(

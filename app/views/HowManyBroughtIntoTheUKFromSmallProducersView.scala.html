@@ -28,12 +28,12 @@
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @htmlContent = {
-    <p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent1")</p>
-    <p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent2")</p>
+    <p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent1")</p>
+    <p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent2")</p>
     <ul class="govuk-list govuk-list--bullet">
-        <li >@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent3")</li>
-        <li>@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent4")</li>
-        <li>@messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsContent5")</li>
+        <li >@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent3")</li>
+        <li>@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent4")</li>
+        <li>@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent5")</li>
     </ul>
 }
 @layout(pageTitle = title(form, messages("howManyBroughtIntoTheUKFromSmallProducers.title"))) {
@@ -48,25 +48,32 @@
         <p class="govuk-body">@messages("howManyBroughtIntoTheUKFromSmallProducers.subtext")</p>
 
         @govukInput(
-            InputViewModel(
-                field = form("lowBand"),
-                label = LabelViewModel(messages("litres.lowBand"))
+            Input(
+                id = "lowBand",
+                name = "lowBand",
+                label = LabelViewModel(messages("litres.lowBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
+                    .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
         )
-
         @govukInput(
-            InputViewModel(
-                field = form("highBand"),
-                label = LabelViewModel(messages("litres.highBand"))
+            Input(
+                id = "highBand",
+                name = "highBand",
+                label = LabelViewModel(messages("litres.highBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("litres.highBandHint"))))
+                    .withHint(Hint(content = Text(messages("litres.highBandHint"))))
         )
 
         @govukDetails(Details(
-            summary = Text(messages("LiableDrinksBroughtIntoUkFromSmallProducersDetailsLink")),
+            summary = Text(messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsLink")),
             content = HtmlContent(htmlContent)
         ))
 

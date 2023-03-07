@@ -21,11 +21,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import forms.PackAtBusinessAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import play.api.i18n.Messages
-<<<<<<< HEAD
-import org.mockito.ArgumentMatchers.any
-=======
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
->>>>>>> main
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
