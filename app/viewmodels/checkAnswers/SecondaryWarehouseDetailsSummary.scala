@@ -21,12 +21,31 @@ import models.{CheckMode, UserAnswers, Warehouse}
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary  {
+
+  def warehouseList(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
+
+    val value = 1.toString //answers.warehouseList.length.toString
+
+    SummaryListRow(
+      key = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
+      value = ValueViewModel(value),
+      actions = if (checkAnswers == true) {
+        Some(
+          Actions("",
+            items = Seq(
+              ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+            ))
+        )
+      } else None
+    )
+  }
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SecondaryWarehouseDetailsPage).map {

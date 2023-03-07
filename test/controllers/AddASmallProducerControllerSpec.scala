@@ -45,8 +45,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
   val bandMax = 100000000000000L
   val litres = 20L
 
-  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
-  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
   val userAnswersWithTwoSmallProducers = UserAnswers(sdilReference, Json.obj(), List(superCola, sparkyJuice))
 
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url

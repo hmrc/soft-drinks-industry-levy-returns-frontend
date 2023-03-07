@@ -71,7 +71,7 @@ class Navigator @Inject()() {
 
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
-      routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
+     routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
     } else {
       routes.PackagedContractPackerController.onPageLoad(NormalMode)
     }
@@ -153,7 +153,6 @@ class Navigator @Inject()() {
           val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
           if(isNewImporter || isNewPacker) routes.ReturnChangeRegistrationController.onPageLoad() else routes.IndexController.onPageLoad()
           //TODO IndexController to be replaced with CYA page
-
         case _ => routes.IndexController.onPageLoad() //TODO to be replaced with CYA page
       }
     }
