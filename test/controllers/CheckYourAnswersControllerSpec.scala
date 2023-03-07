@@ -631,5 +631,48 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must return OK and contain you do not need to pay anything when return amount due is 0" in {
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+      )
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L,0L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L,0L))
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+      when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(List()))
+
+      val application = applicationBuilder(Some(userAnswers)).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("youDoNotNeedToPayAnything"))
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        page.getElementsByClass("total-for-quarter").text() must include("£0.00")
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("£0.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("£0.00")
+
+      }
+    }
+
   }
 }

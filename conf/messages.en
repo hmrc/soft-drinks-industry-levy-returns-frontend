@@ -465,3 +465,5 @@ financiallineitem.returncharge = Return <br/><span class="form-hint">for {0} to 
 sendYourReturn = Send your return
 sendYourReturnConfirmation = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 confirmDetailsAndSendReturn = Confirm details and send return
+
+youDoNotNeedToPayAnything = You do not need to pay anything

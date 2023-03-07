@@ -29,6 +29,7 @@
   broughtIntoTheUKSmallProducersAnswers: SummaryList,
   claimCreditsForExportsAnswers: SummaryList,
   claimCreditsForLostOrDamagedAnswers: SummaryList,
+  amountToPayTitle: String,
   amountToPay: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
@@ -57,7 +58,7 @@
     <h2 class="govuk-heading-m">@messages("lostOrDestroyed")</h2>
     @govukSummaryList(claimCreditsForLostOrDamagedAnswers)
 
-    <h2 class="govuk-heading-m">@messages("amountToPay")</h2>
+    <h2 class="govuk-heading-m">@amountToPayTitle</h2>
     @govukSummaryList(amountToPay)
 
     <h2 class="govuk-heading-m">@messages("sendYourReturn")</h2>

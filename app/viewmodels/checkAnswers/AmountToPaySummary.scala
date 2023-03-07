@@ -21,7 +21,6 @@ import pages._
 import play.api.i18n.Messages
 import play.api.libs.json.Format.GenericFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -31,12 +30,19 @@ object AmountToPaySummary  {
                          lowBandCostPerLitre: BigDecimal,
                          highBandCostPerLitre: BigDecimal,
                          smallProducer: Boolean,
-                         balanceBroughtForward: BigDecimal)(implicit messages: Messages): Seq[SummaryListRow] = {
+                         balanceBroughtForward: BigDecimal)(implicit messages: Messages) = {
 
     val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre, smallProducer)
     val total = totalForQuarter + balanceBroughtForward
 
-    Seq(
+    val sectionHeader =
+      if (total == 0) {
+        Messages("youDoNotNeedToPayAnything")
+      } else {
+        Messages("amountToPay")
+      }
+
+    val summary = SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
         value = ValueViewModel(HtmlContent(formatAmount(totalForQuarter))).withCssClass("total-for-quarter"),
@@ -51,9 +57,10 @@ object AmountToPaySummary  {
         key = "total",
         value = ValueViewModel(HtmlContent(formatAmount(total))).withCssClass("total"),
         actions = Seq()
-      )
+      ))
     )
 
+    (sectionHeader, summary)
   }
 
   private def formatAmount(total: BigDecimal) = {

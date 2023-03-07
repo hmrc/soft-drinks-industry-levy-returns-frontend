@@ -66,6 +66,7 @@ class CheckYourAnswersController @Inject()(
             }
           } else connector.balance(sdilEnrolment, withAssessment = false)
       } yield {
+        val amountToPaySection = amountToPaySummary(userAnswers, isSmallProducer, balanceBroughtForward)
         Ok(view(request.subscription.orgName,
           formattedReturnPeriodQuarter(returnPeriod),
           ownBrandsAnswers(userAnswers),
@@ -75,7 +76,8 @@ class CheckYourAnswersController @Inject()(
           broughtIntoTheUKSmallProducersAnswers(userAnswers),
           claimCreditsForExportsAnswers(userAnswers),
           claimCreditsForLostOrDamagedAnswers(userAnswers),
-          amountToPaySummary(userAnswers, isSmallProducer, balanceBroughtForward)
+          amountToPaySection._1,
+          amountToPaySection._2
         ))
       }) recoverWith {
         case t: Throwable =>
@@ -103,14 +105,13 @@ class CheckYourAnswersController @Inject()(
   private def amountToPaySummary(userAnswers: UserAnswers,
                                  isSmallProducer: Option[Boolean],
                                  balanceBroughtForward: BigDecimal)(implicit messages: Messages) = {
-    SummaryListViewModel(rows = Seq(
+
       AmountToPaySummary.amountToPayRow(
         userAnswers,
         lowerBandCostPerLitre,
         higherBandCostPerLitre,
         isSmallProducer.getOrElse(false),
         balanceBroughtForward)
-    ).flatten)
   }
 
   private def claimCreditsForLostOrDamagedAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
