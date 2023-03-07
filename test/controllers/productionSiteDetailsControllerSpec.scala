@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import forms.productionSiteDetailsFormProvider
 import models.backend.{Site, UkAddress}
 import models.{NormalMode, ProductionSite, UserAnswers}
@@ -112,14 +113,17 @@ class productionSiteDetailsControllerSpec extends SpecBase with MockitoSugar wit
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(None)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
           )
           .build()
 

@@ -16,11 +16,12 @@
 
 package controllers
 
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.productionSiteDetailsFormProvider
 
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, ProductionSite, SdilReturn}
 import navigation.Navigator
 import pages.ProductionSiteDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,7 +29,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.productionSiteDetailsView
-import models.ProductionSite
 import models.backend.{Site, UkAddress}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.checkAnswers.{SmallProducerDetailsSummary, productionSiteDetailsSummary}
@@ -40,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ProductionSiteDetailsController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
+                                         sdilConnector: SoftDrinksIndustryLevyConnector,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
@@ -95,7 +96,9 @@ class ProductionSiteDetailsController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ProductionSiteDetailsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ProductionSiteDetailsPage, mode, updatedAnswers))
+            sdilReturn = SdilReturn.apply(updatedAnswers)
+            retrievedSubs <- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
+          } yield Redirect(navigator.nextPage(ProductionSiteDetailsPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
       )
   }
 }

@@ -19,6 +19,7 @@ package controllers
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.ClaimCreditsForLostDamagedFormProvider
+import models.retrieved.RetrievedSubscription
 
 import javax.inject.Inject
 import models.{Mode, SdilReturn}
@@ -70,7 +71,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForLostDamagedPage, value))
             _              <- sessionRepository.set(updatedAnswers)
             sdilReturn = SdilReturn.apply(updatedAnswers)
-            retrievedSubs <- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
+            retrievedSubs<- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
           } yield Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
       )
   }
