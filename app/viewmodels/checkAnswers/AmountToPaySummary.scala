@@ -34,24 +34,13 @@ object AmountToPaySummary  {
 
     val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre, smallProducer)
     val total = totalForQuarter + balanceBroughtForward
+    val summary = amountToPaySummary(balanceBroughtForward, totalForQuarter, total)
 
+    (sectionHeaderTitle(total), summary, amountInCredit(total))
+  }
 
-    val amountInCredit =
-      if(total < 0)
-        Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", formatAmount(total * -1)))
-      else
-        None
-
-    val sectionHeader =
-      if (total == 0)
-        Messages("youDoNotNeedToPayAnything")
-      else if(total < 0)
-        Messages("amountYouWillBeCredited")
-       else
-        Messages("amountToPay")
-
-
-    val summary = SummaryListViewModel(rows = Seq(
+  private def amountToPaySummary(balanceBroughtForward: BigDecimal, totalForQuarter: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
+    SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
         value = ValueViewModel(HtmlContent(formatAmount(totalForQuarter))).withCssClass("total-for-quarter"),
@@ -68,8 +57,22 @@ object AmountToPaySummary  {
         actions = Seq()
       ))
     )
+  }
 
-    (sectionHeader, summary, amountInCredit)
+  private def amountInCredit(total: BigDecimal)(implicit messages: Messages) = {
+    if (total < 0)
+      Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", formatAmount(total * -1)))
+    else
+      None
+  }
+
+  private def sectionHeaderTitle(total: BigDecimal)(implicit messages: Messages) = {
+    if (total == 0)
+      Messages("youDoNotNeedToPayAnything")
+    else if (total < 0)
+      Messages("amountYouWillBeCredited")
+    else
+      Messages("amountToPay")
   }
 
   private def formatAmount(amount: BigDecimal) = {
