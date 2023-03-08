@@ -459,6 +459,7 @@ lostOrDestroyed.highband.hidden = high band litres if claiming credit for lost o
 amountToPay = Amount to pay
 youDoNotNeedToPayAnything = You do not need to pay anything
 amountYouWillBeCredited = Amount you will be credited
+yourSoftDrinksLevyAccountsWillBeCredited = Your Soft Drinks Levy Account will be credited {0}
 totalThisQuarter = Total this quarter
 balanceBroughtForward = Balance brought forward
 total = Total

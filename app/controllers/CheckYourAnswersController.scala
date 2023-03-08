@@ -66,6 +66,7 @@ class CheckYourAnswersController @Inject()(
             }
           } else connector.balance(sdilEnrolment, withAssessment = false)
       } yield {
+
         val amountToPaySection = amountToPaySummary(userAnswers, isSmallProducer, balanceBroughtForward)
         Ok(view(request.subscription.orgName,
           formattedReturnPeriodQuarter(returnPeriod),
@@ -77,7 +78,8 @@ class CheckYourAnswersController @Inject()(
           claimCreditsForExportsAnswers(userAnswers),
           claimCreditsForLostOrDamagedAnswers(userAnswers),
           amountToPaySection._1,
-          amountToPaySection._2
+          amountToPaySection._2,
+          amountToPaySection._3
         ))
       }) recoverWith {
         case t: Throwable =>

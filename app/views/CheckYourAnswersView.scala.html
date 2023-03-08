@@ -30,12 +30,18 @@
   claimCreditsForExportsAnswers: SummaryList,
   claimCreditsForLostOrDamagedAnswers: SummaryList,
   amountToPayTitle: String,
-  amountToPay: SummaryList)(implicit request: Request[_], messages: Messages)
+  amountToPay: SummaryList,
+  amountInCredit: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
     <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+
+    amountInCredit match {
+        case Some(amount) => <h2 class="govuk-heading-m" id="in-credit-main-sub-header">@amountInCredit</h2>
+        case _ => ""
+    }
 
     <h2 class="govuk-heading-m">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
     @govukSummaryList(ownBrandsAnswers)

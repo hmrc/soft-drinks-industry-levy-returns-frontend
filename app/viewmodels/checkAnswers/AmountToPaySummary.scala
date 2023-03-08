@@ -34,18 +34,22 @@ object AmountToPaySummary  {
 
     val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre, smallProducer)
     val total = totalForQuarter + balanceBroughtForward
-//    println(Console.YELLOW + s"Quarter $totalForQuarter" + Console.WHITE)
-//    println(Console.YELLOW + s"Forward $balanceBroughtForward" + Console.WHITE)
-//    println(Console.YELLOW + s"Total $total" + Console.WHITE)
+
+
+    val amountInCredit =
+      if(total < 0)
+        Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", formatAmount(total * -1)))
+      else
+        None
 
     val sectionHeader =
-      if (total == 0) {
+      if (total == 0)
         Messages("youDoNotNeedToPayAnything")
-      } else if(total < 0) {
+      else if(total < 0)
         Messages("amountYouWillBeCredited")
-      } else {
+       else
         Messages("amountToPay")
-      }
+
 
     val summary = SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
@@ -65,7 +69,7 @@ object AmountToPaySummary  {
       ))
     )
 
-    (sectionHeader, summary)
+    (sectionHeader, summary, amountInCredit)
   }
 
   private def formatAmount(amount: BigDecimal) = {
