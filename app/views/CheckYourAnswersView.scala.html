@@ -32,7 +32,7 @@
   amountToPayTitle: String,
   amountToPay: SummaryList,
   amountInCredit: Option[String] = None,
-  registeredSites: Option[SummaryList] = None)(implicit request: Request[_], messages: Messages)
+  registeredSites: Option[SummaryList])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -73,11 +73,11 @@
     @govukSummaryList(amountToPay)
 
     @registeredSites match {
-        case Some(sites) => {
+        case Some(site) => {
             <h2 class="govuk-heading-m" id="registered-sites">@messages("registeredUkSites")</h2>
-            @govukSummaryList(sites)
+            @govukSummaryList(site)
         }
-        case None => {
+        case _ => {
             <br>
         }
     }

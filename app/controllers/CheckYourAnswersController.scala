@@ -23,7 +23,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
 import models.{ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
-import pages.ExemptionsForSmallProducersPage
+import pages.{ExemptionsForSmallProducersPage, PackAtBusinessAddressPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
@@ -80,7 +80,7 @@ class CheckYourAnswersController @Inject()(
           amountToPaySection._1,
           amountToPaySection._2,
           amountToPaySection._3,
-          Some(registeredSites(userAnswers))
+          registeredSites(userAnswers)
         ))
       }) recoverWith {
         case t: Throwable =>
@@ -118,9 +118,13 @@ class CheckYourAnswersController @Inject()(
   }
 
   private def registeredSites(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    SummaryListViewModel(rows = Seq(
-      PackAtBusinessAddressSummary.row(userAnswers)
-    ).flatten)
+    userAnswers.get(PackAtBusinessAddressPage) match {
+      case true =>
+        Some(SummaryListViewModel(rows = Seq(
+          PackAtBusinessAddressSummary.row(userAnswers)
+        ).flatten))
+      case _ => None
+    }
   }
 
   private def claimCreditsForLostOrDamagedAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
