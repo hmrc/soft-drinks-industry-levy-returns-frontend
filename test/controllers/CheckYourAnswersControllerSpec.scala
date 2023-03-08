@@ -921,6 +921,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("registered-sites").text mustEqual Messages("registeredUkSites")
+        page.getElementsByTag("dt").text() must include(Messages("packagingSites"))
       }
     }
 
@@ -936,6 +937,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.body.text() mustNot include(Messages("registeredUkSites"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("packagingSites"))
       }
     }
 

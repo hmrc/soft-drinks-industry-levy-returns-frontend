@@ -466,6 +466,7 @@ total = Total
 financiallineitem.returncharge = Return <br/><span class="form-hint">for {0} to {1}</span>
 
 registeredUkSites = Registered UK Sites
+packagingSites = Packaging Sites
 
 sendYourReturn = Send your return
 sendYourReturnConfirmation = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
