@@ -761,5 +761,99 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must return OK and contain amount you will be credited header when return amount due is in credit" +
+      "and both totalForQuarter and balanceBroughtForward are negative" in {
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
+      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
+      val financialItemList = List(financialItem1, financialItem2)
+      when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 100, "highBand" -> 100),
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+      )
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+
+      val application = applicationBuilder(Some(userAnswers)).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("amount-to-pay-title").text mustEqual (Messages("amountYouWillBeCredited"))
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        page.getElementsByClass("total-for-quarter").text() must include("-£42.00")
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("-£300.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("-£342.00")
+
+      }
+    }
+
+    "must return OK and contain amount you will be credited header when return amount due is in debit" +
+      "totalForQuarter is positive and balanceBroughtForward is negative where total is negative" in {
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
+      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
+      val financialItemList = List(financialItem1, financialItem2)
+      when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+      )
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+
+      val application = applicationBuilder(Some(userAnswers)).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("amount-to-pay-title").text mustEqual (Messages("amountToPay"))
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        page.getElementsByClass("total-for-quarter").text() must include("£4200.00")
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("-£300.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("£3900.00")
+
+      }
+    }
+
   }
 }
