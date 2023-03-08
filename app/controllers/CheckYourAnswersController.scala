@@ -79,7 +79,8 @@ class CheckYourAnswersController @Inject()(
           claimCreditsForLostOrDamagedAnswers(userAnswers),
           amountToPaySection._1,
           amountToPaySection._2,
-          amountToPaySection._3
+          amountToPaySection._3,
+          Some(registeredSites(userAnswers))
         ))
       }) recoverWith {
         case t: Throwable =>
@@ -114,6 +115,12 @@ class CheckYourAnswersController @Inject()(
         higherBandCostPerLitre,
         isSmallProducer.getOrElse(false),
         balanceBroughtForward)
+  }
+
+  private def registeredSites(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    SummaryListViewModel(rows = Seq(
+      PackAtBusinessAddressSummary.row(userAnswers)
+    ).flatten)
   }
 
   private def claimCreditsForLostOrDamagedAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {

@@ -909,5 +909,22 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must return OK and contain registered UK sites section header when packaging site present" in {
+      val userAnswersData = Json.obj()
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers)).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("registered-sites").text mustEqual Messages("registeredUkSites")
+//        page.getElementsByTag("dt").text() must include("Site address here")
+
+      }
+    }
+
   }
 }

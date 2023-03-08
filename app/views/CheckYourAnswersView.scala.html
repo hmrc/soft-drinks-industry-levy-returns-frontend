@@ -31,7 +31,8 @@
   claimCreditsForLostOrDamagedAnswers: SummaryList,
   amountToPayTitle: String,
   amountToPay: SummaryList,
-  amountInCredit: Option[String] = None)(implicit request: Request[_], messages: Messages)
+  amountInCredit: Option[String] = None,
+  registeredSites: Option[SummaryList] = None)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -70,6 +71,16 @@
 
     <h2 class="govuk-heading-m" id="amount-to-pay-title">@amountToPayTitle</h2>
     @govukSummaryList(amountToPay)
+
+    @registeredSites match {
+        case Some(sites) => {
+            <h2 class="govuk-heading-m" id="registered-sites">@messages("registeredUkSites")</h2>
+            @govukSummaryList(sites)
+        }
+        case None => {
+            <br>
+        }
+    }
 
     <h2 class="govuk-heading-m">@messages("sendYourReturn")</h2>
     <p class="govuk-body govuk-!-margin-bottom-5">@messages("sendYourReturnConfirmation")</p>
