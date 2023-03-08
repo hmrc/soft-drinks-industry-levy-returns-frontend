@@ -34,10 +34,15 @@ object AmountToPaySummary  {
 
     val totalForQuarter = calculateTotalForQuarter(answers, lowBandCostPerLitre, highBandCostPerLitre, smallProducer)
     val total = totalForQuarter + balanceBroughtForward
+//    println(Console.YELLOW + s"Quarter $totalForQuarter" + Console.WHITE)
+//    println(Console.YELLOW + s"Forward $balanceBroughtForward" + Console.WHITE)
+//    println(Console.YELLOW + s"Total $total" + Console.WHITE)
 
     val sectionHeader =
       if (total == 0) {
         Messages("youDoNotNeedToPayAnything")
+      } else if(total < 0) {
+        Messages("amountYouWillBeCredited")
       } else {
         Messages("amountToPay")
       }
@@ -63,8 +68,11 @@ object AmountToPaySummary  {
     (sectionHeader, summary)
   }
 
-  private def formatAmount(total: BigDecimal) = {
-    "£" + String.format("%.2f", total.toDouble)
+  private def formatAmount(amount: BigDecimal) = {
+    if(amount <0)
+      "-£" + String.format("%.2f", amount.toDouble * -1)
+    else
+      "£" + String.format("%.2f", amount.toDouble)
   }
 
   private def calculateTotalForQuarter(userAnswers: UserAnswers,
