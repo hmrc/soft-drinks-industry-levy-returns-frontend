@@ -38,9 +38,13 @@
     <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-    amountInCredit match {
-        case Some(amount) => <h2 class="govuk-heading-m" id="in-credit-main-sub-header">@amountInCredit</h2>
-        case _ => ""
+    @amountInCredit match {
+        case Some(amount) => {
+            <h2 class="govuk-heading-m" id="in-credit-main-sub-header">@amountInCredit</h2>
+        }
+        case _ => {
+            <br>
+        }
     }
 
     <h2 class="govuk-heading-m">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
