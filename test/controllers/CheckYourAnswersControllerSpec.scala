@@ -935,7 +935,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("registered-sites").text mustEqual null
+        page.body.text() mustNot include(Messages("registeredUkSites"))
       }
     }
 

@@ -119,7 +119,7 @@ class CheckYourAnswersController @Inject()(
 
   private def registeredSites(userAnswers: UserAnswers)(implicit messages: Messages) = {
     userAnswers.get(PackAtBusinessAddressPage) match {
-      case true =>
+      case Some(true) =>
         Some(SummaryListViewModel(rows = Seq(
           PackAtBusinessAddressSummary.row(userAnswers)
         ).flatten))
