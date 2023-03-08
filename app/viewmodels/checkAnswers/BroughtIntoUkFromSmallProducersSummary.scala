@@ -20,25 +20,29 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.BroughtIntoUkFromSmallProducersPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object BroughtIntoUkFromSmallProducersSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(BroughtIntoUkFromSmallProducersPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = "broughtIntoUkFromSmallProducers.checkYourAnswersLabel",
+        SummaryListRow(
+          key     = "broughtIntoUKFromSmallProducers.checkYourAnswersLabel",
           value   = ValueViewModel(value),
-          actions = Seq(
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+                items =
+                  Seq(
             ActionItemViewModel("site.change", routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("broughtIntoUkFromSmallProducers.change.hidden"))
-          )
+          )))}else None
         )
     }
 }

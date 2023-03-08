@@ -119,3 +119,5 @@ GET        /pack-at-business-address-in-return                        controller
 POST       /pack-at-business-address-in-return                       controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /change-pack-at-business-address-in-return                  controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-pack-at-business-address-in-return                 controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /return-sent                                             controllers.ReturnSentController.onPageLoad
