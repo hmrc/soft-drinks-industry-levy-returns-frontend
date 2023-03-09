@@ -28,13 +28,21 @@ import viewmodels.implicits._
 
 object OwnBrandsSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(OwnBrandsPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
+        SummaryListRowViewModel(
+          key = "ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel",
+          value = ValueViewModel(value)
+        )
+    }
+  }
 
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(OwnBrandsPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
         SummaryListRowViewModel(
           key = "reportingOwnBrandsPackagedAtYourOwnSite",
           value = ValueViewModel(value).withCssClass("align-right"),
@@ -44,7 +52,6 @@ object OwnBrandsSummary  {
               .withVisuallyHiddenText(messages("ownBrands.change.hidden")) // TODO - what should this say?
           )
         )
-
     }
   }
 

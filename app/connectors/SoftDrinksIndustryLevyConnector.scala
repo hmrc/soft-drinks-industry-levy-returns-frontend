@@ -18,6 +18,7 @@ package connectors
 
 import models.retrieved.RetrievedSubscription
 import models.{FinancialLineItem, ReturnPeriod}
+import models.{FinancialLineItem,ReturnPeriod}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}

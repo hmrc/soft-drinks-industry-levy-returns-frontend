@@ -17,8 +17,7 @@
 package forms.mappings
 
 import java.time.LocalDate
-
-import play.api.data.FieldMapping
+import play.api.data.{FieldMapping, Mapping}
 import play.api.data.Forms.of
 import models.Enumerable
 
@@ -41,6 +40,11 @@ trait Mappings extends Formatters with Constraints {
                      outOfRangeKey: String = "error.outOfMaxVal",
                      args: Seq[String] = Seq.empty): FieldMapping[Long] =
     of(longFormatter(requiredKey, negativeNumber, nonNumericKey, wholeNumberKey,outOfRangeKey, args))
+
+  protected def litres(band: String,
+                       args: Seq[String] = Seq.empty): Mapping[Long] =
+    of(litresFormatter(band, args))
+      .verifying(maximumValueNotEqual(100000000000000L, s"litres.error.$band.outOfMaxVal"))
 
   protected def boolean(requiredKey: String = "error.required",
                         invalidKey: String = "error.boolean",

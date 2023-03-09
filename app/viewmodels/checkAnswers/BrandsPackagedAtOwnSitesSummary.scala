@@ -33,8 +33,8 @@ object BrandsPackagedAtOwnSitesSummary  {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRow(
-          key     = "litresInTheLowBand",
-          value   = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
+          key = "litresInTheLowBand",
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           classes = "govuk-summary-list__row--no-border",
           actions = Some(Actions("",
             items =
@@ -48,10 +48,9 @@ object BrandsPackagedAtOwnSitesSummary  {
 
 
   def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-
     answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
-        val levy = "£" + String.format("%.2f",(answer.lowBand * lowBandCostPerLitre.toDouble))
+        val levy = "£" + String.format("%.2f", (answer.lowBand * lowBandCostPerLitre.toDouble))
         val value = HtmlFormat.escape(levy).toString
 
         SummaryListRowViewModel(
@@ -62,11 +61,10 @@ object BrandsPackagedAtOwnSitesSummary  {
     }
   }
 
-  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
-
         SummaryListRow(
           key = "litresInTheHighBand",
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
@@ -81,17 +79,62 @@ object BrandsPackagedAtOwnSitesSummary  {
                 )))
         )
     }
+  }
 
-  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
+  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val levy = "£" + String.format("%.2f", (answer.highBand * highBandCostPerLitre.toDouble))
         val value = HtmlFormat.escape(levy).toString
-
         SummaryListRowViewModel(
           key = "highBandLevy",
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           actions = Seq()
+        )
+    }
+  }
+
+  def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
+      answer =>
+        val value = HtmlFormat.escape(answer.lowBand.toString).toString
+        SummaryListRow(
+          key = "litresInTheLowBand",
+          value = ValueViewModel(HtmlContent(value)),
+          classes = "govuk-summary-list__row--no-border"
+        )
+    }
+
+  def returnsLowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
+      answer =>
+        val levy = "£" + String.format("%,.2f", answer.lowBand * lowBandCostPerLitre.toDouble)
+        val value = HtmlFormat.escape(levy).toString
+        SummaryListRowViewModel(
+          key = "lowBandLevy",
+          value = ValueViewModel(HtmlContent(value))
+        )
+    }
+  }
+  def returnsHighBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
+      answer =>
+        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
+        SummaryListRow(
+          key = "litresInTheHighBand",
+          value = ValueViewModel(HtmlContent(value)),
+          classes = "govuk-summary-list__row--no-border"
+        )
+    }
+
+  def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
+      answer =>
+        val levy = "£" + String.format("%,.2f", (answer.highBand * highBandCostPerLitre.toDouble))
+        val value = HtmlFormat.escape(levy).toString
+        SummaryListRowViewModel(
+          key = "highBandLevy",
+          value = ValueViewModel(HtmlContent(value))
         )
     }
 

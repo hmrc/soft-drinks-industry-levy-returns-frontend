@@ -26,7 +26,80 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryL
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
+import scala.collection.Seq
+
 object HowManyBroughtIntoUkSummary  {
+
+//  def lowBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+//    answers.get(HowManyBroughtIntoUkPage).map {
+//      answer =>
+//        val value = HtmlFormat.escape(answer.lowBand.toString).toString
+//        SummaryListRow(
+//          key = "litresInTheLowBand",
+//          value = ValueViewModel(HtmlContent(value)),
+//          classes = "govuk-summary-list__row--no-border",
+//          actions = if (checkAnswers == true) {
+//            Some(
+//              Actions("",
+//                items =
+//                  Seq(
+//                    ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
+//                      .withAttribute("id", "change-lowband-literage")
+//                      .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+//                  )))
+//          } else None
+//        )
+//    }
+//
+//  def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
+//
+//    answers.get(HowManyBroughtIntoUkPage).map {
+//      answer =>
+//        val levy = "£" + String.format("%,.2f", (answer.lowBand * lowBandCostPerLitre.toDouble))
+//        val value = HtmlFormat.escape(levy).toString
+//
+//        SummaryListRowViewModel(
+//          key = "lowBandLevy",
+//          value = ValueViewModel(HtmlContent(value)),
+//          actions = Seq()
+//        )
+//    }
+//  }
+//
+//  def highBandRow(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+//    answers.get(HowManyBroughtIntoUkPage).map {
+//      answer =>
+//        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
+//
+//        SummaryListRow(
+//          key = "litresInTheHighBand",
+//          value = ValueViewModel(HtmlContent(value)),
+//          classes = "govuk-summary-list__row--no-border",
+//          actions = if (checkAnswers == true) {
+//            Some(
+//              Actions("",
+//                items =
+//                  Seq(
+//                    ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
+//                      .withAttribute("id", "change-highband-literage")
+//                      .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
+//                  )))
+//          } else None
+//        )
+//    }
+//
+//  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
+//    answers.get(HowManyBroughtIntoUkPage).map {
+//      answer =>
+//        val levy = "£" + String.format("%,.2f", (answer.highBand * highBandCostPerLitre.toDouble))
+//        val value = HtmlFormat.escape(levy).toString
+//
+//        SummaryListRowViewModel(
+//          key = "highBandLevy",
+//          value = ValueViewModel(HtmlContent(value)),
+//          actions = Seq()
+//        )
+//    }
 
   def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoUkPage).map {

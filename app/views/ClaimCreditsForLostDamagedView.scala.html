@@ -55,7 +55,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.heading2")</h1>
+        <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
@@ -65,7 +65,7 @@
         )
         @govukDetails(
             Details(
-            summary = Text(messages("claimCreditsForLostDamaged.detailsLink")),
+            summary = Text(messages("whatCanIClaimCreditForDetailsLink")),
             content = HtmlContent(htmlContent)
             )
         )

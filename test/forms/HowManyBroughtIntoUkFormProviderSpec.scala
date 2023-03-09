@@ -26,11 +26,11 @@ class HowManyBroughtIntoUkFormProviderSpec extends LongFieldBehaviour {
   ".lowBand" - {
 
     val fieldName = "lowBand"
-    val requiredKey = "howManyBoughtIntoUk.error.lowBand.required"
-    val numberKey = "howManyBoughtIntoUk.error.lowBand.nonNumeric"
-    val negativeNumberKey = "howManyBoughtIntoUk.error.lowBand.negative"
-    val maxValueKey = "howManyBoughtIntoUk.error.lowBand.outOfMaxVal"
-    val wholeNumberKey = "howManyBoughtIntoUk.error.lowBand.wholeNumber"
+    val requiredKey = "litres.error.lowBand.required"
+    val numberKey = "litres.error.lowBand.nonNumeric"
+    val negativeNumberKey = "litres.error.lowBand.negative"
+    val maxValueKey = "litres.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "litres.error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -65,11 +65,11 @@ class HowManyBroughtIntoUkFormProviderSpec extends LongFieldBehaviour {
   ".highBand" - {
 
     val fieldName = "highBand"
-    val requiredKey = "howManyBoughtIntoUk.error.highBand.required"
-    val numberKey = "howManyBoughtIntoUk.error.highBand.nonNumeric"
-    val negativeNumberKey = "howManyBoughtIntoUk.error.highBand.negative"
-    val maxValueKey = "howManyBoughtIntoUk.error.highBand.outOfMaxVal"
-    val wholeNumberKey = "howManyBoughtIntoUk.error.highBand.wholeNumber"
+    val requiredKey = "litres.error.highBand.required"
+    val numberKey = "litres.error.highBand.nonNumeric"
+    val negativeNumberKey = "litres.error.highBand.negative"
+    val maxValueKey = "litres.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "litres.error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

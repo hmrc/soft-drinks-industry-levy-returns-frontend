@@ -62,20 +62,20 @@
         @govukInput(
         InputViewModel(
             field = form("lowBand"),
-            label = Label(content = Text(messages("addASmallProducer.lowBand"))),
+            label = Label(content = Text(messages("litres.lowBand"))),
         )
         .withWidth(Fixed10)
-        .withHint(Hint(content = Text(messages("addASmallProducer.hint3"))))
+        .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
         .withSuffix(PrefixOrSuffix(content = Text(messages("litres.suffix"))))
         )
 
         @govukInput(
         InputViewModel(
             field = form("highBand"),
-            label = Label(content = Text(messages("addASmallProducer.highBand"))),
+            label = Label(content = Text(messages("litres.highBand"))),
         )
         .withWidth(Fixed10)
-        .withHint(Hint(content = Text(messages("addASmallProducer.hint4"))))
+        .withHint(Hint(content = Text(messages("litres.highBandHint"))))
         .withSuffix(PrefixOrSuffix(content = Text(messages("litres.suffix"))))
         )
 
