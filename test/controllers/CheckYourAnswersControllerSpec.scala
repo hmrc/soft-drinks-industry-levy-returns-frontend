@@ -669,7 +669,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("h2").text() must include(Messages("sendYourReturn"))
         page.getElementsByTag("p").text() must include(Messages("sendYourReturnConfirmation"))
         page.getElementById("confirm-and-submit").text() must include(Messages("confirmDetailsAndSendReturn"))
-        page.getElementById("confirm-and-submit").attributes().get("href") mustEqual s"$baseUrl/check-your-answers"
+        page.getElementById("confirm-and-submit").attributes().get("href") mustEqual s"$baseUrl/return-sent"
       }
     }
 

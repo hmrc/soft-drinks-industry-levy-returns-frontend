@@ -40,7 +40,7 @@ import java.time.{LocalTime, ZoneId}
 import viewmodels.checkAnswers.{AmountToPaySummary, BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SecondaryWarehouseDetailsSummary, SmallProducerDetailsSummary}
 
 
-class ReturnSentController @Inject()(
+class ReturnsController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        config:FrontendAppConfig,
                                        configuration: Configuration,
