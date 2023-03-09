@@ -58,7 +58,7 @@ class ReturnSentController @Inject()(
 
       val userAnswers = request.userAnswers
 
-      val ownBrandsAnswer = {
+      val ownBrandsAnswer =
         if(userAnswers.get(OwnBrandsPage).getOrElse(false)) {
           SummaryListViewModel(rows = Seq(
             OwnBrandsSummary.returnsRow(userAnswers),
@@ -68,19 +68,21 @@ class ReturnSentController @Inject()(
             BrandsPackagedAtOwnSitesSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
           ).flatten)
         } else {
-          SummaryListViewModel(rows = Seq(OwnBrandsSummary.returnsRow(userAnswers)).flatten)}
-      }
+          SummaryListViewModel(rows = Seq(OwnBrandsSummary.returnsRow(userAnswers)).flatten)
+        }
 
       val packagedContractPackerAnswers =
         if(userAnswers.get(PackagedContractPackerPage).getOrElse(false)){
-        SummaryListViewModel(rows = Seq(
-        PackagedContractPackerSummary.row(userAnswers, checkAnswers = false),
-        HowManyAsAContractPackerSummary.lowBandRow(userAnswers, checkAnswers = false),
-        HowManyAsAContractPackerSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyAsAContractPackerSummary.highBandRow(userAnswers, checkAnswers = false),
-        HowManyAsAContractPackerSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          PackagedContractPackerSummary.row(request.userAnswers, checkAnswers = false)).flatten)}
+          SummaryListViewModel(rows = Seq(
+            PackagedContractPackerSummary.returnsRow(userAnswers),
+            HowManyAsAContractPackerSummary.returnsLowBandRow(userAnswers),
+            HowManyAsAContractPackerSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+            HowManyAsAContractPackerSummary.returnsHighBandRow(userAnswers),
+            HowManyAsAContractPackerSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+          ).flatten)
+        } else {
+          SummaryListViewModel(rows = Seq(PackagedContractPackerSummary.returnsRow(request.userAnswers)).flatten)
+        }
 
       val exemptionsForSmallProducersAnswers =
         if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false) == true){

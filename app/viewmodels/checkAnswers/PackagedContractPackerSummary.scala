@@ -27,34 +27,10 @@ import viewmodels.implicits._
 
 object PackagedContractPackerSummary  {
 
-//  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-//    answers.get(PackagedContractPackerPage).map {
-//      answer =>
-//
-//        val value = if (answer) "site.yes" else "site.no"
-//
-//        SummaryListRow(
-//          key = "reportingContractPackedAtYourOwnSite.checkYourAnswersLabel",
-//          value = ValueViewModel(value),
-//          actions = if (checkAnswers == true) {
-//            Some(
-//              Actions("",
-//                items =
-//                  Seq(
-//                    ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
-//                      .withAttribute("id", "change-contract-packer")
-//                      .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
-//                  )))
-//          } else None
-//        )
-//    }
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(PackagedContractPackerPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRowViewModel(
           key     = "reportingContractPackedAtYourOwnSite",
           value   = ValueViewModel(value).withCssClass("align-right"),
@@ -65,4 +41,16 @@ object PackagedContractPackerSummary  {
           )
         )
     }
+  }
+
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(PackagedContractPackerPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
+        SummaryListRow(
+          key = "reportingContractPackedAtYourOwnSite.checkYourAnswersLabel",
+          value = ValueViewModel(value)
+        )
+    }
+  }
 }
