@@ -45,9 +45,12 @@ class ReturnSentControllerSpec extends SpecBase {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
+
       val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
+
       when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
+
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()

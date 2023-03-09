@@ -54,6 +54,7 @@ class ReturnSentController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+
       val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id,"sdil"),4.seconds).get
 
       val userAnswers = request.userAnswers
@@ -216,13 +217,14 @@ class ReturnSentController @Inject()(
             def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
               l.headOption.fold(BigDecimal(0))(_._2)
 
-            val broughtForward = if(configuration.underlying.getBoolean("balanceAllEnabled")) {
+      val broughtForward = if(config.balanceAllEnabled) {
               connector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x =>
                 extractTotal(listItemsWithTotal(x))
               }
             }else {
                 connector.balance(request.sdilEnrolment, withAssessment = false)
             }
+
             val balanceBroughtForward = Await.result(broughtForward ,20.seconds)
 
       val balanceBroughtForwardAnswer =
