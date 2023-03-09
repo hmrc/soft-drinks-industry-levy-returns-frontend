@@ -28,22 +28,11 @@ import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary  {
 
-  def warehouseList(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
-
+  def warehouseList(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
     val value = 1.toString //answers.warehouseList.length.toString
-
     SummaryListRow(
       key = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
-      value = ValueViewModel(value),
-      actions = if (checkAnswers == true) {
-        Some(
-          Actions("",
-            items = Seq(
-              ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
-            ))
-        )
-      } else None
+      value = ValueViewModel(value)
     )
   }
 

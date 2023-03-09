@@ -137,27 +137,28 @@ class ReturnSentController @Inject()(
         }
 
       val claimCreditsForLostDamagedAnswers =
-        if(userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false) == true){
+        if(userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false)){
           SummaryListViewModel(rows = Seq(
-            ClaimCreditsForLostDamagedSummary.row(userAnswers, checkAnswers = false),
-            HowManyCreditsForLostDamagedSummary.lowBandRow(userAnswers, checkAnswers = false),
-            HowManyCreditsForLostDamagedSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyCreditsForLostDamagedSummary.highBandRow(userAnswers, checkAnswers = false),
-            HowManyCreditsForLostDamagedSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          ClaimCreditsForLostDamagedSummary.row(userAnswers, checkAnswers = false)).flatten)}
+            ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers),
+            HowManyCreditsForLostDamagedSummary.returnsLowBandRow(userAnswers),
+            HowManyCreditsForLostDamagedSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+            HowManyCreditsForLostDamagedSummary.returnsHighBandRow(userAnswers),
+            HowManyCreditsForLostDamagedSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+          ).flatten)
+        } else {
+          SummaryListViewModel(rows = Seq(ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers)).flatten)
+        }
 
       val smallProducerAnswers =
           SummaryListViewModel(rows = Seq(
-            SmallProducerDetailsSummary.producerList(userAnswers, checkAnswers = false)
+            SmallProducerDetailsSummary.producerList(userAnswers)
           ).flatten)
 
       val warehouseAnswers =
         SummaryListViewModel(rows = Seq(
-          SecondaryWarehouseDetailsSummary.warehouseList(userAnswers, checkAnswers = false)
+          SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)
         ))
-
-
+      
       val amountOwed:String = "£100,000.00"
       val paymentDate = ReturnPeriod(2022,1)
       val returnDate = ReturnPeriod(2022,1)

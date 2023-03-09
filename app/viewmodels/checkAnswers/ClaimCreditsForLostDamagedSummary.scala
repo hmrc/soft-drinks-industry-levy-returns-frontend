@@ -26,33 +26,21 @@ import viewmodels.implicits._
 
 object ClaimCreditsForLostDamagedSummary  {
 
-//  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-//    answers.get(ClaimCreditsForLostDamagedPage).map {
-//      answer =>
-//
-//        val value = if (answer) "site.yes" else "site.no"
-//
-//        SummaryListRow(
-//          key = "claimCreditsForLostDamaged.checkYourAnswersLabel",
-//          value = ValueViewModel(value),
-//          actions = if (checkAnswers == true) {
-//            Some(
-//              Actions("",
-//                items =
-//                  Seq(
-//                    ActionItemViewModel("site.change", routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url)
-//                      .withVisuallyHiddenText(messages("claimCreditsForLostDamaged.change.hidden"))
-//                  )))
-//          } else None
-//        )
-//    }
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(ClaimCreditsForLostDamagedPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
+        SummaryListRow(
+          key = "claimCreditsForLostDamaged.checkYourAnswersLabel",
+          value = ValueViewModel(value)
+        )
+    }
+  }
 
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(ClaimCreditsForLostDamagedPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
         SummaryListRowViewModel(
           key     = "claimingCreditForLostOrDestroyedLiableDrinks",
           value   = ValueViewModel(value).withCssClass("align-right"),
@@ -63,4 +51,5 @@ object ClaimCreditsForLostDamagedSummary  {
           )
         )
     }
+  }
 }
