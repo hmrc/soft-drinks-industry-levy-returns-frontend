@@ -124,15 +124,17 @@ class ReturnSentController @Inject()(
         }
 
       val claimCreditsForExportsAnswers =
-        if(userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false) == true){
+        if(userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false)){
           SummaryListViewModel(rows = Seq(
-            ClaimCreditsForExportsSummary.row(userAnswers, checkAnswers = false),
-            HowManyCreditsForExportSummary.lowBandRow(userAnswers, checkAnswers = false),
-            HowManyCreditsForExportSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyCreditsForExportSummary.highBandRow(userAnswers, checkAnswers = false),
-            HowManyCreditsForExportSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          ClaimCreditsForExportsSummary.row(userAnswers, checkAnswers = false)).flatten)}
+            ClaimCreditsForExportsSummary.returnsRow(userAnswers),
+            HowManyCreditsForExportSummary.returnsLowBandRow(userAnswers),
+            HowManyCreditsForExportSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+            HowManyCreditsForExportSummary.returnsHighBandRow(userAnswers),
+            HowManyCreditsForExportSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+          ).flatten)
+        } else {
+          SummaryListViewModel(rows = Seq(ClaimCreditsForExportsSummary.returnsRow(userAnswers)).flatten)
+        }
 
       val claimCreditsForLostDamagedAnswers =
         if(userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false) == true){
