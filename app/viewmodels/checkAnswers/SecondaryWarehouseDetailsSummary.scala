@@ -36,7 +36,7 @@ object SecondaryWarehouseDetailsSummary  {
 
         SummaryListRowViewModel(
           key     = "secondaryWarehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value).withCssClass("float-right"),
+          value   = ValueViewModel(value).withCssClass("align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("secondaryWarehouseDetails.change.hidden"))

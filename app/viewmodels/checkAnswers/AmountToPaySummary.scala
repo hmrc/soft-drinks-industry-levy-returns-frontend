@@ -43,17 +43,17 @@ object AmountToPaySummary  {
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
-        value = ValueViewModel(HtmlContent(formatAmount(totalForQuarter))).withCssClass("total-for-quarter float-right"),
+        value = ValueViewModel(HtmlContent(formatAmount(totalForQuarter))).withCssClass("total-for-quarter align-right"),
         actions = Seq()
       ),
       SummaryListRowViewModel(
         key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(formatAmount(balanceBroughtForward))).withCssClass("balance-brought-forward float-right"),
+        value = ValueViewModel(HtmlContent(formatAmount(balanceBroughtForward))).withCssClass("balance-brought-forward align-right"),
         actions = Seq()
       ),
       SummaryListRowViewModel(
         key = "total",
-        value = ValueViewModel(HtmlContent(formatAmount(total))).withCssClass("total float-right"),
+        value = ValueViewModel(HtmlContent(formatAmount(total))).withCssClass("total align-right"),
         actions = Seq()
       ))
     )

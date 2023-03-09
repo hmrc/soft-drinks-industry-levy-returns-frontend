@@ -34,7 +34,7 @@ object ExemptionsForSmallProducersSummary  {
 
         SummaryListRowViewModel(
           key     = "exemptionForRegisteredSmallProducers",
-          value   = ValueViewModel(value).withCssClass("float-right"),
+          value   = ValueViewModel(value).withCssClass("align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-exemption-small-producers")

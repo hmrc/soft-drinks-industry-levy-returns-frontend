@@ -34,7 +34,7 @@ object ClaimCreditsForExportsSummary  {
 
         SummaryListRowViewModel(
           key     = "claimingCreditForExportedLiableDrinks",
-          value   = ValueViewModel(value).withCssClass("float-right"),
+          value   = ValueViewModel(value).withCssClass("align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-exports")

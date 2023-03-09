@@ -36,7 +36,7 @@ object AddASmallProducerSummary  {
 
         SummaryListRowViewModel(
           key     = "addASmallProducer.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(value)).withCssClass("float-right"),
+          value   = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.AddASmallProducerController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("addASmallProducer.change.hidden"))

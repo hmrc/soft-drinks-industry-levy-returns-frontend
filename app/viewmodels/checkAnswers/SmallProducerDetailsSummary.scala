@@ -37,7 +37,7 @@ object SmallProducerDetailsSummary  {
 
         SummaryListRowViewModel(
           key     = "smallProducerDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value).withCssClass("float-right"),
+          value   = ValueViewModel(value).withCssClass("align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("smallProducerDetails.change.hidden"))
@@ -70,7 +70,7 @@ object SmallProducerDetailsSummary  {
     val litreageTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._1).sum
     Some(SummaryListRow(
       key = "litresInTheLowBand",
-      value = ValueViewModel(HtmlContent(litreageTotal.toString)).withCssClass("float-right"),
+      value = ValueViewModel(HtmlContent(litreageTotal.toString)).withCssClass("align-right"),
       classes = "govuk-summary-list__row--no-border",
       actions = Some(Actions("",
         items =
@@ -89,7 +89,7 @@ object SmallProducerDetailsSummary  {
 
     Some(SummaryListRowViewModel(
       key = "lowBandLevy",
-      value = ValueViewModel(HtmlContent(value)).withCssClass("float-right"),
+      value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
       actions = Seq()
     ))
   }
@@ -98,7 +98,7 @@ object SmallProducerDetailsSummary  {
     val litreageTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._2).sum
     Some(SummaryListRow(
       key = "litresInTheHighBand",
-      value = ValueViewModel(HtmlContent(litreageTotal.toString)).withCssClass("float-right"),
+      value = ValueViewModel(HtmlContent(litreageTotal.toString)).withCssClass("align-right"),
       classes = "govuk-summary-list__row--no-border",
       actions = Some(Actions("",
         items =
@@ -117,7 +117,7 @@ object SmallProducerDetailsSummary  {
 
     Some(SummaryListRowViewModel(
       key = "highBandLevy",
-      value = ValueViewModel(HtmlContent(value)).withCssClass("float-right"),
+      value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
       actions = Seq()
     ))
   }
