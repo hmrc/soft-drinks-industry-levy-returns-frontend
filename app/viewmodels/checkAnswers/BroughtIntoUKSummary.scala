@@ -34,7 +34,7 @@ object BroughtIntoUKSummary  {
 
         SummaryListRowViewModel(
           key     = "reportingLiableDrinksBroughtIntoTheUK",
-          value   = ValueViewModel(value),
+          value   = ValueViewModel(value).withCssClass("float-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-brought-into-uk")

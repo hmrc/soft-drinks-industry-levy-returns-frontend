@@ -34,7 +34,7 @@ object PackagedContractPackerSummary  {
 
         SummaryListRowViewModel(
           key     = "reportingContractPackedAtYourOwnSite",
-          value   = ValueViewModel(value),
+          value   = ValueViewModel(value).withCssClass("float-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-contract-packer")

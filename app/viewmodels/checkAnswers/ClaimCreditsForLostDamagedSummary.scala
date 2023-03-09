@@ -34,7 +34,7 @@ object ClaimCreditsForLostDamagedSummary  {
 
         SummaryListRowViewModel(
           key     = "claimingCreditForLostOrDestroyedLiableDrinks",
-          value   = ValueViewModel(value),
+          value   = ValueViewModel(value).withCssClass("float-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-credits-lost-damaged")

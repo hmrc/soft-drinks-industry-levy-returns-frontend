@@ -37,7 +37,7 @@ object OwnBrandsSummary  {
 
         SummaryListRowViewModel(
           key = "reportingOwnBrandsPackagedAtYourOwnSite",
-          value = ValueViewModel(value),
+          value = ValueViewModel(value).withCssClass("float-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-own-brands")

@@ -34,7 +34,7 @@ object AskSecondaryWarehouseInReturnSummary  {
 
         SummaryListRowViewModel(
           key     = "askSecondaryWarehouseInReturn.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
+          value   = ValueViewModel(value).withCssClass("float-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("askSecondaryWarehouseInReturn.change.hidden"))

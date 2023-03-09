@@ -39,7 +39,7 @@ object PackAtBusinessAddressSummary  {
 
         SummaryListRowViewModel(
           key     = "packagingSites",
-          value   = ValueViewModel("1"),
+          value   = ValueViewModel("1").withCssClass("float-right"), //- TODO Change value to number of sites after the page is implemented
           actions = Seq(
             ActionItemViewModel("site.change", routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("packAtBusinessAddress.change.hidden"))

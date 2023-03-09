@@ -34,7 +34,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRow(
           key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("float-right"),
           classes = "govuk-summary-list__row--no-border",
           actions = Some(Actions("",
             items =
@@ -56,7 +56,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
 
         SummaryListRowViewModel(
           key = "lowBandLevy",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("float-right"),
           actions = Seq()
         )
     }
@@ -69,7 +69,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
 
         SummaryListRow(
           key = "litresInTheHighBand",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("float-right"),
           classes = "govuk-summary-list__row--no-border",
           actions = Some(
             Actions("",
@@ -90,7 +90,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
 
         SummaryListRowViewModel(
           key = "highBandLevy",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("float-right"),
           actions = Seq()
         )
     }

@@ -43,17 +43,17 @@ object AmountToPaySummary  {
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
-        value = ValueViewModel(HtmlContent(formatAmount(totalForQuarter))).withCssClass("total-for-quarter"),
+        value = ValueViewModel(HtmlContent(formatAmount(totalForQuarter))).withCssClass("total-for-quarter float-right"),
         actions = Seq()
       ),
       SummaryListRowViewModel(
         key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(formatAmount(balanceBroughtForward))).withCssClass("balance-brought-forward"),
+        value = ValueViewModel(HtmlContent(formatAmount(balanceBroughtForward))).withCssClass("balance-brought-forward float-right"),
         actions = Seq()
       ),
       SummaryListRowViewModel(
         key = "total",
-        value = ValueViewModel(HtmlContent(formatAmount(total))).withCssClass("total"),
+        value = ValueViewModel(HtmlContent(formatAmount(total))).withCssClass("total float-right"),
         actions = Seq()
       ))
     )
@@ -98,7 +98,7 @@ object AmountToPaySummary  {
     val litresExported = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
     val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
 
-    val total =  litresBroughtIntoTheUk + litresAsContractPacker
+    val total = litresBroughtIntoTheUk + litresAsContractPacker
     val totalCredits =  litresExported + litresLostOrDamaged
 
     smallProducer match {
