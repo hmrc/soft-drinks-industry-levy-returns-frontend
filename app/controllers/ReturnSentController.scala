@@ -158,7 +158,7 @@ class ReturnSentController @Inject()(
         SummaryListViewModel(rows = Seq(
           SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)
         ))
-      
+
       val amountOwed:String = "£100,000.00"
       val paymentDate = ReturnPeriod(2022,1)
       val returnDate = ReturnPeriod(2022,1)
