@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package repositories
 
-import models.core.ErrorModel
+import play.api.libs.json.{JsValue, Json}
 
-object ResponseHttpParser {
-  type HttpResult[T] = Either[ErrorModel, T]
+case class CacheMap(id: String,
+                    data: Map[String, JsValue])
 
-
+object CacheMap {
+  implicit val formats = Json.format[CacheMap]
 }

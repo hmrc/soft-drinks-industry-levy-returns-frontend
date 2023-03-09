@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package repositories
 
-import models.core.ErrorModel
+import play.api.libs.json._
 
-object ResponseHttpParser {
-  type HttpResult[T] = Either[ErrorModel, T]
+import javax.inject.Singleton
 
+@Singleton
+class CascadeUpsert {
 
+  val funcMap: Map[String, (JsValue, CacheMap) => CacheMap] = Map()
+
+  def apply[A](key: String, value: A, originalCacheMap: CacheMap)(implicit fmt: Format[A]): CacheMap =
+    funcMap.get(key).fold(store(key, value, originalCacheMap)) { fn => fn(Json.toJson(value), originalCacheMap)}
+
+  private def store[A](key:String, value: A, cacheMap: CacheMap)(implicit fmt: Format[A]): CacheMap =
+    cacheMap copy (data = cacheMap.data + (key -> Json.toJson(value)))
 }

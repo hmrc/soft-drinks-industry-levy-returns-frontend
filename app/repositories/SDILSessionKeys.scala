@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package repositories
 
-import models.core.ErrorModel
+object SDILSessionKeys {
 
-object ResponseHttpParser {
-  type HttpResult[T] = Either[ErrorModel, T]
-
+  val SUBSCRIPTION = "SUBSCRIPTION"
 
 }
