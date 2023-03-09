@@ -67,7 +67,7 @@ class ProductionSiteDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val producetionSiteList: List[Site] = request.userAnswers.productionSiteList//request.userAnswers.productionSiteList
+      val producetionSiteList: List[Site] = request.userAnswers.productionSiteList //request.userAnswers.productionSiteList
       val preparedForm = request.userAnswers.get(ProductionSiteDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)

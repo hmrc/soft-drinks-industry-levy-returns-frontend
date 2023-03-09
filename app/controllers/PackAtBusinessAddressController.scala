@@ -18,9 +18,10 @@ package controllers
 
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
+
 import javax.inject.Inject
 import models.Mode
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import navigation.Navigator
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,6 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackAtBusinessAddressView
+
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -61,14 +63,25 @@ class PackAtBusinessAddressController @Inject()(
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address
 
-      form.bindFromRequest().fold(
+      val productionSite = Site(
+        request.subscription.address,
+        Some(request.subscription.sdilRef),
+        Some(request.subscription.orgName),
+        request.subscription.deregDate,
+       )
+
+
+
+        form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
 
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            originaProductionSitelList = updatedAnswers.productionSiteList
+            updatedProductionSiteList = if(request.userAnswers.productionSiteList.isEmpty){updatedAnswers.copy(productionSiteList = productionSite :: originaProductionSitelList)} else updatedAnswers
+            _              <- sessionRepository.set(updatedProductionSiteList)
           } yield Redirect(navigator.nextPage(PackAtBusinessAddressPage, mode, updatedAnswers))
       )
   }
