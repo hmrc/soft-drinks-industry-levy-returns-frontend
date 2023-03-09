@@ -26,33 +26,21 @@ import viewmodels.implicits._
 
 object BroughtIntoUKSummary  {
 
-//  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-//    answers.get(BroughtIntoUKPage).map {
-//      answer =>
-//
-//        val value = if (answer) "site.yes" else "site.no"
-//
-//        SummaryListRow(
-//          key = "broughtIntoUK.checkYourAnswersLabel",
-//          value = ValueViewModel(value),
-//          actions = if (checkAnswers == true) {
-//            Some(
-//              Actions("",
-//                items =
-//                  Seq(
-//                    ActionItemViewModel("site.change", routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
-//                      .withVisuallyHiddenText(messages("broughtIntoUK.change.hidden"))
-//                  )))
-//          } else None
-//        )
-//    }
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(BroughtIntoUKPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
+        SummaryListRow(
+          key = "broughtIntoUK.checkYourAnswersLabel",
+          value = ValueViewModel(value)
+        )
+    }
+  }
 
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(BroughtIntoUKPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
         SummaryListRowViewModel(
           key     = "reportingLiableDrinksBroughtIntoTheUK",
           value   = ValueViewModel(value).withCssClass("align-right"),
@@ -63,4 +51,5 @@ object BroughtIntoUKSummary  {
           )
         )
     }
+  }
 }

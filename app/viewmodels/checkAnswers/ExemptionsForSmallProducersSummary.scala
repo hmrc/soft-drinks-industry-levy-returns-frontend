@@ -26,34 +26,21 @@ import viewmodels.implicits._
 
 object ExemptionsForSmallProducersSummary  {
 
-//  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-//    answers.get(ExemptionsForSmallProducersPage).map {
-//      answer =>
-//
-//        val value = if (answer) "site.yes" else "site.no"
-//
-//        SummaryListRow(
-//          key = "exemptionsForSmallProducers.checkYourAnswersLabel",
-//          value = ValueViewModel(value),
-//          actions = if (checkAnswers == true) {
-//            Some(
-//              Actions("",
-//                items =
-//                  Seq(
-//                    ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
-//                      .withAttribute("id", "change-exemptions-for-small-producers")
-//                      .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
-//                  )))
-//          } else None
-//        )
-//    }
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(ExemptionsForSmallProducersPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
+        SummaryListRow(
+          key = "exemptionsForSmallProducers.checkYourAnswersLabel",
+          value = ValueViewModel(value)
+        )
+    }
+  }
 
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(ExemptionsForSmallProducersPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
         SummaryListRowViewModel(
           key     = "exemptionForRegisteredSmallProducers",
           value   = ValueViewModel(value).withCssClass("align-right"),
@@ -64,4 +51,5 @@ object ExemptionsForSmallProducersSummary  {
           )
         )
     }
+  }
 }

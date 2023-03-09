@@ -26,28 +26,16 @@ import viewmodels.implicits._
 
 object BroughtIntoUkFromSmallProducersSummary  {
 
-//  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-//    answers.get(BroughtIntoUkFromSmallProducersPage).map {
-//      answer =>
-//
-//        val value = if (answer) "site.yes" else "site.no"
-//
-//        SummaryListRow(
-//          key = "broughtIntoUKFromSmallProducers.checkYourAnswersLabel",
-//          value = ValueViewModel(value),
-//          actions = if (checkAnswers == true) {
-//            Some(
-//              Actions("",
-//                items =
-//                  Seq(
-//                    ActionItemViewModel("site.change", routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
-//                      .withVisuallyHiddenText(messages("broughtIntoUkFromSmallProducers.change.hidden"))
-//                  )))
-//          } else None
-//        )
-//    }
-
-  // TODO - refactor the above
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(BroughtIntoUkFromSmallProducersPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
+        SummaryListRow(
+          key = "broughtIntoUKFromSmallProducers.checkYourAnswersLabel",
+          value = ValueViewModel(value)
+        )
+    }
+  }
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(BroughtIntoUkFromSmallProducersPage).map {
@@ -67,3 +55,4 @@ object BroughtIntoUkFromSmallProducersSummary  {
     }
 
 }
+  }

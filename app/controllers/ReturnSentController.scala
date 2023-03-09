@@ -85,37 +85,43 @@ class ReturnSentController @Inject()(
         }
 
       val exemptionsForSmallProducersAnswers =
-        if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false) == true){
+        if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)){
           SummaryListViewModel(rows = Seq(
-            ExemptionsForSmallProducersSummary.row(userAnswers, checkAnswers = false),
-            SmallProducerDetailsSummary.lowBandRow(userAnswers, checkAnswers = false),
-            SmallProducerDetailsSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            SmallProducerDetailsSummary.highBandRow(userAnswers, checkAnswers = false),
-            SmallProducerDetailsSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          ExemptionsForSmallProducersSummary.row(userAnswers, checkAnswers = false)).flatten)}
+            ExemptionsForSmallProducersSummary.returnsRow(userAnswers),
+            SmallProducerDetailsSummary.returnsLowBandRow(userAnswers),
+            SmallProducerDetailsSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+            SmallProducerDetailsSummary.returnsHighBandRow(userAnswers),
+            SmallProducerDetailsSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+          ).flatten)
+        } else {
+          SummaryListViewModel(rows = Seq(ExemptionsForSmallProducersSummary.returnsRow(userAnswers)).flatten)
+        }
 
       val broughtIntoUkAnswers =
-        if(userAnswers.get(BroughtIntoUKPage).getOrElse(false) == true){
+        if(userAnswers.get(BroughtIntoUKPage).getOrElse(false)){
           SummaryListViewModel(rows = Seq(
-            BroughtIntoUKSummary.row(userAnswers, checkAnswers = false),
-            HowManyBroughtIntoUkSummary.lowBandRow(userAnswers, checkAnswers = false),
-            HowManyBroughtIntoUkSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyBroughtIntoUkSummary.highBandRow(userAnswers, checkAnswers = false),
-            HowManyBroughtIntoUkSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          BroughtIntoUKSummary.row(userAnswers, checkAnswers = false)).flatten)}
+            BroughtIntoUKSummary.returnsRow(userAnswers),
+            HowManyBroughtIntoUkSummary.returnsLowBandRow(userAnswers),
+            HowManyBroughtIntoUkSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+            HowManyBroughtIntoUkSummary.returnsHighBandRow(userAnswers),
+            HowManyBroughtIntoUkSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+          ).flatten)
+        } else {
+          SummaryListViewModel(rows = Seq(BroughtIntoUKSummary.returnsRow(userAnswers)).flatten)
+        }
 
       val broughtIntoUkSmallProducerAnswers =
-        if(userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false) == true){
+        if(userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false)){
           SummaryListViewModel(rows = Seq(
-            BroughtIntoUkFromSmallProducersSummary.row(userAnswers, checkAnswers = false),
-            HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandRow(userAnswers, checkAnswers = false),
-            HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandRow(userAnswers, checkAnswers = false),
-            HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)}else{ SummaryListViewModel(rows = Seq(
-          BroughtIntoUkFromSmallProducersSummary.row(userAnswers, checkAnswers = false)).flatten)}
+            BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers),
+            HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandRow(userAnswers),
+            HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+            HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandRow(userAnswers),
+            HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+          ).flatten)
+        } else {
+          SummaryListViewModel(rows = Seq(BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers)).flatten)
+        }
 
       val claimCreditsForExportsAnswers =
         if(userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false) == true){
