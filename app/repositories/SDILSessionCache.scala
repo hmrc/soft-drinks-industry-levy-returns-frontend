@@ -15,10 +15,8 @@
  */
 
 package repositories
-import models.requests.IdentifierRequest
-import play.api.libs.json.Format
-import play.api.mvc.Request
 
+import play.api.libs.json.Format
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

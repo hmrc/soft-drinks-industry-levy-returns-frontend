@@ -41,7 +41,7 @@ object ExemptionsForSmallProducersSummary  {
                 items =
                   Seq(
             ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-exemptions-for-small-producers")
+              .withAttribute(("id", "change-exemptions-for-small-producers"))
               .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
           )))}else None
         )

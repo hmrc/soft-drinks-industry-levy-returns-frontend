@@ -42,7 +42,7 @@ object BrandsPackagedAtOwnSitesSummary  {
             items =
               Seq(
                 ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-literage")
+                  .withAttribute(("id", "change-lowband-literage"))
                   .withVisuallyHiddenText(messages("brandsPackagedAtOwnSites.change.hidden")) //TODO - replace with correct hidden content
               )))}else None
         )
