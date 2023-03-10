@@ -108,7 +108,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
   "SoftDrinksIndustryLevyConnector" - {
 
-//    "return a subscription Successfully" when {
+//    "return a subscription Successfully" when { TODO
 
       "when there is a subscription in cache" in {
 
@@ -126,8 +126,10 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
 
       "when there is no subscription in cache" in {
+        //TODO
+
       }
-    
+
       "return a small producer status successfully" in {
         val sdilNumber: String = "XKSDIL000000022"
         val period = ReturnPeriod(year = 2022, quarter = 3)
