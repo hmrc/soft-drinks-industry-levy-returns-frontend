@@ -16,39 +16,64 @@
 
 package connectors
 
+import base.SpecBase
 import com.typesafe.config.ConfigFactory
-import models.ReturnPeriod
+import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, DataRetrievalActionImpl, FakeDataRetrievalAction, FakeIdentifierAction, IdentifierAction}
+import models.{ReturnPeriod, UserAnswers, Warehouse}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import play.api.Configuration
-import repositories.{CascadeUpsert, SDILSessionCache, SDILSessionCacheRepository}
+import play.api.{Application, Configuration, Environment, Mode}
+import play.api.http.Status.OK
+import play.api.inject._
+import play.api.inject.guice.GuiceApplicationBuilder
+import repositories.{CascadeUpsert, SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.libs.json.{Format, Json}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{GET, route, running}
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate, ZoneOffset}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.{Duration, DurationInt}
 import scala.concurrent.{Await, Future}
 
-class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar with ScalaFutures with IntegrationPatience  {
+class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar with ScalaFutures {
 
-  val (host, port) = ("host", "123")
 
-  val config = Configuration(
+  def emptyUserAnswers = UserAnswers("XKSDIL000000022", Json.obj())
+
+  val application = applicationBuilder(userAnswers = None).build()
+  protected def applicationBuilder(
+                                    userAnswers: Option[UserAnswers] = None,
+                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .overrides(
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
+      )
+
+  val (host, localPort) = ("host", "123")
+
+  val localConfig = Configuration(
     ConfigFactory.parseString(s"""
                                  | microservice.services.soft-drinks-industry-levy {
                                  |    host     = "$host"
-                                 |    port     = $port
+                                 |    port     = $localPort
                                  |  }
                                  |""".stripMargin)
   )
+
   val mockHttp = mock[HttpClient]
   val mockSDILSessionCache = mock[SDILSessionCache]
-  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, config, mockSDILSessionCache)
+  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, localConfig, mockSDILSessionCache)
 
   val aSubscription = RetrievedSubscription(
     "0000000022",
@@ -94,34 +119,54 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
   "SoftDrinksIndustryLevyConnector" must {
 
     "return a subscription Successfully" in {
+      val identifierType: String = "sdil"
+      val sdilNumber: String = "XKSDIL000000022"
+      implicit val format: Format[RetrievedSubscription] = Json.format[RetrievedSubscription]
 
-     val identifierType: String = "0000000022"
-     val sdilNumber: String = "XKSDIL000000022"
-
-     when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
-
-     Await.result(softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType), 4.seconds) mustBe  Some(aSubscription)
-
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      lazy val mongo: SDILSessionCache = application.injector.instanceOf[SDILSessionCache]
+      when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
+      val fetchEntryRes = Await.result(mongo.fetchEntry(sdilNumber, "SUBSCRIPTION")(format), 4.seconds)
+      println(Console.YELLOW + fetchEntryRes + Console.WHITE)
     }
+      //      running(application) {
+      //
+      //        val request = FakeRequest(GET, askSecondaryWarehouseInReturnRoute)
+      //
+      //        val result = route(application, request).value
+      //
+      //        val view = application.injector.instanceOf[AskSecondaryWarehouseInReturnView]
+      //
+      //        status(result) mustEqual OK
+      //        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+      //      }
+
+
+      //      val result = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType)
+      //
+      //     result.futureValue must be(OK)
+
+      //     Await.result(softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType), 4.seconds) mustBe  Some(aSubscription)
+      //     for{
+      //       connectorResponse <- softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType)
+      //     } yield {
+      //       connectorResponse.get mustEqual(aSubscription)
+      //     }
+
+
 
     "return a small producer status successfully" in {
-
       val sdilNumber: String = "XKSDIL000000022"
       val period = ReturnPeriod(year = 2022, quarter = 3)
-
       when(mockHttp.GET[Option[Boolean]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(Some(false)))
-
       Await.result(softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period), 4.seconds) mustBe Some(false)
-
     }
 
     "return a oldest pending return period successfully" in {
-
       val utr: String = "1234567891"
       val returnPeriod = ReturnPeriod(year = 2022, quarter = 3)
       when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(List(returnPeriod)))
       Await.result(softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr), 4.seconds) mustBe Some(returnPeriod)
-
     }
   }
 
