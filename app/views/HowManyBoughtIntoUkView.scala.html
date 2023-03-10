@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
+@import views.html.helpers._
 
 @this(
     layout: templates.Layout,
@@ -22,7 +22,11 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-   govukDetails: GovukDetails
+    govukDetails: GovukDetails,
+    lowAndHighBandInputs: lowAndHighBandInputs,
+    saveAndContinueButton: saveAndContinueButton,
+    whatIsASmallProducer: whatIsASmallProducer
+
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -45,6 +49,10 @@
 
         <h1 class="govuk-heading-m">@messages("howManyBoughtIntoUk.title")</h1>
         <p class="govuk-body">@messages("howManyBoughtIntoUk.subtext")</p>
+
+        @lowAndHighBandInputs
+        @whatIsASmallProducer
+        @saveAndContinueButton
 
         @govukInput(
             Input(
