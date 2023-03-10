@@ -16,28 +16,25 @@
 
 package controllers
 
-import scala.concurrent.{Await, ExecutionContext, Future}
-import java.util.Locale
-import scala.concurrent.duration.DurationInt
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
-import models.{Address, FinancialLineItem, ReturnPeriod, SmallProducer, Warehouse}
-import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage}
-import viewmodels.govuk.summarylist._
-
-import scala.math.BigDecimal
-import javax.inject.Inject
-import play.api.i18n.{I18nSupport, MessagesApi}
+import models.requests.DataRequest
+import models.{Address, FinancialLineItem, ReturnPeriod, SmallProducer, UserAnswers, Warehouse}
+import pages._
+import play.api.Configuration
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers._
+import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
 
 import java.time.format.DateTimeFormatter
-import config.FrontendAppConfig
-import play.api.Configuration
-
 import java.time.{LocalTime, ZoneId}
-import viewmodels.checkAnswers.{AmountToPaySummary, BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SecondaryWarehouseDetailsSummary, SmallProducerDetailsSummary}
+import javax.inject.Inject
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 
 class ReturnsController @Inject()(
@@ -56,104 +53,7 @@ class ReturnsController @Inject()(
     implicit request =>
 
       val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id,"sdil"),4.seconds).get
-
       val userAnswers = request.userAnswers
-
-      val ownBrandsAnswer =
-        if(userAnswers.get(OwnBrandsPage).getOrElse(false)) {
-          SummaryListViewModel(rows = Seq(
-            OwnBrandsSummary.returnsRow(userAnswers),
-            BrandsPackagedAtOwnSitesSummary.returnsLowBandRow(userAnswers),
-            BrandsPackagedAtOwnSitesSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            BrandsPackagedAtOwnSitesSummary.returnsHighBandRow(userAnswers),
-            BrandsPackagedAtOwnSitesSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)
-        } else {
-          SummaryListViewModel(rows = Seq(OwnBrandsSummary.returnsRow(userAnswers)).flatten)
-        }
-
-      val packagedContractPackerAnswers =
-        if(userAnswers.get(PackagedContractPackerPage).getOrElse(false)){
-          SummaryListViewModel(rows = Seq(
-            PackagedContractPackerSummary.returnsRow(userAnswers),
-            HowManyAsAContractPackerSummary.returnsLowBandRow(userAnswers),
-            HowManyAsAContractPackerSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyAsAContractPackerSummary.returnsHighBandRow(userAnswers),
-            HowManyAsAContractPackerSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)
-        } else {
-          SummaryListViewModel(rows = Seq(PackagedContractPackerSummary.returnsRow(request.userAnswers)).flatten)
-        }
-
-      val exemptionsForSmallProducersAnswers =
-        if(userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)){
-          SummaryListViewModel(rows = Seq(
-            ExemptionsForSmallProducersSummary.returnsRow(userAnswers),
-            SmallProducerDetailsSummary.returnsLowBandRow(userAnswers),
-            SmallProducerDetailsSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            SmallProducerDetailsSummary.returnsHighBandRow(userAnswers),
-            SmallProducerDetailsSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)
-        } else {
-          SummaryListViewModel(rows = Seq(ExemptionsForSmallProducersSummary.returnsRow(userAnswers)).flatten)
-        }
-
-      val broughtIntoUkAnswers =
-        if(userAnswers.get(BroughtIntoUKPage).getOrElse(false)){
-          SummaryListViewModel(rows = Seq(
-            BroughtIntoUKSummary.returnsRow(userAnswers),
-            HowManyBroughtIntoUkSummary.returnsLowBandRow(userAnswers),
-            HowManyBroughtIntoUkSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyBroughtIntoUkSummary.returnsHighBandRow(userAnswers),
-            HowManyBroughtIntoUkSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)
-        } else {
-          SummaryListViewModel(rows = Seq(BroughtIntoUKSummary.returnsRow(userAnswers)).flatten)
-        }
-
-      val broughtIntoUkSmallProducerAnswers =
-        if(userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false)){
-          SummaryListViewModel(rows = Seq(
-            BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers),
-            HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandRow(userAnswers),
-            HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandRow(userAnswers),
-            HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)
-        } else {
-          SummaryListViewModel(rows = Seq(BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers)).flatten)
-        }
-
-      val claimCreditsForExportsAnswers =
-        if(userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false)){
-          SummaryListViewModel(rows = Seq(
-            ClaimCreditsForExportsSummary.returnsRow(userAnswers),
-            HowManyCreditsForExportSummary.returnsLowBandRow(userAnswers),
-            HowManyCreditsForExportSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyCreditsForExportSummary.returnsHighBandRow(userAnswers),
-            HowManyCreditsForExportSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)
-        } else {
-          SummaryListViewModel(rows = Seq(ClaimCreditsForExportsSummary.returnsRow(userAnswers)).flatten)
-        }
-
-      val claimCreditsForLostDamagedAnswers =
-        if(userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false)){
-          SummaryListViewModel(rows = Seq(
-            ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers),
-            HowManyCreditsForLostDamagedSummary.returnsLowBandRow(userAnswers),
-            HowManyCreditsForLostDamagedSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-            HowManyCreditsForLostDamagedSummary.returnsHighBandRow(userAnswers),
-            HowManyCreditsForLostDamagedSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-          ).flatten)
-        } else {
-          SummaryListViewModel(rows = Seq(ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers)).flatten)
-        }
-
-      val smallProducerAnswers =
-          SummaryListViewModel(rows = Seq(
-            SmallProducerDetailsSummary.producerList(userAnswers)
-          ).flatten)
 
       val warehouseAnswers =
         SummaryListViewModel(rows = Seq(
@@ -163,6 +63,7 @@ class ReturnsController @Inject()(
       val amountOwed:String = "£100,000.00"
       val paymentDate = ReturnPeriod(2022,1)
       val returnDate = ReturnPeriod(2022,1)
+
       LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
 
 
@@ -236,28 +137,131 @@ class ReturnsController @Inject()(
           AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus,balanceBroughtForward)))
 
       val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus, balanceBroughtForward)
-
-
+      
       Ok(view(returnDate,
               subscription,
               amountOwed,
               balance,
               paymentDate,
               financialStatus = financialStatus(balance): String,
-              ownBrandsAnswer,
-              packagedContractPackerAnswers,
-              exemptionsForSmallProducersAnswers,
-              broughtIntoUkAnswers,
-              broughtIntoUkSmallProducerAnswers,
-              claimCreditsForExportsAnswers,
-              claimCreditsForLostDamagedAnswers,
+              ownBrandsAnswers(userAnswers),
+              packagedContractPackerAnswers(request, userAnswers),
+              exemptionForSmallProducersAnswers(userAnswers),
+              broughtIntoUKAnswers(userAnswers),
+              broughtIntoUKFromSmallProducerAnswers(userAnswers),
+              claimCreditsForExportsAnswers(userAnswers),
+              claimCreditsForLostOrDamagedAnswers(userAnswers),
               smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList):Option[List[SmallProducer]],
               warehouseCheck = warehouseCheck(warhouseList):Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
-              smallProducerAnswers,
+              smallProducerAnswers(userAnswers),
               warehouseAnswers,
               totalThisQuarterAnswer,
               balanceBroughtForwardAnswer,
               totalAnswer
               ))
+  }
+
+  private def smallProducerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    SummaryListViewModel(rows = Seq(
+      SmallProducerDetailsSummary.producerList(userAnswers)
+    ).flatten)
+  }
+
+  private def claimCreditsForLostOrDamagedAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    if (userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false)) {
+      SummaryListViewModel(rows = Seq(
+        ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers),
+        HowManyCreditsForLostDamagedSummary.returnsLowBandRow(userAnswers),
+        HowManyCreditsForLostDamagedSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        HowManyCreditsForLostDamagedSummary.returnsHighBandRow(userAnswers),
+        HowManyCreditsForLostDamagedSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+      ).flatten)
+    } else {
+      SummaryListViewModel(rows = Seq(ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers)).flatten)
+    }
+  }
+
+  private def claimCreditsForExportsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    if (userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false)) {
+      SummaryListViewModel(rows = Seq(
+        ClaimCreditsForExportsSummary.returnsRow(userAnswers),
+        HowManyCreditsForExportSummary.returnsLowBandRow(userAnswers),
+        HowManyCreditsForExportSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        HowManyCreditsForExportSummary.returnsHighBandRow(userAnswers),
+        HowManyCreditsForExportSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+      ).flatten)
+    } else {
+      SummaryListViewModel(rows = Seq(ClaimCreditsForExportsSummary.returnsRow(userAnswers)).flatten)
+    }
+  }
+
+  private def broughtIntoUKFromSmallProducerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    if (userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false)) {
+      SummaryListViewModel(rows = Seq(
+        BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers),
+        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandRow(userAnswers),
+        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandRow(userAnswers),
+        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+      ).flatten)
+    } else {
+      SummaryListViewModel(rows = Seq(BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers)).flatten)
+    }
+  }
+
+  private def broughtIntoUKAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    if (userAnswers.get(BroughtIntoUKPage).getOrElse(false)) {
+      SummaryListViewModel(rows = Seq(
+        BroughtIntoUKSummary.returnsRow(userAnswers),
+        HowManyBroughtIntoUkSummary.returnsLowBandRow(userAnswers),
+        HowManyBroughtIntoUkSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        HowManyBroughtIntoUkSummary.returnsHighBandRow(userAnswers),
+        HowManyBroughtIntoUkSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+      ).flatten)
+    } else {
+      SummaryListViewModel(rows = Seq(BroughtIntoUKSummary.returnsRow(userAnswers)).flatten)
+    }
+  }
+
+  private def exemptionForSmallProducersAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    if (userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)) {
+      SummaryListViewModel(rows = Seq(
+        ExemptionsForSmallProducersSummary.returnsRow(userAnswers),
+        SmallProducerDetailsSummary.returnsLowBandRow(userAnswers),
+        SmallProducerDetailsSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        SmallProducerDetailsSummary.returnsHighBandRow(userAnswers),
+        SmallProducerDetailsSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+      ).flatten)
+    } else {
+      SummaryListViewModel(rows = Seq(ExemptionsForSmallProducersSummary.returnsRow(userAnswers)).flatten)
+    }
+  }
+
+  private def packagedContractPackerAnswers(request: DataRequest[AnyContent], userAnswers: UserAnswers)(implicit messages: Messages) = {
+    if (userAnswers.get(PackagedContractPackerPage).getOrElse(false)) {
+      SummaryListViewModel(rows = Seq(
+        PackagedContractPackerSummary.returnsRow(userAnswers),
+        HowManyAsAContractPackerSummary.returnsLowBandRow(userAnswers),
+        HowManyAsAContractPackerSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        HowManyAsAContractPackerSummary.returnsHighBandRow(userAnswers),
+        HowManyAsAContractPackerSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+      ).flatten)
+    } else {
+      SummaryListViewModel(rows = Seq(PackagedContractPackerSummary.returnsRow(request.userAnswers)).flatten)
+    }
+  }
+
+  private def ownBrandsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    if (userAnswers.get(OwnBrandsPage).getOrElse(false)) {
+      SummaryListViewModel(rows = Seq(
+        OwnBrandsSummary.returnsRow(userAnswers),
+        BrandsPackagedAtOwnSitesSummary.returnsLowBandRow(userAnswers),
+        BrandsPackagedAtOwnSitesSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
+        BrandsPackagedAtOwnSitesSummary.returnsHighBandRow(userAnswers),
+        BrandsPackagedAtOwnSitesSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
+      ).flatten)
+    } else {
+      SummaryListViewModel(rows = Seq(OwnBrandsSummary.returnsRow(userAnswers)).flatten)
+    }
   }
 }
