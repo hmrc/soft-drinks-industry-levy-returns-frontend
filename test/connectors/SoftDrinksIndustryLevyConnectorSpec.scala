@@ -26,6 +26,7 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
+import repositories.{CascadeUpsert, SDILSessionCache, SDILSessionCacheRepository}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.time.LocalDate
@@ -46,9 +47,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
                                  |""".stripMargin)
   )
   val mockHttp = mock[HttpClient]
-
-
-  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, config)
+  val mockSDILSessionCache = mock[SDILSessionCache]
+  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, config, mockSDILSessionCache)
 
   val aSubscription = RetrievedSubscription(
     "0000000022",
