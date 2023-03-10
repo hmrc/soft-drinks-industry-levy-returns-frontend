@@ -72,11 +72,11 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
   ".lowBand" - {
 
     val fieldName = "lowBand"
-    val requiredKey = "addASmallProducer.error.lowBand.required"
-    val numberKey = "addASmallProducer.error.lowBand.nonNumeric"
-    val negativeNumberKey = "addASmallProducer.error.lowBand.negative"
-    val maxValueKey = "addASmallProducer.error.lowBand.outOfMaxVal"
-    val wholeNumberKey = "addASmallProducer.error.lowBand.wholeNumber"
+    val requiredKey = "litres.error.lowBand.required"
+    val numberKey = "litres.error.lowBand.nonNumeric"
+    val negativeNumberKey = "litres.error.lowBand.negative"
+    val maxValueKey = "litres.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "litres.error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -89,7 +89,7 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, numberKey),
+      nonNumericError = FormError(fieldName, numberKey),
       negativeNumberError = FormError(fieldName, negativeNumberKey),
       wholeNumberError = FormError(fieldName, wholeNumberKey)
     )
@@ -98,7 +98,7 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
       form,
       fieldName,
       maxValue,
-       FormError(fieldName, maxValueKey, Seq(maxValue))
+      FormError(fieldName, maxValueKey, Seq(maxValue))
     )
 
     behave like mandatoryField(
@@ -111,11 +111,11 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
   ".highBand" - {
 
     val fieldName = "highBand"
-    val requiredKey = "addASmallProducer.error.highBand.required"
-    val numberKey = "addASmallProducer.error.highBand.nonNumeric"
-    val negativeNumberKey = "addASmallProducer.error.highBand.negative"
-    val maxValueKey = "addASmallProducer.error.highBand.outOfMaxVal"
-    val wholeNumberKey = "addASmallProducer.error.highBand.wholeNumber"
+    val requiredKey = "litres.error.highBand.required"
+    val numberKey = "litres.error.highBand.nonNumeric"
+    val negativeNumberKey = "litres.error.highBand.negative"
+    val maxValueKey = "litres.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "litres.error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -128,7 +128,7 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, numberKey),
+      nonNumericError = FormError(fieldName, numberKey),
       negativeNumberError = FormError(fieldName, negativeNumberKey),
       wholeNumberError = FormError(fieldName, wholeNumberKey)
     )

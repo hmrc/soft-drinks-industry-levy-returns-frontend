@@ -45,29 +45,36 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("howManyCreditsForExport.heading")</h1>
+        <h1 class="govuk-heading-m">@messages("howManyCreditsForExport.title")</h1>
         <p class="govuk-body">@messages("howManyCreditsForExport.subtext")</p>
 
         @govukInput(
-            InputViewModel(
-                field = form("lowBand"),
-                label = LabelViewModel(messages("howManyCreditsForExport.lowBand"))
+            Input(
+                id = "lowBand",
+                name = "lowBand",
+                label = LabelViewModel(messages("litres.lowBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("howManyCreditsForExport.hint1"))))
+                    .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
         )
-
         @govukInput(
-            InputViewModel(
-                field = form("highBand"),
-                label = LabelViewModel(messages("howManyCreditsForExport.highBand"))
+            Input(
+                id = "highBand",
+                name = "highBand",
+                label = LabelViewModel(messages("litres.highBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("howManyCreditsForExport.hint2"))))
+                    .withHint(Hint(content = Text(messages("litres.highBandHint"))))
         )
 
         @govukDetails(Details(
-            summary = Text(messages("howManyCreditsForExport.detailsLink")),
+            summary = Text(messages("whatCanIClaimCreditForDetailsLink")),
         content = HtmlContent(htmlContent)
         ))
 

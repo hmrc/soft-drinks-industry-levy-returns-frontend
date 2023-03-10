@@ -26,11 +26,11 @@ class HowManyAsAContractPackerFormProviderSpec extends LongFieldBehaviour {
   ".lowBand" - {
 
     val fieldName = "lowBand"
-    val requiredKey = "howManyAsAContractPacker.error.lowBand.required"
-    val numberKey = "howManyAsAContractPacker.error.lowBand.nonNumeric"
-    val negativeNumberKey = "howManyAsAContractPacker.error.lowBand.negative"
-    val maxValueKey = "howManyAsAContractPacker.error.lowBand.outOfMaxVal"
-    val wholeNumberKey = "howManyAsAContractPacker.error.lowBand.wholeNumber"
+    val requiredKey = "litres.error.lowBand.required"
+    val numberKey = "litres.error.lowBand.nonNumeric"
+    val negativeNumberKey = "litres.error.lowBand.negative"
+    val maxValueKey = "litres.error.lowBand.outOfMaxVal"
+    val wholeNumberKey = "litres.error.lowBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 
@@ -65,11 +65,11 @@ class HowManyAsAContractPackerFormProviderSpec extends LongFieldBehaviour {
   ".highBand" - {
 
     val fieldName = "highBand"
-    val requiredKey = "howManyAsAContractPacker.error.highBand.required"
-    val numberKey = "howManyAsAContractPacker.error.highBand.nonNumeric"
-    val negativeNumberKey = "howManyAsAContractPacker.error.highBand.negative"
-    val maxValueKey = "howManyAsAContractPacker.error.highBand.outOfMaxVal"
-    val wholeNumberKey = "howManyAsAContractPacker.error.highBand.wholeNumber"
+    val requiredKey = "litres.error.highBand.required"
+    val numberKey = "litres.error.highBand.nonNumeric"
+    val negativeNumberKey = "litres.error.highBand.negative"
+    val maxValueKey = "litres.error.highBand.outOfMaxVal"
+    val wholeNumberKey = "litres.error.highBand.wholeNumber"
     val maxValue = 100000000000000L
     val validDataGenerator = longInRangeWithCommas(0, maxValue)
 

@@ -99,4 +99,7 @@ class FrontendAppConfig @Inject()(implicit configuration: Configuration, service
   override lazy val accessibilityReportUrl: String = servicesConfig.getString(Keys.accessibilityReportUrl)
   override lazy val deskproServiceName: String = servicesConfig.getString(Keys.deskproServiceName)
 
+  val lowerBandCostPerLitre: BigDecimal = BigDecimal(configuration.get[String]("lowerBandCostPerLitre"))
+  val higherBandCostPerLitre: BigDecimal = BigDecimal(configuration.get[String]("higherBandCostPerLitre"))
+
 }

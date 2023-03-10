@@ -45,8 +45,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
   val bandMax = 100000000000000L
   val litres = 20L
 
-  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
-  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
   val userAnswersWithTwoSmallProducers = UserAnswers(sdilReference, Json.obj(), List(superCola, sparkyJuice))
 
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
@@ -66,7 +64,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val page = Jsoup.parse(contentAsString(result))
 
         page.title() must include(Messages("addASmallProducer.title"))
-        page.getElementsByTag("h1").text() mustEqual Messages("addASmallProducer.heading")
+        page.getElementsByTag("h1").text() mustEqual Messages("addASmallProducer.title")
       }
     }
 
@@ -83,8 +81,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val labels = page.getElementsByTag("label").text()
         labels must include(Messages("addASmallProducer.hint1"))
         labels must include(Messages("addASmallProducer.referenceNumber"))
-        labels must include(Messages("addASmallProducer.lowBand"))
-        labels must include(Messages("addASmallProducer.highBand"))
+        labels must include(Messages("litres.lowBand"))
+        labels must include(Messages("litres.highBand"))
       }
     }
 
@@ -102,8 +100,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val labels = page.getElementsByTag("label").text()
         labels must include(Messages("addASmallProducer.hint1"))
         labels must include(Messages("addASmallProducer.referenceNumber"))
-        labels must include(Messages("addASmallProducer.lowBand"))
-        labels must include(Messages("addASmallProducer.highBand"))
+        labels must include(Messages("litres.lowBand"))
+        labels must include(Messages("litres.highBand"))
       }
     }
 
@@ -316,7 +314,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include(Messages("addASmallProducer.error.lowBand.nonNumeric"))
+        contentAsString(result) must include(Messages("litres.error.lowBand.nonNumeric"))
 
       }
     }

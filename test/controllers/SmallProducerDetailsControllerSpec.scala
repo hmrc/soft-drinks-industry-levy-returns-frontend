@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.SmallProducerDetailsFormProvider
-import models.{NormalMode, SmallProducer, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -40,9 +40,6 @@ import scala.concurrent.Future
 class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency {
 
   def onwardRoute = Call("GET", "/foo")
-
-  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
-  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
 
   val formProvider = new SmallProducerDetailsFormProvider()
   val form = formProvider()

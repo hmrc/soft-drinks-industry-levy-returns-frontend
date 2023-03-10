@@ -35,25 +35,32 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("brandsPackagedAtOwnSites.heading")</h1>
+        <h1 class="govuk-heading-m">@messages("brandsPackagedAtOwnSites.title")</h1>
         <p class="govuk-body">@messages("brandsPackagedAtOwnSites.subtext")</p>
 
         @govukInput(
-            InputViewModel(
-                field = form("lowBand"),
-                label = LabelViewModel(messages("brandsPackagedAtOwnSites.lowBand"))
+            Input(
+                id = "lowBand",
+                name = "lowBand",
+                label = LabelViewModel(messages("litres.lowBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("brandsPackagedAtOwnSites.hint1"))))
+                    .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
         )
-
         @govukInput(
-            InputViewModel(
-                field = form("highBand"),
-                label = LabelViewModel(messages("brandsPackagedAtOwnSites.highBand"))
+            Input(
+                id = "highBand",
+                name = "highBand",
+                label = LabelViewModel(messages("litres.highBand")),
+                classes = "govuk-input--width-10",
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("litres")
+                ))
             )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("brandsPackagedAtOwnSites.hint2"))))
+                    .withHint(Hint(content = Text(messages("litres.highBandHint"))))
         )
 
         @govukButton(

@@ -27,20 +27,10 @@ class HowManyBroughtIntoTheUKFromSmallProducersFormProvider @Inject() extends Ma
 
    def apply(): Form[HowManyBroughtIntoTheUKFromSmallProducers] = Form(
      mapping(
-      "lowBand" -> long(
-        "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.required",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.negative",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.nonNumeric",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.wholeNumber",
-        "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyBroughtIntoTheUKFromSmallProducers.error.lowBand.outOfMaxVal")),
-        "highBand" -> long(
-        "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.required",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.negative",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.nonNumeric",
-                    "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.wholeNumber",
-          "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "howManyBroughtIntoTheUKFromSmallProducers.error.highBand.outOfMaxVal"))
+       "lowBand" -> litres(
+         "lowBand"),
+       "highBand" -> litres(
+         "highBand")
     )(HowManyBroughtIntoTheUKFromSmallProducers.apply)(HowManyBroughtIntoTheUKFromSmallProducers.unapply)
    )
  }
