@@ -55,17 +55,11 @@ class ReturnsController @Inject()(
       val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id,"sdil"),4.seconds).get
       val userAnswers = request.userAnswers
 
-      val warehouseAnswers =
-        SummaryListViewModel(rows = Seq(
-          SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)
-        ))
-
       val amountOwed:String = "£100,000.00"
       val paymentDate = ReturnPeriod(2022,1)
       val returnDate = ReturnPeriod(2022,1)
 
       LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
-
 
       def financialStatus (total :BigDecimal):String = {
         total match {
@@ -137,7 +131,7 @@ class ReturnsController @Inject()(
           AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus,balanceBroughtForward)))
 
       val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus, balanceBroughtForward)
-      
+
       Ok(view(returnDate,
               subscription,
               amountOwed,
@@ -154,11 +148,17 @@ class ReturnsController @Inject()(
               smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList):Option[List[SmallProducer]],
               warehouseCheck = warehouseCheck(warhouseList):Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
               smallProducerAnswers(userAnswers),
-              warehouseAnswers,
+              warehouseAnswers(userAnswers),
               totalThisQuarterAnswer,
               balanceBroughtForwardAnswer,
               totalAnswer
               ))
+  }
+
+  private def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
+    SummaryListViewModel(rows = Seq(
+      SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)
+    ))
   }
 
   private def smallProducerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
