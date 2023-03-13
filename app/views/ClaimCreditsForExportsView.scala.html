@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers._
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
@@ -21,7 +23,9 @@
         govukRadios: GovukRadios,
         govukButton: GovukButton,
         govukDetails: GovukDetails,
-        govukWarningText : GovukWarningText
+        govukWarningText : GovukWarningText,
+        saveAndContinueButton: saveAndContinueButton,
+        exportedWhatCanIClaimCreditFor: exportedWhatCanIClaimCreditFor
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -49,15 +53,8 @@
                 hint = None
             )
         )
-        @govukDetails(
-            Details(
-                summary = Text(messages("whatCanIClaimCreditForDetailsLink")),
-                content = HtmlContent(htmlContent)
-            )
-        )
 
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-        )
+        @exportedWhatCanIClaimCreditFor(form)(messages)
+        @saveAndContinueButton(messages)
     }
 }

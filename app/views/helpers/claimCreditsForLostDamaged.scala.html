@@ -19,17 +19,21 @@
 @(form: Form[_])(implicit messages: Messages)
 
 @htmlContent = {
- <p class ="govuk-body">@messages("whatCanIClaimCreditForDetailsContent1")</p>
+ <p class ="govuk-body">@messages("claimCreditsForLostDamaged.detailsContent1")</p>
  <ul class="govuk-list govuk-list--bullet">
-  <li>@messages("whatCanIClaimCreditForDetailsContent2")</li>
-  <li>@messages("whatCanIClaimCreditForDetailsContent3")</li>
-  <li>@messages("whatCanIClaimCreditForDetailsContent4")</li>
-  <li>@messages("whatCanIClaimCreditForDetailsContent5")</li>
+  <li>@messages("claimCreditsForLostDamaged.detailsContent2")</li>
+  <li>@messages("claimCreditsForLostDamaged.detailsContent3")</li>
+  <li>@messages("claimCreditsForLostDamaged.detailsContent4")</li>
+  <li>@messages("claimCreditsForLostDamaged.detailsContent5")</li>
+  <li>@messages("claimCreditsForLostDamaged.detailsContent6")</li>
+  <li>@messages("claimCreditsForLostDamaged.detailsContent7")</li>
  </ul>
- <p class ="govuk-body">@messages("whatCanIClaimCreditForDetailsContent6")</p>
+ <p class ="govuk-body">@messages("claimCreditsForLostDamaged.detailsContent8")</p>
 }
 
-@govukDetails(Details(
- summary = Text(messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsLink")),
- content = HtmlContent(htmlContent)
-))
+@govukDetails(
+ Details(
+  summary = Text(messages("whatCanIClaimCreditForDetailsLink")),
+  content = HtmlContent(htmlContent)
+ )
+)
