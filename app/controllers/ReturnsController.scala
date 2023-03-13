@@ -49,110 +49,70 @@ class ReturnsController @Inject()(
                                        view: ReturnSentView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  //Warehouse TODO -> REMOVE WHEN WAREHOUSE LIST IS MADE!
+  val tradingName: String = "Soft Juice Ltd"
+  val line1: String = "3 Prospect St"
+  val line2: String = "Reading"
+  val line3: String = "Berkshire"
+  val line4: String = "United Kingdom"
+  val postcode: String = "CT44 0DF"
+  val warhouseList: List[Warehouse] = List(Warehouse(tradingName, Address(line1, line2, line3, line4, postcode)))
+
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val subscription = Await.result(connector.retrieveSubscription(request.userAnswers.id,"sdil"),4.seconds).get
+      val sdilEnrolment = request.sdilEnrolment
+      val subscription = request.subscription
+      val isSmallProducer = subscription.activity.smallProducer
       val userAnswers = request.userAnswers
+      val paymentDueDate = currentReturnPeriod(request)
+      val returnDate = ReturnPeriod(2022, 1) // Is this returns submitted date?
+      val amountOwed: String = "£100,000.00"
 
-      val amountOwed:String = "£100,000.00"
-      val paymentDate = ReturnPeriod(2022,1)
-      val returnDate = ReturnPeriod(2022,1)
-
-      LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
-
-      def financialStatus (total :BigDecimal):String = {
-        total match {
-          case total if total > 0 => "amountToPay"
-          case total if total < 0 => "creditedPay"
-          case total if total == 0 => "noPayNeeded"
-        }
-      }
-
-      //Warehouse TODO -> REMOVE WHEN WAREHOUSE LIST IS MADE!
-      val tradingName:String = "Soft Juice Ltd"
-      val line1: String = "3 Prospect St"
-      val line2: String = "Reading"
-      val line3: String = "Berkshire"
-      val line4: String = "United Kingdom"
-      val postcode: String = "CT44 0DF"
-      val warhouseList:List[Warehouse] = List(Warehouse(tradingName,Address(line1, line2, line3, line4, postcode)))
-
-            def smallProducerCheck(smallProducerList:List[SmallProducer]): Option[List[SmallProducer]] = {
-              if(smallProducerList.length > 0){
-                Some(smallProducerList)
-              }else None
+      (for {
+        balanceBroughtForward <-
+          if (config.balanceAllEnabled) {
+            connector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
+              extractTotal(listItemsWithTotal(financialItem))
             }
+          } else connector.balance(sdilEnrolment, withAssessment = false)
+      } yield {
 
-            def warehouseCheck(warehouseList:List[Warehouse]): Option[List[Warehouse]] = {
-              if(warehouseList.length > 0){
-                Some(warehouseList)
-              }else None
-            }
+        val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
+        val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)))
+        val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
 
-      //Quarter
+        Ok(view(returnDate,
+          request.subscription,
+          amountOwed,
+          balance,
+          paymentDueDate,
+          financialStatus = financialStatus(balance): String,
+          ownBrandsAnswers(userAnswers),
+          packagedContractPackerAnswers(request, userAnswers),
+          exemptionForSmallProducersAnswers(userAnswers),
+          broughtIntoUKAnswers(userAnswers),
+          broughtIntoUKFromSmallProducerAnswers(userAnswers),
+          claimCreditsForExportsAnswers(userAnswers),
+          claimCreditsForLostOrDamagedAnswers(userAnswers),
+          smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList): Option[List[SmallProducer]],
+          warehouseCheck = warehouseCheck(warhouseList): Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
+          smallProducerAnswers(userAnswers),
+          warehouseAnswers(userAnswers),
+          totalForQuarterSummary(isSmallProducer, userAnswers),
+          balanceBroughtForwardAnswer,
+          totalAnswer
+        ))
+      })
+  }
 
-            def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] = {
-              connector.checkSmallProducerStatus(sdilRef, period)
-            }
-
-            val smallProducerStatus:Boolean = !Await.result(checkSmallProducerStatus(request.sdilEnrolment,request.returnPeriod.get),20.seconds).getOrElse(true)
-
-            val totalThisQuarterAnswer =
-              SummaryListViewModel(rows = Seq(
-                AmountToPaySummary.totalThisQuarter(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus)))
-
-      //Balance Brought Forward
-
-            def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
-              items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
-                (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
-              }
-
-            def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
-              l.headOption.fold(BigDecimal(0))(_._2)
-
-      val broughtForward = if(config.balanceAllEnabled) {
-              connector.balanceHistory(request.sdilEnrolment, withAssessment = false).map { x =>
-                extractTotal(listItemsWithTotal(x))
-              }
-            }else {
-                connector.balance(request.sdilEnrolment, withAssessment = false)
-            }
-
-            val balanceBroughtForward = Await.result(broughtForward ,20.seconds)
-
-      val balanceBroughtForwardAnswer =
-        SummaryListViewModel(rows = Seq(
-          AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
-
-      val totalAnswer =
-        SummaryListViewModel(rows = Seq(
-          AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus,balanceBroughtForward)))
-
-      val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus, balanceBroughtForward)
-
-      Ok(view(returnDate,
-              subscription,
-              amountOwed,
-              balance,
-              paymentDate,
-              financialStatus = financialStatus(balance): String,
-              ownBrandsAnswers(userAnswers),
-              packagedContractPackerAnswers(request, userAnswers),
-              exemptionForSmallProducersAnswers(userAnswers),
-              broughtIntoUKAnswers(userAnswers),
-              broughtIntoUKFromSmallProducerAnswers(userAnswers),
-              claimCreditsForExportsAnswers(userAnswers),
-              claimCreditsForLostOrDamagedAnswers(userAnswers),
-              smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList):Option[List[SmallProducer]],
-              warehouseCheck = warehouseCheck(warhouseList):Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
-              smallProducerAnswers(userAnswers),
-              warehouseAnswers(userAnswers),
-              totalThisQuarterAnswer,
-              balanceBroughtForwardAnswer,
-              totalAnswer
-              ))
+  private def totalForQuarterSummary(isSmallProducer: Boolean, userAnswers: UserAnswers)(implicit messages: Messages) = {
+    SummaryListViewModel(
+      rows = Seq(AmountToPaySummary.totalThisQuarter(
+        userAnswers,
+        config.lowerBandCostPerLitre,
+        config.higherBandCostPerLitre,
+        isSmallProducer)))
   }
 
   private def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
@@ -264,4 +224,39 @@ class ReturnsController @Inject()(
       SummaryListViewModel(rows = Seq(OwnBrandsSummary.returnsRow(userAnswers)).flatten)
     }
   }
+
+  private def currentReturnPeriod(request: DataRequest[AnyContent]) = {
+    request.returnPeriod match {
+      case Some(returnPeriod) => returnPeriod
+      case None => throw new RuntimeException("No return period returned")
+    }
+  }
+
+  private def financialStatus(total: BigDecimal): String = {
+    total match {
+      case total if total > 0 => "amountToPay"
+      case total if total < 0 => "creditedPay"
+      case total if total == 0 => "noPayNeeded"
+    }
+  }
+
+  private def smallProducerCheck(smallProducerList: List[SmallProducer]): Option[List[SmallProducer]] = {
+    if (smallProducerList.length > 0) {
+      Some(smallProducerList)
+    } else None
+  }
+
+  private def warehouseCheck(warehouseList: List[Warehouse]): Option[List[Warehouse]] = {
+    if (warehouseList.length > 0) {
+      Some(warehouseList)
+    } else None
+  }
+
+  private def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
+    items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
+      (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
+    }
+
+  private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
+
 }

@@ -27,6 +27,7 @@ import pages.{ExemptionsForSmallProducersPage, PackAtBusinessAddressPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
+import repositories.SDILSessionCache
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -43,6 +44,7 @@ class CheckYourAnswersController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CheckYourAnswersView,
                                             connector: SoftDrinksIndustryLevyConnector,
+                                            sessionCache: SDILSessionCache,
                                           ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val lowerBandCostPerLitre = config.lowerBandCostPerLitre
@@ -52,6 +54,8 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad() = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val subscription = request.subscription
+      println(Console.YELLOW + subscription + Console.WHITE)
       val balanceAllEnabled = config.balanceAllEnabled
       val userAnswers = request.userAnswers
       val returnPeriod = currentReturnPeriod(request)
