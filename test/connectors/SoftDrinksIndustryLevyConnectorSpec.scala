@@ -36,20 +36,6 @@ import scala.concurrent.{Await, Future}
 
 class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-
-//  def emptyUserAnswers = UserAnswers("XKSDIL000000022", Json.obj())
-//
-//  val application = applicationBuilder(userAnswers = None).build()
-//  protected def applicationBuilder(
-//                                    userAnswers: Option[UserAnswers] = None,
-//                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
-//    new GuiceApplicationBuilder()
-//      .overrides(
-//        bind[DataRequiredAction].to[DataRequiredActionImpl],
-//        bind[IdentifierAction].to[FakeIdentifierAction],
-//        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
-//      )
-
   val (host, localPort) = ("host", "123")
 
   val localConfig = Configuration(
@@ -65,44 +51,6 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
   val mockSDILSessionCache = mock[SDILSessionCache]
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, localConfig, mockSDILSessionCache)
 
-//  val aSubscription = RetrievedSubscription(
-//    "0000000022",
-//    "XKSDIL000000022",
-//    "Super Lemonade Plc",
-//    UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-//    RetrievedActivity(false, true, false, false, false),
-//    LocalDate.of(2018, 4, 19),
-//    List(
-//      Site(
-//        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-//        Some("88"),
-//        Some("Wild Lemonade Group"),
-//        Some(LocalDate.of(2018, 2, 26))),
-//      Site(
-//        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-//        Some("87"),
-//        Some("Highly Addictive Drinks Plc"),
-//        Some(LocalDate.of(2019, 8, 19))),
-//      Site(
-//        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
-//        Some("94"),
-//        Some("Monster Bottle Ltd"),
-//        Some(LocalDate.of(2017, 9, 23))),
-//      Site(
-//        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
-//        Some("27"),
-//        Some("Super Lemonade Group"),
-//        Some(LocalDate.of(2017, 4, 23))),
-//      Site(
-//        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
-//        Some("96"),
-//        Some("Star Products Ltd"),
-//        Some(LocalDate.of(2017, 2, 11)))
-//    ),
-//    List(),
-//    Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-//    None
-//  )
 
   implicit val hc = HeaderCarrier()
 

@@ -57,9 +57,6 @@ class SDILSessionCache @Inject()(sdilSessionCacheRepository: SDILSessionCacheRep
 
   def fetchEntry[T](sdilEnrolment: String, key: String)
                    (implicit fmt: Format[T]): Future[Option[T]] = {
-
-    println(Console.YELLOW + sdilEnrolment + Console.WHITE)
-    println(Console.YELLOW + key + Console.WHITE)
     fetch(sdilEnrolment).map(optCacheMap =>
       optCacheMap.fold[Option[T]](None)(cachedMap =>
         cachedMap.data.get(key)
