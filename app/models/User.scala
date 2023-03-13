@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package models.requests
+package models
 
-import models.retrieved.RetrievedSubscription
-import models.ReturnPeriod
 import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, InternalError}
 
-case class IdentifierRequest[A] (request: Request[A],
-                                 sdilEnrolment: String,
-                                 subscription: RetrievedSubscription,
-                                 returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
+case class User[A](vrn: String, active: Boolean = true, arn: Option[String] = None)
+                  (implicit request: Request[A]) extends WrappedRequest[A](request) {
+  val isAgent: Boolean = arn.isDefined
+}
+
+object User {
+  def apply[A](enrolments: Enrolments)(implicit request: Request[A]): User[A] =
+    enrolments.enrolments.collectFirst {
+      case Enrolment("IR-CT", Seq(EnrolmentIdentifier(_, vatId)), _, _) => User(vatId)
+    }.getOrElse(throw InternalError("VRN Missing"))
+}

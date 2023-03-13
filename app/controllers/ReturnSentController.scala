@@ -17,15 +17,13 @@
 package controllers
 
 import scala.concurrent.{Await, ExecutionContext, Future}
-import java.util.Locale
 import scala.concurrent.duration.DurationInt
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import models.{Address, FinancialLineItem, ReturnPeriod, SmallProducer, Warehouse}
-import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage}
+import pages.{BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, OwnBrandsPage, PackagedContractPackerPage}
 import viewmodels.govuk.summarylist._
 
-import scala.math.BigDecimal
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

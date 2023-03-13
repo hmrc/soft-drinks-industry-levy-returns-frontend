@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package models.requests
+package repositories
 
-import models.retrieved.RetrievedSubscription
-import models.ReturnPeriod
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.{JsValue, Json}
 
-case class IdentifierRequest[A] (request: Request[A],
-                                 sdilEnrolment: String,
-                                 subscription: RetrievedSubscription,
-                                 returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
+case class CacheMap(id: String,
+                    data: Map[String, JsValue])
+
+object CacheMap {
+  implicit val formats = Json.format[CacheMap]
+}

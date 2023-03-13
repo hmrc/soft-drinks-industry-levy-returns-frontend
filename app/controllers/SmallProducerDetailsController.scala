@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.SmallProducerDetailsFormProvider
-import viewmodels.checkAnswers.{AddASmallProducerSummary, SmallProducerDetailsSummary}
+import viewmodels.checkAnswers.SmallProducerDetailsSummary
 import views.html.SmallProducerDetailsView
 import models.{Mode, SmallProducer}
 import navigation.Navigator

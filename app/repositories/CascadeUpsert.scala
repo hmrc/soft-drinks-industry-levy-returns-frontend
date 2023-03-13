@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package models.requests
+package repositories
 
-import models.retrieved.RetrievedSubscription
-import models.ReturnPeriod
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json._
 
-case class IdentifierRequest[A] (request: Request[A],
-                                 sdilEnrolment: String,
-                                 subscription: RetrievedSubscription,
-                                 returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
+import javax.inject.Singleton
+
+@Singleton
+class CascadeUpsert {
+
+  val funcMap: Map[String, (JsValue, CacheMap) => CacheMap] = Map()
+
+  def apply[A](key: String, value: A, originalCacheMap: CacheMap)(implicit fmt: Format[A]): CacheMap =
+    funcMap.get(key).fold(store(key, value, originalCacheMap)) { fn => fn(Json.toJson(value), originalCacheMap)}
+
+  private def store[A](key:String, value: A, cacheMap: CacheMap)(implicit fmt: Format[A]): CacheMap =
+    cacheMap copy (data = cacheMap.data + (key -> Json.toJson(value)))
+}

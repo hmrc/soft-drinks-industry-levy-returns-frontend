@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package models.requests
+package repositories
 
-import models.retrieved.RetrievedSubscription
-import models.ReturnPeriod
-import play.api.mvc.{Request, WrappedRequest}
+object SDILSessionKeys {
 
-case class IdentifierRequest[A] (request: Request[A],
-                                 sdilEnrolment: String,
-                                 subscription: RetrievedSubscription,
-                                 returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
+  val SUBSCRIPTION = "SUBSCRIPTION"
+
+}
