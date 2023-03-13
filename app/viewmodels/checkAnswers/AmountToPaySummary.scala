@@ -19,7 +19,6 @@ import models.{CheckMode, FinancialLineItem, ReturnPeriod, UserAnswers}
 import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, PackagedContractPackerPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-
 import java.util.Locale
 import scala.concurrent.{Await, Future}
 import scala.math.BigDecimal

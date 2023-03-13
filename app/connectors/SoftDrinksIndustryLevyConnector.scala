@@ -16,30 +16,39 @@
 
 package connectors
 
-import models.retrieved.RetrievedSubscription
-import models.{FinancialLineItem, ReturnPeriod}
 import models.{FinancialLineItem,ReturnPeriod}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import models.retrieved.RetrievedSubscription
+import repositories.{SDILSessionCache, SDILSessionKeys}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
-    http: HttpClient,
-    val configuration: Configuration
-  )(implicit ec: ExecutionContext) extends ServicesConfig(configuration) {
+    val http: HttpClient,
+    val configuration: Configuration,
+    sdilSessionCache: SDILSessionCache
+  )(implicit ec: ExecutionContext)
+  extends ServicesConfig(configuration) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 
   private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
-  def retrieveSubscription(sdilNumber: String, identifierType: String= "sdil")(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
-    http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).map {
-      case Some(a) => Some(a)
-      case _ => None
+  def retrieveSubscription(sdilNumber: String, identifierType: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
+    sdilSessionCache.fetchEntry[RetrievedSubscription](sdilNumber, SDILSessionKeys.SUBSCRIPTION).flatMap{
+      case Some(subscription) => Future.successful(Some(subscription))
+      case None =>
+        http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String, identifierType)).flatMap {
+          case Some(a) =>
+            sdilSessionCache.save(a.sdilRef, SDILSessionKeys.SUBSCRIPTION, a)
+              .map{_ => Some(a)}
+          case _ => Future.successful(None)
+        }
+    }
   }
 
   private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
