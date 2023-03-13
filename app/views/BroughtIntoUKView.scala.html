@@ -15,6 +15,7 @@
  *@
 
 @import scala.language.postfixOps
+@import views.html.helpers._
 
 @this(
         layout: templates.Layout,
@@ -22,18 +23,13 @@
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
-        govukDetails: GovukDetails
+        govukDetails: GovukDetails,
+        saveAndContinueButton: saveAndContinueButton,
+        whatIsASmallProducer: whatIsASmallProducer
 )
 
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
-@htmlContent = {
-        <p class ="govuk-body">@messages("whatIsASmallProducer.detailsContent1")</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li >@messages("whatIsASmallProducer.detailsContent2")</li>
-            <li>@messages("whatIsASmallProducer.detailsContent3")</li>
-        </ul>
-    }
 
 @layout(pageTitle = title(form, messages("broughtIntoUK.title"))) {
 
@@ -50,14 +46,8 @@
                 legend = LegendViewModel(messages("broughtIntoUK.subHeading")),
                 None
         ))
-        @govukDetails(Details(
-            summary = Text(messages("whatIsASmallProducer.detailsLink")),
 
-            content = HtmlContent(htmlContent)
-        ))
-
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-        )
+        @whatIsASmallProducer(form)(messages)
+        @saveAndContinueButton(messages)
     }
 }
