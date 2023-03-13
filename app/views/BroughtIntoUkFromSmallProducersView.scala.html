@@ -14,13 +14,17 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers._
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
-        govukDetails: GovukDetails
+        govukDetails: GovukDetails,
+        saveAndContinueButton: saveAndContinueButton,
+        liableDrinksFromSmallProducers: liableDrinksFromSmallProducers
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -50,13 +54,8 @@
                 legend = LegendViewModel(messages("broughtIntoUkFromSmallProducers.subHeading")),
                 None
         ))
-        @govukDetails(Details(
-            summary = Text(messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsLink")),
-            content = HtmlContent(htmlContent)
-        ))
 
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-        )
+        @liableDrinksFromSmallProducers(form)(messages)
+        @saveAndContinueButton(messages)
     }
 }
