@@ -28,9 +28,14 @@
         classes = "govuk-input--width-10",
         suffix = Some(PrefixOrSuffix(
             content = Text("litres")
-        ))
+        )),
+        errorMessage = if (form("lowBand").hasErrors) {
+            Some(ErrorMessage(content = Text(messages(s"${form.errors.head.message}"))))
+        } else None,
+        value = form.data.get("lowBand")
     )
-            .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
+        .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
+
 )
 @govukInput(
     Input(
@@ -40,7 +45,16 @@
         classes = "govuk-input--width-10",
         suffix = Some(PrefixOrSuffix(
             content = Text("litres")
-        ))
+        )),
+        errorMessage =
+        form.error("highBand").map{ e =>
+          ErrorMessage(
+              content = Text(messages(s"${e.messages.headOption.get}")),
+              visuallyHiddenText = Some(messages("Error"))
+          )
+        },
+        value = form("highBand").value
+
     )
-            .withHint(Hint(content = Text(messages("litres.highBandHint"))))
+        .withHint(Hint(content = Text(messages("litres.highBandHint"))))
 )

@@ -40,9 +40,9 @@
         <h1 class="govuk-heading-m">@messages("brandsPackagedAtOwnSites.title")</h1>
         <p class="govuk-body">@messages("brandsPackagedAtOwnSites.subtext")</p>
 
-        @lowAndHighBandInputs
-        @saveAndContinueButton
 
+    @lowAndHighBandInputs(form)(messages)
+    @saveAndContinueButton(messages)
 
     }
 }

@@ -25,6 +25,7 @@ import models.BrandsPackagedAtOwnSites
 
 class BrandsPackagedAtOwnSitesFormProvider @Inject() extends Mappings {
 
+
    def apply(): Form[BrandsPackagedAtOwnSites] = Form(
      mapping(
        "lowBand" -> litres(
@@ -32,5 +33,5 @@ class BrandsPackagedAtOwnSitesFormProvider @Inject() extends Mappings {
        "highBand" -> litres(
          "highBand")
     )(BrandsPackagedAtOwnSites.apply)(BrandsPackagedAtOwnSites.unapply)
-   )
- }
+  )
+}
