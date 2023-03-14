@@ -46,7 +46,7 @@ case class SdilReturn(
   type LitreBands = (Litres, Litres)
 
   implicit class LitreOps(litreBands: LitreBands) {
-    lazy val lowLevy: BigDecimal = litreBands._1 * BigDecimal("0.18")
+    lazy val lowLevy: BigDecimal = litreBands._1 * BigDecimal("0.18") // TODO this should use lowerBandCostPerLitre and higherBandCostPerLitre from application.conf to be changed in 1 place only
     lazy val highLevy: BigDecimal = litreBands._2 * BigDecimal("0.24")
     lazy val dueLevy: BigDecimal = lowLevy + highLevy
   }

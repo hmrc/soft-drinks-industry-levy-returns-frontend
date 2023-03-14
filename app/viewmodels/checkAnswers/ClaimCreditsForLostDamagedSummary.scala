@@ -20,25 +20,29 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.ClaimCreditsForLostDamagedPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object ClaimCreditsForLostDamagedSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ClaimCreditsForLostDamagedPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
+        SummaryListRow(
           key     = "claimCreditsForLostDamaged.checkYourAnswersLabel",
           value   = ValueViewModel(value),
-          actions = Seq(
+          actions = if(checkAnswers == true) {
+            Some(
+              Actions("",
+                items =
+                  Seq(
             ActionItemViewModel("site.change", routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("claimCreditsForLostDamaged.change.hidden"))
-          )
+          )))}else None
         )
     }
 }

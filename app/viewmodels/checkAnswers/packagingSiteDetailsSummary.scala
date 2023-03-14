@@ -18,8 +18,8 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.backend.Site
-import models.{CheckMode, ProductionSite, UserAnswers}
-import pages.ProductionSiteDetailsPage
+import models.{CheckMode, PackagingSite, UserAnswers}
+import pages.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Content}
@@ -30,27 +30,27 @@ import viewmodels.implicits._
 
 import scala.reflect.internal.util.NoSourceFile.content
 
-object productionSiteDetailsSummary  {
+object packagingSiteDetailsSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ProductionSiteDetailsPage).map {
+    answers.get(PackagingSiteDetailsPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "productionSiteDetails.checkYourAnswersLabel",
+          key     = "packagingSiteDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.ProductionSiteDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("productionSiteDetails.change.hidden"))
+            ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("packagingSiteDetails.change.hidden"))
           )
         )
     }
 
 
-  def row2(productionSiteList: List[Site])(implicit messages: Messages): List[SummaryListRow] = {
-    productionSiteList.map {
+  def row2(packagingSiteList: List[Site])(implicit messages: Messages): List[SummaryListRow] = {
+    packagingSiteList.map {
       site =>
         val value = ValueViewModel(
           HtmlContent(
@@ -62,15 +62,15 @@ object productionSiteDetailsSummary  {
             content = HtmlContent(s"""${site.tradingName.get}<br>${HtmlFormat.escape(site.address.lines.mkString(", "))}<br>${HtmlFormat.escape(site.address.postCode)}"""),
             classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
           ),
-          actions = if(productionSiteList.length > 1){
+          actions = if(packagingSiteList.length > 1){
             Some(Actions("",Seq(
             ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url) //TODO
-              .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")),
+              .withVisuallyHiddenText(messages("packagingSiteDetails.edit.hidden")),
             ActionItemViewModel("site.remove", routes.IndexController.onPageLoad().url) //TODO
-              .withVisuallyHiddenText(messages("smallProducerDetails.remove.hidden"))
+              .withVisuallyHiddenText(messages("packagingSiteDetails.remove.hidden"))
           )))}else    Some(Actions("",Seq(
             ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url) //TODO
-              .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")))))
+              .withVisuallyHiddenText(messages("packagingSiteDetails.edit.hidden")))))
         )
     }
   }

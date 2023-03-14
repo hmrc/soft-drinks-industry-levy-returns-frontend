@@ -21,16 +21,17 @@ import connectors.SoftDrinksIndustryLevyConnector
 import forms.PackAtBusinessAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
+import play.api.i18n.Messages
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
-import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.PackAtBusinessAddressView
+
 
 import scala.concurrent.Future
 

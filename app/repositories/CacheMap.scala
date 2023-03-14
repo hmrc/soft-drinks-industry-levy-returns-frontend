@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package pages
+package repositories
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.{JsValue, Json}
 
-class productionSiteDetailsPageSpec extends PageBehaviours {
+case class CacheMap(id: String,
+                    data: Map[String, JsValue])
 
-  "productionSiteDetailsPage" - {
-
-    beRetrievable[Boolean](ProductionSiteDetailsPage)
-
-    beSettable[Boolean](ProductionSiteDetailsPage)
-
-    beRemovable[Boolean](ProductionSiteDetailsPage)
-  }
+object CacheMap {
+  implicit val formats = Json.format[CacheMap]
 }

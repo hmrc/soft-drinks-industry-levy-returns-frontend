@@ -18,10 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
-
 import javax.inject.Inject
 import models.Mode
-import models.backend.{Site, UkAddress}
+import models.backend.Site
 import navigation.Navigator
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -79,8 +78,8 @@ class PackAtBusinessAddressController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            originaProductionSitelList = updatedAnswers.productionSiteList
-            updatedProductionSiteList = if(request.userAnswers.productionSiteList.isEmpty){updatedAnswers.copy(productionSiteList = productionSite :: originaProductionSitelList)} else updatedAnswers
+            originaProductionSitelList = updatedAnswers.packagingSiteList
+            updatedProductionSiteList = if(request.userAnswers.packagingSiteList.isEmpty){updatedAnswers.copy(packagingSiteList = productionSite :: originaProductionSitelList)} else updatedAnswers
             _              <- sessionRepository.set(updatedProductionSiteList)
           } yield Redirect(navigator.nextPage(PackAtBusinessAddressPage, mode, updatedAnswers))
       )

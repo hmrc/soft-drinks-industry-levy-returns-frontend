@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package forms
+package models.core
 
-import javax.inject.Inject
+import play.api.libs.json.{Format, Json}
 
-import forms.mappings.Mappings
-import play.api.data.Form
+sealed trait Error
 
-class productionSiteDetailsFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("productionSiteDetails.error.required")
-    )
+object ErrorModel {
+  implicit val format: Format[ErrorModel] = Json.format[ErrorModel]
 }
+
+case class ErrorModel(status: Int, message: String) extends Error
+
+case object AddressValidationError extends Error

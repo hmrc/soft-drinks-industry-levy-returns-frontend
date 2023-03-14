@@ -14,23 +14,22 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers._
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
-        govukDetails: GovukDetails
+        govukDetails: GovukDetails,
+        lowAndHighBandInputs: lowAndHighBandInputs,
+        saveAndContinueButton: saveAndContinueButton,
+        whatIsASmallProducer: whatIsASmallProducer
 )
 
+
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
-@htmlContent = {
-<p class ="govuk-body">@messages("exemptionsForSmallProducers.detailsContent1")</p>
-<ul class="govuk-list govuk-list--bullet">
-    <li>@messages("exemptionsForSmallProducers.detailsContent2")</li>
-    <li>@messages("exemptionsForSmallProducers.detailsContent3")</li>
-</ul>
-}
 
 @layout(pageTitle = title(form, messages("exemptionsForSmallProducers.title"))) {
 
@@ -40,19 +39,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("exemptionsForSmallProducers.heading")</h1>
+        <h1 class="govuk-heading-m">@messages("exemptionsForSmallProducers.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("")),None
         ))
-        @govukDetails(Details(
-            summary = Text(messages("exemptionsForSmallProducers.detailsLink")),
-            content = HtmlContent(htmlContent)
-        ))
 
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+        @whatIsASmallProducer(form)(messages)
+        @saveAndContinueButton(messages)
     }
 }

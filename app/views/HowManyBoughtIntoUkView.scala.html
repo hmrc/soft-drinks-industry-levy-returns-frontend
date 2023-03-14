@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
+@import views.html.helpers._
 
 @this(
     layout: templates.Layout,
@@ -22,18 +22,13 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-   govukDetails: GovukDetails
+    govukDetails: GovukDetails,
+    lowAndHighBandInputs: lowAndHighBandInputs,
+    saveAndContinueButton: saveAndContinueButton,
+    whatIsASmallProducer: whatIsASmallProducer
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
-@htmlContent = {
-        <p class ="govuk-body">@messages("howManyBoughtIntoUk.detailsContent1")</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li >@messages("howManyBoughtIntoUk.detailsContent2")</li>
-            <li>@messages("howManyBoughtIntoUk.detailsContent3")</li>
-        </ul>
-    }
-
 
 @layout(pageTitle = title(form, messages("howManyBoughtIntoUk.title"))) {
 
@@ -43,34 +38,12 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("howManyBoughtIntoUk.heading")</h1>
+        <h1 class="govuk-heading-m">@messages("howManyBoughtIntoUk.title")</h1>
         <p class="govuk-body">@messages("howManyBoughtIntoUk.subtext")</p>
 
-        @govukInput(
-            InputViewModel(
-                field = form("lowBand"),
-                label = LabelViewModel(messages("howManyBoughtIntoUk.lowBand"))
-            )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("howManyBoughtIntoUk.hint1"))))
-        )
+        @lowAndHighBandInputs(form)(messages)
+        @whatIsASmallProducer(form)(messages)
+        @saveAndContinueButton(messages)
 
-        @govukInput(
-            InputViewModel(
-                field = form("highBand"),
-                label = LabelViewModel(messages("howManyBoughtIntoUk.highBand"))
-            )
-            .withWidth(Fixed10)
-                .withHint(Hint(content = Text(messages("howManyBoughtIntoUk.hint2"))))
-        )
-
-        @govukDetails(Details(
-            summary = Text(messages("howManyBoughtIntoUk.detailsLink")),
-            content = HtmlContent(htmlContent)
-        ))
-
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-        )
     }
 }

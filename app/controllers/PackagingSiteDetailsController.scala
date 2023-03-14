@@ -18,36 +18,36 @@ package controllers
 
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
-import forms.productionSiteDetailsFormProvider
+import forms.packagingSiteDetailsFormProvider
 
 import javax.inject.Inject
-import models.{Mode, ProductionSite, SdilReturn}
+import models.{Mode, SdilReturn}
 import navigation.Navigator
-import pages.ProductionSiteDetailsPage
+import pages.PackagingSiteDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.productionSiteDetailsView
+import views.html.packagingSiteDetailsView
 import models.backend.{Site, UkAddress}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.checkAnswers.{SmallProducerDetailsSummary, productionSiteDetailsSummary}
+import viewmodels.checkAnswers.packagingSiteDetailsSummary
 import viewmodels.govuk.summarylist._
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class ProductionSiteDetailsController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         sdilConnector: SoftDrinksIndustryLevyConnector,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: productionSiteDetailsFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: productionSiteDetailsView
+class PackagingSiteDetailsController @Inject()(
+                                                override val messagesApi: MessagesApi,
+                                                sessionRepository: SessionRepository,
+                                                sdilConnector: SoftDrinksIndustryLevyConnector,
+                                                navigator: Navigator,
+                                                identify: IdentifierAction,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                formProvider: packagingSiteDetailsFormProvider,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                view: packagingSiteDetailsView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -67,15 +67,15 @@ class ProductionSiteDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val producetionSiteList: List[Site] = request.userAnswers.productionSiteList //request.userAnswers.productionSiteList
-      val preparedForm = request.userAnswers.get(ProductionSiteDetailsPage) match {
+      val packagingSiteList: List[Site] = request.userAnswers.packagingSiteList
+      val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val producetionSiteSummaryAliasList: List[SummaryListRow] = productionSiteDetailsSummary.row2(producetionSiteList)
+      val packagingSiteSummaryAliasList: List[SummaryListRow] = packagingSiteDetailsSummary.row2(packagingSiteList)
       val aliasList: SummaryList = SummaryListViewModel(
-        rows = producetionSiteSummaryAliasList
+        rows = packagingSiteSummaryAliasList
       )
 
       Ok(view(preparedForm, mode, aliasList))
@@ -83,10 +83,10 @@ class ProductionSiteDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val producetionSiteList: List[Site] = request.userAnswers.productionSiteList
-      val producetionSiteSummaryList: List[SummaryListRow] = productionSiteDetailsSummary.row2(producetionSiteList)
+      val packagingSiteList: List[Site] = request.userAnswers.packagingSiteList
+      val packagingSiteSummaryList: List[SummaryListRow] = packagingSiteDetailsSummary.row2(packagingSiteList)
       val siteList: SummaryList = SummaryListViewModel(
-        rows = producetionSiteSummaryList
+        rows = packagingSiteSummaryList
       )
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -94,11 +94,11 @@ class ProductionSiteDetailsController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ProductionSiteDetailsPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
             sdilReturn = SdilReturn.apply(updatedAnswers)
             retrievedSubs <- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
-          } yield Redirect(navigator.nextPage(ProductionSiteDetailsPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
+          } yield Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
       )
   }
 }

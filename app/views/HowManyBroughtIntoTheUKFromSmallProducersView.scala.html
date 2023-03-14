@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
+@import views.html.helpers._
 
 @this(
         layout: templates.Layout,
@@ -22,56 +22,38 @@
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
         govukButton: GovukButton,
-        govukDetails: GovukDetails
+        govukDetails: GovukDetails,
+        lowAndHighBandInputs: lowAndHighBandInputs,
+        saveAndContinueButton: saveAndContinueButton,
+        liableDrinksFromSmallProducers: liableDrinksFromSmallProducers
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
-    @htmlContent = {
-        <p class ="govuk-body">@messages("howManyAsAContract.detailsContent1")</p>
-        <p class ="govuk-body">@messages("howManyAsAContract.detailsContent2")</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li >@messages("howManyAsAContract.detailsContent3")</li>
-            <li>@messages("howManyAsAContract.detailsContent4")</li>
-            <li>@messages("howManyAsAContract.detailsContent5")</li>
-        </ul>
-    }
-    @layout(pageTitle = title(form, messages("howManyBroughtIntoTheUKFromSmallProducers.title"))) {
 
-        @formHelper(action = routes.HowManyBroughtIntoTheUKFromSmallProducersController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+@htmlContent = {
+    <p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent1")</p>
+    <p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent2")</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li >@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent3")</li>
+        <li>@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent4")</li>
+        <li>@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent5")</li>
+    </ul>
+}
+@layout(pageTitle = title(form, messages("howManyBroughtIntoTheUKFromSmallProducers.title"))) {
 
-            @if(form.errors.nonEmpty) {
-                @govukErrorSummary(ErrorSummaryViewModel(form))
-            }
+    @formHelper(action = routes.HowManyBroughtIntoTheUKFromSmallProducersController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
-            <h1 class="govuk-heading-m">@messages("howManyBroughtIntoTheUKFromSmallProducers.heading")</h1>
-            <p class="govuk-body">@messages("howManyBroughtIntoTheUKFromSmallProducers.subtext")</p>
-
-            @govukInput(
-                InputViewModel(
-                    field = form("lowBand"),
-                    label = LabelViewModel(messages("howManyBroughtIntoTheUKFromSmallProducers.lowBand"))
-                )
-                        .withWidth(Fixed10)
-                        .withHint(Hint(content = Text(messages("howManyBroughtIntoTheUKFromSmallProducers.hint1"))))
-            )
-
-            @govukInput(
-                InputViewModel(
-                    field = form("highBand"),
-                    label = LabelViewModel(messages("howManyBroughtIntoTheUKFromSmallProducers.highBand"))
-                )
-                        .withWidth(Fixed10)
-                        .withHint(Hint(content = Text(messages("howManyBroughtIntoTheUKFromSmallProducers.hint2"))))
-            )
-
-            @govukDetails(Details(
-                summary = Text(messages("howManyBroughtIntoTheUKFromSmallProducers.detailsLink")),
-                content = HtmlContent(htmlContent)
-            ))
-
-            @govukButton(
-                ButtonViewModel(messages("site.saveContinue"))
-            )
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        <h1 class="govuk-heading-m">@messages("howManyBroughtIntoTheUKFromSmallProducers.title")</h1>
+        <p class="govuk-body">@messages("howManyBroughtIntoTheUKFromSmallProducers.subtext")</p>
+
+        @lowAndHighBandInputs(form)(messages)
+        @liableDrinksFromSmallProducers(form)(messages)
+        @saveAndContinueButton(messages)
+
     }
+}
 

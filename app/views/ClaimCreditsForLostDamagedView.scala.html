@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers._
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
@@ -21,24 +23,12 @@
         govukRadios: GovukRadios,
         govukButton: GovukButton,
         govukDetails: GovukDetails,
-        govukWarningText : GovukWarningText
+        govukWarningText : GovukWarningText,
+        claimCreditsForLostDamaged: claimCreditsForLostDamaged,
+        saveAndContinueButton: saveAndContinueButton,
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
-@htmlContent = {
-<p class ="govuk-body">@messages("claimCreditsForLostDamaged.detailsContent1")</p>
-<ul class="govuk-list govuk-list--bullet">
-    <li>@messages("claimCreditsForLostDamaged.detailsContent2")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent3")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent4")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent5")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent6")</li>
-    <li>@messages("claimCreditsForLostDamaged.detailsContent7")</li>
-</ul>
-<p class ="govuk-body">@messages("claimCreditsForLostDamaged.detailsContent8")</p>
-}
-
-
 
 @layout(pageTitle = title(form, messages("claimCreditsForLostDamaged.title"))) {
 
@@ -55,7 +45,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.heading2")</h1>
+        <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
@@ -63,15 +53,7 @@
                 hint = None
             )
         )
-        @govukDetails(
-            Details(
-            summary = Text(messages("claimCreditsForLostDamaged.detailsLink")),
-            content = HtmlContent(htmlContent)
-            )
-        )
-
-        @govukButton(
-        ButtonViewModel(messages("site.saveContinue"))
-        )
+        @claimCreditsForLostDamaged(form)(messages)
+        @saveAndContinueButton(messages)
     }
 }

@@ -14,31 +14,31 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers._
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
-        govukButton: GovukButton,
-        govukDetails: GovukDetails,
-        govukSummaryList: GovukSummaryList
+        govukSummaryList: GovukSummaryList,
+        saveAndContinueButton: saveAndContinueButton,
 )
 
 @(form: Form[_], mode: Mode, siteList: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("productionSiteDetails.title"))) {
+@layout(pageTitle = title(form, messages("packagingSiteDetails.title"))) {
 
-    @formHelper(action = routes.ProductionSiteDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m" >@messages("productionSiteDetails.title", siteList.rows.size)</h1>
-        <p class="govuk-body-m">@messages("productionSiteDetails.subHeading")</p>
+        <h1 class="govuk-heading-m" >@messages("packagingSiteDetails.title", siteList.rows.size)</h1>
+        <p class="govuk-body-m">@messages("packagingSiteDetails.info")</p>
+
         @govukSummaryList(siteList)
-
-
 
         @govukRadios(
             RadiosViewModel.yesNo(
@@ -47,8 +47,6 @@
             )
         )
 
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-        )
+        @saveAndContinueButton(messages)
     }
 }

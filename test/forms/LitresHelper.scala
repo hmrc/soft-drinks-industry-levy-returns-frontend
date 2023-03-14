@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-import models.backend.Site
-import play.api.libs.json.{Json, Reads, Writes}
+import forms.behaviours.LongFieldBehaviour
+import play.api.data.{Form, FormError}
 
-case class ProductionSite(sites: Seq[Site], addAddress: Boolean, tradingName: Option[String], additionalSites: Option[Address])
+trait LitresHelper extends LongFieldBehaviour {
 
-object ProductionSite {
-  implicit val writes: Writes[ProductionSite] = Json.writes
-  implicit val reads: Reads[ProductionSite] = Json.reads
 
 }

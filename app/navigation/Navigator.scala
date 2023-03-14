@@ -28,7 +28,7 @@ import models.retrieved.RetrievedSubscription
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
-    case ProductionSiteDetailsPage => userAnswers =>
+    case PackagingSiteDetailsPage => userAnswers =>
       sdilReturnOpt =>
         subscriptionOpt =>
           _ =>
@@ -170,7 +170,7 @@ class Navigator @Inject()() {
 
   private def packAtBusinessAddressPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = PackAtBusinessAddressPage).contains(true)) {
-      routes.ProductionSiteDetailsController.onPageLoad(NormalMode)
+      routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     } else {
       routes.IndexController.onPageLoad()//TODO GO TO ADDRESS LOOKUP PATH
     }
@@ -179,7 +179,7 @@ class Navigator @Inject()() {
   private def productionSiteDetailsPageNavigation(userAnswers: UserAnswers,
                                                   sdilReturnOpt: Option[SdilReturn],
                                                   subscriptionOpt: Option[RetrievedSubscription]) = {
-    if (userAnswers.get(ProductionSiteDetailsPage).contains(true)) {
+    if (userAnswers.get(PackagingSiteDetailsPage).contains(true)) {
       routes.IndexController.onPageLoad()
     } else {
       (sdilReturnOpt, subscriptionOpt) match {

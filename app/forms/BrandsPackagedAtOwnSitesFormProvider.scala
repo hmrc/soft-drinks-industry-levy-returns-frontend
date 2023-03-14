@@ -25,22 +25,13 @@ import models.BrandsPackagedAtOwnSites
 
 class BrandsPackagedAtOwnSitesFormProvider @Inject() extends Mappings {
 
+
    def apply(): Form[BrandsPackagedAtOwnSites] = Form(
      mapping(
-      "lowBand" -> long(
-        "brandsPackagedAtOwnSites.error.lowBand.required",
-                    "brandsPackagedAtOwnSites.error.lowBand.negative",
-                    "brandsPackagedAtOwnSites.error.lowBand.nonNumeric",
-                    "brandsPackagedAtOwnSites.error.lowBand.wholeNumber",
-        "brandsPackagedAtOwnSites.error.lowBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "brandsPackagedAtOwnSites.error.lowBand.outOfMaxVal")),
-        "highBand" -> long(
-        "brandsPackagedAtOwnSites.error.highBand.required",
-                    "brandsPackagedAtOwnSites.error.highBand.negative",
-                    "brandsPackagedAtOwnSites.error.highBand.nonNumeric",
-                    "brandsPackagedAtOwnSites.error.highBand.wholeNumber",
-          "brandsPackagedAtOwnSites.error.highBand.outOfMaxVal")
-  .verifying(maximumValueNotEqual(100000000000000L, "brandsPackagedAtOwnSites.error.highBand.outOfMaxVal"))
+       "lowBand" -> litres(
+         "lowBand"),
+       "highBand" -> litres(
+         "highBand")
     )(BrandsPackagedAtOwnSites.apply)(BrandsPackagedAtOwnSites.unapply)
-   )
- }
+  )
+}
