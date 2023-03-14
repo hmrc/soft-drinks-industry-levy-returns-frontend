@@ -228,6 +228,14 @@ object AmountToPaySummary  {
     (sectionHeaderTitle(total), summary, amountInCredit(total))
   }
 
+  def amountToPayOverviewRow(totalForQuarter: BigDecimal,
+                             balanceBroughtForward: BigDecimal,
+                             total: BigDecimal)(implicit messages: Messages) = {
+
+    val summary = amountToPaySummary(balanceBroughtForward, totalForQuarter, total)
+    (sectionHeaderTitle(total), summary, amountInCredit(total))
+  }
+
   private def amountToPaySummary(balanceBroughtForward: BigDecimal, totalForQuarter: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(

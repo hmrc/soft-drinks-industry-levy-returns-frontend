@@ -16,10 +16,12 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads, Writes}
 
 case class Amounts(totalForQuarter: BigDecimal, balanceBroughtForward: BigDecimal, total:BigDecimal)
 
 object Amounts {
   implicit val format = Json.format[Amounts]
+  implicit val writes: Writes[SmallProducer] = Json.writes
+  implicit val reads: Reads[Amounts] = Json.reads
 }

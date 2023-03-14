@@ -20,11 +20,13 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import models.requests.DataRequest
-import models.{Address, FinancialLineItem, ReturnPeriod, SmallProducer, UserAnswers, Warehouse}
+import models.{Address, Amounts, FinancialLineItem, ReturnPeriod, SmallProducer, UserAnswers, Warehouse}
 import pages._
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.libs.json.{Format, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -46,7 +48,8 @@ class ReturnsController @Inject()(
                                        requireData: DataRequiredAction,
                                        connector: SoftDrinksIndustryLevyConnector,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: ReturnSentView
+                                       view: ReturnSentView,
+                                       sessionCache: SDILSessionCache,
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   //Warehouse TODO -> REMOVE WHEN WAREHOUSE LIST IS MADE!
@@ -57,6 +60,7 @@ class ReturnsController @Inject()(
   val line4: String = "United Kingdom"
   val postcode: String = "CT44 0DF"
   val warhouseList: List[Warehouse] = List(Warehouse(tradingName, Address(line1, line2, line3, line4, postcode)))
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -68,42 +72,43 @@ class ReturnsController @Inject()(
       val paymentDueDate = currentReturnPeriod(request)
       val returnDate = ReturnPeriod(2022, 1) // Is this returns submitted date?
       val amountOwed: String = "£100,000.00"
+      implicit val format = Json.format[Amounts]
 
-      (for {
-        balanceBroughtForward <-
-          if (config.balanceAllEnabled) {
-            connector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
-              extractTotal(listItemsWithTotal(financialItem))
-            }
-          } else connector.balance(sdilEnrolment, withAssessment = false)
-      } yield {
+      sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS).map {
+        case Some(amounts) => {
+          val balanceBroughtForward = amounts.balanceBroughtForward
 
-        val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
-        val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)))
-        val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
+          // TODO - these needs re-checking by Jake
+          val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
+          val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)))
+          val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
 
-        Ok(view(returnDate,
-          request.subscription,
-          amountOwed,
-          balance,
-          paymentDueDate,
-          financialStatus = financialStatus(balance): String,
-          ownBrandsAnswers(userAnswers),
-          packagedContractPackerAnswers(request, userAnswers),
-          exemptionForSmallProducersAnswers(userAnswers),
-          broughtIntoUKAnswers(userAnswers),
-          broughtIntoUKFromSmallProducerAnswers(userAnswers),
-          claimCreditsForExportsAnswers(userAnswers),
-          claimCreditsForLostOrDamagedAnswers(userAnswers),
-          smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList): Option[List[SmallProducer]],
-          warehouseCheck = warehouseCheck(warhouseList): Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
-          smallProducerAnswers(userAnswers),
-          warehouseAnswers(userAnswers),
-          totalForQuarterSummary(isSmallProducer, userAnswers),
-          balanceBroughtForwardAnswer,
-          totalAnswer
-        ))
-      })
+          Ok(view(returnDate,
+            request.subscription,
+            amountOwed,
+            balance,
+            paymentDueDate,
+            financialStatus = financialStatus(balance): String,
+            ownBrandsAnswers(userAnswers),
+            packagedContractPackerAnswers(request, userAnswers),
+            exemptionForSmallProducersAnswers(userAnswers),
+            broughtIntoUKAnswers(userAnswers),
+            broughtIntoUKFromSmallProducerAnswers(userAnswers),
+            claimCreditsForExportsAnswers(userAnswers),
+            claimCreditsForLostOrDamagedAnswers(userAnswers),
+            smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList): Option[List[SmallProducer]],
+            warehouseCheck = warehouseCheck(warhouseList): Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
+            smallProducerAnswers(userAnswers),
+            warehouseAnswers(userAnswers),
+            totalForQuarterSummary(isSmallProducer, userAnswers),
+            balanceBroughtForwardAnswer,
+            totalAnswer
+          ))
+        }
+        case _ =>
+          logger.error("no amount found in the cache")
+          Redirect(routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   private def totalForQuarterSummary(isSmallProducer: Boolean, userAnswers: UserAnswers)(implicit messages: Messages) = {

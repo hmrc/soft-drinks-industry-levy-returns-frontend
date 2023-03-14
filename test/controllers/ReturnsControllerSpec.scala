@@ -16,43 +16,35 @@
 
 package controllers
 
-import akka.http.scaladsl.model.DateTime
-import akka.http.scaladsl.model.headers.Date
 import base.SpecBase
-import connectors.SoftDrinksIndustryLevyConnector
-import models.{FinancialLineItem, ReturnPeriod, SmallProducer, Unknown, UserAnswers}
-import play.api.inject.bind
+import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import play.api.i18n.Messages
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SDILSessionCache
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class ReturnsControllerSpec extends SpecBase {
+
+  val zero = BigDecimal(0.00)
+  val amounts = Amounts(zero, zero, zero)
+  val mockSessionCache = mock[SDILSessionCache]
+  when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
 
   "ReturnSent Controller" - {
 
     "must show own brands row with answer no, when answered" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
-
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -71,15 +63,9 @@ class ReturnsControllerSpec extends SpecBase {
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 1000 , "highBand"-> 1000)
       )
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -107,15 +93,8 @@ class ReturnsControllerSpec extends SpecBase {
     "must show Contract packed at your own site with answer no, when answered" in {
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -134,16 +113,9 @@ class ReturnsControllerSpec extends SpecBase {
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 1000 , "highBand"-> 2000)
       )
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -170,17 +142,9 @@ class ReturnsControllerSpec extends SpecBase {
     "must show Exemptions For Small Producers row with answer no, when answered" in {
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
-
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
@@ -196,15 +160,8 @@ class ReturnsControllerSpec extends SpecBase {
     "must show brought into uk with answer no, when answered" in {
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -223,16 +180,9 @@ class ReturnsControllerSpec extends SpecBase {
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
       )
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -259,15 +209,8 @@ class ReturnsControllerSpec extends SpecBase {
     "must show brought into the UK from small producers row when present and answer is no" in {
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
 
@@ -287,16 +230,9 @@ class ReturnsControllerSpec extends SpecBase {
         "broughtIntoUkFromSmallProducers" -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
       )
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -323,15 +259,8 @@ class ReturnsControllerSpec extends SpecBase {
     "must show claim credits for exports row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
 
@@ -351,15 +280,9 @@ class ReturnsControllerSpec extends SpecBase {
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -386,15 +309,8 @@ class ReturnsControllerSpec extends SpecBase {
     "must show show lost or damaged row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
 
@@ -414,15 +330,9 @@ class ReturnsControllerSpec extends SpecBase {
         "claimCreditsForLostDamaged" -> true,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -453,20 +363,10 @@ class ReturnsControllerSpec extends SpecBase {
       )
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
-
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 1000)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
-
-
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
@@ -479,21 +379,9 @@ class ReturnsControllerSpec extends SpecBase {
     }
 
     "must show correct message to user when nothing is owed " in {
-      val userAnswersData = Json.obj(
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand"-> 0 , "highBand"-> 0)
-      )
-
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -513,17 +401,9 @@ class ReturnsControllerSpec extends SpecBase {
         "claimCreditsForLostDamaged" -> true,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -543,18 +423,9 @@ class ReturnsControllerSpec extends SpecBase {
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-
-
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -574,17 +445,9 @@ class ReturnsControllerSpec extends SpecBase {
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 1000 , "highBand"-> 2000)
       )
-
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -604,17 +467,9 @@ class ReturnsControllerSpec extends SpecBase {
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 1000 , "highBand"-> 2000)
       )
-
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {
@@ -630,23 +485,13 @@ class ReturnsControllerSpec extends SpecBase {
     }
 
     "must show correct total" in {
-
       val userAnswersData = Json.obj(
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 1000 , "highBand"-> 2000)
       )
-
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      when(mockSdilConnector.balance(any(), any())(any())) thenReturn Future.successful(0)
-      val financialLineItem: FinancialLineItem = Unknown(LocalDate.now, "someTitle", 0)
-      when(mockSdilConnector.balanceHistory(any(), any())(any())) thenReturn Future.successful(List(financialLineItem))
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
-
       val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[SDILSessionCache].toInstance(mockSessionCache)
       ).build()
 
       running(application) {

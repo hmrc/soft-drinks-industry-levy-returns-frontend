@@ -73,10 +73,6 @@ class CheckYourAnswersController @Inject()(
         val totalForQuarter = calculateTotalForQuarter(userAnswers, isSmallProducer.getOrElse(false))
         val total = totalForQuarter + balanceBroughtForward
 
-        println(Console.YELLOW + totalForQuarter + Console.WHITE)
-        println(Console.YELLOW + balanceBroughtForward.toDouble + Console.WHITE)
-        println(Console.YELLOW + total + Console.WHITE)
-
         cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
 
         val amountToPaySection = AmountToPaySummary.amountToPayRow(totalForQuarter, balanceBroughtForward, total)
