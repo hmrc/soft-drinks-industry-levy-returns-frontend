@@ -145,7 +145,6 @@ claimCreditsForLostDamaged.title = Do you want to claim a credit for liable drin
 claimCreditsForLostDamaged.heading1 = Lost or destroyed drinks
 claimCreditsForLostDamaged.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 claimCreditsForLostDamaged.warning = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
-claimCreditsForLostDamaged.detailsLink = What can I claim a credit for?
 claimCreditsForLostDamaged.detailsContent1 = You can claim a credit for liable drinks that have been:
 claimCreditsForLostDamaged.detailsContent2 = lost
 claimCreditsForLostDamaged.detailsContent3 = destroyed

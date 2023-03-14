@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
+@import views.html.helpers._
 
 @this(
     layout: templates.Layout,
@@ -22,18 +22,13 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-   govukDetails: GovukDetails
+    govukDetails: GovukDetails,
+    lowAndHighBandInputs: lowAndHighBandInputs,
+    saveAndContinueButton: saveAndContinueButton,
+    whatIsASmallProducer: whatIsASmallProducer
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
-@htmlContent = {
-        <p class ="govuk-body">@messages("whatIsASmallProducer.detailsContent1")</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li >@messages("whatIsASmallProducer.detailsContent2")</li>
-            <li>@messages("whatIsASmallProducer.detailsContent3")</li>
-        </ul>
-    }
-
 
 @layout(pageTitle = title(form, messages("howManyBoughtIntoUk.title"))) {
 
@@ -46,38 +41,9 @@
         <h1 class="govuk-heading-m">@messages("howManyBoughtIntoUk.title")</h1>
         <p class="govuk-body">@messages("howManyBoughtIntoUk.subtext")</p>
 
-        @govukInput(
-            Input(
-                id = "lowBand",
-                name = "lowBand",
-                label = LabelViewModel(messages("litres.lowBand")),
-                classes = "govuk-input--width-10",
-                suffix = Some(PrefixOrSuffix(
-                    content = Text("litres")
-                ))
-            )
-                    .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
-        )
-        @govukInput(
-            Input(
-                id = "highBand",
-                name = "highBand",
-                label = LabelViewModel(messages("litres.highBand")),
-                classes = "govuk-input--width-10",
-                suffix = Some(PrefixOrSuffix(
-                    content = Text("litres")
-                ))
-            )
-                    .withHint(Hint(content = Text(messages("litres.highBandHint"))))
-        )
+        @lowAndHighBandInputs(form)(messages)
+        @whatIsASmallProducer(form)(messages)
+        @saveAndContinueButton(messages)
 
-        @govukDetails(Details(
-            summary = Text(messages("whatIsASmallProducer.detailsLink")),
-            content = HtmlContent(htmlContent)
-        ))
-
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-        )
     }
 }

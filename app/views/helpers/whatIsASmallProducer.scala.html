@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@this(govukDetails: GovukDetails)
 
-import javax.inject.Inject
+@(form: Form[_])(implicit messages: Messages)
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import play.api.data.Forms._
-import models.BrandsPackagedAtOwnSites
-
-class BrandsPackagedAtOwnSitesFormProvider @Inject() extends Mappings {
-
-
-   def apply(): Form[BrandsPackagedAtOwnSites] = Form(
-     mapping(
-       "lowBand" -> litres(
-         "lowBand"),
-       "highBand" -> litres(
-         "highBand")
-    )(BrandsPackagedAtOwnSites.apply)(BrandsPackagedAtOwnSites.unapply)
-  )
+@htmlContent = {
+ <p class ="govuk-body">@messages("whatIsASmallProducer.detailsContent1")</p>
+ <ul class="govuk-list govuk-list--bullet">
+  <li >@messages("whatIsASmallProducer.detailsContent2")</li>
+  <li>@messages("whatIsASmallProducer.detailsContent3")</li>
+ </ul>
 }
+
+@govukDetails(Details(
+ summary = Text(messages("whatIsASmallProducer.detailsLink")),
+ content = HtmlContent(htmlContent)
+))
