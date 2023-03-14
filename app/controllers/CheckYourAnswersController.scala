@@ -34,6 +34,7 @@ import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -73,7 +74,7 @@ class CheckYourAnswersController @Inject()(
         val total = totalForQuarter + balanceBroughtForward
 
         println(Console.YELLOW + totalForQuarter + Console.WHITE)
-        println(Console.YELLOW + balanceBroughtForward + Console.WHITE)
+        println(Console.YELLOW + balanceBroughtForward.toDouble + Console.WHITE)
         println(Console.YELLOW + total + Console.WHITE)
 
         cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
@@ -238,20 +239,11 @@ class CheckYourAnswersController @Inject()(
     }
   }
 
-  private def formatAmount(amount: BigDecimal) = {
-    if (amount < 0)
-      "-£" + String.format("%.2f", amount.toDouble * -1)
-    else
-      "£" + String.format("%.2f", amount.toDouble)
-  }
-
   private def cacheAmounts(sdilEnrolment: String, amounts: Amounts) = {
-    for {
-      a <- sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts)
-    } yield {
-      println(Console.YELLOW + "CACHE A" + a + Console.WHITE)
+    sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts).onComplete {
+      case Success(_) => logger.info(s"Amounts saved in session cache for $sdilEnrolment")
+      case Failure(error) => logger.error(s"Failed to save amounts in session cache for $sdilEnrolment Error: $error")
     }
-
   }
 
 }
