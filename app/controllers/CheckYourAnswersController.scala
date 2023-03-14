@@ -22,12 +22,12 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import models.{ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
-import pages.{ExemptionsForSmallProducersPage, PackAtBusinessAddressPage}
+import models.{Amounts, ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
+import pages.{BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, PackAtBusinessAddressPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
-import repositories.SDILSessionCache
+import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -54,8 +54,6 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad() = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val subscription = request.subscription
-      println(Console.YELLOW + subscription + Console.WHITE)
       val balanceAllEnabled = config.balanceAllEnabled
       val userAnswers = request.userAnswers
       val returnPeriod = currentReturnPeriod(request)
@@ -71,7 +69,17 @@ class CheckYourAnswersController @Inject()(
           } else connector.balance(sdilEnrolment, withAssessment = false)
       } yield {
 
-        val amountToPaySection = amountToPaySummary(userAnswers, isSmallProducer, balanceBroughtForward)
+        val totalForQuarter = calculateTotalForQuarter(userAnswers, isSmallProducer.getOrElse(false))
+        val total = totalForQuarter + balanceBroughtForward
+
+        println(Console.YELLOW + totalForQuarter + Console.WHITE)
+        println(Console.YELLOW + balanceBroughtForward + Console.WHITE)
+        println(Console.YELLOW + total + Console.WHITE)
+
+        cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
+
+        val amountToPaySection = AmountToPaySummary.amountToPayRow(totalForQuarter, balanceBroughtForward, total)
+
         Ok(view(request.subscription.orgName,
           formattedReturnPeriodQuarter(returnPeriod),
           ownBrandsAnswers(userAnswers),
@@ -107,18 +115,6 @@ class CheckYourAnswersController @Inject()(
       case 2 => s"${Messages("thirdQuarter")} ${returnPeriod.year}"
       case 3 => s"${Messages("fourthQuarter")} ${returnPeriod.year}"
     }
-  }
-
-  private def amountToPaySummary(userAnswers: UserAnswers,
-                                 isSmallProducer: Option[Boolean],
-                                 balanceBroughtForward: BigDecimal)(implicit messages: Messages) = {
-
-      AmountToPaySummary.amountToPayRow(
-        userAnswers,
-        lowerBandCostPerLitre,
-        higherBandCostPerLitre,
-        isSmallProducer.getOrElse(false),
-        balanceBroughtForward)
   }
 
   private def registeredSites(userAnswers: UserAnswers)(implicit messages: Messages) = {
@@ -204,4 +200,58 @@ class CheckYourAnswersController @Inject()(
       BrandsPackagedAtOwnSitesSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
     ).flatten)
   }
+
+  private def calculateTotalForQuarter(userAnswers: UserAnswers, smallProducer: Boolean)(implicit messages: Messages) = {
+    calculateLowBandTotalForQuarter(userAnswers, lowerBandCostPerLitre, smallProducer) +
+      calculateHighBandTotalForQuarter(userAnswers, higherBandCostPerLitre, smallProducer)
+  }
+
+  private def calculateLowBandTotalForQuarter(userAnswers: UserAnswers, lowBandCostPerLitre: BigDecimal, smallProducer: Boolean)(implicit messages: Messages): BigDecimal = {
+    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
+    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
+    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
+    val litresExported = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
+    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
+
+    val total = litresBroughtIntoTheUk + litresAsContractPacker
+    val totalCredits = litresExported + litresLostOrDamaged
+
+    smallProducer match {
+      case true => (total - totalCredits) * lowBandCostPerLitre
+      case _ => (total + litresPackedAtOwnSite - totalCredits) * lowBandCostPerLitre
+    }
+  }
+
+  private def calculateHighBandTotalForQuarter(userAnswers: UserAnswers, highBandCostPerLitre: BigDecimal, smallProducer: Boolean)(implicit messages: Messages): BigDecimal = {
+    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
+    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
+    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
+    val litresExported = userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
+    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
+
+    val total = litresBroughtIntoTheUk + litresAsContractPacker
+    val totalCredits = litresExported + litresLostOrDamaged
+
+    smallProducer match {
+      case true => (total - totalCredits) * highBandCostPerLitre
+      case _ => (total + litresPackedAtOwnSite - totalCredits) * highBandCostPerLitre
+    }
+  }
+
+  private def formatAmount(amount: BigDecimal) = {
+    if (amount < 0)
+      "-£" + String.format("%.2f", amount.toDouble * -1)
+    else
+      "£" + String.format("%.2f", amount.toDouble)
+  }
+
+  private def cacheAmounts(sdilEnrolment: String, amounts: Amounts) = {
+    for {
+      a <- sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts)
+    } yield {
+      println(Console.YELLOW + "CACHE A" + a + Console.WHITE)
+    }
+
+  }
+
 }

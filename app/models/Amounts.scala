@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package repositories
+package models
 
-object SDILSessionKeys {
+import play.api.libs.json.Json
 
-  val SUBSCRIPTION = "SUBSCRIPTION"
-  val AMOUNTS = "AMOUNTS"
+case class Amounts(totalForQuarter: BigDecimal, balanceBroughtForward: BigDecimal, total:BigDecimal)
 
+object Amounts {
+  implicit val format = Json.format[Amounts]
 }
