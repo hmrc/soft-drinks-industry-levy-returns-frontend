@@ -22,21 +22,18 @@ import controllers.actions._
 import models.requests.DataRequest
 import models.{Address, Amounts, FinancialLineItem, ReturnPeriod, SmallProducer, UserAnswers, Warehouse}
 import pages._
-import play.api.{Configuration, Logger}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.{Configuration, Logger}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalTime, ZoneId}
 import javax.inject.Inject
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 
 class ReturnsController @Inject()(

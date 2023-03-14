@@ -20,7 +20,7 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.ClaimCreditsForLostDamagedPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 

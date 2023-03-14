@@ -15,23 +15,16 @@
  */
 
 package viewmodels.checkAnswers
-import models.{CheckMode, FinancialLineItem, ReturnPeriod, UserAnswers}
-import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, PackagedContractPackerPage}
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import java.util.Locale
-import scala.concurrent.{Await, Future}
-import scala.math.BigDecimal
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
 import models.UserAnswers
 import pages._
 import play.api.i18n.Messages
 import play.api.libs.json.Format.GenericFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
+
+import java.util.Locale
 
 object AmountToPaySummary  {
 

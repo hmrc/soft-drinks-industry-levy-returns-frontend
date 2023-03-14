@@ -16,15 +16,8 @@
 
 package models
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate => Date}
-
 import play.api.i18n.Messages
 import play.api.libs.json._
-
-
-import play.api.i18n.Messages
-import play.api.libs.json.{Format, JsObject, JsResult, JsString, JsValue, Json}
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate => Date}
