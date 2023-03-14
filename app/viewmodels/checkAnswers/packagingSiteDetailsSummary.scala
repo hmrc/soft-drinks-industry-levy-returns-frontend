@@ -59,7 +59,7 @@ object packagingSiteDetailsSummary  {
         )
         SummaryListRow(
           key = Key(
-            content = HtmlContent(s"""${site.tradingName.get}<br>${HtmlFormat.escape(site.address.lines.mkString(", "))}<br>${HtmlFormat.escape(site.address.postCode)}"""),
+            content = HtmlContent(s"""${site.tradingName.get}<br>${HtmlFormat.escape(site.address.lines.mkString(", "))}, ${HtmlFormat.escape(site.address.postCode)}"""),
             classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
           ),
           actions = if(packagingSiteList.length > 1){

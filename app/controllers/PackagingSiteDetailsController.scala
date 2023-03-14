@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.packagingSiteDetailsView
+import views.html.PackagingSiteDetailsView
 import models.backend.{Site, UkAddress}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.checkAnswers.packagingSiteDetailsSummary
@@ -47,22 +47,10 @@ class PackagingSiteDetailsController @Inject()(
                                                 requireData: DataRequiredAction,
                                                 formProvider: packagingSiteDetailsFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
-                                                view: packagingSiteDetailsView
+                                                view: PackagingSiteDetailsView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
-
-  val superCola = Site(
-    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-    Some("88"),
-    Some("Wild Lemonade Group"),
-    Some(LocalDate.of(2018, 2, 26)))
-
-  val sparkyJuice = Site(
-    UkAddress(List("30 Rhes Priordy", "East London"), "E73 2RP"),
-    Some("10"),
-    Some("Sparky Juice Co"),
-    Some(LocalDate.of(2018, 2, 26)))
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>

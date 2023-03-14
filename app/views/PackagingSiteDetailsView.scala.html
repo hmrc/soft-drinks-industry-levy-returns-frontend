@@ -35,10 +35,12 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m" >@messages("packagingSiteDetails.title", siteList.rows.size)</h1>
+        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.heading1", siteList.rows.size)</h1>
         <p class="govuk-body-m">@messages("packagingSiteDetails.info")</p>
 
         @govukSummaryList(siteList)
+
+        <h2 class="govuk-heading-m">@messages("packagingSiteDetails.addAnotherPackingSite")</h2>
 
         @govukRadios(
             RadiosViewModel.yesNo(
