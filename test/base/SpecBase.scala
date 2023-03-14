@@ -98,6 +98,7 @@ trait SpecBase
   val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
   val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
   val sdilNumber: String = "XKSDIL000000022"
+
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",

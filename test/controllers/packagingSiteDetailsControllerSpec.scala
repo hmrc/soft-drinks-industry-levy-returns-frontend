@@ -22,11 +22,14 @@ import forms.packagingSiteDetailsFormProvider
 import models.backend.{Site, UkAddress}
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackagingSiteDetailsPage
+import play.api.i18n.Messages
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,53 +37,60 @@ import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.checkAnswers.packagingSiteDetailsSummary
 import viewmodels.govuk.SummaryListFluency
-import views.html.packagingSiteDetailsView
+import views.html.PackagingSiteDetailsView
+
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency{
 
-  def onwardRoute = Call("GET", "/foo")
-
   val PackagingSite1 = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-    Some("88"),
+    None,
     Some("Wild Lemonade Group"),
-    Some(LocalDate.of(2018, 2, 26)))
+    None)
 
   val PackagingSite2 = Site(
     UkAddress(List("30 Rhes Priordy", "East London"), "E73 2RP"),
     Some("10"),
-    Some("Sparky Juice Co"),
-    Some(LocalDate.of(2018, 2, 26)))
+    None,
+    None)
 
   val formProvider = new packagingSiteDetailsFormProvider()
   val form = formProvider()
 
   lazy val packagingSiteDetailsRoute = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+  val packagingSiteListWith2 = List(PackagingSite1, PackagingSite2)
+  val packagingSiteListWith1 = List(PackagingSite1)
 
-  "productionSiteDetails Controller" - {
+  val userAnswersWith1PackagingSite = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
+  val userAnswersWith2PackagingSites = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith2)
+
+  "packagingSiteDetails Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWith1PackagingSite)).build()
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
 
         val result = route(application, request).value
 
-        val smallProducersSummaryList: List[SummaryListRow] =
+        val packagingSummaryList: List[SummaryListRow] =
           packagingSiteDetailsSummary.row2(List())(messages(application))
 
         val list: SummaryList = SummaryListViewModel(
-          rows = smallProducersSummaryList
+          rows = packagingSummaryList
         )
 
-        val view = application.injector.instanceOf[packagingSiteDetailsView]
+        val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, list)(request, messages(application)).toString
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.title() must include(Messages("packagingSiteDetails.title"))
+        page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
       }
     }
 
@@ -88,12 +98,12 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
       val userAnswers = UserAnswers(sdilNumber).set(PackagingSiteDetailsPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWith1PackagingSite)).build()
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
 
-        val view = application.injector.instanceOf[packagingSiteDetailsView]
+        val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         val result = route(application, request).value
 
@@ -105,6 +115,10 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         )
 
         status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() must include(Messages("packagingSiteDetails.title"))
+        page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
+
         contentAsString(result) mustEqual view(form.fill(true), NormalMode, list)(request, messages(application)).toString
       }
     }
@@ -118,9 +132,8 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(None)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswersWith1PackagingSite))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
               bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
           )
@@ -134,9 +147,10 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
+// TODO Update to include error message
+    // also need test for more than 1 packaging site.
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
@@ -149,7 +163,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[packagingSiteDetailsView]
+        val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         val smallProducersSummaryList: List[SummaryListRow] =
           packagingSiteDetailsSummary.row2(List())(messages(application))

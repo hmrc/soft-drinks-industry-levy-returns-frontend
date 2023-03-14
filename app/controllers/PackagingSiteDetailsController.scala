@@ -19,7 +19,6 @@ package controllers
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.packagingSiteDetailsFormProvider
-
 import javax.inject.Inject
 import models.{Mode, SdilReturn}
 import navigation.Navigator
@@ -29,12 +28,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackagingSiteDetailsView
-import models.backend.{Site, UkAddress}
+import models.backend.Site
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.checkAnswers.packagingSiteDetailsSummary
 import viewmodels.govuk.summarylist._
-
-import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class PackagingSiteDetailsController @Inject()(
