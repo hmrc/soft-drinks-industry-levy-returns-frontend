@@ -69,16 +69,16 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def decimalsOps: Gen[String] =
     arbitrary[BigDecimal]
-      . suchThat(x => x > 0 && x < decimalMax)
+      .suchThat(x => x > 0 && x < decimalMax)
       .suchThat(!_.isValidInt)
-      .map(_.formatted("%f"))
+      .map("%f".format(_))
 
 
   def decimals: Gen[String] =
     arbitrary[BigDecimal]
       .suchThat(_.abs < Int.MaxValue)
       .suchThat(!_.isValidInt)
-      .map(_.formatted("%f"))
+      .map("%f".format(_))
 
   def intsBelowValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat(_ < value)
