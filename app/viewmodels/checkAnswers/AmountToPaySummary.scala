@@ -210,20 +210,11 @@ object AmountToPaySummary  {
     ) - balanceBroughtForward
   }
 
-
   // TODO see what can be refactored from the above into the below
 
   def amountToPayRow(totalForQuarter: BigDecimal,
                      balanceBroughtForward: BigDecimal,
                      total: BigDecimal)(implicit messages: Messages) = {
-
-    val summary = amountToPaySummary(balanceBroughtForward, totalForQuarter, total)
-    (sectionHeaderTitle(total), summary, amountInCredit(total))
-  }
-
-  def amountToPayOverviewRow(totalForQuarter: BigDecimal,
-                             balanceBroughtForward: BigDecimal,
-                             total: BigDecimal)(implicit messages: Messages) = {
 
     val summary = amountToPaySummary(balanceBroughtForward, totalForQuarter, total)
     (sectionHeaderTitle(total), summary, amountInCredit(total))
@@ -236,17 +227,17 @@ object AmountToPaySummary  {
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
-        value = ValueViewModel(HtmlContent(formatAmount(totalForQuarter))).withCssClass("total-for-quarter align-right"),
+        value = ValueViewModel(HtmlContent(formatAmountOfMoneyWithPoundSign(totalForQuarter))).withCssClass("total-for-quarter align-right"),
         actions = Seq()
       ),
       SummaryListRowViewModel(
         key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(formatAmount(negatedBalanceBroughtForward))).withCssClass("balance-brought-forward align-right"),
+        value = ValueViewModel(HtmlContent(formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward))).withCssClass("balance-brought-forward align-right"),
         actions = Seq()
       ),
       SummaryListRowViewModel(
         key = "total",
-        value = ValueViewModel(HtmlContent(formatAmount(total))).withCssClass("total align-right"),
+        value = ValueViewModel(HtmlContent(formatAmountOfMoneyWithPoundSign(total))).withCssClass("total align-right"),
         actions = Seq()
       ))
     )
@@ -254,7 +245,7 @@ object AmountToPaySummary  {
 
   private def amountInCredit(total: BigDecimal)(implicit messages: Messages) = {
     if (total < 0)
-      Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", formatAmount(total * -1)))
+      Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", formatAmountOfMoneyWithPoundSign(total * -1)))
     else
       None
   }
@@ -267,14 +258,6 @@ object AmountToPaySummary  {
     else
       Messages("amountToPay")
   }
-
-  private def formatAmount(amount: BigDecimal) = {
-    if(amount <0)
-      "-£" + String.format("%.2f", amount.toDouble * -1)
-    else
-      "£" + String.format("%.2f", amount.toDouble)
-  }
-
 
 }
 

@@ -643,11 +643,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        page.getElementsByClass("total-for-quarter").text() must include("£1188.00")
+        page.getElementsByClass("total-for-quarter").text() must include("£1,188.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
         page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
         page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("£1488.00")
+        page.getElementsByClass("total").text() must include("£1,488.00")
 
       }
     }
@@ -899,12 +899,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text mustEqual (Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        page.getElementsByClass("total-for-quarter").text() must include("£4200.00")
+        page.getElementsByClass("total-for-quarter").text() must include("£4,200.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
         page.getElementsByClass("balance-brought-forward").text() must include("-£300.00")
         page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("£3900.00")
-        page.getElementsByClass("total").text() mustNot include("-£3900.00")
+        page.getElementsByClass("total").text() must include("£3,900.00")
+        page.getElementsByClass("total").text() mustNot include("-£3,900.00")
 
       }
     }
