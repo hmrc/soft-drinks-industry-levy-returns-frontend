@@ -70,7 +70,6 @@ class ReturnsController @Inject()(
       val userAnswers = request.userAnswers
       val paymentDueDate = currentReturnPeriod(request)
       val returnDate = ReturnPeriod(2022, 1) // Is this returns submitted date?
-      val amountOwed: String = "£100,000.00"
       implicit val format = Json.format[Amounts]
 
       sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS).map {
@@ -82,20 +81,23 @@ class ReturnsController @Inject()(
           // TODO - these needs re-checking by Jake
           val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
           val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)))
-          val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
+//          val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
 
-          println(Console.YELLOW + "balance/quarter " + totalForQuarter + Console.WHITE)
-          println(Console.YELLOW + "forward " + balanceBroughtForward + Console.WHITE)
-          println(Console.YELLOW + "total " + total + Console.WHITE)
+//          println(Console.YELLOW + "=================" + Console.WHITE)
+//          println(Console.YELLOW + totalForQuarter + Console.WHITE)
+//          println(Console.YELLOW + balanceBroughtForward + Console.WHITE)
+//          println(Console.YELLOW + total + Console.WHITE)
+//          println(Console.YELLOW + "=================" + Console.WHITE)
+//          println(Console.YELLOW + balanceBroughtForwardAnswer + Console.WHITE)
+//          println(Console.YELLOW + totalAnswer + Console.WHITE)
+//          println(Console.YELLOW + "=================" + Console.WHITE)
 
-          println(Console.YELLOW + "balance/quarter " + balance + Console.WHITE)
-          println(Console.YELLOW + "forward " + balanceBroughtForward + Console.WHITE)
-          println(Console.YELLOW + "total " + totalAnswer + Console.WHITE)
+          val amountToPaySection = AmountToPaySummary.amountToPayOverviewRow(totalForQuarter, balanceBroughtForward, total)
 
           Ok(view(returnDate,
             request.subscription,
             Utilities.formatAmountOfMoneyWithPoundSign(total),
-            balance,
+            totalForQuarter,
             paymentDueDate,
             financialStatus = financialStatus(total): String,
             ownBrandsAnswers(userAnswers),
@@ -109,24 +111,13 @@ class ReturnsController @Inject()(
             warehouseCheck = warehouseCheck(warhouseList): Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
             smallProducerAnswers(userAnswers),
             warehouseAnswers(userAnswers),
-            totalForQuarterSummary(isSmallProducer, userAnswers),
-            balanceBroughtForwardAnswer,
-            totalAnswer
+            amountToPaySection
           ))
         }
         case _ =>
           logger.error("no amount found in the cache")
           Redirect(routes.JourneyRecoveryController.onPageLoad())
       }
-  }
-
-  private def totalForQuarterSummary(isSmallProducer: Boolean, userAnswers: UserAnswers)(implicit messages: Messages) = {
-    SummaryListViewModel(
-      rows = Seq(AmountToPaySummary.totalThisQuarter(
-        userAnswers,
-        config.lowerBandCostPerLitre,
-        config.higherBandCostPerLitre,
-        isSmallProducer)))
   }
 
   private def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
