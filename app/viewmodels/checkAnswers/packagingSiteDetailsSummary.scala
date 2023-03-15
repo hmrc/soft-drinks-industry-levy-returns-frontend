@@ -51,14 +51,9 @@ object packagingSiteDetailsSummary  {
   def row2(packagingSiteList: List[Site])(implicit messages: Messages): List[SummaryListRow] = {
     packagingSiteList.map {
       site =>
-        val tradingName = {
-          if (site.tradingName nonEmpty) {
-            s"""${site.tradingName.get}<br>""".stripMargin
-          } else {
-            ""
-          }
-        }
+
         val siteAddress = {
+
           site.address.lines.map(line => {
             if (line.isEmpty) {
               ""
@@ -75,9 +70,14 @@ object packagingSiteDetailsSummary  {
         )
         SummaryListRow(
           key = Key(
-            content = HtmlContent(
-              s"""$tradingName${HtmlFormat.escape(siteAddress.mkString(""))}${HtmlFormat.escape(site.address.postCode)}""".stripMargin),
-            classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
+            content = if (site.tradingName.get.isEmpty) {
+              HtmlContent(
+              s"""${HtmlFormat.escape(siteAddress.mkString(""))}${HtmlFormat.escape(site.address.postCode)}""".stripMargin)
+            } else {
+              HtmlContent(
+                s"""${HtmlFormat.escape(site.tradingName.get)}<br>${HtmlFormat.escape(siteAddress.mkString(""))}${HtmlFormat.escape(site.address.postCode)}""".stripMargin)
+            },
+              classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
           ),
           actions = if(packagingSiteList.length > 1) {
             Some(Actions("",Seq(
