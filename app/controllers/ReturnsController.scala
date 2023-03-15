@@ -28,10 +28,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.{Configuration, Logger}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.Utilities
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
 
+import java.util.Locale
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -73,29 +75,29 @@ class ReturnsController @Inject()(
 
       sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS).map {
         case Some(amounts) => {
+          val totalForQuarter = amounts.totalForQuarter
           val balanceBroughtForward = amounts.balanceBroughtForward
+          val total = amounts.total
 
           // TODO - these needs re-checking by Jake
           val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
           val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)))
           val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
 
-          println(Console.YELLOW + "balance " + amounts.totalForQuarter + Console.WHITE)
-          println(Console.YELLOW + "forward " + amounts.balanceBroughtForward + Console.WHITE)
-          println(Console.YELLOW + "total " + amounts.total + Console.WHITE)
+          println(Console.YELLOW + "balance/quarter " + totalForQuarter + Console.WHITE)
+          println(Console.YELLOW + "forward " + balanceBroughtForward + Console.WHITE)
+          println(Console.YELLOW + "total " + total + Console.WHITE)
 
-          println(Console.YELLOW + "balance " + balance + Console.WHITE)
+          println(Console.YELLOW + "balance/quarter " + balance + Console.WHITE)
           println(Console.YELLOW + "forward " + balanceBroughtForward + Console.WHITE)
           println(Console.YELLOW + "total " + totalAnswer + Console.WHITE)
 
-
-
           Ok(view(returnDate,
             request.subscription,
-            amountOwed,
+            Utilities.formatAmountOfMoneyWithPoundSign(total),
             balance,
             paymentDueDate,
-            financialStatus = financialStatus(balance): String,
+            financialStatus = financialStatus(total): String,
             ownBrandsAnswers(userAnswers),
             packagedContractPackerAnswers(request, userAnswers),
             exemptionForSmallProducersAnswers(userAnswers),
