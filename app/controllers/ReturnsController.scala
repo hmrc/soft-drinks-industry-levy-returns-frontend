@@ -80,6 +80,16 @@ class ReturnsController @Inject()(
           val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)))
           val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
 
+          println(Console.YELLOW + "balance " + amounts.totalForQuarter + Console.WHITE)
+          println(Console.YELLOW + "forward " + amounts.balanceBroughtForward + Console.WHITE)
+          println(Console.YELLOW + "total " + amounts.total + Console.WHITE)
+
+          println(Console.YELLOW + "balance " + balance + Console.WHITE)
+          println(Console.YELLOW + "forward " + balanceBroughtForward + Console.WHITE)
+          println(Console.YELLOW + "total " + totalAnswer + Console.WHITE)
+
+
+
           Ok(view(returnDate,
             request.subscription,
             amountOwed,

@@ -506,5 +506,28 @@ class ReturnsControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK and contain amount to pay header when return amount is in debit" +
+      " totalForQuarter is positive and balanceBroughtForward is negative" in {
+
+        val amounts = Amounts(4200, 0, 4200)
+        when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
+
+        val userAnswers = UserAnswers(sdilNumber, Json.obj(), List(sparkyJuice, superCola))
+
+        val application = applicationBuilder(Some(userAnswers)).overrides(
+          bind[SDILSessionCache].toInstance(mockSessionCache)).build()
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val page = Jsoup.parse(contentAsString(result))
+          page.getElementById("amountDue").text must include(Messages("checkYourAnswers.amountToPay.title"))
+          page.getElementsByTag("dt").text() must include(Messages("total.checkYourAnswersLabel"))
+          page.getElementsByTag("dd").text() must include("£4200.00")
+
+        }
+      }
+
   }
 }
