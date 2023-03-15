@@ -257,12 +257,12 @@ secondaryWarehouseDetails.remove.hidden = Remove UK warehouse
 packagingSiteDetails.title = Packaging Site Details
 packagingSiteDetails.heading1 = You added {0} packaging sites 
 packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
-packagingSiteDetails.checkYourAnswersLabel = productionSiteDetails
+packagingSiteDetails.checkYourAnswersLabel = PackagingSiteDetails
 packagingSiteDetails.addAnotherPackingSite = Do you want to add another UK packaging site?
 packagingSiteDetails.error.required = Select yes if you need to add another packaging site
-packagingSiteDetails.change.hidden = productionSiteDetails
-packagingSiteDetails.edit.hidden = Edit packaging site
-packagingSiteDetails.remove.hidden = Remove packaging site
+packagingSiteDetails.change.hidden = Packaging Site Details
+packagingSiteDetails.hidden = packaging site
+
 
 reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site
 exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?

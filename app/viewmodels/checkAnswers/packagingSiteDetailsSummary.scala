@@ -27,6 +27,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
+import scala.language.postfixOps
 
 object packagingSiteDetailsSummary  {
 
@@ -50,7 +51,24 @@ object packagingSiteDetailsSummary  {
   def row2(packagingSiteList: List[Site])(implicit messages: Messages): List[SummaryListRow] = {
     packagingSiteList.map {
       site =>
-        val value = ValueViewModel(
+        val tradingName = {
+          if (site.tradingName nonEmpty) {
+            s"""${site.tradingName.get}<br>""".stripMargin
+          } else {
+            ""
+          }
+        }
+        val siteAddress = {
+          site.address.lines.map(line => {
+            if (line.isEmpty) {
+              ""
+            } else {
+              line + ", "
+            }
+          })
+        }
+
+        ValueViewModel(
           HtmlContent(
             HtmlFormat.escape(site.address.lines.toString())
           )
@@ -58,16 +76,15 @@ object packagingSiteDetailsSummary  {
         SummaryListRow(
           key = Key(
             content = HtmlContent(
-              s"""${site.tradingName.get}<br>${HtmlFormat.escape(site.address.lines.
-                mkString(", "))}, ${HtmlFormat.escape(site.address.postCode)}""".stripMargin),
+              s"""$tradingName${HtmlFormat.escape(siteAddress.mkString(""))}${HtmlFormat.escape(site.address.postCode)}""".stripMargin),
             classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
           ),
           actions = if(packagingSiteList.length > 1) {
             Some(Actions("",Seq(
               ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url) //TODO
-                .withVisuallyHiddenText(messages("packagingSiteDetails.edit.hidden")),
+                .withVisuallyHiddenText(messages("packagingSiteDetails.hidden")),
               ActionItemViewModel("site.remove", routes.IndexController.onPageLoad().url) //TODO
-                .withVisuallyHiddenText(messages("packagingSiteDetails.remove.hidden"))
+                .withVisuallyHiddenText(messages("packagingSiteDetails.hidden"))
             )))
           } else { Some(Actions("",Seq(
               ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url) //TODO
