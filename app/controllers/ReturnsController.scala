@@ -82,18 +82,7 @@ class ReturnsController @Inject()(
           val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
           val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)))
 //          val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
-
-//          println(Console.YELLOW + "=================" + Console.WHITE)
-//          println(Console.YELLOW + totalForQuarter + Console.WHITE)
-//          println(Console.YELLOW + balanceBroughtForward + Console.WHITE)
-//          println(Console.YELLOW + total + Console.WHITE)
-//          println(Console.YELLOW + "=================" + Console.WHITE)
-//          println(Console.YELLOW + balanceBroughtForwardAnswer + Console.WHITE)
-//          println(Console.YELLOW + totalAnswer + Console.WHITE)
-//          println(Console.YELLOW + "=================" + Console.WHITE)
-
-          val amountToPaySection = AmountToPaySummary.amountToPayOverviewRow(totalForQuarter, balanceBroughtForward, total)
-
+          
           Ok(view(returnDate,
             request.subscription,
             Utilities.formatAmountOfMoneyWithPoundSign(total),
@@ -111,7 +100,7 @@ class ReturnsController @Inject()(
             warehouseCheck = warehouseCheck(warhouseList): Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
             smallProducerAnswers(userAnswers),
             warehouseAnswers(userAnswers),
-            amountToPaySection
+            AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total)
           ))
         }
         case _ =>

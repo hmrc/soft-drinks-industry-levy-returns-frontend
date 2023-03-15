@@ -202,17 +202,10 @@ object AmountToPaySummary  {
     ) - balanceBroughtForward
   }
 
-  def amountToPayOverviewRow(totalForQuarter: BigDecimal,
-                     balanceBroughtForward: BigDecimal,
-                     total: BigDecimal)(implicit messages: Messages) = {
-
-    amountToPayOverviewSummary(balanceBroughtForward, totalForQuarter, total)
-  }
-
-  private def amountToPayOverviewSummary(balanceBroughtForward: BigDecimal, totalForQuarter: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
+  def amountToPaySummary(totalForQuarter: BigDecimal, balanceBroughtForward: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
 
     val negatedBalanceBroughtForward = balanceBroughtForward * -1
-   
+
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
@@ -230,29 +223,6 @@ object AmountToPaySummary  {
   }
 
   // TODO see what can be refactored from the above into the below
-
-  def amountToPaySummary(totalForQuarter: BigDecimal, balanceBroughtForward: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
-
-    val negatedBalanceBroughtForward = balanceBroughtForward * -1
-
-    SummaryListViewModel(rows = Seq(
-      SummaryListRowViewModel(
-        key = "totalThisQuarter",
-        value = ValueViewModel(HtmlContent(Utilities.formatAmountOfMoneyWithPoundSign(totalForQuarter))).withCssClass("total-for-quarter align-right"),
-        actions = Seq()
-      ),
-      SummaryListRowViewModel(
-        key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(Utilities.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward))).withCssClass("balance-brought-forward align-right"),
-        actions = Seq()
-      ),
-      SummaryListRowViewModel(
-        key = "total",
-        value = ValueViewModel(HtmlContent(Utilities.formatAmountOfMoneyWithPoundSign(total))).withCssClass("total align-right"),
-        actions = Seq()
-      ))
-    )
-  }
 
   def amountInCredit(total: BigDecimal)(implicit messages: Messages) = {
     if (total < 0)
