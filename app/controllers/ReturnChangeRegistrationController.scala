@@ -56,10 +56,8 @@ class ReturnChangeRegistrationController @Inject()(
       val subscription = Await.result(sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil"),4.seconds)
       val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.get.activity.importer
       if(!isNewImporter) {
-        println("PackAtBusinessAddressPage")
         Redirect(routes.PackAtBusinessAddressController.onPageLoad(NormalMode)) //TODO CHECK IF USER IS NEW PACKER
       }else {
-        println("AskSecondaryWarehouseInReturnPage")
         Redirect(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode))
       }
   }
