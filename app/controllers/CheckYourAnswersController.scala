@@ -29,6 +29,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.Utilities
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
@@ -57,7 +58,7 @@ class CheckYourAnswersController @Inject()(
 
       val balanceAllEnabled = config.balanceAllEnabled
       val userAnswers = request.userAnswers
-      val returnPeriod = currentReturnPeriod(request)
+      val returnPeriod = Utilities.currentReturnPeriod(request.returnPeriod)
       val sdilEnrolment = request.sdilEnrolment
 
       (for {
@@ -94,13 +95,6 @@ class CheckYourAnswersController @Inject()(
           logger.error(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
           Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
       }
-  }
-
-  private def currentReturnPeriod(request: DataRequest[AnyContent]) = {
-    request.returnPeriod match {
-      case Some(returnPeriod) => returnPeriod
-      case None => throw new RuntimeException("No return period returned")
-    }
   }
 
   private def formattedReturnPeriodQuarter(returnPeriod: ReturnPeriod)(implicit messages: Messages) = {

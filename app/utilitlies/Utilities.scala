@@ -16,15 +16,25 @@
 
 package utilitlies
 
+import models.ReturnPeriod
+import models.requests.DataRequest
+import play.api.mvc.AnyContent
+
 import java.util.Locale
 
 case object Utilities {
 
-  val currencyFormatter =
-    java.text.NumberFormat.getCurrencyInstance(Locale.UK)
+  private val currencyFormatter = java.text.NumberFormat.getCurrencyInstance(Locale.UK)
 
   def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String = {
     currencyFormatter.format(d)
+  }
+
+  def currentReturnPeriod(returnPeriod: Option[ReturnPeriod]) = {
+    returnPeriod match {
+      case Some(returnPeriod) => returnPeriod
+      case None => throw new RuntimeException("No return period returned")
+    }
   }
 
 }

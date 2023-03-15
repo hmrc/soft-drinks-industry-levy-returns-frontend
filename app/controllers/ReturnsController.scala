@@ -33,7 +33,6 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
 
-import java.util.Locale
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -68,7 +67,7 @@ class ReturnsController @Inject()(
       val subscription = request.subscription
       val isSmallProducer = subscription.activity.smallProducer
       val userAnswers = request.userAnswers
-      val paymentDueDate = currentReturnPeriod(request)
+      val paymentDueDate = Utilities.currentReturnPeriod(request.returnPeriod)
       val returnDate = ReturnPeriod(2022, 1) // Is this returns submitted date?
       implicit val format = Json.format[Amounts]
 
@@ -82,7 +81,7 @@ class ReturnsController @Inject()(
           val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
           val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)))
 //          val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
-          
+
           Ok(view(returnDate,
             request.subscription,
             Utilities.formatAmountOfMoneyWithPoundSign(total),
@@ -216,13 +215,6 @@ class ReturnsController @Inject()(
       ).flatten)
     } else {
       SummaryListViewModel(rows = Seq(OwnBrandsSummary.returnsRow(userAnswers)).flatten)
-    }
-  }
-
-  private def currentReturnPeriod(request: DataRequest[AnyContent]) = {
-    request.returnPeriod match {
-      case Some(returnPeriod) => returnPeriod
-      case None => throw new RuntimeException("No return period returned")
     }
   }
 
