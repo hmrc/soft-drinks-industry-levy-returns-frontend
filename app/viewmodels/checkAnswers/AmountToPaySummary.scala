@@ -25,8 +25,6 @@ import utilitlies.Utilities
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-import java.util.Locale
-
 object AmountToPaySummary  {
 
   def calculatChargeFromPages(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal): List[BigDecimal] = {
@@ -214,7 +212,7 @@ object AmountToPaySummary  {
   private def amountToPayOverviewSummary(balanceBroughtForward: BigDecimal, totalForQuarter: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
 
     val negatedBalanceBroughtForward = balanceBroughtForward * -1
-
+   
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
@@ -233,14 +231,7 @@ object AmountToPaySummary  {
 
   // TODO see what can be refactored from the above into the below
 
-  def amountToPayRow(totalForQuarter: BigDecimal,
-                     balanceBroughtForward: BigDecimal,
-                     total: BigDecimal)(implicit messages: Messages) = {
-
-    val summary = amountToPaySummary(balanceBroughtForward, totalForQuarter, total)
-    (sectionHeaderTitle(total), summary, amountInCredit(total))
-  }
-  private def amountToPaySummary(balanceBroughtForward: BigDecimal, totalForQuarter: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
+  def amountToPaySummary(totalForQuarter: BigDecimal, balanceBroughtForward: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
 
     val negatedBalanceBroughtForward = balanceBroughtForward * -1
 
@@ -263,14 +254,14 @@ object AmountToPaySummary  {
     )
   }
 
-  private def amountInCredit(total: BigDecimal)(implicit messages: Messages) = {
+  def amountInCredit(total: BigDecimal)(implicit messages: Messages) = {
     if (total < 0)
       Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", Utilities.formatAmountOfMoneyWithPoundSign(total * -1)))
     else
       None
   }
 
-  private def sectionHeaderTitle(total: BigDecimal)(implicit messages: Messages) = {
+  def sectionHeaderTitle(total: BigDecimal)(implicit messages: Messages) = {
     if (total == 0)
       Messages("youDoNotNeedToPayAnything")
     else if (total < 0)

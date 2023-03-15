@@ -75,8 +75,6 @@ class CheckYourAnswersController @Inject()(
 
         cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
 
-        val amountToPaySection = AmountToPaySummary.amountToPayRow(totalForQuarter, balanceBroughtForward, total)
-
         Ok(view(request.subscription.orgName,
           formattedReturnPeriodQuarter(returnPeriod),
           ownBrandsAnswers(userAnswers),
@@ -86,9 +84,9 @@ class CheckYourAnswersController @Inject()(
           broughtIntoTheUKSmallProducersAnswers(userAnswers),
           claimCreditsForExportsAnswers(userAnswers),
           claimCreditsForLostOrDamagedAnswers(userAnswers),
-          amountToPaySection._1,
-          amountToPaySection._2,
-          amountToPaySection._3,
+          AmountToPaySummary.sectionHeaderTitle(total),
+          AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total),
+          AmountToPaySummary.amountInCredit(total),
           registeredSites(userAnswers)
         ))
       }) recoverWith {
