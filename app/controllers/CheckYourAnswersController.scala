@@ -16,15 +16,14 @@
 
 package controllers
 
-import cats.implicits.{catsSyntaxApplicativeId, toFoldableOps}
+import cats.implicits.catsSyntaxApplicativeId
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import models.retrieved.RetrievedSubscription
-import models.{Amounts, ReturnPeriod, SdilReturn, UserAnswers, extractTotal, listItemsWithTotal}
-import pages.{BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, PackAtBusinessAddressPage}
+import models.{Amounts, ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
+import pages._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
@@ -57,7 +56,6 @@ class CheckYourAnswersController @Inject()(
     implicit request =>
 
       val balanceAllEnabled = config.balanceAllEnabled
-      val subscription = request.subscription
       val userAnswers = request.userAnswers
       val returnPeriod = currentReturnPeriod(request)
       val sdilEnrolment = request.sdilEnrolment
@@ -71,8 +69,6 @@ class CheckYourAnswersController @Inject()(
             }
           } else connector.balance(sdilEnrolment, withAssessment = false)
       } yield {
-
-        println(Console.YELLOW + balanceBroughtForward + Console.WHITE)
 
         val totalForQuarter = calculateTotalForQuarter(userAnswers, isSmallProducer.getOrElse(false))
         val total = totalForQuarter - balanceBroughtForward
@@ -245,37 +241,4 @@ class CheckYourAnswersController @Inject()(
       case Failure(error) => logger.error(s"Failed to save amounts in session cache for $sdilEnrolment Error: $error")
     }
   }
-
-  // TODO - copied from old service
-
-//  private def nilReturnTotal(isSmallProducer: Option[Boolean], balanceBroughtForward: BigDecimal) = {
-//    val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
-//    val data = returnAmount(emptyReturn, isSmallProducer.get)
-//    val subtotal = calculateSubtotal(data)
-//    val total = subtotal - balanceBroughtForward
-//    println(Console.YELLOW + "subtotal is always 0 right: " + subtotal + Console.WHITE)
-//    total
-//  }
-//
-//  def returnAmount(sdilReturn: SdilReturn, isSmallProducer: Boolean): List[(String, (Long, Long), Int)] = {
-//    val ra = List(
-//      ("packaged-as-a-contract-packer", sdilReturn.packLarge, 1),
-//      ("exemptions-for-small-producers", sdilReturn.packSmall.map {_.litreage}.combineAll, 0),
-//      ("brought-into-uk", sdilReturn.importLarge, 1),
-//      ("brought-into-uk-from-small-producers", sdilReturn.importSmall, 0),
-//      ("claim-credits-for-exports", sdilReturn.export, -1),
-//      ("claim-credits-for-lost-damaged", sdilReturn.wastage, -1)
-//    )
-//    if (!isSmallProducer) {
-//      val x = ("own-brands-packaged-at-own-sites", sdilReturn.ownBrand, 1) :: ra
-//      println(Console.YELLOW + "not a small producer and " + x + Console.WHITE)
-//      x
-//    } else {
-//      println(Console.YELLOW + "small producer and " + ra + Console.WHITE)
-//      ra
-//    }
-//  }
-//
-//  def calculateSubtotal(d: List[(String, (Long, Long), Int)]): BigDecimal =
-//    d.map { case (_, (l, h), m) => lowerBandCostPerLitre * l * m + higherBandCostPerLitre * h * m }.sum
 }
