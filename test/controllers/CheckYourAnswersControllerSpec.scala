@@ -40,8 +40,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
-  val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
-  val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
+  val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
+  val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
   val financialItemList = List(financialItem1, financialItem2)
 
   when(mockSdilConnector.retrieveSubscription(any(), any())(any())).thenReturn(Future.successful(Some(aSubscription)))
@@ -718,10 +718,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
-      " and both totalForQuarter and balanceBroughtForward are negative" in {
+      " and both totalForQuarter and balanceBroughtForward are negative (on page)" in {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
-      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
+      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
+      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
       val financialItemList = List(financialItem1, financialItem2)
       when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
       val userAnswersData = Json.obj(
@@ -766,10 +766,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
-      " and totalForQuarter is positive and balanceBroughtForward is negative" in {
+      " and totalForQuarter is positive and balanceBroughtForward is negative (on page)" in {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
-      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
+      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
+      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
       val financialItemList = List(financialItem1, financialItem2)
       when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
       val userAnswersData = Json.obj(
@@ -814,10 +814,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
-      " and totalForQuarter is negative and balanceBroughtForward is positive" in {
+      " and totalForQuarter is negative and balanceBroughtForward is positive (on page)" in {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
-      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
+      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
+      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
       val financialItemList = List(financialItem1, financialItem2)
       when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
       val userAnswersData = Json.obj(
@@ -862,10 +862,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain amount to pay header when return amount is in debit" +
-      " totalForQuarter is positive and balanceBroughtForward is negative" in {
+      " totalForQuarter is positive and balanceBroughtForward is negative (on page)" in {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
-      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
+      val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
+      val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
       val financialItemList = List(financialItem1, financialItem2)
       when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
       val userAnswersData = Json.obj(

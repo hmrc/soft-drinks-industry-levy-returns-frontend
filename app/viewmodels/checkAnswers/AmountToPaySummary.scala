@@ -230,6 +230,9 @@ object AmountToPaySummary  {
   }
 
   private def amountToPaySummary(balanceBroughtForward: BigDecimal, totalForQuarter: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
+
+    val negatedBalanceBroughtForward = balanceBroughtForward * -1
+
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
@@ -238,7 +241,7 @@ object AmountToPaySummary  {
       ),
       SummaryListRowViewModel(
         key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(formatAmount(balanceBroughtForward))).withCssClass("balance-brought-forward align-right"),
+        value = ValueViewModel(HtmlContent(formatAmount(negatedBalanceBroughtForward))).withCssClass("balance-brought-forward align-right"),
         actions = Seq()
       ),
       SummaryListRowViewModel(
