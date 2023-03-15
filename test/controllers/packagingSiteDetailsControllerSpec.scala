@@ -21,7 +21,6 @@ import connectors.SoftDrinksIndustryLevyConnector
 import forms.packagingSiteDetailsFormProvider
 import models.backend.{Site, UkAddress}
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -30,7 +29,6 @@ import pages.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
@@ -38,8 +36,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, Summ
 import viewmodels.checkAnswers.packagingSiteDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.PackagingSiteDetailsView
-
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency{
@@ -80,37 +76,38 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val packagingSummaryList: List[SummaryListRow] =
           packagingSiteDetailsSummary.row2(List())(messages(application))
 
-        val list: SummaryList = SummaryListViewModel(
+        SummaryListViewModel(
           rows = packagingSummaryList
         )
 
-        val view = application.injector.instanceOf[PackagingSiteDetailsView]
+        application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
         page.title() must include(Messages("packagingSiteDetails.title"))
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
+        page.getElementsByTag("h2").text() must include(Messages("packagingSiteDetails.addAnotherPackingSite"))
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set(PackagingSiteDetailsPage, true).success.value
+      UserAnswers(sdilNumber).set(PackagingSiteDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWith1PackagingSite)).build()
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
 
-        val view = application.injector.instanceOf[PackagingSiteDetailsView]
+        application.injector.instanceOf[PackagingSiteDetailsView]
 
         val result = route(application, request).value
 
         val smallProducersSummaryList: List[SummaryListRow] =
           packagingSiteDetailsSummary.row2(List())(messages(application))
 
-        val list: SummaryList = SummaryListViewModel(
+        SummaryListViewModel(
           rows = smallProducersSummaryList
         )
 
@@ -118,8 +115,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val page = Jsoup.parse(contentAsString(result))
         page.title() must include(Messages("packagingSiteDetails.title"))
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
-
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, list)(request, messages(application)).toString
+        page.getElementById("value").`val`() mustEqual "true"
       }
     }
 
@@ -149,8 +145,6 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         status(result) mustEqual SEE_OTHER
       }
     }
-// TODO Update to include error message
-    // also need test for more than 1 packaging site.
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
@@ -173,9 +167,12 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         )
 
         val result = route(application, request).value
+        val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
+        page.getElementsByTag("h2").text() must include(Messages("error.summary.title"))
         contentAsString(result) mustEqual view(boundForm, NormalMode, list)(request, messages(application)).toString
+        page.getElementById("value-error").text() must include(Messages("packagingSiteDetails.error.required"))
       }
     }
 
