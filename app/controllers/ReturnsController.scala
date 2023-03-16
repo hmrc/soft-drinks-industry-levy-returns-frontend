@@ -38,16 +38,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class ReturnsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       config:FrontendAppConfig,
-                                       configuration: Configuration,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       connector: SoftDrinksIndustryLevyConnector,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ReturnSentView,
-                                       sessionCache: SDILSessionCache,
+                                   override val messagesApi: MessagesApi,
+                                   config:FrontendAppConfig,
+                                   configuration: Configuration,
+                                   identify: IdentifierAction,
+                                   getData: DataRetrievalAction,
+                                   requireData: DataRequiredAction,
+                                   sdilConnector: SoftDrinksIndustryLevyConnector,
+                                   val controllerComponents: MessagesControllerComponents,
+                                   view: ReturnSentView,
+                                   sessionCache: SDILSessionCache,
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   //Warehouse TODO -> REMOVE WHEN WAREHOUSE LIST IS MADE!
@@ -78,7 +78,7 @@ class ReturnsController @Inject()(
 
       for {
         session <- sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS)
-        pendingReturns <- connector.returns_pending(subscription.utr)
+        pendingReturns <- sdilConnector.returns_pending(subscription.utr)
       } yield {
         session match {
           case Some(amounts) => {
@@ -93,6 +93,8 @@ class ReturnsController @Inject()(
               }
 
 //              connector.returns_update(subscription.utr, returnPeriod, sdilReturn)
+            } else {
+              ???
             }
 
 
