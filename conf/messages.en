@@ -123,7 +123,6 @@ howManyBoughtIntoUk.checkYourAnswersLabel = howManyBoughtIntoUk
 
 broughtIntoUK.title = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 broughtIntoUK.subHeading = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
-broughtIntoUK.checkYourAnswersLabel = broughtIntoUK
 broughtIntoUK.error.required = Select yes if you are reporting liable drinks you have brought into the UK from anywhere outside of the UK
 broughtIntoUK.change.hidden = BroughtIntoUK
 
@@ -135,7 +134,7 @@ howManyCreditsForExport.checkYourAnswersLabel = HowManyCreditsForExport
 whatCanIClaimCreditForDetailsLink = What can I claim a credit for?
 whatCanIClaimCreditForDetailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
 whatCanIClaimCreditForDetailsContent2 = brand of the liable drinks
-whatCanIClaimCreditForDetailsContent3= supplier or consigner
+whatCanIClaimCreditForDetailsContent3 = supplier or consigner
 whatCanIClaimCreditForDetailsContent4 = customer and destination the liable drinks are supplied to
 whatCanIClaimCreditForDetailsContent5 = method of delivery
 whatCanIClaimCreditForDetailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
