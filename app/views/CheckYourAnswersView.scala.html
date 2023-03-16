@@ -32,7 +32,8 @@
   amountToPayTitle: String,
   amountToPay: SummaryList,
   amountInCredit: Option[String] = None,
-  registeredSites: Option[SummaryList])(implicit request: Request[_], messages: Messages)
+  registeredSites: Option[SummaryList],
+  nilReturn: Boolean)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -84,7 +85,7 @@
 
     <h2 class="govuk-heading-m">@messages("sendYourReturn")</h2>
     <p class="govuk-body govuk-!-margin-bottom-5">@messages("sendYourReturnConfirmation")</p>
-    <a class="govuk-button" id="confirm-and-submit" role="button" data-module="govuk-button" href="@routes.ReturnsController.onPageLoad">@messages("confirmDetailsAndSendReturn")</a>
+    <a class="govuk-button" id="confirm-and-submit" role="button" data-module="govuk-button" href="@routes.ReturnsController.onPageLoad(nilReturn)">@messages("confirmDetailsAndSendReturn")</a>
 
 
 }

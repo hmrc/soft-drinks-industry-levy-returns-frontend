@@ -48,7 +48,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -69,7 +69,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -98,7 +98,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -119,7 +119,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -147,7 +147,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -165,7 +165,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -186,7 +186,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -215,7 +215,7 @@ class ReturnsControllerSpec extends SpecBase {
 
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -236,7 +236,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -265,7 +265,7 @@ class ReturnsControllerSpec extends SpecBase {
 
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -286,7 +286,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -315,7 +315,7 @@ class ReturnsControllerSpec extends SpecBase {
 
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -336,7 +336,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -369,7 +369,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -385,7 +385,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -405,7 +405,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -426,7 +426,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -446,7 +446,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -466,7 +466,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -487,7 +487,7 @@ class ReturnsControllerSpec extends SpecBase {
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
         val result = route(application, request).value
 
         status(result) mustEqual OK

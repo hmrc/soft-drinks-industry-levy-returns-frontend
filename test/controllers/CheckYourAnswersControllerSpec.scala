@@ -653,9 +653,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show submit returns section when a return is available" in {
+      when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(List()))
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers)).overrides(
@@ -669,7 +670,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("h2").text() must include(Messages("sendYourReturn"))
         page.getElementsByTag("p").text() must include(Messages("sendYourReturnConfirmation"))
         page.getElementById("confirm-and-submit").text() must include(Messages("confirmDetailsAndSendReturn"))
-        page.getElementById("confirm-and-submit").attributes().get("href") mustEqual s"$baseUrl/return-sent"
+        page.getElementById("confirm-and-submit").attributes().get("href") mustEqual s"$baseUrl/submit-return/nil-return/true"
       }
     }
 

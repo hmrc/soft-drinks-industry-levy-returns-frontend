@@ -21,12 +21,11 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.requests.DataRequest
 import models.{Amounts, ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
 import pages._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{AnyContent, MessagesControllerComponents}
+import play.api.mvc.MessagesControllerComponents
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.Utilities
@@ -88,7 +87,8 @@ class CheckYourAnswersController @Inject()(
           AmountToPaySummary.sectionHeaderTitle(total),
           AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total),
           AmountToPaySummary.amountInCredit(total),
-          registeredSites(userAnswers)
+          registeredSites(userAnswers),
+          isNilReturn(totalForQuarter, balanceBroughtForward, total)
         ))
       }) recoverWith {
         case t: Throwable =>
@@ -233,4 +233,7 @@ class CheckYourAnswersController @Inject()(
       case Failure(error) => logger.error(s"Failed to save amounts in session cache for $sdilEnrolment Error: $error")
     }
   }
+
+  private def isNilReturn(amounts: BigDecimal*) = amounts.forall(_ == 0)
+
 }
