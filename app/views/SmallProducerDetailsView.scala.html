@@ -27,7 +27,7 @@
 
 @(form: Form[_], mode: Mode, smallProducerList: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("smallProducerDetails.title"))) {
+@layout(pageTitle = title(form, messages("smallProducerDetails.title-heading"))) {
 
     @formHelper(action = routes.SmallProducerDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -35,7 +35,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("smallProducerDetails.heading1", smallProducerList.rows.size)</h1>
+        <h1 class="govuk-heading-m">@messages("smallProducerDetails.title-heading", smallProducerList.rows.size)</h1>
         @govukSummaryList(smallProducerList)
 
         <h2 class="govuk-heading-m">@messages("smallProducerDetails.addAnotherSP")</h2>

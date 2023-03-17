@@ -205,8 +205,7 @@ claimCreditsForExports.error.required = Select yes if you want to claim a credit
 claimCreditsForExports.change.hidden = ClaimCreditsForExports
 
 
-smallProducerDetails.title = Small Producer Details
-smallProducerDetails.heading1 = You added {0} small producers
+smallProducerDetails.title-heading = You added {0} small producers
 smallProducerDetails.addAnotherSP = Do you want to add another small producer?
 smallProducerDetails.checkYourAnswersLabel = smallProducerDetails
 smallProducerDetails.producerList.checkYourAnswersLabel = Packaging sites
@@ -253,8 +252,7 @@ secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
 secondaryWarehouseDetails.remove.hidden = Remove UK warehouse
 
 
-packagingSiteDetails.title = Packaging Site Details
-packagingSiteDetails.heading1 = You added {0} packaging sites 
+packagingSiteDetails.title-heading = You added {0} packaging sites
 packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
 packagingSiteDetails.checkYourAnswersLabel = PackagingSiteDetails
 packagingSiteDetails.addAnotherPackingSite = Do you want to add another UK packaging site?

@@ -27,7 +27,7 @@
 
 @(form: Form[_], mode: Mode, siteList: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("packagingSiteDetails.title"))) {
+@layout(pageTitle = title(form, messages("packagingSiteDetails.title-heading"))) {
 
     @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -35,7 +35,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.heading1", siteList.rows.size)</h1>
+        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.title-heading", siteList.rows.size)</h1>
         <p class="govuk-body-m">@messages("packagingSiteDetails.info")</p>
 
         @govukSummaryList(siteList)
