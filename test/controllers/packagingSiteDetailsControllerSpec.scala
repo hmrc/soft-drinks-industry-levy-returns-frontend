@@ -85,7 +85,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.title() must include(Messages("packagingSiteDetails.title"))
+        page.title() must include(Messages("packagingSiteDetails.title-heading"))
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
         page.getElementsByTag("h2").text() must include(Messages("packagingSiteDetails.addAnotherPackingSite"))
       }
@@ -113,7 +113,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.title() must include(Messages("packagingSiteDetails.title"))
+        page.title() must include(Messages("packagingSiteDetails.title-heading"))
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
         page.getElementById("value").`val`() mustEqual "true"
       }
