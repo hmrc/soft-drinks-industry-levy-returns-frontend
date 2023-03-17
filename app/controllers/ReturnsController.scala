@@ -86,6 +86,7 @@ class ReturnsController @Inject()(
             // TODO - submit return
             if (pendingReturns.contains(returnPeriod)){
 
+              val nilReturn = false // TODO - CYA page should be redirecting to this page with a value of nil-return available
               if(nilReturn){
                 println(Console.YELLOW + "nil-return" + Console.WHITE)
               } else {
@@ -269,5 +270,6 @@ class ReturnsController @Inject()(
     }
 
   private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
+
 
 }
