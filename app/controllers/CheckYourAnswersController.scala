@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.{CurrencyFormatter, GenericError}
+import utilitlies.{CurrencyFormatter, GenericError, ReturnsHelper}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
@@ -60,7 +60,7 @@ class CheckYourAnswersController @Inject()(
 
   def noActivityToReport: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val noActivityUserAnswers = CurrencyFormatter.noActivityUserAnswers(request.sdilEnrolment)
+      val noActivityUserAnswers = ReturnsHelper.noActivityUserAnswers(request.sdilEnrolment)
       constructPage(request, Some(noActivityUserAnswers))
   }
 

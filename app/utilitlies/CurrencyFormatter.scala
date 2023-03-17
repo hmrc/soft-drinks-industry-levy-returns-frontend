@@ -30,27 +30,4 @@ object CurrencyFormatter {
   def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String = {
     currencyFormatter.format(d)
   }
-
-
-
-  def noActivityUserAnswers(sdilEnrolment: String) =
-    UserAnswers(sdilEnrolment,
-      Json.obj(
-        "ownBrands" -> false,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "packagedContractPacker" -> false,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "exemptionsForSmallProducers" -> false,
-        "addASmallProducer" -> Json.obj("referenceNumber" -> s"$sdilEnrolment", "lowBand" -> 0, "highBand" -> 0),
-        "smallProducerDetails" -> false,
-        "broughtIntoUK" -> false,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "broughtIntoUkFromSmallProducers" -> false,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "claimCreditsForExports" -> false,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "claimCreditsForLostDamaged" -> false,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-      ))
-
 }
