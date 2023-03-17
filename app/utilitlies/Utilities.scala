@@ -16,8 +16,9 @@
 
 package utilitlies
 
-import models.ReturnPeriod
+import models.{ReturnPeriod, UserAnswers}
 import models.requests.DataRequest
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 
 import java.util.Locale
@@ -36,5 +37,25 @@ case object Utilities {
       case None => throw new RuntimeException("No return period returned")
     }
   }
+
+  def noActivityUserAnswers(sdilEnrolment: String) =
+    UserAnswers(sdilEnrolment,
+      Json.obj(
+        "ownBrands" -> false,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "packagedContractPacker" -> false,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "exemptionsForSmallProducers" -> false,
+        "addASmallProducer" -> Json.obj("referenceNumber" -> s"$sdilEnrolment", "lowBand" -> 0, "highBand" -> 0),
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> false,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "broughtIntoUkFromSmallProducers" -> false,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForExports" -> false,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForLostDamaged" -> false,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+      ))
 
 }

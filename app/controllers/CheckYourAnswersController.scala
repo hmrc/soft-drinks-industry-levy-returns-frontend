@@ -21,13 +21,14 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{Amounts, ReturnPeriod, SdilReturn, UserAnswers, extractTotal, listItemsWithTotal}
+import models.requests.DataRequest
+import models.{Amounts, ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
 import pages._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.Utilities
 import viewmodels.checkAnswers._
@@ -49,125 +50,69 @@ class CheckYourAnswersController @Inject()(
                                             sessionCache: SDILSessionCache,
                                           ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val lowerBandCostPerLitre = config.lowerBandCostPerLitre
-  val higherBandCostPerLitre = config.higherBandCostPerLitre
+  val lowerBandCostPerLitre: BigDecimal = config.lowerBandCostPerLitre
+  val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
   val logger: Logger = Logger(this.getClass())
 
-  def onPageLoad() = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      val balanceAllEnabled = config.balanceAllEnabled
-      val userAnswers = request.userAnswers
-      println(Console.YELLOW + "I need empty user answers: " + userAnswers + Console.WHITE)
-      val returnPeriod = Utilities.currentReturnPeriod(request.returnPeriod)
-      val sdilEnrolment = request.sdilEnrolment
-
-      (for {
-        isSmallProducer <- connector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
-        balanceBroughtForward <-
-          if (balanceAllEnabled) {
-            connector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
-              extractTotal(listItemsWithTotal(financialItem))
-            }
-          } else connector.balance(sdilEnrolment, withAssessment = false)
-      } yield {
-
-        val totalForQuarter = calculateTotalForQuarter(userAnswers, isSmallProducer.getOrElse(false))
-        val total = totalForQuarter - balanceBroughtForward
-
-        cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
-
-        Ok(view(request.subscription.orgName,
-          formattedReturnPeriodQuarter(returnPeriod),
-          ownBrandsAnswers(userAnswers),
-          packagedContractPackerAnswers(userAnswers),
-          exemptionsForSmallProducersAnswers(userAnswers),
-          broughtIntoTheUKAnswers(userAnswers),
-          broughtIntoTheUKSmallProducersAnswers(userAnswers),
-          claimCreditsForExportsAnswers(userAnswers),
-          claimCreditsForLostOrDamagedAnswers(userAnswers),
-          AmountToPaySummary.sectionHeaderTitle(total),
-          AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total),
-          AmountToPaySummary.amountInCredit(total),
-          registeredSites(userAnswers),
-          isNilReturn(totalForQuarter, balanceBroughtForward, total)
-        ))
-      }) recoverWith {
-        case t: Throwable =>
-          logger.error(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
-          Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
-      }
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request => constructPage(request)
   }
 
-  def noActivityToReport() = (identify andThen getData andThen requireData).async {
+  def noActivityToReport: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      // TODO - need a ticket to implement the navigation logic from
-      //  "there is no activity to report for this period" on the dashboard page to this
-      //  page, as currently trying to bypass own brands page without an answer throws an error
-      //  to avoid increasing the scope of DLS-6532 any further and to save some time when it comes to
-      //  implementing this section, I will leave this duplicate-ish function here for the time being as this is
-      //  a requirement discovered as part of CYA work
-
-      val sdilEnrolment = request.sdilEnrolment
-      val userAnswers =
-        UserAnswers(sdilEnrolment,
-        Json.obj(
-          "ownBrands" -> false,
-          "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-          "packagedContractPacker" -> false,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-          "exemptionsForSmallProducers" -> false,
-          "addASmallProducer" -> Json.obj("referenceNumber" -> s"$sdilEnrolment", "lowBand" -> 0, "highBand" -> 0),
-          "smallProducerDetails" -> false,
-          "broughtIntoUK" -> false,
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-          "broughtIntoUkFromSmallProducers" -> false,
-          "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-          "claimCreditsForExports" -> false,
-          "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-          "claimCreditsForLostDamaged" -> false,
-          "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        ))
-      val balanceAllEnabled = config.balanceAllEnabled
-      val returnPeriod = Utilities.currentReturnPeriod(request.returnPeriod)
-
-      (for {
-        isSmallProducer <- connector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
-        balanceBroughtForward <-
-          if (balanceAllEnabled) {
-            connector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
-              extractTotal(listItemsWithTotal(financialItem))
-            }
-          } else connector.balance(sdilEnrolment, withAssessment = false)
-      } yield {
-
-        val totalForQuarter = calculateTotalForQuarter(userAnswers, isSmallProducer.getOrElse(false))
-        val total = totalForQuarter - balanceBroughtForward
-
-        cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
-
-        Ok(view(request.subscription.orgName,
-          formattedReturnPeriodQuarter(returnPeriod),
-          ownBrandsAnswers(userAnswers),
-          packagedContractPackerAnswers(userAnswers),
-          exemptionsForSmallProducersAnswers(userAnswers),
-          broughtIntoTheUKAnswers(userAnswers),
-          broughtIntoTheUKSmallProducersAnswers(userAnswers),
-          claimCreditsForExportsAnswers(userAnswers),
-          claimCreditsForLostOrDamagedAnswers(userAnswers),
-          AmountToPaySummary.sectionHeaderTitle(total),
-          AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total),
-          AmountToPaySummary.amountInCredit(total),
-          registeredSites(userAnswers),
-          isNilReturn(totalForQuarter, balanceBroughtForward, total)
-        ))
-      }) recoverWith {
-        case t: Throwable =>
-          logger.error(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
-          Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
-      }
+      val noActivityUserAnswers = Utilities.noActivityUserAnswers(request.sdilEnrolment)
+      constructPage(request, Some(noActivityUserAnswers))
   }
+
+  private def constructPage(request: DataRequest[AnyContent],
+                            userAnswers: Option[UserAnswers] = None
+                           )(implicit hc: HeaderCarrier, messages: Messages) = {
+
+    val answers = userAnswers match {
+      case Some(answers) => answers
+      case _ => request.userAnswers
+    }
+    val balanceAllEnabled = config.balanceAllEnabled
+    val returnPeriod = Utilities.currentReturnPeriod(request.returnPeriod)
+    val sdilEnrolment = request.sdilEnrolment
+
+    (for {
+      isSmallProducer <- connector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
+      balanceBroughtForward <-
+        if (balanceAllEnabled) {
+          connector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
+            extractTotal(listItemsWithTotal(financialItem))
+          }
+        } else connector.balance(sdilEnrolment, withAssessment = false)
+    } yield {
+
+      val totalForQuarter = calculateTotalForQuarter(answers, isSmallProducer.getOrElse(false))
+      val total = totalForQuarter - balanceBroughtForward
+
+      cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
+
+      Ok(view(request.subscription.orgName,
+        formattedReturnPeriodQuarter(returnPeriod),
+        ownBrandsAnswers(answers),
+        packagedContractPackerAnswers(answers),
+        exemptionsForSmallProducersAnswers(answers),
+        broughtIntoTheUKAnswers(answers),
+        broughtIntoTheUKSmallProducersAnswers(answers),
+        claimCreditsForExportsAnswers(answers),
+        claimCreditsForLostOrDamagedAnswers(answers),
+        AmountToPaySummary.sectionHeaderTitle(total),
+        AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total),
+        AmountToPaySummary.amountInCredit(total),
+        registeredSites(answers),
+        isNilReturn(totalForQuarter, balanceBroughtForward, total)
+      )(request,messages))
+    }) recoverWith {
+      case t: Throwable =>
+        logger.error(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
+        Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
+    }
+  }
+
   private def formattedReturnPeriodQuarter(returnPeriod: ReturnPeriod)(implicit messages: Messages) = {
     returnPeriod.quarter match {
       case 0 => s"${Messages("firstQuarter")} ${returnPeriod.year}"
