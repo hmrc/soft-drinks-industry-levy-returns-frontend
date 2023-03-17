@@ -23,7 +23,7 @@ import play.api.mvc.AnyContent
 
 import java.util.Locale
 
-case object Utilities {
+object CurrencyFormatter {
 
   private val currencyFormatter = java.text.NumberFormat.getCurrencyInstance(Locale.UK)
 
@@ -31,12 +31,7 @@ case object Utilities {
     currencyFormatter.format(d)
   }
 
-  def currentReturnPeriod(returnPeriod: Option[ReturnPeriod]) = {
-    returnPeriod match {
-      case Some(returnPeriod) => returnPeriod
-      case None => throw new RuntimeException("No return period returned")
-    }
-  }
+
 
   def noActivityUserAnswers(sdilEnrolment: String) =
     UserAnswers(sdilEnrolment,

@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.{Configuration, Logger}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.Utilities
+import utilitlies.{CurrencyFormatter, GenericError}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
@@ -68,7 +68,7 @@ class ReturnsController @Inject()(
       val subscription = request.subscription
       val isSmallProducer = subscription.activity.smallProducer
       val userAnswers = request.userAnswers
-      val paymentDueDate = Utilities.currentReturnPeriod(request.returnPeriod)
+      val paymentDueDate = request.returnPeriod.getOrElse(GenericError.throwException("No return period found"))
       val returnPeriod = request.returnPeriod match {
         case Some(period) => period
         case _ =>
@@ -109,7 +109,7 @@ class ReturnsController @Inject()(
 
             Ok(view(returnPeriod,
               request.subscription,
-              Utilities.formatAmountOfMoneyWithPoundSign(amounts.total),
+              CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
               amounts.totalForQuarter,
               paymentDueDate,
               financialStatus = financialStatus(amounts.total): String,

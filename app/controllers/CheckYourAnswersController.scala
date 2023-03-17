@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.Utilities
+import utilitlies.{CurrencyFormatter, GenericError}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
@@ -60,7 +60,7 @@ class CheckYourAnswersController @Inject()(
 
   def noActivityToReport: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val noActivityUserAnswers = Utilities.noActivityUserAnswers(request.sdilEnrolment)
+      val noActivityUserAnswers = CurrencyFormatter.noActivityUserAnswers(request.sdilEnrolment)
       constructPage(request, Some(noActivityUserAnswers))
   }
 
@@ -73,7 +73,7 @@ class CheckYourAnswersController @Inject()(
       case _ => request.userAnswers
     }
     val balanceAllEnabled = config.balanceAllEnabled
-    val returnPeriod = Utilities.currentReturnPeriod(request.returnPeriod)
+    val returnPeriod = request.returnPeriod.getOrElse(GenericError.throwException("No return period found"))
     val sdilEnrolment = request.sdilEnrolment
 
     (for {

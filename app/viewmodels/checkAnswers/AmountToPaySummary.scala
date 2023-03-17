@@ -21,7 +21,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.Format.GenericFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utilitlies.Utilities
+import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -135,7 +135,7 @@ object AmountToPaySummary  {
 //  }
 
   def balanceBroughtForward(balanceBroughtForward: BigDecimal)(implicit messages: Messages): SummaryListRow = {
-    val formattedBalanceBroughtForward = Utilities.formatAmountOfMoneyWithPoundSign(balanceBroughtForward)
+    val formattedBalanceBroughtForward = CurrencyFormatter.formatAmountOfMoneyWithPoundSign(balanceBroughtForward)
     SummaryListRow(
       key = "balanceBroughtForward.checkYourAnswersLabel",
       value = ValueViewModel(HtmlContent(formattedBalanceBroughtForward)),
@@ -163,7 +163,7 @@ object AmountToPaySummary  {
       }
     }
 
-    val total: String = Utilities.formatAmountOfMoneyWithPoundSign(calculateSubtotal(lowBandCostPerLitre,
+    val total: String = CurrencyFormatter.formatAmountOfMoneyWithPoundSign(calculateSubtotal(lowBandCostPerLitre,
       highBandCostPerLitre,
       smallProducerAnswerListTotal
     ) - balanceBroughtForward)
@@ -209,15 +209,15 @@ object AmountToPaySummary  {
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
-        value = ValueViewModel(HtmlContent(Utilities.formatAmountOfMoneyWithPoundSign(totalForQuarter))).withCssClass("total-for-quarter align-right")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(totalForQuarter))).withCssClass("total-for-quarter align-right")
       ),
       SummaryListRowViewModel(
         key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(Utilities.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward))).withCssClass("balance-brought-forward align-right")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward))).withCssClass("balance-brought-forward align-right")
       ),
       SummaryListRowViewModel(
         key = "total",
-        value = ValueViewModel(HtmlContent(Utilities.formatAmountOfMoneyWithPoundSign(total))).withCssClass("total align-right")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))).withCssClass("total align-right")
       ))
     )
   }
@@ -226,7 +226,7 @@ object AmountToPaySummary  {
 
   def amountInCredit(total: BigDecimal)(implicit messages: Messages) = {
     if (total < 0)
-      Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", Utilities.formatAmountOfMoneyWithPoundSign(total * -1)))
+      Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total * -1)))
     else
       None
   }
