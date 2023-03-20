@@ -16,17 +16,17 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, FinancialLineItem, ReturnPeriod, UserAnswers}
-import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, PackagedContractPackerPage}
+import controllers.routes
+import models.{CheckMode, UserAnswers}
+import pages._
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-
-import java.util.Locale
-import scala.concurrent.{Await, Future}
-import scala.math.BigDecimal
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryList, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
+
+import java.util.Locale
+import scala.math.BigDecimal
 
 object AmountToPaySummary {
 
@@ -196,4 +196,74 @@ object AmountToPaySummary {
       smallProducerAnswerListTotal
     ) - balanceBroughtForward
   }
+
+  def producerAndWarehouseList(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryList] =
+    answers.get(SmallProducerDetailsPage).map {
+      answer =>
+
+        val smallProduerTotal = answers.smallProducerList.length.toString
+        val warhouseTotal = answers.warehouseList.length.toString
+
+
+        if(!answers.smallProducerList.isEmpty && !answers.warehouseList.isEmpty){
+          SummaryList(
+            rows = Seq(
+                SummaryListRow(
+                  key     = "smallProducerDetails.producerList.checkYourAnswersLabel",
+                  value   = ValueViewModel(smallProduerTotal),
+                  actions = if(checkAnswers == true) {  Some(
+                    Actions("",
+                      items =Seq(
+                        ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+                          .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+                      ))
+                  )}else None
+                ),
+              SummaryListRow(
+                key     = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
+                value   = ValueViewModel(warhouseTotal),
+                actions = if(checkAnswers == true) {  Some(
+                  Actions("",
+                    items =Seq(
+                      ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+                        .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+                    ))
+                )}else None
+              )
+            )
+          )
+        }else if(!answers.smallProducerList.isEmpty){
+          SummaryList(
+            rows = Seq(
+              SummaryListRow(
+                key     = "smallProducerDetails.producerList.checkYourAnswersLabel",
+                value   = ValueViewModel(smallProduerTotal),
+                actions = if(checkAnswers == true) {  Some(
+                  Actions("",
+                    items =Seq(
+                      ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+                        .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+                    ))
+                )}else None
+              )))
+        }else if(!answers.warehouseList.isEmpty){
+          SummaryList(
+            rows = Seq(
+              SummaryListRow(
+                key = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
+                value = ValueViewModel(warhouseTotal),
+                actions = if (checkAnswers == true) {
+                  Some(
+                    Actions("",
+                      items = Seq(
+                        ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+                          .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+                      ))
+                  )
+                } else None
+              )
+            ))
+        }
+        else SummaryList()
+    }
 }

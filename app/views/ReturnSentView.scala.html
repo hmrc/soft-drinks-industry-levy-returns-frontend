@@ -43,8 +43,7 @@
   claimCreditsForLostDamagedAnswers: SummaryList,
   smallProducerCheck: Option[List[SmallProducer]],
   warehouseCheck: Option[List[Warehouse]],
-  smallProducerAnswers: SummaryList,
-  warehouseAnswers: SummaryList,
+  smallproducerAndWarehouseAnswers: Option[SummaryList],
   balanceSummaryAnswers: SummaryList
   )(implicit request: Request[_], messages: Messages)
 
@@ -206,16 +205,12 @@
         @messages("returnSent.RegisteredSites")
     </h2>
     }
-    @if(smallProducerCheck != None){
+
     <p class="govuk-body">
-        @govukSummaryList(smallProducerAnswers)
+        @govukSummaryList(smallproducerAndWarehouseAnswers.getOrElse(SummaryList()))
     </p>
-    }
-    @if(warehouseCheck != None){
-    <p class="govuk-body">
-        @govukSummaryList(warehouseAnswers)
-    </p>
-    }
+
+
 </div>
 
 }

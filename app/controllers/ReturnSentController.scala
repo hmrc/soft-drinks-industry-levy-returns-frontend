@@ -35,8 +35,9 @@ import views.html.ReturnSentView
 import java.time.format.DateTimeFormatter
 import config.FrontendAppConfig
 import play.api.Configuration
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
-import java.time.{LocalTime, ZoneId}
+import java.time.{LocalDateTime, LocalTime, ZoneId}
 import viewmodels.checkAnswers.{AmountToPaySummary, BrandsPackagedAtOwnSitesSummary, BroughtIntoUKSummary, BroughtIntoUkFromSmallProducersSummary, ClaimCreditsForExportsSummary, ClaimCreditsForLostDamagedSummary, ExemptionsForSmallProducersSummary, HowManyAsAContractPackerSummary, HowManyBroughtIntoTheUKFromSmallProducersSummary, HowManyBroughtIntoUkSummary, HowManyCreditsForExportSummary, HowManyCreditsForLostDamagedSummary, OwnBrandsSummary, PackagedContractPackerSummary, SecondaryWarehouseDetailsSummary, SmallProducerDetailsSummary}
 
 
@@ -136,21 +137,8 @@ class ReturnSentController @Inject()(
           ).flatten)}else{ SummaryListViewModel(rows = Seq(
           ClaimCreditsForLostDamagedSummary.row(userAnswers, checkAnswers = false)).flatten)}
 
-      val smallProducerAnswers =
-          SummaryListViewModel(rows = Seq(
-            SmallProducerDetailsSummary.producerList(userAnswers, checkAnswers = false)
-          ).flatten)
+      val smallproducerAndWarehouseAnswers: Option[SummaryList] = AmountToPaySummary.producerAndWarehouseList(userAnswers, checkAnswers = false)
 
-      val warehouseAnswers =
-        SummaryListViewModel(rows = Seq(
-          SecondaryWarehouseDetailsSummary.warehouseList(userAnswers, checkAnswers = false)
-        ))
-
-
-      val amountOwed:String = "£100,000.00"
-      val paymentDate = ReturnPeriod(2022,1)
-      val returnDate = ReturnPeriod(2022,1)
-      LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase
 
 
       def financialStatus (total :BigDecimal):String = {
@@ -212,7 +200,10 @@ class ReturnSentController @Inject()(
         balanceBroughtForward)
 
       val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus, balanceBroughtForward)
-
+      val amountOwed:String = AmountToPaySummary.formatAmountOfMoneyWithPoundSign(balance)
+      val paymentDate = ReturnPeriod(2022,1) // TODO WILL NEED TO CHECK THE RETURN PERIOD FOR THE NEXT RETURN
+      val returnDate = ReturnPeriod(LocalDateTime.now(ZoneId.of("Europe/London")).getYear,1)
+      LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase //TODO NEEDS TO BE CALLED THE RETURN
 
       Ok(view(returnDate,
               subscription,
@@ -229,8 +220,7 @@ class ReturnSentController @Inject()(
               claimCreditsForLostDamagedAnswers,
               smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList):Option[List[SmallProducer]],
               warehouseCheck = warehouseCheck(warhouseList):Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
-              smallProducerAnswers,
-              warehouseAnswers,
+              smallproducerAndWarehouseAnswers,
               balanceSummaryAnswers
               ))
   }
