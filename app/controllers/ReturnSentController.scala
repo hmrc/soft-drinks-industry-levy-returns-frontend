@@ -182,19 +182,11 @@ class ReturnSentController @Inject()(
               }else None
             }
 
-      //Quarter
-
             def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod): Future[Option[Boolean]] = {
               connector.checkSmallProducerStatus(sdilRef, period)
             }
 
             val smallProducerStatus:Boolean = !Await.result(checkSmallProducerStatus(request.sdilEnrolment,request.returnPeriod.get),20.seconds).getOrElse(true)
-
-            val totalThisQuarterAnswer =
-              SummaryListViewModel(rows = Seq(
-                AmountToPaySummary.totalThisQuarter(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus)))
-
-      //Balance Brought Forward
 
             def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
               items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
@@ -213,13 +205,11 @@ class ReturnSentController @Inject()(
             }
             val balanceBroughtForward = Await.result(broughtForward ,20.seconds)
 
-      val balanceBroughtForwardAnswer =
-        SummaryListViewModel(rows = Seq(
-          AmountToPaySummary.balanceBroughtForward(balanceBroughtForward)))
-
-      val totalAnswer =
-        SummaryListViewModel(rows = Seq(
-          AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus,balanceBroughtForward)))
+      val balanceSummaryAnswers = AmountToPaySummary.balanceSummary(userAnswers,
+        config.lowerBandCostPerLitre,
+        config.higherBandCostPerLitre,
+        smallProducerStatus,
+        balanceBroughtForward)
 
       val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, smallProducerStatus, balanceBroughtForward)
 
@@ -241,9 +231,7 @@ class ReturnSentController @Inject()(
               warehouseCheck = warehouseCheck(warhouseList):Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
               smallProducerAnswers,
               warehouseAnswers,
-              totalThisQuarterAnswer,
-              balanceBroughtForwardAnswer,
-              totalAnswer
+              balanceSummaryAnswers
               ))
   }
 }

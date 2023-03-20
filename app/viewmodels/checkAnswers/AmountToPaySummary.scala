@@ -19,7 +19,7 @@ package viewmodels.checkAnswers
 import models.{CheckMode, FinancialLineItem, ReturnPeriod, UserAnswers}
 import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, PackagedContractPackerPage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 
 import java.util.Locale
 import scala.concurrent.{Await, Future}
@@ -112,49 +112,12 @@ object AmountToPaySummary {
     )
   }
 
-  def totalThisQuarter(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal, smallProducerStatus:Boolean )(implicit messages: Messages): SummaryListRow = {
-    val smallProducerAnswerListTotal = calculatChargeFromPages(answers, lowBandCostPerLitre, highBandCostPerLitre)
+  def balanceSummary(answers: UserAnswers,
+                            lowBandCostPerLitre: BigDecimal,
+                            highBandCostPerLitre: BigDecimal,
+                            smallProducerStatus:Boolean,
+                            balanceBroughtForward:BigDecimal)(implicit messages: Messages): SummaryList = {
 
-    def calculateSubtotal(
-                                 costLower:BigDecimal,
-                                 costHigher:BigDecimal,
-                                 smallProducerAnswerListTotal:List[BigDecimal]
-                               ): BigDecimal = {
-            if(smallProducerStatus){
-                smallProducerAnswerListTotal.sum
-              }else{
-              val ownBranduserAnswers = answers.get(BrandsPackagedAtOwnSitesPage)
-              val lowBand = ownBranduserAnswers.map(answer => answer.lowBand).getOrElse(0L)
-              val highBand = ownBranduserAnswers.map(answer => answer.highBand).getOrElse(0L)
-              val ownBrandTotal = costLower * lowBand * 1 + costHigher * highBand * 1
-              val largeProducerListTotal =   ownBrandTotal + smallProducerAnswerListTotal.sum
-              largeProducerListTotal
-              }
-            }
-
-    val totalThisQuarter = formatAmountOfMoneyWithPoundSign(calculateSubtotal(
-      lowBandCostPerLitre,
-      highBandCostPerLitre,
-      smallProducerAnswerListTotal)):String
-
-    SummaryListRow(
-      key = "totalThisQuarter.checkYourAnswersLabel",
-      value = ValueViewModel(HtmlContent(totalThisQuarter)),
-      actions = None
-    )
-
-  }
-
-  def balanceBroughtForward(balanceBroughtForward:BigDecimal)(implicit messages: Messages): SummaryListRow = {
-    val formattedBalanceBroughtForward = formatAmountOfMoneyWithPoundSign(balanceBroughtForward)
-    SummaryListRow(
-      key = "balanceBroughtForward.checkYourAnswersLabel",
-      value = ValueViewModel(HtmlContent(formattedBalanceBroughtForward)),
-      actions = None
-    )
-  }
-
-  def total(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal, smallProducerStatus:Boolean, balanceBroughtForward:BigDecimal)(implicit messages: Messages): SummaryListRow= {
     val smallProducerAnswerListTotal = calculatChargeFromPages(answers, lowBandCostPerLitre, highBandCostPerLitre)
 
     def calculateSubtotal(
@@ -174,16 +137,40 @@ object AmountToPaySummary {
       }
     }
 
-          val total:String = formatAmountOfMoneyWithPoundSign(calculateSubtotal(lowBandCostPerLitre,
-                                                   highBandCostPerLitre,
-                                                   smallProducerAnswerListTotal
-                                                  ) - balanceBroughtForward)
+    val totalThisQuarter = formatAmountOfMoneyWithPoundSign(calculateSubtotal(
+      lowBandCostPerLitre,
+      highBandCostPerLitre,
+      smallProducerAnswerListTotal)):String
 
-    SummaryListRow(
-      key = "total.checkYourAnswersLabel",
-      value = ValueViewModel(HtmlContent(total)),
-      actions = None
-    )
+    val total:String = formatAmountOfMoneyWithPoundSign(calculateSubtotal(lowBandCostPerLitre,
+      highBandCostPerLitre,
+      smallProducerAnswerListTotal
+    ) - balanceBroughtForward)
+
+    val formattedBalanceBroughtForward =    if(balanceBroughtForward < 0) {
+      {f"+£${balanceBroughtForward.abs}%,.2f"}
+    } else {
+      {f"-£${balanceBroughtForward.abs}%,.2f"}
+    }
+
+    SummaryList(
+      rows = Seq(
+      SummaryListRow(
+        key = "totalThisQuarter.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlContent(totalThisQuarter)),
+        actions = None
+      ),
+      SummaryListRow(
+        key = "balanceBroughtForward.checkYourAnswersLabel",
+        value = ValueViewModel(HtmlContent(formattedBalanceBroughtForward)),
+        actions = None
+      ),
+        SummaryListRow(
+          key = "total.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlContent(total)),
+          actions = None
+        )
+      ))
   }
 
   def balance(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal, smallProducerStatus:Boolean, balanceBroughtForward:BigDecimal):BigDecimal ={

@@ -45,11 +45,10 @@
   warehouseCheck: Option[List[Warehouse]],
   smallProducerAnswers: SummaryList,
   warehouseAnswers: SummaryList,
-  quarter: SummaryList,
-  balanceBroughtForward: SummaryList,
-  total: SummaryList)(implicit request: Request[_], messages: Messages)
+  balanceSummaryAnswers: SummaryList
+  )(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("returnSent.title"))) {
+@layout(pageTitle = titleNoForm(messages("returnSent.title")), showBackLink = false) {
 
     @govukPanel(Panel(
     title = Text(messages("returnSent.title")),
@@ -76,7 +75,7 @@
         @Html(messages("returnSent.paymentsBlurb.payby", amountOwed, paymentDate.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))))
     </p>
     <p class="govuk-body">
-        @messages("returnSent.paymentsBlurb.payby.info",subscription.sdilRef)
+        @Html(messages("returnSent.paymentsBlurb.payby.info",subscription.sdilRef))
     </p>
     <p class = "govuk-body-m">
     <a class="govuk-link" href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">@messages("retutnSent.paymentBlurb.paybyLink")</a>
@@ -90,7 +89,7 @@
     <p class="govuk-body">@messages("returnSent.paymentsBlurb.nextReturn",
         paymentDate.next.start.format(DateTimeFormatter.ofPattern("MMMM")),
         paymentDate.next.end.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
-        paymentDate.next.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))),
+        paymentDate.next.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
     </p>
 
     <h1 class="govuk-heading-m">
@@ -113,7 +112,14 @@
 
 <details class="govuk-details" data-module="govuk-details">
 
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          @messages("returnSent.details")
+        </span>
+    </summary>
+
     <div class = "ownBrands">
+        <br>
         <h2 class="govuk-heading-m">
             @messages("returnSent.ownBrands")
         </h2>
@@ -123,6 +129,7 @@
     </div>
 
     <div class = "packagedContractPacker">
+        <br>
         <h2 class="govuk-heading-m">
             @messages("returnSent.packagedContractPacker")
         </h2>
@@ -132,6 +139,7 @@
     </div>
 
     <div class = "exemptionsForSmallProducers">
+        <br>
         <h2 class="govuk-heading-m">
             @messages("returnSent.exemptionsForSmallProducers")
         </h2>
@@ -141,6 +149,7 @@
     </div>
 
     <div class = "broughtIntoUk">
+        <br>
         <h2 class="govuk-heading-m">
             @messages("returnSent.broughtIntoUk")
         </h2>
@@ -150,6 +159,7 @@
     </div>
 
     <div class = "broughtIntoUkSmallProducers">
+        <br>
         <h2 class="govuk-heading-m">
             @messages("returnSent.broughtIntoUkSmallProducer")
         </h2>
@@ -159,6 +169,7 @@
     </div>
 
     <div class = "claimCreditsForExports">
+        <br>
         <h2 class="govuk-heading-m">
             @messages("returnSent.exported")
         </h2>
@@ -168,6 +179,7 @@
     </div>
 
     <div class = "claimCreditsForLostDamagedAnswers">
+        <br>
         <h2 class="govuk-heading-m">
             @messages("returnSent.lostDestroyed")
         </h2>
@@ -183,14 +195,8 @@
         case "noPayNeeded" =>  Some(messages("checkYourAnswers.noPayNeeded.title"))
         })
     </h2>
-    <p class="govuk-body" id = "quarter">
-        @govukSummaryList(quarter)
-    </p>
-    <p class="govuk-body" id = "balanceBroughtForward">
-        @govukSummaryList(balanceBroughtForward)
-    </p>
-    <p class="govuk-body" id = "total">
-        @govukSummaryList(total)
+    <p class="govuk-body" id = "balanceSummaryAnswers">
+        @govukSummaryList(balanceSummaryAnswers)
     </p>
 </div>
 

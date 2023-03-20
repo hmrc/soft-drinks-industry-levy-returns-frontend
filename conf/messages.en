@@ -411,9 +411,9 @@ secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehous
 secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
 secondaryWarehouseDetails.remove.hidden = remove UK warehouse
 
-reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site
+reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site?
 exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?
-ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site
+ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site?
 broughtIntoUK.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
 claimCreditsForLostDamaged.checkYourAnswersLabel = Claiming credit for lost or destroyed liable drinks?
 broughtIntoUKFromSmallProducers.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
@@ -423,12 +423,12 @@ returnSent.panel.returnMessage = Soft Drinks Industry Levy return {0} to {1} {2}
 returnSent.returnsDoneMessage = Your Soft Drinks Industry Levy return from {0} to {1} {2} for {3} was sent at {4} on the {5}.
 returnSent.headerOne = What you need to do next
 
-returnSent.paymentsBlurb.payby=You need to pay {0} by {1}.
-returnSent.paymentsBlurb.payby.info=Make sure you include your Soft Drinks Industry Levy reference {0} when making a payment.
+returnSent.paymentsBlurb.payby= You need to pay {0} by {1}.
+returnSent.paymentsBlurb.payby.info= Make sure you include your Soft Drinks Industry Levy reference <strong>{0}</strong> when making a payment.
 retutnSent.paymentBlurb.paybyLink = See how to pay the levy (opens in a new tab)
-returnSent.paymentsBlurb.nothingOwed=You do not need to do anything else.
+returnSent.paymentsBlurb.nothingOwed= You do not need to do anything else.
 returnSent.paymentsBlurb.credited = We will take the payment from your Soft Drinks Industry Levy account shortly.
-returnSent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must send this return and make any \
+returnSent.paymentsBlurb.nextReturn= Your next return will be for {0} to {1}. You must send this return and make any \
                       payments by {2}.
 returnSent.headerTwo = Help using the service
 returnSent.list1 = check your account balance
@@ -446,6 +446,7 @@ returnSent.exported = Exported
 returnSent.lostDestroyed = Lost or destroyed
 returnSent.amountToPay = Amount to pay
 returnSent.RegisteredSites = Registered UK sites
+returnSent.details = Details of your return
 
 checkYourAnswers.amountToPay.title = Amount to pay
 checkYourAnswers.creditedPay.title = Amount you will be credited

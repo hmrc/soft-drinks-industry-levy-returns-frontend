@@ -131,7 +131,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
     "balance should return a big decimal successfully" in {
       val withAssesment = true
       when(mockHttp.GET[BigDecimal](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(0))
-      Await.result(softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment), 4.seconds) mustBe Some(emptySdilReturn)
+      Await.result(softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment), 4.seconds) mustBe 0
     }
 
     "balance history should return a big decimal successfully" in {
@@ -143,7 +143,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
 
       val financialLineItemList = List(returnCharge)
       when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialLineItemList))
-      Await.result(softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment), 4.seconds) mustBe Some(emptySdilReturn)
+      Await.result(softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment), 4.seconds) mustBe  List(ReturnCharge(ReturnPeriod(2022, 3), 1000))
     }
 
   }
