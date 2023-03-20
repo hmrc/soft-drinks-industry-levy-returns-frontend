@@ -17,7 +17,7 @@
 package connectors
 
 import com.typesafe.config.ConfigFactory
-import models.ReturnPeriod
+import models.{FinancialLineItem, ReturnCharge, ReturnPeriod, SdilReturn}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.mockito.ArgumentMatchers.any
@@ -49,6 +49,10 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
 
 
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, config)
+
+  val sdilNumber: String = "XKSDIL000000022"
+
+  val emptySdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(100L, 100L),(0L,0L),(0L,0L),(0L,0L))
 
   val aSubscription = RetrievedSubscription(
     "0000000022",
@@ -123,6 +127,25 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
       Await.result(softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr), 4.seconds) mustBe Some(returnPeriod)
 
     }
+
+    "balance should return a big decimal successfully" in {
+      val withAssesment = true
+      when(mockHttp.GET[BigDecimal](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(0))
+      Await.result(softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment), 4.seconds) mustBe Some(emptySdilReturn)
+    }
+
+    "balance history should return a big decimal successfully" in {
+      val withAssesment = true
+
+      val date: LocalDate = LocalDate.of(2022,10,10)
+      val bigDecimal: BigDecimal = 1000
+      val returnCharge: FinancialLineItem = ReturnCharge(ReturnPeriod(date), bigDecimal)
+
+      val financialLineItemList = List(returnCharge)
+      when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialLineItemList))
+      Await.result(softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment), 4.seconds) mustBe Some(emptySdilReturn)
+    }
+
   }
 
 }
