@@ -84,28 +84,30 @@ class ReturnsController @Inject()(
         session match {
           case Some(amounts) => {
 
-            // TODO - submit return
-            if (pendingReturns.contains(returnPeriod)){
-
-              if(nilReturn){
-                sdilConnector.returns_update(subscription.utr, returnPeriod, ReturnsHelper.emptyReturn).onComplete {
-                  case Success(result) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-                  case Failure(_) =>
-                    logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-                    throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-                }
+            val returnToBeSubmitted =
+              if(nilReturn) {
+                ReturnsHelper.emptyReturn
               } else {
-                println(Console.YELLOW + "Non-Nil Return" + Console.WHITE)
+                SdilReturn(
+                  ownBrandsLitres(userAnswers),
+                  packLargeLitres(userAnswers),
+                  userAnswers.smallProducerList,
+                  importsLitres(userAnswers),
+                  importsSmallLitres(userAnswers),
+                  exportLitres(userAnswers),
+                  wastageLitres(userAnswers))
               }
 
-//              connector.returns_update(subscription.utr, returnPeriod, sdilReturn)
+            if (pendingReturns.contains(returnPeriod)){
+              sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted).onComplete {
+                case Success(_) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+                case Failure(e) =>
+                  logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+                  throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter} - error ${e.getMessage}" )
+              }
             } else {
               ???
             }
-
-
-
-
 
             // TODO - these needs re-checking by Jake, let's discuss this
             val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(amounts.balanceBroughtForward)))
@@ -137,6 +139,48 @@ class ReturnsController @Inject()(
             Redirect(routes.JourneyRecoveryController.onPageLoad())
         }
       }
+  }
+
+  private def wastageLitres(userAnswers: UserAnswers) = {
+    (
+      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
+    )
+  }
+
+  private def exportLitres(userAnswers: UserAnswers) = {
+    (
+      userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
+    )
+  }
+
+  private def importsSmallLitres(userAnswers: UserAnswers) = {
+    (
+      userAnswers.smallProducerList.map(smallProducer => smallProducer.litreage._1).sum,
+      userAnswers.smallProducerList.map(smallProducer => smallProducer.litreage._2).sum
+    )
+  }
+
+  private def importsLitres(userAnswers: UserAnswers) = {
+    (
+      userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
+    )
+  }
+
+  private def packLargeLitres(userAnswers: UserAnswers) = {
+    (
+      userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
+    )
+  }
+
+  private def ownBrandsLitres(userAnswers: UserAnswers) = {
+    (
+      userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
+    )
   }
 
   private def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
@@ -275,6 +319,5 @@ class ReturnsController @Inject()(
     }
 
   private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
-
 
 }
