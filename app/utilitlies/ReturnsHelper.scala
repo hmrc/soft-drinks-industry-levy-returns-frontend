@@ -16,7 +16,7 @@
 
 package utilitlies
 
-import models.UserAnswers
+import models.{SdilReturn, UserAnswers}
 import play.api.libs.json.Json
 
 object ReturnsHelper {
@@ -40,5 +40,7 @@ object ReturnsHelper {
         "claimCreditsForLostDamaged" -> false,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
       ))
+
+  def emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
 }

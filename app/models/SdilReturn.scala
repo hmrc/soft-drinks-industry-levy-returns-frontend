@@ -19,6 +19,7 @@ package models
 import cats.implicits._
 import models.requests.DataRequest
 import pages.{BrandsPackagedAtOwnSitesPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage}
+import play.api.libs.json.Json
 
 import java.time.LocalDateTime
 
@@ -52,6 +53,9 @@ case class SdilReturn(
 }
 
 object SdilReturn {
+
+  implicit val returnsFormat = Json.format[SdilReturn]
+
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
@@ -81,5 +85,7 @@ object SdilReturn {
     )
 
   }
+
+
 
 }

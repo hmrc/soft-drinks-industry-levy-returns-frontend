@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.{CurrencyFormatter, GenericError, ReturnsHelper}
+import utilitlies.{GenericError, ReturnsHelper}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
@@ -88,6 +88,7 @@ class CheckYourAnswersController @Inject()(
 
       val totalForQuarter = calculateTotalForQuarter(answers, isSmallProducer.getOrElse(false))
       val total = totalForQuarter - balanceBroughtForward
+      val isNilReturn = totalForQuarter == 0
 
       cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
 
@@ -104,7 +105,7 @@ class CheckYourAnswersController @Inject()(
         AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total),
         AmountToPaySummary.amountInCredit(total),
         registeredSites(answers),
-        isNilReturn(totalForQuarter, balanceBroughtForward, total)
+        isNilReturn
       )(request,messages))
     }) recoverWith {
       case t: Throwable =>
@@ -249,7 +250,4 @@ class CheckYourAnswersController @Inject()(
       case Failure(error) => logger.error(s"Failed to save amounts in session cache for $sdilEnrolment Error: $error")
     }
   }
-
-  private def isNilReturn(amounts: BigDecimal*) = amounts.forall(_ == 0)
-
 }

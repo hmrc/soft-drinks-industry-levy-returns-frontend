@@ -43,6 +43,7 @@ class ReturnsControllerSpec extends SpecBase {
   val returnPeriods = List(ReturnPeriod(2020, 0), ReturnPeriod(2023, 1))
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriods)
+  when(mockSdilConnector.returns_update(any(),any(),any())(any())) thenReturn Future.successful()
 
   "ReturnSent Controller" - {
 

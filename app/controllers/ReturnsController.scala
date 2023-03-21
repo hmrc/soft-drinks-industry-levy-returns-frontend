@@ -28,13 +28,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.{Configuration, Logger}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.{CurrencyFormatter, GenericError}
+import utilitlies.{CurrencyFormatter, GenericError, ReturnsHelper}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 
 class ReturnsController @Inject()(
@@ -86,11 +87,15 @@ class ReturnsController @Inject()(
             // TODO - submit return
             if (pendingReturns.contains(returnPeriod)){
 
-              val nilReturn = false // TODO - CYA page should be redirecting to this page with a value of nil-return available
               if(nilReturn){
-                println(Console.YELLOW + "nil-return" + Console.WHITE)
+                sdilConnector.returns_update(subscription.utr, returnPeriod, ReturnsHelper.emptyReturn).onComplete {
+                  case Success(result) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+                  case Failure(_) =>
+                    logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+                    throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+                }
               } else {
-                println(Console.YELLOW + "nont-nil-return" + Console.WHITE)
+                println(Console.YELLOW + "Non-Nil Return" + Console.WHITE)
               }
 
 //              connector.returns_update(subscription.utr, returnPeriod, sdilReturn)

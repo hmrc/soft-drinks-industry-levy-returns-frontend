@@ -71,11 +71,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(val http: HttpClient,
   def returns_pending(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
     http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
 
-//  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Unit] = {
-//    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-//    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map { _ =>
-//      ()
-//    }
-//  }
+  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map { _ => ()}
+  }
 
 }
