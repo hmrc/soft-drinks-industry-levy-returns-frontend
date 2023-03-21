@@ -111,11 +111,6 @@ class ReturnsController @Inject()(
               Redirect(routes.JourneyRecoveryController.onPageLoad())
             }
 
-            // TODO - these needs re-checking by Jake, let's discuss this
-            val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(amounts.balanceBroughtForward)))
-            val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, amounts.balanceBroughtForward)))
-            // val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
-
             Ok(view(returnPeriod,
               request.subscription,
               CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
