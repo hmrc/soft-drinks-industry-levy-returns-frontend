@@ -98,44 +98,47 @@ class ReturnsController @Inject()(
                   wastageLitres(userAnswers))
               }
 
-            if (pendingReturns.contains(returnPeriod)){
+            if (pendingReturns.contains(returnPeriod)) {
               sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted).onComplete {
-                case Success(_) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+                case Success(_) =>
+                  logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+
+                  // TODO - these needs re-checking by Jake, let's discuss this
+                  val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(amounts.balanceBroughtForward)))
+                  val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, amounts.balanceBroughtForward)))
+                  // val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
+
+                  Ok(view(returnPeriod,
+                    request.subscription,
+                    CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
+                    amounts.totalForQuarter,
+                    paymentDueDate,
+                    financialStatus = financialStatus(amounts.total): String,
+                    ownBrandsAnswers(userAnswers),
+                    packagedContractPackerAnswers(request, userAnswers),
+                    exemptionForSmallProducersAnswers(userAnswers),
+                    broughtIntoUKAnswers(userAnswers),
+                    broughtIntoUKFromSmallProducerAnswers(userAnswers),
+                    claimCreditsForExportsAnswers(userAnswers),
+                    claimCreditsForLostOrDamagedAnswers(userAnswers),
+                    smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList): Option[List[SmallProducer]],
+                    warehouseCheck = warehouseCheck(warehouseList): Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
+                    smallProducerAnswers(userAnswers),
+                    warehouseAnswers(userAnswers),
+                    AmountToPaySummary.amountToPaySummary(amounts.totalForQuarter, amounts.balanceBroughtForward, amounts.total)
+                  ))
+
                 case Failure(e) =>
                   logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
                   throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter} - error ${e.getMessage}" )
               }
             } else {
-              ???
+              logger.error(s"Pending returns for $sdilEnrolment don't contains the return for  year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+              Redirect(routes.JourneyRecoveryController.onPageLoad())
             }
-
-            // TODO - these needs re-checking by Jake, let's discuss this
-            val balanceBroughtForwardAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.balanceBroughtForward(amounts.balanceBroughtForward)))
-            val totalAnswer = SummaryListViewModel(rows = Seq(AmountToPaySummary.total(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, amounts.balanceBroughtForward)))
-            // val balance = AmountToPaySummary.balance(userAnswers, config.lowerBandCostPerLitre, config.higherBandCostPerLitre, isSmallProducer, balanceBroughtForward)
-
-            Ok(view(returnPeriod,
-              request.subscription,
-              CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
-              amounts.totalForQuarter,
-              paymentDueDate,
-              financialStatus = financialStatus(amounts.total): String,
-              ownBrandsAnswers(userAnswers),
-              packagedContractPackerAnswers(request, userAnswers),
-              exemptionForSmallProducersAnswers(userAnswers),
-              broughtIntoUKAnswers(userAnswers),
-              broughtIntoUKFromSmallProducerAnswers(userAnswers),
-              claimCreditsForExportsAnswers(userAnswers),
-              claimCreditsForLostOrDamagedAnswers(userAnswers),
-              smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList): Option[List[SmallProducer]],
-              warehouseCheck = warehouseCheck(warehouseList): Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
-              smallProducerAnswers(userAnswers),
-              warehouseAnswers(userAnswers),
-              AmountToPaySummary.amountToPaySummary(amounts.totalForQuarter, amounts.balanceBroughtForward, amounts.total)
-            ))
           }
           case _ =>
-            logger.error("no amount found in the cache")
+            logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
             Redirect(routes.JourneyRecoveryController.onPageLoad())
         }
       }
