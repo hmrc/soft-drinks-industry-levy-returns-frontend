@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import forms.packagingSiteDetailsFormProvider
+import forms.PackagingSiteDetailsFormProvider
 import models.backend.{Site, UkAddress}
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
@@ -33,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.checkAnswers.packagingSiteDetailsSummary
+import viewmodels.checkAnswers.PackagingSiteDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.PackagingSiteDetailsView
 import scala.concurrent.Future
@@ -52,7 +52,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
     None,
     None)
 
-  val formProvider = new packagingSiteDetailsFormProvider()
+  val formProvider = new PackagingSiteDetailsFormProvider()
   val form = formProvider()
 
   lazy val packagingSiteDetailsRoute = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
@@ -74,7 +74,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         val packagingSummaryList: List[SummaryListRow] =
-          packagingSiteDetailsSummary.row2(List())(messages(application))
+          PackagingSiteDetailsSummary.row2(List())(messages(application))
 
         SummaryListViewModel(
           rows = packagingSummaryList
@@ -105,7 +105,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         val smallProducersSummaryList: List[SummaryListRow] =
-          packagingSiteDetailsSummary.row2(List())(messages(application))
+          PackagingSiteDetailsSummary.row2(List())(messages(application))
 
         SummaryListViewModel(
           rows = smallProducersSummaryList
@@ -160,7 +160,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         val smallProducersSummaryList: List[SummaryListRow] =
-          packagingSiteDetailsSummary.row2(List())(messages(application))
+          PackagingSiteDetailsSummary.row2(List())(messages(application))
 
         val list: SummaryList = SummaryListViewModel(
           rows = smallProducersSummaryList

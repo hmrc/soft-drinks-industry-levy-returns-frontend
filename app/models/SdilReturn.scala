@@ -19,6 +19,7 @@ package models
 import java.time.LocalDateTime
 import cats.implicits._
 import SdilReturn._
+import config.FrontendAppConfig
 import models.requests.DataRequest
 import pages._
 
@@ -32,7 +33,7 @@ case class SdilReturn(
                        export: (Long, Long),
                        wastage: (Long, Long),
                        submittedOn: Option[LocalDateTime] = None
-                     ) {
+                     )(implicit config: FrontendAppConfig) {
 
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
@@ -46,8 +47,8 @@ case class SdilReturn(
   type LitreBands = (Litres, Litres)
 
   implicit class LitreOps(litreBands: LitreBands) {
-    lazy val lowLevy: BigDecimal = litreBands._1 * BigDecimal("0.18") // TODO this should use lowerBandCostPerLitre and higherBandCostPerLitre from application.conf to be changed in 1 place only
-    lazy val highLevy: BigDecimal = litreBands._2 * BigDecimal("0.24")
+    lazy val lowLevy: BigDecimal = litreBands._1 * config.lowerBandCostPerLitre
+    lazy val highLevy: BigDecimal = litreBands._2 * config.higherBandCostPerLitre
     lazy val dueLevy: BigDecimal = lowLevy + highLevy
   }
 }
@@ -57,7 +58,7 @@ object SdilReturn {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
 
-  def apply(userAnswers: UserAnswers)(implicit request: DataRequest[_]): SdilReturn = {
+  def apply(userAnswers: UserAnswers)(implicit request: DataRequest[_], config: FrontendAppConfig): SdilReturn = {
     val lowOwnBrand =  userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
     val highOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
     val lowPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)

@@ -29,7 +29,7 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import scala.language.postfixOps
 
-object packagingSiteDetailsSummary {
+object PackagingSiteDetailsSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(PackagingSiteDetailsPage).map {

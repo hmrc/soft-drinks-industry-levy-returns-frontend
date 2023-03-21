@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.ClaimCreditsForLostDamagedFormProvider
@@ -44,7 +45,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
                                          formProvider: ClaimCreditsForLostDamagedFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ClaimCreditsForLostDamagedView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext, config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -71,7 +72,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForLostDamagedPage, value))
             _              <- sessionRepository.set(updatedAnswers)
             sdilReturn = SdilReturn.apply(updatedAnswers)
-            retrievedSubs<- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
+            retrievedSubs <- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
           } yield Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
       )
   }

@@ -20,22 +20,22 @@ import base.SpecBase
 import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.ReturnChangeRegistrationView
+import views.html.ChangeRegistrationView
 
-class ReturnChangeRegistrationControllerSpec extends SpecBase {
+class ChangeRegistrationControllerSpec extends SpecBase {
 
-  "ReturnChangeRegistration Controller" - {
+  "ChangeRegistration Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnChangeRegistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ChangeRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ReturnChangeRegistrationView]
+        val view = application.injector.instanceOf[ChangeRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) must include (routes.PackagedContractPackerController.onPageLoad(NormalMode).url)

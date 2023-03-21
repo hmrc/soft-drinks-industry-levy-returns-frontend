@@ -16,8 +16,10 @@
 
 package controllers
 
+import cats.conversions.all.autoWidenFunctor
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import models.backend.Site
@@ -62,7 +64,7 @@ class PackAtBusinessAddressController @Inject()(
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address
 
-      val productionSite = Site(
+      val packagingSite = Site(
         request.subscription.address,
         Some(request.subscription.sdilRef),
         Some(request.subscription.orgName),
@@ -78,9 +80,11 @@ class PackAtBusinessAddressController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            originaProductionSitelList = updatedAnswers.packagingSiteList
-            updatedProductionSiteList = if(request.userAnswers.packagingSiteList.isEmpty){updatedAnswers.copy(packagingSiteList = productionSite :: originaProductionSitelList)} else updatedAnswers
-            _              <- sessionRepository.set(updatedProductionSiteList)
+            originalPackagingSiteList = updatedAnswers.packagingSiteList
+            updatedPackagingSiteList = if(value) {
+              updatedAnswers.copy(packagingSiteList = packagingSite :: originalPackagingSiteList)
+            } else updatedAnswers
+            _  <- sessionRepository.set(updatedPackagingSiteList)
           } yield Redirect(navigator.nextPage(PackAtBusinessAddressPage, mode, updatedAnswers))
       )
   }

@@ -16,24 +16,20 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
-import models.retrieved.RetrievedSubscription
-import models.{NormalMode, SdilReturn, UserAnswers}
+import models.{NormalMode, SdilReturn}
 import navigation.Navigator
-import pages.{AskSecondaryWarehouseInReturnPage, PackAtBusinessAddressPage, PackagedContractPackerPage}
-
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ReturnChangeRegistrationView
-
-import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
+import views.html.ChangeRegistrationView
+import scala.concurrent.ExecutionContext
 
 
-class ReturnChangeRegistrationController @Inject()(
+class ChangeRegistrationController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
@@ -41,8 +37,8 @@ class ReturnChangeRegistrationController @Inject()(
                                        sdilConnector: SoftDrinksIndustryLevyConnector,
                                        navigator: Navigator,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: ReturnChangeRegistrationView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                       view: ChangeRegistrationView
+                                     )(implicit ec: ExecutionContext, config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData) {
     implicit request =>
@@ -53,9 +49,10 @@ class ReturnChangeRegistrationController @Inject()(
     implicit request =>
       val answers = request.userAnswers
       val sdilReturn = SdilReturn.apply(answers)
-      val subscription = Await.result(sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil"),4.seconds)
-      val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.get.activity.importer
-      if(!isNewImporter) {
+      val subscription = request.subscription
+      val isNewImporter = (sdilReturn.totalImported._1 > 0L || sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer // TODO to be refactored when we have a common helper
+      val isNewPacker = (sdilReturn.totalPacked._1 > 0L || sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker // TODO to be refactored when we have a common helper
+      if(isNewPacker) {
         Redirect(routes.PackAtBusinessAddressController.onPageLoad(NormalMode)) //TODO CHECK IF USER IS NEW PACKER
       }else {
         Redirect(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode))

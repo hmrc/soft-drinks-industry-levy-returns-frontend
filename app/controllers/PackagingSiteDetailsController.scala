@@ -16,9 +16,11 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
-import forms.packagingSiteDetailsFormProvider
+import forms.PackagingSiteDetailsFormProvider
+
 import javax.inject.Inject
 import models.{Mode, SdilReturn}
 import navigation.Navigator
@@ -30,8 +32,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackagingSiteDetailsView
 import models.backend.Site
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.checkAnswers.packagingSiteDetailsSummary
+import viewmodels.checkAnswers.PackagingSiteDetailsSummary
 import viewmodels.govuk.summarylist._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class PackagingSiteDetailsController @Inject()(
@@ -42,10 +45,10 @@ class PackagingSiteDetailsController @Inject()(
                                                 identify: IdentifierAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
-                                                formProvider: packagingSiteDetailsFormProvider,
+                                                formProvider: PackagingSiteDetailsFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 view: PackagingSiteDetailsView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext, config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -58,7 +61,7 @@ class PackagingSiteDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val packagingSiteSummaryAliasList: List[SummaryListRow] = packagingSiteDetailsSummary.row2(packagingSiteList)
+      val packagingSiteSummaryAliasList: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteList)
       val aliasList: SummaryList = SummaryListViewModel(
         rows = packagingSiteSummaryAliasList
       )
@@ -69,7 +72,7 @@ class PackagingSiteDetailsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val packagingSiteList: List[Site] = request.userAnswers.packagingSiteList
-      val packagingSiteSummaryList: List[SummaryListRow] = packagingSiteDetailsSummary.row2(packagingSiteList)
+      val packagingSiteSummaryList: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteList)
       val siteList: SummaryList = SummaryListViewModel(
         rows = packagingSiteSummaryList
       )

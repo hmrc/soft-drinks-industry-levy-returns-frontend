@@ -95,8 +95,8 @@ POST       /small-producer-details                              controllers.Smal
 GET        /change-small-producer-details                       controllers.SmallProducerDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-small-producer-details                       controllers.SmallProducerDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /return-change-registration                          controllers.ReturnChangeRegistrationController.onPageLoad()
-POST       /return-change-registration                          controllers.ReturnChangeRegistrationController.onSubmit()
+GET        /return-change-registration                          controllers.ChangeRegistrationController.onPageLoad()
+POST       /return-change-registration                          controllers.ChangeRegistrationController.onSubmit()
 
 GET        /remove-small-producer-confirm/:sdil                 controllers.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
 POST       /remove-small-producer-confirm/:sdil                 controllers.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)

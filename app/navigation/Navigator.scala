@@ -28,19 +28,11 @@ import models.retrieved.RetrievedSubscription
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
-    case PackagingSiteDetailsPage => userAnswers =>
-      sdilReturnOpt =>
-        subscriptionOpt =>
-          _ =>
-            productionSiteDetailsPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
+    case PackagingSiteDetailsPage => userAnswers => sdilReturnOpt => subscriptionOpt => _ => packagingSiteDetailsPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
     case PackAtBusinessAddressPage => userAnswers => _ => _ => _ => packAtBusinessAddressPageNavigation(userAnswers)
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
-    case ClaimCreditsForLostDamagedPage => userAnswers =>
-      sdilReturnOpt =>
-        subscriptionOpt =>
-          _ =>
-            claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
+    case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt => _ => claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
     case ClaimCreditsForExportsPage => userAnswers => _ => _ => _ => claimCreditsForExportPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => _ => _ => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => _ => _ => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
@@ -158,10 +150,13 @@ class Navigator @Inject()() {
     } else {
       (sdilReturnOpt, subscriptionOpt) match {
         case (Some(sdilReturn), Some(subscription)) =>
-          val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
-          val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-          if (isNewImporter || isNewPacker) routes.ReturnChangeRegistrationController.onPageLoad() else routes.IndexController.onPageLoad()
-        //TODO IndexController to be replaced with CYA page
+          val isNewImporter = (sdilReturn.totalImported._1 > 0L || sdilReturn.totalImported._2 > 0L) &&
+            !subscription.activity.importer // TODO to be refactored when we have a common helper
+          val isNewPacker = (sdilReturn.totalPacked._1 > 0L || sdilReturn.totalPacked._2 > 0L) &&
+            !subscription.activity.contractPacker // TODO to be refactored when we have a common helper
+          if ((isNewImporter && subscription.productionSites.isEmpty) || (isNewPacker && subscription.warehouseSites.isEmpty)) {
+            routes.ChangeRegistrationController.onPageLoad()
+          } else routes.IndexController.onPageLoad()  //TODO IndexController to be replaced with CYA page
 
         case _ => routes.IndexController.onPageLoad() //TODO to be replaced with CYA page
       }
@@ -176,17 +171,20 @@ class Navigator @Inject()() {
     }
   }
 
-  private def productionSiteDetailsPageNavigation(userAnswers: UserAnswers,
+  private def packagingSiteDetailsPageNavigation(userAnswers: UserAnswers,
                                                   sdilReturnOpt: Option[SdilReturn],
                                                   subscriptionOpt: Option[RetrievedSubscription]) = {
     if (userAnswers.get(PackagingSiteDetailsPage).contains(true)) {
-      routes.IndexController.onPageLoad()
+      routes.IndexController.onPageLoad() //TODO GO TO ADDRESS LOOKUP PATH
     } else {
       (sdilReturnOpt, subscriptionOpt) match {
         case (Some(sdilReturn), Some(subscription)) =>
-          val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
-          if (isNewImporter) routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode) else routes.IndexController.onPageLoad()
-        //TODO IndexController to be replaced with CYA page
+          val isNewImporter = (sdilReturn.totalImported._1 > 0L || sdilReturn.totalImported._2 > 0L) &&
+            !subscription.activity.importer // TODO to be refactored when we have a common helper
+          if (isNewImporter && subscription.warehouseSites.isEmpty) {
+            routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
+          } else routes.IndexController.onPageLoad()
+
         case _ => routes.IndexController.onPageLoad() //TODO to be replaced with CYA page
       }
     }

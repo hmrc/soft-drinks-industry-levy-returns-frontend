@@ -22,14 +22,14 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("returnChangeRegistration.title"))) {
-    @formHelper(action = routes.ReturnChangeRegistrationController.onSubmit(), Symbol("autoComplete") -> "off") {
+@layout(pageTitle = titleNoForm(messages("ChangeRegistration.title"))) {
+    @formHelper(action = routes.ChangeRegistrationController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-        <h1 class="govuk-heading-m">@messages("returnChangeRegistration.title")</h1>
-        <p class="govuk-body">@messages("returnChangeRegistration.subtext1")</p>
-        <p class="govuk-body">@messages("returnChangeRegistration.subtext2")</p>
-        <p class="govuk-body">@Html(messages("returnChangeRegistration.subtext3", routes.PackagedContractPackerController.onPageLoad(NormalMode).url))</p>
-        <p class="govuk-body">@messages("returnChangeRegistration.subtext4")</p>
+        <h1 class="govuk-heading-m">@messages("ChangeRegistration.title")</h1>
+        <p class="govuk-body">@messages("ChangeRegistration.subtext1")</p>
+        <p class="govuk-body">@messages("ChangeRegistration.subtext2")</p>
+        <p class="govuk-body">@Html(messages("ChangeRegistration.subtext3", routes.PackagedContractPackerController.onPageLoad(NormalMode).url))</p>
+        <p class="govuk-body">@messages("ChangeRegistration.subtext4")</p>
 
         @govukButton(
             ButtonViewModel(messages("site.updateReg"))

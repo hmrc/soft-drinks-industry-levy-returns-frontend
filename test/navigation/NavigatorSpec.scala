@@ -17,9 +17,12 @@
 package navigation
 
 import base.SpecBase
+import config.FrontendAppConfig
 import controllers.routes
 import pages._
 import models._
+import models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
 
 class NavigatorSpec extends SpecBase {
@@ -32,6 +35,8 @@ class NavigatorSpec extends SpecBase {
   val referenceNumber1 = "XZSDIL000000234"
   val referenceNumber2 = "XZSDIL000000235"
   val literage = (10L, 20L)
+
+  implicit val config = application.injector.instanceOf[FrontendAppConfig]
 
   "Navigator" - {
 
@@ -246,26 +251,30 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
             }
 
-            "select No to navigate to return change registration page" - {
+            "select No to navigate to change registration page" - {
 
               "when user is a new Importer" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
                   Json.obj(
                     "HowManyBroughtIntoUk" -> HowManyBroughtIntoUk(100L, 100L),
                     "claimCreditsForLostDamaged" -> value))
+                def retrievedActivity = RetrievedActivity(true, false, false, false, true)
+
+                def retrievedSubscription = RetrievedSubscription.apply(any(), any(), any(), any(), activity =
+                  retrievedActivity, any(), any(), warehouseSites = List.empty, any(), any())
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(100L, 100L),(0L,0L),(0L,0L),(0L,0L))
                 val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+                result mustBe routes.ChangeRegistrationController.onPageLoad()
               }
 
               "when user is a new packer" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
                   Json.obj(
                     "howManyAsAContractPacker" -> HowManyAsAContractPacker(100L, 100L),
-                    "claimCreditsForLostDamaged" -> value))
+                    "claimCreditsForLostDamaged" -> value), List.empty, List.empty, lastUpdated = any)
                 val sdilReturn = SdilReturn((0L,0L),(100L, 100L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+                val result = navigate(false, _ => userAnswers(false), sdilReturn)
+                result mustBe routes.ChangeRegistrationController.onPageLoad()
               }
 
             }
