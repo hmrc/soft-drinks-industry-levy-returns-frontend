@@ -33,6 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
+import play.api.test.Helpers.stubControllerComponents
 
 import java.time.LocalDate
 
@@ -153,11 +154,18 @@ trait SpecBase
 
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None,
-                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
+                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder = {
+
+    val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
+
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[IdentifierAction].toInstance(new FakeIdentifierAction(bodyParsers)),
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
+
+  }
+
+
 }
