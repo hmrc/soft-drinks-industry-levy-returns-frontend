@@ -23,6 +23,8 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
+
+
 class ChangeRegistrationControllerSpec extends SpecBase {
 
   "ChangeRegistration Controller" - {
@@ -59,8 +61,19 @@ class ChangeRegistrationControllerSpec extends SpecBase {
 
       }
     }
+    "must redirect to the next page when valid data is submitted" in {
 
-    // TODO: need to test Post
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      lazy val changeRegistrationRoute = routes.ChangeRegistrationController.onPageLoad.url
+      running(application) {
+        val request =
+          FakeRequest(POST, changeRegistrationRoute)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
     // TODO: need to run test coverage report
     // TODO: need to refactor 2nd fakeIdentifier and application builder
   }
