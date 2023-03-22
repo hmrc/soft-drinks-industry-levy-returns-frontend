@@ -17,7 +17,6 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
       setAnswers(userAnswers)
       given
         .commonPrecondition
-       // .newPackagerPrecondition
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/packaging-site-details")
@@ -37,7 +36,6 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
       "user selected yes " in {
 
         given
-//          .newPackagerPrecondition
           .commonPrecondition
         val userAnswers = newPackerOrImporterPartialAnswers.success.value
         setAnswers(userAnswers)
@@ -63,7 +61,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
       "user selected edit on one of the detail lines" in {
 
         given
-          .newPackagerPrecondition
+          .commonPrecondition
 
         val userAnswers = newPackerOrImporterPartialAnswers.success.value
         setAnswers(userAnswers)
@@ -90,7 +88,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 "user selected remove on one of the addresses" in {
 
 given
-.newPackagerPrecondition
+.commonPrecondition
 
 val userAnswers = newPackerOrImporterPartialAnswers.success.value
 setAnswers(userAnswers)
@@ -119,7 +117,6 @@ res.status mustBe 303
       "user selected no with at least one packaging site on the list" in {
 
         given
-        //  .newPackagerPrecondition
           .commonPrecondition
         val userAnswers = newPackerOrImporterPartialAnswers.success.value.copy(packagingSiteList =
           List(Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
@@ -146,7 +143,6 @@ res.status mustBe 303
       "user selected no with at least one packaging site on the list AND user is also a new Importer" in {
 
         given
-        //  .newPackagerAndImporterPrecondition
           .commonPrecondition
         val userAnswers = newPackerOrImporterPartialAnswers.success.value.copy(packagingSiteList =
           List(Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
