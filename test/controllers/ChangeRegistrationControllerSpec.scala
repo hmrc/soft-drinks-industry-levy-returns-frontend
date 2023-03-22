@@ -31,7 +31,7 @@ class ChangeRegistrationControllerSpec extends SpecBase {
 
     "must return OK and the correct link for packer within the view for a GET" in {
 
-      val application = applicationBuilder2(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.ChangeRegistrationController.onPageLoad().url)
@@ -47,7 +47,7 @@ class ChangeRegistrationControllerSpec extends SpecBase {
 
     "must return OK and the correct link for importer within the view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptiondetails = subscriptionWithCopacker).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.ChangeRegistrationController.onPageLoad().url)
@@ -75,6 +75,5 @@ class ChangeRegistrationControllerSpec extends SpecBase {
     }
 
     // TODO: need to run test coverage report
-    // TODO: need to refactor 2nd fakeIdentifier and application builder
   }
 }

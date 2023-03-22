@@ -29,7 +29,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
 
 import java.time.LocalDate
@@ -74,18 +74,6 @@ object SpecBase {
     deregDate = None
   )
 
-  val subscriptionWithNoProductionSiteList = RetrievedSubscription(
-    utr = "0000000022",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
 }
 
 trait SpecBase
@@ -97,6 +85,7 @@ trait SpecBase
     with IntegrationPatience {
 
   val application = applicationBuilder(userAnswers = None).build()
+  implicit val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
@@ -148,41 +137,35 @@ trait SpecBase
     warehouseSites = List(),
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
-  )  // TODO - can we remove this one and use teh one in teh object instead?
+  ) // TODO - can we remove this one and use teh one in teh object instead?
 
-  val subscriptionWithNoProductionSiteList = RetrievedSubscription(
-    utr = "0000000055",
-    sdilRef = "XKSDIL000000055",
+  val subscriptionWithCopacker = RetrievedSubscription(
+    utr = "0000000022",
+    sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",
     address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
+    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = false,
+      voluntaryRegistration = false),
     liabilityDate = LocalDate.of(2018, 4, 19),
     productionSites = List(),
     warehouseSites = List(),
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
   )
+
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None,
-                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
+                                    returnPeriod: Option[ReturnPeriod] = None,
+                                    subscriptiondetails: RetrievedSubscription = aSubscription): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[IdentifierAction].toInstance (new FakeIdentifierAction(subscriptiondetails)),
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
 
-  protected def applicationBuilder2(
-                                    userAnswers: Option[UserAnswers] = None,
-                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction2],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
-      )
 }

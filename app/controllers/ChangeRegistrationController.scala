@@ -40,7 +40,7 @@ class ChangeRegistrationController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData) {
     implicit request =>
-      val linkCall = if (request.subscription.productionSites.isEmpty) {
+      val linkCall = if (!request.subscription.activity.contractPacker) {
         routes.PackagedContractPackerController.onPageLoad(NormalMode)
       } else routes.BroughtIntoUKController.onPageLoad(NormalMode)
       Ok(view(linkCall))

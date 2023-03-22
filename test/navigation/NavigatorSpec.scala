@@ -238,7 +238,7 @@ class NavigatorSpec extends SpecBase {
               NormalMode,
               userAnswers(value),
               Some(sdilReturn),
-              Some(subscriptionWithNoProductionSiteList)
+              Some(aSubscription)
             )
 
             "select Yes to navigate to How many credits for lost damaged page" in {
@@ -253,7 +253,7 @@ class NavigatorSpec extends SpecBase {
 
             "select No to navigate to change registration page" - {
 
-              "when user is a new Importer and has no warehouses in the warehouses list" in {
+              "when user is a new Importer" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
                   Json.obj(
                     "HowManyBroughtIntoUk" -> HowManyBroughtIntoUk(100L, 100L),
