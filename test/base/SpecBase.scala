@@ -74,6 +74,18 @@ object SpecBase {
     deregDate = None
   )
 
+  val subscriptionWithNoProductionSiteList = RetrievedSubscription(
+    utr = "0000000022",
+    sdilRef = "XKSDIL000000022",
+    orgName = "Super Lemonade Plc",
+    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
+    liabilityDate = LocalDate.of(2018, 4, 19),
+    productionSites = List(),
+    warehouseSites = List(),
+    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+    deregDate = None
+  )
 }
 
 trait SpecBase
@@ -138,6 +150,18 @@ trait SpecBase
     deregDate = None
   )  // TODO - can we remove this one and use teh one in teh object instead?
 
+  val subscriptionWithNoProductionSiteList = RetrievedSubscription(
+    utr = "0000000055",
+    sdilRef = "XKSDIL000000055",
+    orgName = "Super Lemonade Plc",
+    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
+    liabilityDate = LocalDate.of(2018, 4, 19),
+    productionSites = List(),
+    warehouseSites = List(),
+    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+    deregDate = None
+  )
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())

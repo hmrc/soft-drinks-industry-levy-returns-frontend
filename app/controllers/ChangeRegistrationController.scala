@@ -21,11 +21,14 @@ import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import models.{NormalMode, SdilReturn}
 import navigation.Navigator
+import pages.HowManyAsAContractPackerPage
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ChangeRegistrationView
+
 import scala.concurrent.ExecutionContext
 
 
@@ -42,6 +45,8 @@ class ChangeRegistrationController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData) {
     implicit request =>
+      val productionSiteList = request.subscription.productionSites
+      println(Console.YELLOW + "inside On Page load" + Console.WHITE)
       Ok(view())
   }
 

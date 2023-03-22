@@ -18,6 +18,9 @@ package controllers
 
 import base.SpecBase
 import models.NormalMode
+import models.retrieved.RetrievedSubscription
+import org.jsoup.Jsoup
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.ChangeRegistrationView
@@ -26,20 +29,22 @@ class ChangeRegistrationControllerSpec extends SpecBase {
 
   "ChangeRegistration Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct link for packer within the view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
+        val subWithNoProductionSiteList: RetrievedSubscription = SpecBase.subscriptionWithNoProductionSiteList
         val request = FakeRequest(GET, routes.ChangeRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ChangeRegistrationView]
-
+        val page = Jsoup.parse(contentAsString(result))
         status(result) mustEqual OK
         contentAsString(result) must include (routes.PackagedContractPackerController.onPageLoad(NormalMode).url)
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        page.getElementsByTag("h1").text() mustEqual Messages("ChangeRegistration.title")
+
       }
     }
   }

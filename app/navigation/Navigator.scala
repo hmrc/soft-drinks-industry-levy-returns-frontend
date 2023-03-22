@@ -154,7 +154,7 @@ class Navigator @Inject()() {
             !subscription.activity.importer // TODO to be refactored when we have a common helper
           val isNewPacker = (sdilReturn.totalPacked._1 > 0L || sdilReturn.totalPacked._2 > 0L) &&
             !subscription.activity.contractPacker // TODO to be refactored when we have a common helper
-          if ((isNewImporter && subscription.productionSites.isEmpty) || (isNewPacker && subscription.warehouseSites.isEmpty)) {
+          if ((isNewImporter && subscription.warehouseSites.isEmpty) || (isNewPacker && subscription.productionSites.isEmpty)) {
             routes.ChangeRegistrationController.onPageLoad()
           } else routes.IndexController.onPageLoad()  //TODO IndexController to be replaced with CYA page
 

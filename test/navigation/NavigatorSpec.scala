@@ -238,7 +238,7 @@ class NavigatorSpec extends SpecBase {
               NormalMode,
               userAnswers(value),
               Some(sdilReturn),
-              Some(aSubscription)
+              Some(subscriptionWithNoProductionSiteList)
             )
 
             "select Yes to navigate to How many credits for lost damaged page" in {
@@ -253,25 +253,23 @@ class NavigatorSpec extends SpecBase {
 
             "select No to navigate to change registration page" - {
 
-              "when user is a new Importer" in {
+              "when user is a new Importer and has no warehouses in the warehouses list" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
                   Json.obj(
                     "HowManyBroughtIntoUk" -> HowManyBroughtIntoUk(100L, 100L),
                     "claimCreditsForLostDamaged" -> value))
-                def retrievedActivity = RetrievedActivity(true, false, false, false, true)
 
-                def retrievedSubscription = RetrievedSubscription.apply(any(), any(), any(), any(), activity =
-                  retrievedActivity, any(), any(), warehouseSites = List.empty, any(), any())
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(100L, 100L),(0L,0L),(0L,0L),(0L,0L))
                 val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
                 result mustBe routes.ChangeRegistrationController.onPageLoad()
               }
 
               "when user is a new packer" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = UserAnswers("XKSDIL000000055",
                   Json.obj(
-                    "howManyAsAContractPacker" -> HowManyAsAContractPacker(100L, 100L),
-                    "claimCreditsForLostDamaged" -> value), List.empty, List.empty, lastUpdated = any)
+                    "HowManyAsAContractPacker" -> HowManyAsAContractPacker(100L, 100L),
+                    "claimCreditsForLostDamaged" -> value))
+
                 val sdilReturn = SdilReturn((0L,0L),(100L, 100L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
                 val result = navigate(false, _ => userAnswers(false), sdilReturn)
                 result mustBe routes.ChangeRegistrationController.onPageLoad()
