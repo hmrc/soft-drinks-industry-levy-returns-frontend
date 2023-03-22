@@ -942,5 +942,28 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must return OK and contain company alias with 0 total when there is no activity to report (nilReturn)" in {
+
+      val application = applicationBuilder(Some(bareBoneUserAnswers)).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2023"
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.noActivityToReport().url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
+        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+      }
+    }
+
+    // TODO - Period is set to a default value in FakeIdentifierAction -
+    //  Allow tests to set the period for more flexibility
+//    "must throw an exception when no return period is available on when constructing the page" in {
+//      ???
+//    }
+
+
   }
 }

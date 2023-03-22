@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import models.requests.DataRequest
+import models.retrieved.RetrievedSubscription
 import models.{Address, Amounts, FinancialLineItem, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers, Warehouse}
 import pages._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -68,14 +69,11 @@ class ReturnsController @Inject()(
       val sdilEnrolment = request.sdilEnrolment
       val subscription = request.subscription
       val isSmallProducer = subscription.activity.smallProducer
+      // TODO - globalise maybe?
       val userAnswers = request.userAnswers
-      val paymentDueDate = request.returnPeriod.getOrElse(GenericError.throwException("No return period found"))
-      val returnPeriod = request.returnPeriod match {
-        case Some(period) => period
-        case _ =>
-          logger.error("No period available")
-          throw new RuntimeException("no period available")
-      }
+
+      // TODO - double check if payment due date is the end of the current return period being submitted
+      val returnPeriod = request.returnPeriod.getOrElse(GenericError.throwException("No return period found"))
 
       for {
         session <- sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS)
@@ -89,7 +87,7 @@ class ReturnsController @Inject()(
                 ReturnsHelper.emptyReturn
               } else {
                 SdilReturn(
-                  ownBrandsLitres(userAnswers),
+                  ownBrandsLitres(subscription, userAnswers),
                   packLargeLitres(userAnswers),
                   userAnswers.smallProducerList,
                   importsLitres(userAnswers),
@@ -115,7 +113,7 @@ class ReturnsController @Inject()(
               request.subscription,
               CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
               amounts.totalForQuarter,
-              paymentDueDate,
+              returnPeriod, // TODO - I don't think this needs to be passed twice
               financialStatus = financialStatus(amounts.total): String,
               ownBrandsAnswers(userAnswers),
               packagedContractPackerAnswers(request, userAnswers),
@@ -130,6 +128,7 @@ class ReturnsController @Inject()(
               warehouseAnswers(userAnswers),
               AmountToPaySummary.amountToPaySummary(amounts.totalForQuarter, amounts.balanceBroughtForward, amounts.total)
             ))
+
           }
           case _ =>
             logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
@@ -138,58 +137,53 @@ class ReturnsController @Inject()(
       }
   }
 
-  private def wastageLitres(userAnswers: UserAnswers) = {
-    (
-      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
-      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
-    )
-  }
-
-  private def exportLitres(userAnswers: UserAnswers) = {
-    (
-      userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L),
-      userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
-    )
-  }
-
-  private def importsSmallLitres(userAnswers: UserAnswers) = {
-    (
-      userAnswers.smallProducerList.map(smallProducer => smallProducer.litreage._1).sum,
-      userAnswers.smallProducerList.map(smallProducer => smallProducer.litreage._2).sum
-    )
-  }
-
-  private def importsLitres(userAnswers: UserAnswers) = {
-    (
-      userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L),
-      userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
-    )
+  private def ownBrandsLitres(subscription: RetrievedSubscription, userAnswers: UserAnswers) = {
+    if (!subscription.activity.smallProducer) {
+      (userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
+        userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L))
+    } else (0L, 0L)
   }
 
   private def packLargeLitres(userAnswers: UserAnswers) = {
-    (
-      userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L),
-      userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
-    )
+    (userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L))
   }
 
-  private def ownBrandsLitres(userAnswers: UserAnswers) = {
-    (
-      userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
-      userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
-    )
+  private def importsLitres(userAnswers: UserAnswers) = {
+    (userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L))
   }
+
+  private def importsSmallLitres(userAnswers: UserAnswers) = {
+    (userAnswers.smallProducerList.map(smallProducer => smallProducer.litreage._1).sum,
+      userAnswers.smallProducerList.map(smallProducer => smallProducer.litreage._2).sum)
+  }
+
+  private def exportLitres(userAnswers: UserAnswers) = {
+    (userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L))
+  }
+
+  private def wastageLitres(userAnswers: UserAnswers) = {
+    (userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L))
+  }
+
+
+//  TODO - refactor function to work based on page type as opposed to function per type
+//  private def pageLitresInfo(userAnswers: UserAnswers, page: QuestionPage[_]): Unit = {
+//    (
+//      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
+//      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
+//    )
+//  }
 
   private def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    SummaryListViewModel(rows = Seq(
-      SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)
-    ))
+    SummaryListViewModel(rows = Seq(SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)))
   }
 
   private def smallProducerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    SummaryListViewModel(rows = Seq(
-      SmallProducerDetailsSummary.producerList(userAnswers)
-    ).flatten)
+    SummaryListViewModel(rows = Seq(SmallProducerDetailsSummary.producerList(userAnswers)).flatten)
   }
 
   private def claimCreditsForLostOrDamagedAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
@@ -299,15 +293,11 @@ class ReturnsController @Inject()(
   }
 
   private def smallProducerCheck(smallProducerList: List[SmallProducer]): Option[List[SmallProducer]] = {
-    if (smallProducerList.length > 0) {
-      Some(smallProducerList)
-    } else None
+    if (smallProducerList.length > 0) Some(smallProducerList) else None
   }
 
   private def warehouseCheck(warehouseList: List[Warehouse]): Option[List[Warehouse]] = {
-    if (warehouseList.length > 0) {
-      Some(warehouseList)
-    } else None
+    if (warehouseList.length > 0) Some(warehouseList) else None
   }
 
   private def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
