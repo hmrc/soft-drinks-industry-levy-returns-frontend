@@ -59,5 +59,9 @@ class ChangeRegistrationControllerSpec extends SpecBase {
 
       }
     }
+
+    // TODO: need to test Post
+    // TODO: need to run test coverage report
+    // TODO: need to refactor 2nd fakeIdentifier and application builder
   }
 }
