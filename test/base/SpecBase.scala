@@ -154,14 +154,14 @@ trait SpecBase
 
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None,
-                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder = {
+                                    returnPeriod: Option[ReturnPeriod] = Some(ReturnPeriod(year = 2023, quarter = 1))): GuiceApplicationBuilder = {
 
     val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
 
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].toInstance(new FakeIdentifierAction(bodyParsers)),
+        bind[IdentifierAction].toInstance(new FakeIdentifierAction(returnPeriod, bodyParsers)),
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
 

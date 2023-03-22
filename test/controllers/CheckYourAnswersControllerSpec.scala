@@ -56,9 +56,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       // TODO - Period is set to a default value in FakeIdentifierAction -
       //  Allow tests to set the period for more flexibility
-      val application = applicationBuilder(Some(bareBoneUserAnswers)).overrides(
+      val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2023"
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("firstQuarter")} 2022"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -71,9 +71,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias and return correct description for period 1 in grey pre header" in {
-      val application = applicationBuilder(Some(bareBoneUserAnswers)).overrides(
+      val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2021, quarter = 1))).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2023"
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2021"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -86,9 +86,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias and return correct description for period 2 in grey pre header" in {
-      val application = applicationBuilder(Some(bareBoneUserAnswers)).overrides(
+      val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2020, quarter = 2))).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2023"
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("thirdQuarter")} 2020"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -101,9 +101,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias and return correct description for period 3 in grey pre header" in {
-      val application = applicationBuilder(Some(bareBoneUserAnswers)).overrides(
+      val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2019, quarter = 3))).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2023"
+      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("fourthQuarter")} 2019"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value

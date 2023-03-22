@@ -25,10 +25,10 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeIdentifierAction @Inject()(bodyParsers: BodyParser[AnyContent]) extends IdentifierAction {
+class FakeIdentifierAction @Inject()(returnPeriod: Option[ReturnPeriod],bodyParsers: BodyParser[AnyContent]) extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, "id", SpecBase.aSubscription, Some(ReturnPeriod(2023,1))))
+    block(IdentifierRequest(request, "id", SpecBase.aSubscription, returnPeriod))
 
   override def parser: BodyParser[AnyContent] = bodyParsers
 
