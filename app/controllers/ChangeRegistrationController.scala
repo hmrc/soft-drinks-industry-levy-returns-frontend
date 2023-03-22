@@ -21,16 +21,11 @@ import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import models.{NormalMode, SdilReturn}
 import navigation.Navigator
-import pages.HowManyAsAContractPackerPage
-
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ChangeRegistrationView
-
-import scala.concurrent.ExecutionContext
-
 
 class ChangeRegistrationController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -41,13 +36,14 @@ class ChangeRegistrationController @Inject()(
                                        navigator: Navigator,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: ChangeRegistrationView
-                                     )(implicit ec: ExecutionContext, config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                     )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData) {
     implicit request =>
-      val productionSiteList = request.subscription.productionSites
-      println(Console.YELLOW + "inside On Page load" + Console.WHITE)
-      Ok(view())
+      val linkCall = if (request.subscription.productionSites.isEmpty) {
+        routes.PackagedContractPackerController.onPageLoad(NormalMode)
+      } else routes.BroughtIntoUKController.onPageLoad(NormalMode)
+      Ok(view(linkCall))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {
@@ -55,10 +51,9 @@ class ChangeRegistrationController @Inject()(
       val answers = request.userAnswers
       val sdilReturn = SdilReturn.apply(answers)
       val subscription = request.subscription
-      val isNewImporter = (sdilReturn.totalImported._1 > 0L || sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer // TODO to be refactored when we have a common helper
       val isNewPacker = (sdilReturn.totalPacked._1 > 0L || sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker // TODO to be refactored when we have a common helper
       if(isNewPacker) {
-        Redirect(routes.PackAtBusinessAddressController.onPageLoad(NormalMode)) //TODO CHECK IF USER IS NEW PACKER
+        Redirect(routes.PackAtBusinessAddressController.onPageLoad(NormalMode))
       }else {
         Redirect(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode))
       }

@@ -20,7 +20,7 @@
         govukButton: GovukButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(linkCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("ChangeRegistration.title"))) {
     @formHelper(action = routes.ChangeRegistrationController.onSubmit(), Symbol("autoComplete") -> "off") {
@@ -28,7 +28,7 @@
         <h1 class="govuk-heading-m">@messages("ChangeRegistration.title")</h1>
         <p class="govuk-body">@messages("ChangeRegistration.subtext1")</p>
         <p class="govuk-body">@messages("ChangeRegistration.subtext2")</p>
-        <p class="govuk-body">@Html(messages("ChangeRegistration.subtext3", routes.PackagedContractPackerController.onPageLoad(NormalMode).url))</p>
+        <p class="govuk-body">@Html(messages("ChangeRegistration.subtext3", linkCall.url))</p>
         <p class="govuk-body">@messages("ChangeRegistration.subtext4")</p>
 
         @govukButton(
