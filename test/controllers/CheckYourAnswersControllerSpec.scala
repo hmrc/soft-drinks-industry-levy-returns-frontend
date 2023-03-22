@@ -53,9 +53,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   "Check Your Answers Controller" - {
 
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
-
-      // TODO - Period is set to a default value in FakeIdentifierAction -
-      //  Allow tests to set the period for more flexibility
       val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("firstQuarter")} 2022"
@@ -958,11 +955,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    // TODO - Period is set to a default value in FakeIdentifierAction -
-    //  Allow tests to set the period for more flexibility
-//    "must throw an exception when no return period is available on when constructing the page" in {
-//      ???
-//    }
+    "must throw an exception when no return period is available on when constructing the page" in {
+      val application = applicationBuilder(Some(bareBoneUserAnswers), None).build()
+      val result = running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        route(application, request).value
+      }
+
+      intercept[RuntimeException](
+        result mustBe an[RuntimeException]
+      )
+    }
 
 
   }
