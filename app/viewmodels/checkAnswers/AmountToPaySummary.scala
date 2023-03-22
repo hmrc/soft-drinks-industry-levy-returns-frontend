@@ -149,9 +149,9 @@ object AmountToPaySummary {
 
     val formattedBalanceBroughtForward =    if(balanceBroughtForward < 0) {
       {f"+£${balanceBroughtForward.abs}%,.2f"}
-    } else {
+    } else if(balanceBroughtForward > 0){
       {f"-£${balanceBroughtForward.abs}%,.2f"}
-    }
+    }else f"£${balanceBroughtForward.abs}%,.2f"
 
     SummaryList(
       rows = Seq(

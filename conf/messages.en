@@ -417,6 +417,7 @@ ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own b
 broughtIntoUK.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
 claimCreditsForLostDamaged.checkYourAnswersLabel = Claiming credit for lost or destroyed liable drinks?
 broughtIntoUKFromSmallProducers.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
+claimCreditsForExports.checkYourAnswersLabel = claiming credit for exported liable drinks?
 
 returnSent.title = Return sent
 returnSent.panel.returnMessage = Soft Drinks Industry Levy return {0} to {1} {2} for the {3}

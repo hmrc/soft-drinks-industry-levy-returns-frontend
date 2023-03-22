@@ -54,8 +54,8 @@ object HowManyCreditsForExportSummary  {
 
     answers.get(HowManyCreditsForExportPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", (answer.lowBand * lowBandCostPerLitre.toDouble * -1))
-        val value = HtmlFormat.escape(levy).toString
+        val levyTotal = answer.lowBand * lowBandCostPerLitre.toDouble * -1
+        val value = if(levyTotal<0){f"-£${levyTotal.abs}%,.2f"} else f"£${levyTotal.abs}"
 
         SummaryListRowViewModel(
           key = "lowBandLevy",
@@ -90,8 +90,8 @@ object HowManyCreditsForExportSummary  {
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyCreditsForExportPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", (answer.highBand * highBandCostPerLitre.toDouble * -1))
-        val value = HtmlFormat.escape(levy).toString
+        val levyTotal = answer.highBand * highBandCostPerLitre.toDouble * -1
+        val value = if(levyTotal<0){f"-£${levyTotal.abs}%,.2f"} else f"£${levyTotal.abs}"
 
         SummaryListRowViewModel(
           key = "highBandLevy",
