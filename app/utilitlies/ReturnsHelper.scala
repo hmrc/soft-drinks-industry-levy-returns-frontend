@@ -16,8 +16,10 @@
 
 package utilitlies
 
+import models.requests.DataRequest
 import models.{SdilReturn, UserAnswers}
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
 
 object ReturnsHelper {
 
@@ -42,5 +44,12 @@ object ReturnsHelper {
       ))
 
   def emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
+
+  private def extractReturnsPeriod(request: DataRequest[AnyContent], sdilEnrolment: String) = {
+    request.returnPeriod match {
+      case Some(period) => period
+      case _ => throw new RuntimeException(s"Request does not contain return period for $sdilEnrolment")
+    }
+  }
 
 }

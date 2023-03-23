@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.{Configuration, Logger}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.{CurrencyFormatter, GenericError, ReturnsHelper}
+import utilitlies.{CurrencyFormatter, ReturnsHelper}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
@@ -73,9 +73,9 @@ class ReturnsController @Inject()(
       val userAnswers = request.userAnswers
 
       // TODO - double check if payment due date is the end of the current return period being submitted
-      val returnPeriod = request.returnPeriod.getOrElse(GenericError.throwException("No return period found"))
+      val returnPeriod = extractReturnsPeriod(request, sdilEnrolment)
 
-      for {
+        for {
         session <- sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS)
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
       } yield {
@@ -306,5 +306,12 @@ class ReturnsController @Inject()(
     }
 
   private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
+
+  private def extractReturnsPeriod(request: DataRequest[AnyContent], sdilEnrolment: String) = {
+    request.returnPeriod match {
+      case Some(period) => period
+      case _ => throw new RuntimeException(s"Request does not contain return period for $sdilEnrolment")
+    }
+  }
 
 }

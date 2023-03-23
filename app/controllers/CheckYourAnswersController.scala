@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.{GenericError, ReturnsHelper}
+import utilitlies.ReturnsHelper
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
@@ -115,8 +115,6 @@ class CheckYourAnswersController @Inject()(
         Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
     }
   }
-
-
 
   private def formattedReturnPeriodQuarter(returnPeriod: ReturnPeriod)(implicit messages: Messages) = {
     returnPeriod.quarter match {
@@ -249,12 +247,13 @@ class CheckYourAnswersController @Inject()(
   }
 
   private def cacheAmounts(sdilEnrolment: String, amounts: Amounts) = {
-    sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts).onComplete {
-      case Success(_) => logger.info(s"Amounts saved in session cache for $sdilEnrolment")
-      case Failure(error) => throw new RuntimeException(s"Failed to save amounts in session cache for $sdilEnrolment Error: $error")
+    sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts).map {
+      case result => result
+      case _ => throw new RuntimeException(s"Failed to save amounts in session cache for $sdilEnrolment")
     }
   }
 
+  // TODO - refactor as this is used in both CYA and returns controllers
   private def extractReturnsPeriod(request: DataRequest[AnyContent], sdilEnrolment: String) = {
     request.returnPeriod match {
       case Some(period) => period

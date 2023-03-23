@@ -19,15 +19,15 @@ package utilitlies
 import play.api.i18n.Lang.logger
 
 
-trait GenericError {
-  def throwException(message: String)
-}
-
-object GenericError extends GenericError {
-
-  override def throwException(message: String) = {
-    logger.error(message)
-    throw new RuntimeException(message)
-  }
-}
+//trait GenericError {
+//  def throwException(message: String)
+//}
+//
+//object GenericError extends GenericError {
+//
+//  override def throwException(message: String) = {
+//    logger.error(message)
+//    throw new RuntimeException(message)
+//  }
+//}
 
