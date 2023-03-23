@@ -74,8 +74,8 @@ class CheckYourAnswersController @Inject()(
     }
 
     val balanceAllEnabled = config.balanceAllEnabled
-    val returnPeriod = request.returnPeriod.getOrElse(GenericError.throwException("No return period found"))
     val sdilEnrolment = request.sdilEnrolment
+    val returnPeriod = extractReturnsPeriod(request, sdilEnrolment)
 
     (for {
       isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
@@ -115,6 +115,8 @@ class CheckYourAnswersController @Inject()(
         Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
     }
   }
+
+
 
   private def formattedReturnPeriodQuarter(returnPeriod: ReturnPeriod)(implicit messages: Messages) = {
     returnPeriod.quarter match {
@@ -249,7 +251,14 @@ class CheckYourAnswersController @Inject()(
   private def cacheAmounts(sdilEnrolment: String, amounts: Amounts) = {
     sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts).onComplete {
       case Success(_) => logger.info(s"Amounts saved in session cache for $sdilEnrolment")
-      case Failure(error) => logger.error(s"Failed to save amounts in session cache for $sdilEnrolment Error: $error")
+      case Failure(error) => throw new RuntimeException(s"Failed to save amounts in session cache for $sdilEnrolment Error: $error")
+    }
+  }
+
+  private def extractReturnsPeriod(request: DataRequest[AnyContent], sdilEnrolment: String) = {
+    request.returnPeriod match {
+      case Some(period) => period
+      case _ => throw new RuntimeException(s"Request does not contain return period for $sdilEnrolment")
     }
   }
 }
