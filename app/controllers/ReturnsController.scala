@@ -95,14 +95,10 @@ class ReturnsController @Inject()(
               }
 
             if (pendingReturns.contains(returnPeriod)) {
-              sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted).onComplete {
-                case Success(_) =>
-                  println(Console.YELLOW + "SUCCESS" + Console.WHITE)
-                  logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-                case Failure(e) =>
-                  println(Console.YELLOW + "FAILURE" + Console.WHITE)
-                  logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-                  throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter} - error ${e.getMessage}" )
+              sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted).map {
+                case Some(OK) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+                case _ => logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+                  throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}" )
               }
             } else {
               logger.error(s"Pending returns for $sdilEnrolment don't contain the return for year ${returnPeriod.year} quarter ${returnPeriod.quarter}")

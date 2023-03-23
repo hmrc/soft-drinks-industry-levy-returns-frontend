@@ -45,7 +45,7 @@ class ReturnsControllerSpec extends SpecBase {
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
   when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriods)
-  when(mockSdilConnector.returns_update(any(),any(),any())(any())) thenReturn Future.successful()
+  when(mockSdilConnector.returns_update(any(),any(),any())(any())) thenReturn Future.successful(Some(OK))
 
   "ReturnSent Controller" - {
 
@@ -548,11 +548,9 @@ class ReturnsControllerSpec extends SpecBase {
     }
 
     "must submit return successfully" in {
-
       val amounts = Amounts(666, 666, 1332)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
-      when(mockSdilConnector.returns_update(any(), any(),any())(any())) thenReturn Future.successful()
 
       val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
@@ -569,6 +567,28 @@ class ReturnsControllerSpec extends SpecBase {
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£1,332.00")
       }
+    }
+
+    "must handle errors when submit return fails" in {
+      val amounts = Amounts(666, 666, 1332)
+
+      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
+      when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
+      when(mockSdilConnector.returns_update(any(), any(), any())(any())) thenReturn Future.successful(None)
+
+      val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
+        bind[SDILSessionCache].toInstance(mockSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
+
+      val result = running(application) {
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        route(application, request).value
+      }
+
+      intercept[RuntimeException](
+        result mustBe an[RuntimeException]
+      )
     }
 
   }

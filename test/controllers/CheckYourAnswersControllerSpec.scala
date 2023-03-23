@@ -1150,7 +1150,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must log error when fails on resolving all future calls" in {
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.failed(new RuntimeException(""))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
       val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
