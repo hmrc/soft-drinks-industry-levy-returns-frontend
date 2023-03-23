@@ -17,33 +17,46 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import org.scalatest.BeforeAndAfter
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import org.mockito.MockitoSugar.mock
+import play.api.mvc.MessagesControllerComponents
+import repositories.{SDILSessionCache, SessionRepository}
+import views.html.CheckYourAnswersView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter {
 
-  val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
+
+  val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
+  val defaultReturnPeriod = Some(ReturnPeriod(year = 2023, quarter = 1))
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
   val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
   val financialItemList = List(financialItem1, financialItem2)
 
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockSessionRepository = mock[SessionRepository]
+  val mockConfig = mock[FrontendAppConfig]
+
+  when(mockConfig.balanceAllEnabled).thenReturn(false)
+  when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal(0.18))
+  when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal(0.24))
   when(mockSdilConnector.retrieveSubscription(any(), any())(any())).thenReturn(Future.successful(Some(aSubscription)))
   when(mockSdilConnector.returns_pending(any())(any())).thenReturn(Future.successful(List.empty[ReturnPeriod]))
   when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
@@ -54,7 +67,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
       val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("firstQuarter")} 2022"
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -127,7 +141,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show own brands packaged at own site row when no selected" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -150,7 +164,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       running(application) {
@@ -187,7 +201,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       running(application) {
@@ -207,7 +221,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show packaged contract packer row when present and answer is no" in {
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -227,7 +241,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -259,7 +273,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show exemption for small producers row when present and answer is no" in {
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -286,7 +300,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
 
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -318,7 +332,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show brought into the UK row when present and answer is no" in {
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -338,7 +352,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -370,7 +384,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show brought into the UK from small producers row when present and answer is no" in {
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -390,7 +404,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -422,7 +436,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show claim credits for exports row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -442,7 +456,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -474,7 +488,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show show lost or damaged row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -494,7 +508,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -546,7 +560,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (1000L, 2000L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -588,7 +602,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -630,7 +644,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (1000L, 2000L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -656,7 +670,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -694,9 +708,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L,0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L,0L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
-
-
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -743,7 +755,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -790,8 +802,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
-
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -839,7 +850,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -887,7 +898,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -910,7 +921,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must return OK and contain registered UK sites section header when packaging site present" in {
       val userAnswersData = Json.obj("packAtBusinessAddress" -> true)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -926,7 +937,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must return OK and contain registered UK sites section header when packaging site not present" in {
       val userAnswersData = Json.obj("packAtBusinessAddress" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers)).overrides(
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -940,8 +951,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias with 0 total when there is no activity to report (nilReturn)" in {
-
-      val application = applicationBuilder(Some(bareBoneUserAnswers)).overrides(
+      val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2023"
       running(application) {
@@ -955,7 +965,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must throw an exception when no return period is available on when constructing the page" in {
+    "must throw an exception when no return period is available when constructing the page" in {
       val application = applicationBuilder(Some(bareBoneUserAnswers), None).build()
       val result = running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -967,6 +977,22 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       )
     }
 
+    "must call balance instead of balanceHistory when balanceAllEnabled config is set to false" in {
+
+
+
+      val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+      }
+    }
 
   }
 }

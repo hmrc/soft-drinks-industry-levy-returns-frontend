@@ -16,6 +16,7 @@
 
 package base
 
+import config.FrontendAppConfig
 import controllers.actions._
 import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import models.{ReturnPeriod, UserAnswers}
@@ -154,7 +155,7 @@ trait SpecBase
 
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None,
-                                    returnPeriod: Option[ReturnPeriod] = Some(ReturnPeriod(year = 2023, quarter = 1))): GuiceApplicationBuilder = {
+                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder = {
 
     val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
 

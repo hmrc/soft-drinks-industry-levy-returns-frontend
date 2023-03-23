@@ -46,7 +46,7 @@ class CheckYourAnswersController @Inject()(
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CheckYourAnswersView,
-                                            connector: SoftDrinksIndustryLevyConnector,
+                                            sdilConnector: SoftDrinksIndustryLevyConnector,
                                             sessionCache: SDILSessionCache,
                                           ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -72,20 +72,22 @@ class CheckYourAnswersController @Inject()(
       case Some(answers) => answers
       case _ => request.userAnswers
     }
+
     val balanceAllEnabled = config.balanceAllEnabled
     val returnPeriod = request.returnPeriod.getOrElse(GenericError.throwException("No return period found"))
     val sdilEnrolment = request.sdilEnrolment
 
     (for {
-      isSmallProducer <- connector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
+      isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
       balanceBroughtForward <-
         if (balanceAllEnabled) {
-          connector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
+          sdilConnector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
             extractTotal(listItemsWithTotal(financialItem))
           }
-        } else connector.balance(sdilEnrolment, withAssessment = false)
+        } else {
+          sdilConnector.balance(sdilEnrolment, withAssessment = false)
+        }
     } yield {
-
       val totalForQuarter = calculateTotalForQuarter(answers, isSmallProducer.getOrElse(false))
       val total = totalForQuarter - balanceBroughtForward
       val isNilReturn = totalForQuarter == 0
