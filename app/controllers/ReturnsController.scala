@@ -69,13 +69,11 @@ class ReturnsController @Inject()(
       val sdilEnrolment = request.sdilEnrolment
       val subscription = request.subscription
       val isSmallProducer = subscription.activity.smallProducer
-      // TODO - globalise maybe?
-      val userAnswers = request.userAnswers
 
-      // TODO - double check if payment due date is the end of the current return period being submitted
+      val userAnswers = request.userAnswers
       val returnPeriod = extractReturnsPeriod(request, sdilEnrolment)
 
-        for {
+      for {
         session <- sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS)
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
       } yield {
@@ -99,8 +97,10 @@ class ReturnsController @Inject()(
             if (pendingReturns.contains(returnPeriod)) {
               sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted).onComplete {
                 case Success(_) =>
+                  println(Console.YELLOW + "SUCCESS" + Console.WHITE)
                   logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
                 case Failure(e) =>
+                  println(Console.YELLOW + "FAILURE" + Console.WHITE)
                   logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
                   throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter} - error ${e.getMessage}" )
               }
@@ -113,7 +113,7 @@ class ReturnsController @Inject()(
               request.subscription,
               CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
               amounts.totalForQuarter,
-              returnPeriod, // TODO - I don't think this needs to be passed twice
+              returnPeriod, // TODO - I don't think this needs to be passed twice :)
               financialStatus = financialStatus(amounts.total): String,
               ownBrandsAnswers(userAnswers),
               packagedContractPackerAnswers(request, userAnswers),

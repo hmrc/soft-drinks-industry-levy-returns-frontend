@@ -40,8 +40,6 @@ import scala.util.Failure
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter {
 
-
-
   val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
   val defaultReturnPeriod = Some(ReturnPeriod(year = 2023, quarter = 1))
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
@@ -53,7 +51,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   val mockSessionRepository = mock[SessionRepository]
   val mockConfig = mock[FrontendAppConfig]
   val mockSDILSessionCache = mock[SDILSessionCache]
-
 
   when(mockConfig.balanceAllEnabled).thenReturn(false)
   when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal(0.18))

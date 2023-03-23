@@ -41,7 +41,9 @@ class ReturnsControllerSpec extends SpecBase {
   when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
 
   val returnPeriods = List(ReturnPeriod(2020, 0), ReturnPeriod(2023, 1))
+  val returnPeriodsContainingBaseReturnPeriod = List(ReturnPeriod(2020, 0), ReturnPeriod(2023, 1), returnPeriod)
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
   when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriods)
   when(mockSdilConnector.returns_update(any(),any(),any())(any())) thenReturn Future.successful()
 
@@ -50,7 +52,7 @@ class ReturnsControllerSpec extends SpecBase {
     "must show own brands row with answer no, when answered" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -72,7 +74,7 @@ class ReturnsControllerSpec extends SpecBase {
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 1000 , "highBand"-> 1000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -102,7 +104,7 @@ class ReturnsControllerSpec extends SpecBase {
     "must show Contract packed at your own site with answer no, when answered" in {
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -124,7 +126,7 @@ class ReturnsControllerSpec extends SpecBase {
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 1000 , "highBand"-> 2000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -153,7 +155,7 @@ class ReturnsControllerSpec extends SpecBase {
     "must show Exemptions For Small Producers row with answer no, when answered" in {
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -172,7 +174,7 @@ class ReturnsControllerSpec extends SpecBase {
     "must show brought into uk with answer no, when answered" in {
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -194,7 +196,7 @@ class ReturnsControllerSpec extends SpecBase {
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -223,7 +225,7 @@ class ReturnsControllerSpec extends SpecBase {
     "must show brought into the UK from small producers row when present and answer is no" in {
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -246,7 +248,7 @@ class ReturnsControllerSpec extends SpecBase {
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -275,7 +277,7 @@ class ReturnsControllerSpec extends SpecBase {
     "must show claim credits for exports row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -298,7 +300,7 @@ class ReturnsControllerSpec extends SpecBase {
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -327,7 +329,7 @@ class ReturnsControllerSpec extends SpecBase {
     "must show show lost or damaged row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -350,7 +352,7 @@ class ReturnsControllerSpec extends SpecBase {
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -384,7 +386,7 @@ class ReturnsControllerSpec extends SpecBase {
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -401,7 +403,7 @@ class ReturnsControllerSpec extends SpecBase {
 
     "must show correct message to user when nothing is owed " in {
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -422,7 +424,7 @@ class ReturnsControllerSpec extends SpecBase {
       val amounts = Amounts(0, 0, -6600)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -444,7 +446,7 @@ class ReturnsControllerSpec extends SpecBase {
       val amounts = Amounts(0, 0, 6600)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -465,7 +467,7 @@ class ReturnsControllerSpec extends SpecBase {
       val amounts = Amounts(660, 0, 660)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -486,7 +488,7 @@ class ReturnsControllerSpec extends SpecBase {
       val amounts = Amounts(660, 0, 660)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -504,12 +506,11 @@ class ReturnsControllerSpec extends SpecBase {
       }
     }
 
-
-    "must show correct total" in {
+    "must show correct total when non nil return" in {
       val amounts = Amounts(660, 0, 660)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -529,8 +530,7 @@ class ReturnsControllerSpec extends SpecBase {
     "must show correct total when nil return" in {
       val amounts = Amounts(0, 0, 0)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-      val application = applicationBuilder(Some(userAnswers), Some(ReturnPeriod(year = 2022, quarter = 3))).overrides(
+      val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
@@ -544,6 +544,30 @@ class ReturnsControllerSpec extends SpecBase {
         page.getElementById("amountDue").text must include(Messages("checkYourAnswers.noPayNeeded.title"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£0.00")
+      }
+    }
+
+    "must submit return successfully" in {
+
+      val amounts = Amounts(666, 666, 1332)
+      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
+      when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
+      when(mockSdilConnector.returns_update(any(), any(),any())(any())) thenReturn Future.successful()
+
+      val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
+        bind[SDILSessionCache].toInstance(mockSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(true).url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("amountDue").text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text() must include("£1,332.00")
       }
     }
 
