@@ -538,6 +538,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain amount to pay section for large producer" in {
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
@@ -561,6 +562,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -580,6 +583,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount to pay header when return amount is in debit" +
       " totalForQuarter is negative and balanceBroughtForward is positive" in {
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
@@ -603,6 +607,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -622,6 +628,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain amount to pay section for small producer" in {
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
@@ -645,6 +652,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -686,6 +695,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain you do not need to pay anything when return amount is 0" in {
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(List()))
       val userAnswersData = Json.obj(
@@ -709,6 +719,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L,0L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -729,6 +741,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
       " and both totalForQuarter and balanceBroughtForward are negative (on page)" in {
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
       val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
@@ -756,6 +769,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -777,6 +792,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
       " and totalForQuarter is positive and balanceBroughtForward is negative (on page)" in {
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
       val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
@@ -803,6 +819,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -818,12 +836,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("total"))
         page.getElementsByClass("total").text() must include("-£258.00")
         page.getElementById("in-credit-main-sub-header").text() mustEqual(Messages("yourSoftDrinksLevyAccountsWillBeCredited", "£258.00"))
-
       }
     }
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
       " and totalForQuarter is negative and balanceBroughtForward is positive (on page)" in {
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
       val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
@@ -851,6 +869,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -872,6 +892,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount to pay header when return amount is in debit" +
       " totalForQuarter is positive and balanceBroughtForward is negative (on page)" in {
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
       val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(200))
@@ -899,6 +920,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
 
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -978,8 +1001,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must call balance instead of balanceHistory when balanceAllEnabled config is set to false" in {
-
-
 
       val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
