@@ -22,7 +22,8 @@ import connectors.SoftDrinksIndustryLevyConnector
 import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.IdiomaticMockitoBase.Times
+import org.mockito.Mockito.{times, verify, when}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfter
 import play.api.i18n.Messages
@@ -47,11 +48,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
   val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
   val financialItemList = List(financialItem1, financialItem2)
-
+  val cacheMap = CacheMap("ID",Map())
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockSessionRepository = mock[SessionRepository]
   val mockConfig = mock[FrontendAppConfig]
   val mockSDILSessionCache = mock[SDILSessionCache]
+
 
   when(mockConfig.balanceAllEnabled).thenReturn(false)
   when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal(0.18))
@@ -61,7 +63,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
   when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
   when(mockSdilConnector.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(100)))
-  when(mockSDILSessionCache.save(any(),any(),any())(any())).thenReturn(Future.successful(CacheMap("",Map())))
+  when(mockSDILSessionCache.save(any(),any(),any())(any())).thenReturn(Future.successful(cacheMap))
 
   "Check Your Answers Controller" - {
 
@@ -103,6 +105,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias and return correct description for period 2 in grey pre header" in {
+
       val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2020, quarter = 2))).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
@@ -121,6 +124,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias and return correct description for period 3 in grey pre header" in {
+
       val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2019, quarter = 3))).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
@@ -139,6 +143,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must throw and exception when return period is not returned" in {
+
       val application = applicationBuilder(Some(bareBoneUserAnswers), None).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
@@ -155,6 +160,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show own brands packaged at own site row when no selected" in {
+
       val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
@@ -178,6 +184,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected" in {
+
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
@@ -218,6 +225,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show own brands packaged at own site row containing small calculations when yes is selected" in {
+
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3)
@@ -244,6 +252,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show packaged contract packer row when present and answer is no" in {
+
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
@@ -264,6 +273,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show packaged contract packer row containing calculation when yes is selected" in {
+
       val userAnswersData = Json.obj(
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
@@ -302,6 +312,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show exemption for small producers row when present and answer is no" in {
+
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
@@ -325,6 +336,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show exemption for small producers row when yes is selected" in {
+
       val userAnswersData = Json.obj(
         "exemptionsForSmallProducers" -> true,
         "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
@@ -367,6 +379,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show brought into the UK row when present and answer is no" in {
+
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
@@ -387,6 +400,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show brought into the UK row containing calculation when yes is selected" in {
+
       val userAnswersData = Json.obj(
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
@@ -425,6 +439,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show brought into the UK from small producers row when present and answer is no" in {
+
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
@@ -445,6 +460,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show brought into the UK from small producers row containing calculation when yes is selected" in {
+
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers" -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
@@ -483,6 +499,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show claim credits for exports row when present and answer is no" in {
+
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
@@ -503,6 +520,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show claim credits for exports row containing calculation when yes is selected" in {
+
       val userAnswersData = Json.obj(
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
@@ -541,6 +559,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show show lost or damaged row when present and answer is no" in {
+
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
@@ -561,6 +580,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show lost or damaged row containing calculation when yes is selected" in {
+
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
@@ -599,6 +619,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain amount to pay section for large producer" in {
+
       when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
       val userAnswersData = Json.obj(
@@ -645,6 +666,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount to pay header when return amount is in debit" +
       " totalForQuarter is negative and balanceBroughtForward is positive" in {
+
       when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
       val userAnswersData = Json.obj(
@@ -691,6 +713,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain amount to pay section for small producer" in {
+
       when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val userAnswersData = Json.obj(
@@ -737,6 +760,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show submit returns section when a return is available" in {
+
       when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(List()))
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
@@ -762,6 +786,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain you do not need to pay anything when return amount is 0" in {
+
       when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(List()))
@@ -809,6 +834,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
       " and both totalForQuarter and balanceBroughtForward are negative (on page)" in {
+
       when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
@@ -861,6 +887,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
       " and totalForQuarter is positive and balanceBroughtForward is negative (on page)" in {
+
       when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
@@ -911,6 +938,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount you will be credited header when return amount is in credit" +
       " and totalForQuarter is negative and balanceBroughtForward is positive (on page)" in {
+
       when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
@@ -963,6 +991,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain amount to pay header when return amount is in debit" +
       " totalForQuarter is positive and balanceBroughtForward is negative (on page)" in {
+
       when(mockConfig.balanceAllEnabled).thenReturn(true)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
       val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(100))
@@ -1014,6 +1043,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain registered UK sites section header when packaging site present" in {
+
       val userAnswersData = Json.obj("packAtBusinessAddress" -> true)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
@@ -1052,6 +1082,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain company alias with 0 total when there is no activity to report (nilReturn)" in {
+
       val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
@@ -1086,7 +1117,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must call balance instead of balanceHistory when balanceAllEnabled config is set to false" in {
-
+      when(mockConfig.balanceAllEnabled).thenReturn(false)
       val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
@@ -1102,11 +1133,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must log error when fails on caching the amounts calculated" in {
-      when(mockSDILSessionCache.save(any(),any(),any())(any())).thenReturn(Future.failed(new RuntimeException()))
+      val secondMockSdilSessionCache = mock[SDILSessionCache]
+      when(secondMockSdilSessionCache.save(any(),any(),any())(any())).thenReturn(Future.successful(CacheMap("",Map())))
       val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
-        bind[SDILSessionCache].toInstance(mockSDILSessionCache),
+        bind[SDILSessionCache].toInstance(secondMockSdilSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       val result = running(application) {
@@ -1114,14 +1146,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         route(application, request).value
       }
 
+      verify(secondMockSdilSessionCache, times(1)).save(any(),any(),any())(any())
       intercept[RuntimeException](
         result mustBe an[RuntimeException]
       )
-
     }
 
     "must log error when fails on resolving all future calls" in {
-
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.failed(new RuntimeException(""))
       val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),

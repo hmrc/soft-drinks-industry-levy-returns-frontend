@@ -36,7 +36,6 @@ import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -248,7 +247,7 @@ class CheckYourAnswersController @Inject()(
 
   private def cacheAmounts(sdilEnrolment: String, amounts: Amounts) = {
     sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts).map {
-      case result => result
+      case result if !result.id.isEmpty => result
       case _ => throw new RuntimeException(s"Failed to save amounts in session cache for $sdilEnrolment")
     }
   }
