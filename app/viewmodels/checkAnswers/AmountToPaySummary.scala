@@ -168,6 +168,7 @@ object AmountToPaySummary {
         SummaryListRow(
           key = "total.checkYourAnswersLabel",
           value = ValueViewModel(HtmlContent(total)),
+          classes = "govuk-heading-s",
           actions = None
         )
       ))
