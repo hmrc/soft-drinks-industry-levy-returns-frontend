@@ -51,7 +51,7 @@ class ChangeRegistrationController @Inject()(
       val answers = request.userAnswers
       val sdilReturn = SdilReturn.apply(answers)
       val subscription = request.subscription
-      val isNewPacker = (sdilReturn.totalPacked._1 > 0L || sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker // TODO to be refactored when we have a common helper
+      val isNewPacker = (sdilReturn.totalPacked._1 + sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker // TODO to be refactored when we have a common helper
       if(isNewPacker) {
         Redirect(routes.PackAtBusinessAddressController.onPageLoad(NormalMode))
       }else {
