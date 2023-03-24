@@ -18,6 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
+import models.retrieved.RetrievedActivity
 import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -99,7 +100,6 @@ class ReturnsControllerSpec extends SpecBase {
         page.getElementsByTag("dd").text() must include("£240.00")
       }
     }
-
 
     "must show Contract packed at your own site with answer no, when answered" in {
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
@@ -612,6 +612,25 @@ class ReturnsControllerSpec extends SpecBase {
       intercept[RuntimeException](
         result mustBe an[RuntimeException]
       )
+    }
+
+    "must display 0 lowband and highband amounts when for own brands and small producer" in {
+      val amounts = Amounts(660, 0, 660)
+      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
+
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
+      val subscription = aSubscription.copy(activity = RetrievedActivity(true, true, false,false,false))
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod), Some(subscription)).overrides(
+        bind[SDILSessionCache].toInstance(mockSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+      }
     }
 
   }

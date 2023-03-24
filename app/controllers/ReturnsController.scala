@@ -133,11 +133,12 @@ class ReturnsController @Inject()(
       }
   }
 
+
   private def ownBrandsLitres(subscription: RetrievedSubscription, userAnswers: UserAnswers) = {
-    if (!subscription.activity.smallProducer) {
+    // TODO - iron out the difference between showing own brands litres on the page and including them in the total
+    //  if (!subscription.activity.smallProducer) otherwise return (0L, 0L)
       (userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
         userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L))
-    } else (0L, 0L)
   }
 
   private def packLargeLitres(userAnswers: UserAnswers) = {
@@ -164,15 +165,6 @@ class ReturnsController @Inject()(
     (userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L))
   }
-
-
-//  TODO - refactor function to work based on page type as opposed to function per type
-//  private def pageLitresInfo(userAnswers: UserAnswers, page: QuestionPage[_]): Unit = {
-//    (
-//      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
-//      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
-//    )
-//  }
 
   private def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)))
@@ -309,5 +301,4 @@ class ReturnsController @Inject()(
       case _ => throw new RuntimeException(s"Request does not contain return period for $sdilEnrolment")
     }
   }
-
 }
