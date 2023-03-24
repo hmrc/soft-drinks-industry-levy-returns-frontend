@@ -17,8 +17,7 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
-import models.{NormalMode, SdilReturn}
+import models.NormalMode
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
@@ -26,7 +25,7 @@ import play.api.test.Helpers._
 
 
 
-class ChangeRegistrationControllerSpec(implicit val config: FrontendAppConfig) extends SpecBase {
+class ChangeRegistrationControllerSpec extends SpecBase {
 
   "ChangeRegistration Controller" - {
 
@@ -67,7 +66,7 @@ class ChangeRegistrationControllerSpec(implicit val config: FrontendAppConfig) e
       val application = applicationBuilder(userAnswers = Some(completedUserAnswers)).build()
       lazy val changeRegistrationRoute = routes.ChangeRegistrationController.onPageLoad().url
       running(application) {
-        SdilReturn((0L,0L),(100L, 100L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
+
         val request =
           FakeRequest(POST, changeRegistrationRoute)
 

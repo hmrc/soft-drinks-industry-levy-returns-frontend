@@ -25,11 +25,8 @@ import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
-import play.api.libs.json.{Format, Json}
 import repositories.SDILSessionCache
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import play.api.test.Helpers._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}

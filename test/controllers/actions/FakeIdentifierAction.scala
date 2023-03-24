@@ -16,10 +16,7 @@
 
 package controllers.actions
 
-import base.SpecBase
 import models.ReturnPeriod
-
-import javax.inject.Inject
 import models.requests.IdentifierRequest
 import models.retrieved.RetrievedSubscription
 import play.api.mvc._

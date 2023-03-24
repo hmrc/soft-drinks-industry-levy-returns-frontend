@@ -21,8 +21,6 @@ import config.FrontendAppConfig
 import controllers.routes
 import pages._
 import models._
-import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
 
 class NavigatorSpec extends SpecBase {
