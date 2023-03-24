@@ -209,13 +209,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementById("change-lowband-litreage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£1800.00")
+        page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£4800.00")
+        page.getElementsByTag("dd").text() must include("£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("ownBrandsPackagedAtYourOwnSite.lowband.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("ownBrandsPackagedAtYourOwnSite.highband.hidden"))
@@ -297,13 +297,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementById("change-lowband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£1800.00")
+        page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£4800.00")
+        page.getElementsByTag("dd").text() must include("£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.lowband.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.highband.hidden"))
@@ -370,7 +370,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("6000")
         page.getElementById("change-highband-litreage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£1440.00")
+        page.getElementsByTag("dd").text() must include("£1,440.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.lowband.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.highband.hidden"))
@@ -424,13 +424,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementById("change-lowband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£1800.00")
+        page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£4800.00")
+        page.getElementsByTag("dd").text() must include("£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.lowband.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.highband.hidden"))
@@ -484,13 +484,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementById("change-lowband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£1800.00")
+        page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£4800.00")
+        page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.lowband.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.highband.hidden"))
@@ -1185,6 +1185,53 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       intercept[RuntimeException](
         result mustBe an[RuntimeException]
       )
+    }
+
+    "must not include brought into uk from small producers in teh calculation and should display cost as 0 for those" in {
+      when(mockSdilConnector.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
+      when(mockConfig.balanceAllEnabled).thenReturn(false)
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "exemptionsForSmallProducers" -> false,
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 444, "highBand" -> 444),
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+      )
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
+        bind[SDILSessionCache].toInstance(mockSDILSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("amountToPay"))
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        page.getElementsByClass("total-for-quarter").text() must include("£12,600.00")
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("£0.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("£12,600.00")
+
+        page.getElementsByTag("dd").text() must not include("£79.92")
+        page.getElementsByTag("dd").text() must not include("£106.56")
+
+      }
     }
   }
 }

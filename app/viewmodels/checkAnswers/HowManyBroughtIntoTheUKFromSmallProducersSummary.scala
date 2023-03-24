@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
+import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -43,8 +44,8 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
   def returnsLowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", (answer.lowBand * lowBandCostPerLitre.toDouble))
-        val value = HtmlFormat.escape(levy).toString
+        val levy = answer.lowBand * lowBandCostPerLitre.toDouble
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
 
         SummaryListRowViewModel(
           key = "lowBandLevy",
@@ -69,8 +70,8 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
   def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", (answer.highBand * highBandCostPerLitre.toDouble))
-        val value = HtmlFormat.escape(levy).toString
+        val levy = answer.highBand * highBandCostPerLitre.toDouble
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
         SummaryListRowViewModel(
           key = "highBandLevy",
           value = ValueViewModel(HtmlContent(value))
@@ -101,8 +102,8 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
 
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        val levy = "£" + String.format("%.2f", (answer.lowBand * lowBandCostPerLitre.toDouble))
-        val value = HtmlFormat.escape(levy).toString
+        // TODO - are there any conditions under which this is chargeable ?????
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
 
         SummaryListRowViewModel(
           key = "lowBandLevy",
@@ -135,8 +136,8 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        val levy = "£" + String.format("%.2f", (answer.highBand * highBandCostPerLitre.toDouble))
-        val value = HtmlFormat.escape(levy).toString
+        // TODO - are there any conditions under which this is chargeable ?????
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
 
         SummaryListRowViewModel(
           key = "highBandLevy",

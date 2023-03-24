@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
+import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -44,8 +45,8 @@ object HowManyCreditsForLostDamagedSummary  {
 
     answers.get(HowManyCreditsForLostDamagedPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", answer.lowBand * lowBandCostPerLitre.toDouble * -1)
-        val value = HtmlFormat.escape(levy).toString
+        val levy = answer.lowBand * lowBandCostPerLitre.toDouble * -1
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
 
         SummaryListRowViewModel(
           key = "lowBandLevy",
@@ -69,8 +70,8 @@ object HowManyCreditsForLostDamagedSummary  {
   def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(HowManyCreditsForLostDamagedPage).map {
       answer =>
-        val levy = "£" + String.format("%,.2f", answer.highBand * highBandCostPerLitre.toDouble * -1)
-        val value = HtmlFormat.escape(levy).toString
+        val levy = answer.highBand * highBandCostPerLitre.toDouble * -1
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
         SummaryListRowViewModel(
           key = "highBandLevy",
           value = ValueViewModel(HtmlContent(value))

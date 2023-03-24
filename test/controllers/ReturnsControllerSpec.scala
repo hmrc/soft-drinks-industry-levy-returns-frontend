@@ -317,12 +317,12 @@ class ReturnsControllerSpec extends SpecBase {
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£-1,800.00")
+        page.getElementsByTag("dd").text() must include("-£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£-4,800.00")
+        page.getElementsByTag("dd").text() must include("-£4,800.00")
       }
     }
 
@@ -369,12 +369,12 @@ class ReturnsControllerSpec extends SpecBase {
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include(" £-1,800.00")
+        page.getElementsByTag("dd").text() must include("-£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£-4,800.00")
+        page.getElementsByTag("dd").text() must include("-£4,800.00")
       }
     }
 

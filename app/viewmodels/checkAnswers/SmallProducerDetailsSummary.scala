@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
+import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -55,8 +56,9 @@ object SmallProducerDetailsSummary  {
   def returnsLowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(SmallProducerDetailsPage).map {
       _ =>
-        val levy = "£" + String.format("%,.2f", (answers.smallProducerList.map(lowBand => lowBand.litreage._1).sum * lowBandCostPerLitre.toDouble * 0))
-        val value = HtmlFormat.escape(levy).toString
+        // TODO - will this ever not be zero??
+        /// val levy = answers.smallProducerList.map(lowBand => lowBand.litreage._1).sum * lowBandCostPerLitre.toDouble * 0
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
         SummaryListRowViewModel(
           key = "lowBandLevy",
           value = ValueViewModel(HtmlContent(value)),
@@ -80,8 +82,9 @@ object SmallProducerDetailsSummary  {
   def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SmallProducerDetailsPage).map {
       _ =>
-        val levy = "£" + String.format("%,.2f", (answers.smallProducerList.map(highBand => highBand.litreage._2).sum * highBandCostPerLitre.toDouble * 0))
-        val value = HtmlFormat.escape(levy).toString
+        // TODO - when would this ever not be zero?????
+        //val levy = answers.smallProducerList.map(highBand => highBand.litreage._2).sum * highBandCostPerLitre.toDouble * 0
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
         SummaryListRowViewModel(
           key = "highBandLevy",
           value = ValueViewModel(HtmlContent(value)),
@@ -144,8 +147,7 @@ object SmallProducerDetailsSummary  {
   def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
 
     val levyTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._1 * lowBandCostPerLitre.toDouble).sum
-    val levy = "£" + String.format("%.2f", levyTotal)
-    val value = HtmlFormat.escape(levy).toString
+    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levyTotal)).toString
 
     Some(SummaryListRowViewModel(
       key = "lowBandLevy",
@@ -172,8 +174,7 @@ object SmallProducerDetailsSummary  {
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
 
     val levyTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._2 * highBandCostPerLitre.toDouble).sum
-    val levy = "£" + String.format("%.2f", levyTotal)
-    val value = HtmlFormat.escape(levy).toString
+    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levyTotal)).toString
 
     Some(SummaryListRowViewModel(
       key = "highBandLevy",

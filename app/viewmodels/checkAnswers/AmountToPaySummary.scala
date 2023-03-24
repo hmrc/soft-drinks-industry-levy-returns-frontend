@@ -43,6 +43,7 @@ object AmountToPaySummary  {
 
 
     val smallProducerDetailsAnswers = answers.smallProducerList
+    // TODO - will the following two ever not be zero
     val smallProducerDetailsLowBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._1 * lowBandCostPerLitre * 0).sum
     val smallProducerDetailsHighBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._2 * lowBandCostPerLitre * 0).sum
     val smallProducerDetailsTotal = smallProducerDetailsLowBandCost + smallProducerDetailsHighBandCost
