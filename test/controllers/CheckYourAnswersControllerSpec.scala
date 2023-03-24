@@ -62,16 +62,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   when(mockSdilConnector.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(100)))
   when(mockSDILSessionCache.save(any(),any(),any())(any())).thenReturn(Future.successful(cacheMap))
 
+
   "Check Your Answers Controller" - {
 
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
+
       val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
+
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("firstQuarter")} 2022"
+
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -280,7 +284,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[FrontendAppConfig].toInstance(mockConfig),
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value

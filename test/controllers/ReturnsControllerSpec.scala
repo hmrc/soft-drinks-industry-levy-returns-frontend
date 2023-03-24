@@ -591,5 +591,28 @@ class ReturnsControllerSpec extends SpecBase {
       )
     }
 
+    "must handle errors when no amounts returned from session" in {
+
+      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(None)
+      when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
+      when(mockSdilConnector.returns_update(any(), any(), any())(any())) thenReturn Future.successful(None)
+
+      val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
+        bind[SDILSessionCache].toInstance(mockSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
+
+      val result = running(application) {
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        route(application, request).value
+      }
+
+      status(result) mustEqual SEE_OTHER
+
+      intercept[RuntimeException](
+        result mustBe an[RuntimeException]
+      )
+    }
+
   }
 }
