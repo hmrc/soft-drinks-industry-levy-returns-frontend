@@ -22,7 +22,6 @@ import connectors.SoftDrinksIndustryLevyConnector
 import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.IdiomaticMockitoBase.Times
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfter
@@ -35,7 +34,6 @@ import repositories.{CacheMap, SDILSessionCache, SessionRepository}
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
-import scala.util.Failure
 
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter {
@@ -61,7 +59,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(Future.successful(financialItemList))
   when(mockSdilConnector.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(100)))
   when(mockSDILSessionCache.save(any(),any(),any())(any())).thenReturn(Future.successful(cacheMap))
-
 
   "Check Your Answers Controller" - {
 
@@ -1154,7 +1151,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       )
     }
 
-    "must log error when fails on resolving all future calls" in {
+    "must log error when fails on resolving one of main future calls" in {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
       val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
@@ -1170,7 +1167,24 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       intercept[RuntimeException](
         result mustBe an[RuntimeException]
       )
+    }
 
+    "must log error when exception thrown on resolving one of main future calls" in {
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.failed(new RuntimeException(""))
+      val application = applicationBuilder(Some(bareBoneUserAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
+        bind[SDILSessionCache].toInstance(mockSDILSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+
+      val result = running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        route(application, request).value
+      }
+
+      intercept[RuntimeException](
+        result mustBe an[RuntimeException]
+      )
     }
   }
 }
