@@ -38,7 +38,7 @@ import viewmodels.govuk.SummaryListFluency
 import views.html.PackagingSiteDetailsView
 import scala.concurrent.Future
 
-class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency{
+class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency{
 
   val PackagingSite1 = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
@@ -99,6 +99,7 @@ class packagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
         application.injector.instanceOf[PackagingSiteDetailsView]
 

@@ -31,8 +31,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
-
 import java.time.LocalDate
+
 
 object SpecBase {
   val aSubscription = RetrievedSubscription(
@@ -154,6 +154,11 @@ trait SpecBase
   )
 
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+  def completedUserAnswers = UserAnswers(sdilNumber, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
+    true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
+    "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj(
+      "lowBand" -> 259, "highBand" -> 923), "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports"
+      -> false, "claimCreditsForLostDamaged" -> false), List.empty, List.empty)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

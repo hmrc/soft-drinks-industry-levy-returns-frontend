@@ -17,7 +17,8 @@
 package controllers
 
 import base.SpecBase
-import models.NormalMode
+import config.FrontendAppConfig
+import models.{NormalMode, SdilReturn}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
@@ -25,7 +26,7 @@ import play.api.test.Helpers._
 
 
 
-class ChangeRegistrationControllerSpec extends SpecBase {
+class ChangeRegistrationControllerSpec(implicit val config: FrontendAppConfig) extends SpecBase {
 
   "ChangeRegistration Controller" - {
 
@@ -47,7 +48,7 @@ class ChangeRegistrationControllerSpec extends SpecBase {
 
     "must return OK and the correct link for importer within the view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptiondetails = subscriptionWithCopacker).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionDetails = subscriptionWithCopacker).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.ChangeRegistrationController.onPageLoad().url)
@@ -63,9 +64,10 @@ class ChangeRegistrationControllerSpec extends SpecBase {
     }
     "must redirect to the next page when valid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      lazy val changeRegistrationRoute = routes.ChangeRegistrationController.onPageLoad.url
+      val application = applicationBuilder(userAnswers = Some(completedUserAnswers)).build()
+      lazy val changeRegistrationRoute = routes.ChangeRegistrationController.onPageLoad().url
       running(application) {
+        SdilReturn((0L,0L),(100L, 100L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
         val request =
           FakeRequest(POST, changeRegistrationRoute)
 
@@ -74,6 +76,5 @@ class ChangeRegistrationControllerSpec extends SpecBase {
       }
     }
 
-    // TODO: need to run test coverage report
   }
 }
