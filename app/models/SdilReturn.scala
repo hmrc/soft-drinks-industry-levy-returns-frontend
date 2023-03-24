@@ -66,7 +66,7 @@ object SdilReturn {
     val packSmall = request.userAnswers.smallProducerList
     val lowImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
     val highImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
-    val lowImportSmall = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
+    val lowImportSmall = userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.lowBand).getOrElse(0L)
     val highImportSmall= userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.highBand).getOrElse(0L)
     val lowExports = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
     val highExports = userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
