@@ -160,11 +160,11 @@ trait SpecBase
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None,
                                     returnPeriod: Option[ReturnPeriod] = None,
-                                    subscriptiondetails: RetrievedSubscription = aSubscription): GuiceApplicationBuilder =
+                                    subscriptionDetails: RetrievedSubscription = aSubscription): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].toInstance (new FakeIdentifierAction(subscriptiondetails)),
+        bind[IdentifierAction].toInstance (new FakeIdentifierAction(subscriptionDetails)),
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
 
