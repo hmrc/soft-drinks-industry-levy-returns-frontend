@@ -85,9 +85,9 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.title() must include(Messages("packagingSiteDetails.title-heading"))
+        page.title() must include("You added 1 packaging sites")
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
-        page.getElementsByTag("h2").text() must include(Messages("packagingSiteDetails.addAnotherPackingSite"))
+        page.getElementsByTag("h2").text() must include("Do you want to add another UK packaging site?")
       }
     }
 
@@ -114,7 +114,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.title() must include(Messages("packagingSiteDetails.title-heading"))
+        page.title() must include("You added 1 packaging sites")
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
         page.getElementById("value").`val`() mustEqual "true"
       }
@@ -171,9 +171,9 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
-        page.getElementsByTag("h2").text() must include(Messages("error.summary.title"))
+        page.getElementsByTag("h2").text() must include("There is a problem")
         contentAsString(result) mustEqual view(boundForm, NormalMode, list)(request, messages(application)).toString
-        page.getElementById("value-error").text() must include(Messages("packagingSiteDetails.error.required"))
+        page.getElementById("value-error").text() must include("Select yes if you need to add another packaging site")
       }
     }
 
