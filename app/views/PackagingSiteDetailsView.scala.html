@@ -27,7 +27,7 @@
 
 @(form: Form[_], mode: Mode, siteList: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("packagingSiteDetails.title-heading"))) {
+@layout(pageTitle = title(form, messages("packagingSiteDetails.title-heading", siteList.rows.size))) {
 
     @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), 'autoComplete -> "off") {
 
