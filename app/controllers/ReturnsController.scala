@@ -154,8 +154,8 @@ class ReturnsController @Inject()(
   }
 
   private def importsSmallLitres(userAnswers: UserAnswers) = {
-    (userAnswers.smallProducerList.map(smallProducer => smallProducer.litreage._1).sum,
-      userAnswers.smallProducerList.map(smallProducer => smallProducer.litreage._2).sum)
+    (userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.lowBand).getOrElse(0L),
+      userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.highBand).getOrElse(0L))
   }
 
   private def exportLitres(userAnswers: UserAnswers) = {
