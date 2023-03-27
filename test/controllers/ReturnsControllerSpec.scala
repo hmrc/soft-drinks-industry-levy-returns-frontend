@@ -19,17 +19,19 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedActivity
-import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{Amounts, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.mockito.MockitoSugar.mock
+import org.scalatest.matchers.must.Matchers
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SDILSessionCache
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -221,6 +223,8 @@ class ReturnsControllerSpec extends SpecBase {
         page.getElementsByTag("dd").text() must include("£480")
       }
     }
+
+//    TODO -- herereriejlrkjlksjdclkjsdlkcjslkdjc
 
     "must show brought into the UK from small producers row when present and answer is no" in {
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
@@ -632,6 +636,47 @@ class ReturnsControllerSpec extends SpecBase {
         status(result) mustEqual OK
       }
     }
+
+
+//    TODO - fix this to verify correct return has been submitted
+//    "must submit the return with the correct sdil return object" in {
+////      implicit val hc = HeaderCarrier()
+//      val expectedReturn = SdilReturn((10000,10000),(10000,10000),List(),(10000,10000),(444,444),(0,0),(0,0),None)
+//      val amounts = Amounts(660, 0, 660)
+//      val userAnswersData = Json.obj(
+//        "ownBrands" -> true,
+//        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+//        "packagedContractPacker" -> true,
+//        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+//        "exemptionsForSmallProducers" -> false,
+//        "smallProducerDetails" -> false,
+//        "broughtIntoUK" -> true,
+//        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+//        "broughtIntoUkFromSmallProducers" -> true,
+//        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 444, "highBand" -> 444),
+//        "claimCreditsForExports" -> true,
+//        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+//        "claimCreditsForLostDamaged" -> true,
+//        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+//      )
+////      when(mockSdilConnector.returns_update("0000000022",ReturnPeriod(2022,1),expectedReturn)(any())) thenReturn Future.successful(Some(OK))
+//      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
+//      when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
+//      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+//      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
+//        bind[SDILSessionCache].toInstance(mockSessionCache),
+//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+//      ).build()
+//
+//      running(application) {
+//        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual OK
+//
+//        verify(mockSdilConnector).returns_update(("0000000022"),eq(ReturnPeriod(2022,1)),eq(expectedReturn))(any())
+//      }
+//    }
 
   }
 }

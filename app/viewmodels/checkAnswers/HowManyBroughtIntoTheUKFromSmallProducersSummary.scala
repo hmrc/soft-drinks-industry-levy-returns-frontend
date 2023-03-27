@@ -102,7 +102,7 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
 
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        // TODO - are there any conditions under which this is chargeable ?????
+        // TODO - are there any conditions under which this is chargeable ????? if not then we don't need lowBandCostPerLitre to be passed in
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
 
         SummaryListRowViewModel(

@@ -69,7 +69,6 @@ class ReturnsController @Inject()(
       val sdilEnrolment = request.sdilEnrolment
       val subscription = request.subscription
       val isSmallProducer = subscription.activity.smallProducer
-
       val userAnswers = request.userAnswers
       val returnPeriod = extractReturnsPeriod(request, sdilEnrolment)
 
@@ -79,23 +78,8 @@ class ReturnsController @Inject()(
       } yield {
         session match {
           case Some(amounts) => {
-
-            val returnToBeSubmitted =
-              if(nilReturn) {
-                ReturnsHelper.emptyReturn
-              } else {
-                SdilReturn(
-                  ownBrandsLitres(subscription, userAnswers),
-                  packLargeLitres(userAnswers),
-                  userAnswers.smallProducerList,
-                  importsLitres(userAnswers),
-                  importsSmallLitres(userAnswers),
-                  exportLitres(userAnswers),
-                  wastageLitres(userAnswers))
-              }
-
             if (pendingReturns.contains(returnPeriod)) {
-              sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted).map {
+              sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted(nilReturn, subscription, userAnswers)).map {
                 case Some(OK) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
                 case _ => logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
                   throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}" )
@@ -133,6 +117,24 @@ class ReturnsController @Inject()(
       }
   }
 
+
+  private def returnToBeSubmitted(nilReturn: Boolean, subscription: RetrievedSubscription, userAnswers: UserAnswers) = {
+    println(Console.YELLOW + nilReturn + Console.WHITE)
+    val x = if (nilReturn) {
+      ReturnsHelper.emptyReturn
+    } else {
+      SdilReturn(
+        ownBrandsLitres(subscription, userAnswers),
+        packLargeLitres(userAnswers),
+        userAnswers.smallProducerList,
+        importsLitres(userAnswers),
+        importsSmallLitres(userAnswers),
+        exportLitres(userAnswers),
+        wastageLitres(userAnswers))
+    }
+    println(Console.YELLOW + x + Console.WHITE)
+    x
+  }
 
   private def ownBrandsLitres(subscription: RetrievedSubscription, userAnswers: UserAnswers) = {
     // TODO - iron out the difference between showing own brands litres on the page and including them in the total
