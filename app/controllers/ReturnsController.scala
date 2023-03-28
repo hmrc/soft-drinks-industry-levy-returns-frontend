@@ -77,7 +77,7 @@ class ReturnsController @Inject()(
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
       } yield {
         session match {
-          case Some(amounts) => {
+          case Some(amounts) =>
             if (pendingReturns.contains(returnPeriod)) {
               sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted(nilReturn, subscription, userAnswers)).map {
                 case Some(OK) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
@@ -108,8 +108,6 @@ class ReturnsController @Inject()(
               warehouseAnswers(userAnswers),
               AmountToPaySummary.amountToPaySummary(amounts.totalForQuarter, amounts.balanceBroughtForward, amounts.total)
             ))
-
-          }
           case _ =>
             logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
             Redirect(routes.JourneyRecoveryController.onPageLoad())
@@ -119,8 +117,7 @@ class ReturnsController @Inject()(
 
 
   private def returnToBeSubmitted(nilReturn: Boolean, subscription: RetrievedSubscription, userAnswers: UserAnswers) = {
-    println(Console.YELLOW + nilReturn + Console.WHITE)
-    val x = if (nilReturn) {
+    if (nilReturn) {
       ReturnsHelper.emptyReturn
     } else {
       SdilReturn(
@@ -132,8 +129,6 @@ class ReturnsController @Inject()(
         exportLitres(userAnswers),
         wastageLitres(userAnswers))
     }
-    println(Console.YELLOW + x + Console.WHITE)
-    x
   }
 
   private def ownBrandsLitres(subscription: RetrievedSubscription, userAnswers: UserAnswers) = {

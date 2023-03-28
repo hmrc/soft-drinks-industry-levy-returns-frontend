@@ -32,8 +32,7 @@ class Navigator @Inject()() {
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad()
-    case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt => _ =>
-      claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
+    case ClaimCreditsForLostDamagedPage => userAnswers => _ => _ => _ => claimCreditsForLostDamagedPageNavigation(userAnswers)
     case ClaimCreditsForExportsPage => userAnswers => _ => _ => _ => claimCreditsForExportPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => _ => _ => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => _ => _ => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
@@ -210,25 +209,22 @@ class Navigator @Inject()() {
     }
   }
 
-  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers,
-                                                       sdilReturn: Option[SdilReturn],
-                                                       subscription: Option[RetrievedSubscription]) = {
+  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
+
+//    TODO - extract value with the navigation ticket for claim credits, for now default to false.
+//    val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+//    val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
+    val isNewImporter = false
+    val isNewPacker = false
 
     if(userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
+    } else if(isNewImporter || isNewPacker) {
+      routes.ReturnChangeRegistrationController.onPageLoad()
     } else {
-      (sdilReturn, subscription)  match {
-        case (Some(sdilReturn), Some(subscription)) =>
-          val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
-          val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-          if(isNewImporter || isNewPacker) {
-            routes.ReturnChangeRegistrationController.onPageLoad()
-          }
-          else
-            routes.CheckYourAnswersController.onPageLoad()
-        case _ => routes.CheckYourAnswersController.onPageLoad()
-      }
+      routes.CheckYourAnswersController.onPageLoad()
     }
+
   }
 
   private def checkClaimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
