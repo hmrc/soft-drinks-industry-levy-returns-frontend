@@ -3,6 +3,7 @@ package controllers.testSupport
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import config.FrontendAppConfig
 import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, DataRetrievalActionImpl, IdentifierAction}
 import models.UserAnswers
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}

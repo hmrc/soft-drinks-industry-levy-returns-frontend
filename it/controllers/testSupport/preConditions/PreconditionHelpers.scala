@@ -10,9 +10,7 @@ trait PreconditionHelpers {
       .sdilBackend.retrieveSubscription("sdil","XKSDIL000000022")
       .sdilBackend.oldestPendingReturnPeriod("0000001611")
       .sdilBackend.balance("XKSDIL000000022", false)
-
+      .sdilBackend.balanceHistory("XKSDIL000000022", false)
   }
-
-
 
 }

@@ -92,9 +92,7 @@ class CheckYourAnswersController @Inject()(
       val totalForQuarter = calculateTotalForQuarter(answers, isSmallProducer.getOrElse(false))
       val total = totalForQuarter - balanceBroughtForward
       val isNilReturn = totalForQuarter == 0
-
       cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
-
       Ok(view(request.subscription.orgName,
         formattedReturnPeriodQuarter(returnPeriod),
         ownBrandsAnswers(answers),
@@ -112,7 +110,6 @@ class CheckYourAnswersController @Inject()(
       )(request,messages))
     }) recoverWith {
       case t: Throwable =>
-        println(Console.YELLOW + t.getMessage + Console.WHITE)
         logger.error(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
         Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
     }

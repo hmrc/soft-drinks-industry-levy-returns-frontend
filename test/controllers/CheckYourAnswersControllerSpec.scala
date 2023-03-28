@@ -41,9 +41,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
   val defaultReturnPeriod = Some(ReturnPeriod(year = 2023, quarter = 1))
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
-  val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
-  val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
-  val financialItemList = List(financialItem1, financialItem2)
+
   val cacheMap = CacheMap("ID",Map())
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockSessionRepository = mock[SessionRepository]

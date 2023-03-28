@@ -25,14 +25,11 @@ import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
-import play.api.libs.json.{Format, Json}
 import repositories.SDILSessionCache
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
@@ -51,12 +48,9 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
   val mockSDILSessionCache = mock[SDILSessionCache]
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, localConfig, mockSDILSessionCache)
 
-
   implicit val hc = HeaderCarrier()
 
   "SoftDrinksIndustryLevyConnector" - {
-
-//    "return a subscription Successfully" when { TODO
 
       "when there is a subscription in cache" in {
 
@@ -82,15 +76,30 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         val sdilNumber: String = "XKSDIL000000022"
         val period = ReturnPeriod(year = 2022, quarter = 3)
         when(mockHttp.GET[Option[Boolean]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(false)))
-        Await.result(softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period), 4.seconds) mustBe Some(false)
+        val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
+
+        whenReady(
+          res
+        ) {
+          response =>
+            response mustEqual Some(false)
+        }
+
       }
 
       "return a oldest pending return period successfully" in {
         val utr: String = "1234567891"
         val returnPeriod = ReturnPeriod(year = 2022, quarter = 3)
         when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(List(returnPeriod)))
-        Await.result(softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr), 4.seconds) mustBe Some(returnPeriod)
+        val res = softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr)
+
+        whenReady(
+          res
+        ) {
+          response =>
+            response mustEqual Some(returnPeriod)
+        }
       }
     }
-//  }
+
 }

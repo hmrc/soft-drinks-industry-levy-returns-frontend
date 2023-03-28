@@ -18,9 +18,8 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{ReturnPeriod, SmallProducer, UserAnswers}
-import models.{ReturnPeriod, UserAnswers}
 import models.backend.{Contact, Site, UkAddress}
+import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -94,6 +93,7 @@ trait SpecBase
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
 
   val returnPeriod = ReturnPeriod(2022,1)
+  val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val genericSmallProducerAlias = "Generic Producer LTD"
   val baseUrl = "/soft-drinks-industry-levy-returns-frontend"
   val baseAlias = "Jackson's Drinks"
@@ -101,6 +101,9 @@ trait SpecBase
   val sdilNumber: String = "XKSDIL000000022"
   val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
   val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
+  val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
+  val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
+  val financialItemList = List(financialItem1, financialItem2)
 
   val baseSessionData =
     Json.obj(
