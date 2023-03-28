@@ -17,7 +17,7 @@
 package utilitlies
 
 import models.requests.DataRequest
-import models.{SdilReturn, UserAnswers}
+import models.{FinancialLineItem, SdilReturn, SmallProducer, UserAnswers}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 
@@ -45,11 +45,18 @@ object ReturnsHelper {
 
   def emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
-  private def extractReturnsPeriod(request: DataRequest[AnyContent], sdilEnrolment: String) = {
+  def extractReturnPeriod(request: DataRequest[AnyContent]) = {
     request.returnPeriod match {
       case Some(period) => period
-      case _ => throw new RuntimeException(s"Request does not contain return period for $sdilEnrolment")
+      case _ => throw new RuntimeException(s"Request does not contain return period for ${request.returnPeriod}")
     }
   }
+
+  def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
+    items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
+      (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
+    }
+
+  def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
 
 }

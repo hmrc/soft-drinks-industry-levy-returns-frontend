@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import models.{Amounts, ReturnPeriod, UserAnswers, extractTotal, listItemsWithTotal}
+import models.{Amounts, ReturnPeriod, UserAnswers}
 import pages._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -31,6 +31,7 @@ import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.ReturnsHelper
+import utilitlies.ReturnsHelper.{extractReturnPeriod, extractTotal, listItemsWithTotal}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.CheckYourAnswersView
@@ -74,7 +75,7 @@ class CheckYourAnswersController @Inject()(
 
     val balanceAllEnabled = config.balanceAllEnabled
     val sdilEnrolment = request.sdilEnrolment
-    val returnPeriod = extractReturnsPeriod(request, sdilEnrolment)
+    val returnPeriod = extractReturnPeriod(request)
 
     (for {
       isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
@@ -256,14 +257,6 @@ class CheckYourAnswersController @Inject()(
     sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts).map {
       case result if !result.id.isEmpty => result
       case _ => throw new RuntimeException(s"Failed to save amounts in session cache for $sdilEnrolment")
-    }
-  }
-
-  // TODO - refactor as this is used in both CYA and returns controllers
-  private def extractReturnsPeriod(request: DataRequest[AnyContent], sdilEnrolment: String) = {
-    request.returnPeriod match {
-      case Some(period) => period
-      case _ => throw new RuntimeException(s"Request does not contain return period for $sdilEnrolment")
     }
   }
 }

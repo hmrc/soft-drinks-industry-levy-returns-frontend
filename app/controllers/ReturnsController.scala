@@ -21,29 +21,27 @@ import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import models.requests.DataRequest
 import models.retrieved.RetrievedSubscription
-import models.{Address, Amounts, FinancialLineItem, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers, Warehouse}
-import org.checkerframework.checker.units.qual.A
-import pages.{BrandsPackagedAtOwnSitesPage, QuestionPage, _}
+import models.{Address, Amounts, SdilReturn, SmallProducer, UserAnswers, Warehouse}
+import pages._
+import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.api.{Configuration, Logger}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.ReturnsHelper.extractReturnPeriod
 import utilitlies.{CurrencyFormatter, ReturnsHelper}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext
 
 
 class ReturnsController @Inject()(
                                    override val messagesApi: MessagesApi,
                                    config:FrontendAppConfig,
-                                   configuration: Configuration,
                                    identify: IdentifierAction,
                                    getData: DataRetrievalAction,
                                    requireData: DataRequiredAction,
@@ -65,15 +63,12 @@ class ReturnsController @Inject()(
 
   def onPageLoad(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      // TODO - is there a less couply way to pass this implicit in?
+      // TODO - is there a less "couply" way to pass this implicit in?
       implicit val amountsFormat = Json.format[Amounts]
-
       val sdilEnrolment = request.sdilEnrolment
       val subscription = request.subscription
-      val isSmallProducer = subscription.activity.smallProducer
       val userAnswers = request.userAnswers
-      val returnPeriod = extractReturnsPeriod(request, sdilEnrolment)
+      val returnPeriod = extractReturnPeriod(request)
 
       for {
         session <- sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS)
@@ -284,19 +279,5 @@ class ReturnsController @Inject()(
 
   private def warehouseCheck(warehouseList: List[Warehouse]): Option[List[Warehouse]] = {
     if (warehouseList.length > 0) Some(warehouseList) else None
-  }
-
-  private def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
-    items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
-      (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
-    }
-
-  private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
-
-  private def extractReturnsPeriod(request: DataRequest[AnyContent], sdilEnrolment: String) = {
-    request.returnPeriod match {
-      case Some(period) => period
-      case _ => throw new RuntimeException(s"Request does not contain return period for $sdilEnrolment")
-    }
   }
 }
