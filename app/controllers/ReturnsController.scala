@@ -63,15 +63,13 @@ class ReturnsController @Inject()(
 
   def onPageLoad(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      // TODO - is there a less "couply" way to pass this implicit in?
-      implicit val amountsFormat = Json.format[Amounts]
       val sdilEnrolment = request.sdilEnrolment
       val subscription = request.subscription
       val userAnswers = request.userAnswers
       val returnPeriod = extractReturnPeriod(request)
 
       for {
-        session <- sessionCache.fetchEntry(sdilEnrolment,SDILSessionKeys.AMOUNTS)
+        session <- sessionCache.fetchEntry[Amounts](sdilEnrolment,SDILSessionKeys.AMOUNTS)
         pendingReturns <- sdilConnector.returns_pending(subscription.utr)
       } yield {
         session match {
