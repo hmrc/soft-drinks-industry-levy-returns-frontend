@@ -781,6 +781,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("p").text() must include(Messages("sendYourReturnConfirmation"))
         page.getElementById("confirm-and-submit").text() must include(Messages("confirmDetailsAndSendReturn"))
         page.getElementById("confirm-and-submit").attributes().get("href") mustEqual s"$baseUrl/submit-return/nil-return/true"
+        page.getElementById("print-page-cya").text() must include(Messages("site.print"))
       }
     }
 

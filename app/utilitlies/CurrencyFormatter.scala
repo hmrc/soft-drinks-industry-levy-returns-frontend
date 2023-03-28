@@ -16,12 +16,8 @@
 
 package utilitlies
 
-import models.{ReturnPeriod, UserAnswers}
-import models.requests.DataRequest
-import play.api.libs.json.Json
-import play.api.mvc.AnyContent
-
 import java.util.Locale
+import models.Amounts
 
 object CurrencyFormatter {
 

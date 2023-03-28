@@ -22,6 +22,6 @@ case class Amounts(totalForQuarter: BigDecimal, balanceBroughtForward: BigDecima
 
 object Amounts {
   implicit val format = Json.format[Amounts]
-  implicit val writes: Writes[SmallProducer] = Json.writes
+  implicit val writes: Writes[Amounts] = Json.writes
   implicit val reads: Reads[Amounts] = Json.reads
 }

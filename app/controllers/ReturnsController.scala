@@ -65,7 +65,7 @@ class ReturnsController @Inject()(
   def onPageLoad(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      implicit val format = Json.format[Amounts]
+      implicit val amountsFormat = Json.format[Amounts]
       val sdilEnrolment = request.sdilEnrolment
       val subscription = request.subscription
       val isSmallProducer = subscription.activity.smallProducer
@@ -132,8 +132,6 @@ class ReturnsController @Inject()(
   }
 
   private def ownBrandsLitres(subscription: RetrievedSubscription, userAnswers: UserAnswers) = {
-    // TODO - iron out the difference between showing own brands litres on the page and including them in the total
-    //  if (!subscription.activity.smallProducer) otherwise return (0L, 0L)
       (userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
         userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L))
   }
