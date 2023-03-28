@@ -211,11 +211,9 @@ class Navigator @Inject()() {
 
   private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
 
-//    TODO - extract value with the navigation ticket for claim credits, for now default to false.
-//    val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
-//    val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-    val isNewImporter = false
-    val isNewPacker = false
+    // TODO - extract value with the navigation ticket for claim credits, for now default to false.
+    val isNewImporter = false //TODO - (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+    val isNewPacker = false // TODO - (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
 
     if(userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)

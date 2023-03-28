@@ -37,40 +37,7 @@ case class SdilReturn(
                        submittedOn: Option[LocalDateTime] = None
                      ) {
 
-  val returnLiterageList = List(
-    "own-brands-packaged-at-own-sites",
-    "packaged-as-a-contract-packer",
-    "exemptions-for-small-producers",
-    "brought-into-uk",
-    "brought-into-uk-from-small-producers",
-    "claim-credits-for-exports",
-    "claim-credits-for-lost-damaged"
-  )
-
-  def totalPacked: (Long, Long) = packLarge |+| packSmall.total
-  def totalImported: (Long, Long) = importLarge |+| importSmall
-
-  private def toLongs: List[(Long, Long)] =
-    List(ownBrand, packLarge, packSmall.total, importLarge, importSmall, export, wastage)
-
-  private val keys = returnLiterageList
   private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
-
-  /*
-   Produces a map of differing litreage fields containing the revised and original litreages as a tuple
-   and keyed by the field name
-   */
-  def compare(other: SdilReturn): ListMap[String, ((Long, Long), (Long, Long))] = {
-    val y = this.toLongs
-    ListMap(
-      other.toLongs.zipWithIndex
-        .filter { x =>
-          x._1 != y(x._2)
-        }
-        .map { x =>
-          keys(x._2) -> ((x._1, y(x._2)))
-        }: _*)
-  }
 
   def total: BigDecimal = sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
 
@@ -95,35 +62,5 @@ object SdilReturn {
 
     implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
     implicit val returnsFormat = Json.format[SdilReturn]
-
-//  implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
-//    def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
-//  }
-//
-//  def apply(userAnswers: UserAnswers)(implicit request: DataRequest[_]): SdilReturn = {
-//    val lowOwnBrand =  userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
-//    val highOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
-//    val lowPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
-//    val highPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
-//    val packSmall = request.userAnswers.smallProducerList
-//    val lowImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
-//    val highImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
-//    val lowImportSmall = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
-//    val highImportSmall= userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.highBand).getOrElse(0L)
-//    val lowExports = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
-//    val highExports = userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
-//    val lowWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
-//    val highWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
-//    SdilReturn(
-//      ownBrand = (lowOwnBrand, highOwnBrand),
-//      packLarge = (lowPackLarge, highPackLarge),
-//      packSmall = packSmall,
-//      importLarge = (lowImportLarge, highImportLarge),
-//      importSmall = (lowImportSmall, highImportSmall),
-//      export = (lowExports, highExports),
-//      wastage = (lowWastage, highWastage)
-//    )
-//
-//  }
 
 }

@@ -276,31 +276,6 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
             }
 
-            "select No to navigate to return change registration page" - {
-
-//                TODO - commented out to be revisited on lost or stolen navigation journey
-//              "when user is a new Importer" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "HowManyBroughtIntoUk" -> HowManyBroughtIntoUk(100L, 100L),
-//                    "claimCreditsForLostDamaged" -> value))
-//                val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(100L, 100L),(0L,0L),(0L,0L),(0L,0L))
-//                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-//                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
-//              }
-//
-//              "when user is a new packer" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "howManyAsAContractPacker" -> HowManyAsAContractPacker(100L, 100L),
-//                    "claimCreditsForLostDamaged" -> value))
-//                val sdilReturn = SdilReturn((0L,0L),(100L, 100L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
-//                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-//                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
-//              }
-
-            }
-
             "select No to navigate to Index controller page " - {
               "when user is a not a new Importer" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
