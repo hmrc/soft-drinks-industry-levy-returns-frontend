@@ -223,22 +223,24 @@ object AmountToPaySummary  {
     )
   }
 
-  // TODO see what can be refactored from the above into the below
-
-  def amountInCredit(total: BigDecimal)(implicit messages: Messages) = {
-    if (total < 0)
+  def subheader(total: BigDecimal)(implicit messages: Messages) = {
+    if (total < 0) {
       Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total * -1)))
-    else
+    } else if (total > 0) {
+      Some(Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total)))
+    } else {
       None
+    }
   }
 
   def sectionHeaderTitle(total: BigDecimal)(implicit messages: Messages) = {
-    if (total == 0)
+    if (total == 0) {
       Messages("youDoNotNeedToPayAnything")
-    else if (total < 0)
+    } else if (total < 0) {
       Messages("amountYouWillBeCredited")
-    else
+    } else {
       Messages("amountToPay")
+    }
   }
 
 }

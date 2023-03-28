@@ -301,6 +301,7 @@ lostOrDestroyed.highband.hidden = high band litres if claiming credit for lost o
 
 amountToPay = Amount to pay
 youDoNotNeedToPayAnything = You do not need to pay anything
+youNeedToPay = You need to pay {0}
 amountYouWillBeCredited = Amount you will be credited
 yourSoftDrinksLevyAccountsWillBeCredited = Your Soft Drinks Levy Account will be credited {0}
 totalThisQuarter = Total this quarter
@@ -314,8 +315,6 @@ packagingSites = Packaging Sites
 sendYourReturn = Send your return
 sendYourReturnConfirmation = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
 confirmDetailsAndSendReturn = Confirm details and send return
-
-
 
 reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site
 exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?

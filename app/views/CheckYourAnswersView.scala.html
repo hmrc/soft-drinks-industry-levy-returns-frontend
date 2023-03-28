@@ -31,7 +31,7 @@
   claimCreditsForLostOrDamagedAnswers: SummaryList,
   amountToPayTitle: String,
   amountToPay: SummaryList,
-  amountInCredit: Option[String] = None,
+  subheader: Option[String] = None,
   registeredSites: Option[SummaryList],
   nilReturn: Boolean)(implicit request: Request[_], messages: Messages)
 
@@ -40,9 +40,9 @@
     <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-    @amountInCredit match {
+    @subheader match {
         case Some(amount) => {
-            <h2 class="govuk-heading-m" id="in-credit-main-sub-header">@amountInCredit</h2>
+            <h2 class="govuk-heading-m" id="cya-sub-header">@subheader</h2>
         }
         case _ => {
             <br>

@@ -104,7 +104,7 @@ class CheckYourAnswersController @Inject()(
         claimCreditsForLostOrDamagedAnswers(answers),
         AmountToPaySummary.sectionHeaderTitle(total),
         AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total),
-        AmountToPaySummary.amountInCredit(total),
+        AmountToPaySummary.subheader(total),
         registeredSites(answers),
         isNilReturn
       )(request,messages))

@@ -660,6 +660,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
         page.getElementsByTag("dt").text() must include(Messages("total"))
         page.getElementsByClass("total").text() must include("£960.00")
+        page.getElementById("cya-sub-header").text() mustEqual(Messages("youNeedToPay", "£960.00"))
       }
     }
 
@@ -880,7 +881,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByClass("balance-brought-forward").text() must include("-£300.00")
         page.getElementsByTag("dt").text() must include(Messages("total"))
         page.getElementsByClass("total").text() must include("-£342.00")
-        page.getElementById("in-credit-main-sub-header").text() mustEqual(Messages("yourSoftDrinksLevyAccountsWillBeCredited", "£342.00"))
+        page.getElementById("cya-sub-header").text() mustEqual(Messages("yourSoftDrinksLevyAccountsWillBeCredited", "£342.00"))
 
       }
     }
@@ -932,7 +933,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByClass("balance-brought-forward").text() must include("-£300.00")
         page.getElementsByTag("dt").text() must include(Messages("total"))
         page.getElementsByClass("total").text() must include("-£258.00")
-        page.getElementById("in-credit-main-sub-header").text() mustEqual(Messages("yourSoftDrinksLevyAccountsWillBeCredited", "£258.00"))
+        page.getElementById("cya-sub-header").text() mustEqual(Messages("yourSoftDrinksLevyAccountsWillBeCredited", "£258.00"))
       }
     }
 
@@ -984,7 +985,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
         page.getElementsByTag("dt").text() must include(Messages("total"))
         page.getElementsByClass("total").text() must include("-£120.00")
-        page.getElementById("in-credit-main-sub-header").text() mustEqual(Messages("yourSoftDrinksLevyAccountsWillBeCredited", "£120.00"))
+        page.getElementById("cya-sub-header").text() mustEqual(Messages("yourSoftDrinksLevyAccountsWillBeCredited", "£120.00"))
 
       }
     }
