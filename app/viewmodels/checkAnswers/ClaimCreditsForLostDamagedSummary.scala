@@ -32,7 +32,7 @@ object ClaimCreditsForLostDamagedSummary  {
         val value = if (answer) "site.yes" else "site.no"
         SummaryListRow(
           key = "claimCreditsForLostDamaged.checkYourAnswersLabel",
-          value = ValueViewModel(value)
+          value = ValueViewModel(value).withCssClass("align-right")
         )
     }
   }

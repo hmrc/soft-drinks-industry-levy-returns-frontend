@@ -32,7 +32,7 @@ object OwnBrandsSummary  {
         val value = if (answer) "site.yes" else "site.no"
         SummaryListRowViewModel(
           key = "ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel",
-          value = ValueViewModel(value)
+          value = ValueViewModel(value).withCssClass("align-right")
         )
     }
   }

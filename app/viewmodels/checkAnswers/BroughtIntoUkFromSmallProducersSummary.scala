@@ -32,7 +32,7 @@ object BroughtIntoUkFromSmallProducersSummary  {
         val value = if (answer) "site.yes" else "site.no"
         SummaryListRow(
           key = "broughtIntoUKFromSmallProducers.checkYourAnswersLabel",
-          value = ValueViewModel(value)
+          value = ValueViewModel(value).withCssClass("align-right")
         )
     }
   }

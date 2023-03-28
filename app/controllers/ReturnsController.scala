@@ -86,7 +86,7 @@ class ReturnsController @Inject()(
             }
 
             Ok(view(returnPeriod,
-              request.subscription,
+              subscription,
               CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
               amounts.totalForQuarter,
               returnPeriod, // TODO - I don't think this needs to be passed twice :)

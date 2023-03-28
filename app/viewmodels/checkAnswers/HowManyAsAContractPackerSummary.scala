@@ -100,7 +100,7 @@ object HowManyAsAContractPackerSummary  {
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRow(
           key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           classes = "govuk-summary-list__row--no-border"
         )
     }
@@ -113,7 +113,7 @@ object HowManyAsAContractPackerSummary  {
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
         SummaryListRowViewModel(
           key = "lowBandLevy",
-          value = ValueViewModel(HtmlContent(value))
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
         )
     }
   }
@@ -124,7 +124,7 @@ object HowManyAsAContractPackerSummary  {
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
         SummaryListRow(
           key = "litresInTheHighBand",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           classes = "govuk-summary-list__row--no-border"
         )
     }
@@ -137,7 +137,7 @@ object HowManyAsAContractPackerSummary  {
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
         SummaryListRowViewModel(
           key = "highBandLevy",
-          value = ValueViewModel(HtmlContent(value))
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
         )
     }
   }

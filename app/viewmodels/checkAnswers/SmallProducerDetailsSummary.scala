@@ -47,7 +47,7 @@ object SmallProducerDetailsSummary  {
         val value = HtmlFormat.escape(answers.smallProducerList.map(lowBand => lowBand.litreage._1).sum.toString)
         SummaryListRow(
           key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           classes = "govuk-summary-list__row--no-border",
         )
     }
@@ -61,7 +61,7 @@ object SmallProducerDetailsSummary  {
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
         SummaryListRowViewModel(
           key = "lowBandLevy",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           actions = Seq()
         )
     }
@@ -73,7 +73,7 @@ object SmallProducerDetailsSummary  {
         val value = HtmlFormat.escape(answers.smallProducerList.map(highBand => highBand.litreage._2).sum.toString) + "<br/>"
         SummaryListRow(
           key = "litresInTheHighBand",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           classes = "govuk-summary-list__row--no-border"
         )
     }
@@ -87,7 +87,7 @@ object SmallProducerDetailsSummary  {
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
         SummaryListRowViewModel(
           key = "highBandLevy",
-          value = ValueViewModel(HtmlContent(value)),
+          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
           actions = Seq()
         )
     }

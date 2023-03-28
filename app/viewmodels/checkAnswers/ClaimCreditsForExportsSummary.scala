@@ -35,7 +35,7 @@ object ClaimCreditsForExportsSummary  {
 
         SummaryListRow(
           key = "claimCreditsForExports.checkYourAnswersLabel",
-          value = ValueViewModel(value)
+          value = ValueViewModel(value).withCssClass("align-right")
         )
     }
   }

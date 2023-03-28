@@ -48,7 +48,7 @@ object PackagedContractPackerSummary  {
         val value = if (answer) "site.yes" else "site.no"
         SummaryListRow(
           key = "reportingContractPackedAtYourOwnSite.checkYourAnswersLabel",
-          value = ValueViewModel(value)
+          value = ValueViewModel(value).withCssClass("align-right")
         )
     }
   }

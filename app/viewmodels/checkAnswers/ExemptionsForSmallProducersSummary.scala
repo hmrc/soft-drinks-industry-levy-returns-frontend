@@ -32,7 +32,7 @@ object ExemptionsForSmallProducersSummary  {
         val value = if (answer) "site.yes" else "site.no"
         SummaryListRow(
           key = "exemptionsForSmallProducers.checkYourAnswersLabel",
-          value = ValueViewModel(value)
+          value = ValueViewModel(value).withCssClass("align-right")
         )
     }
   }
