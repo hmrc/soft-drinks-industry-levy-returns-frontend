@@ -22,7 +22,8 @@ import controllers.actions._
 import models.requests.DataRequest
 import models.retrieved.RetrievedSubscription
 import models.{Address, Amounts, FinancialLineItem, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers, Warehouse}
-import pages._
+import org.checkerframework.checker.units.qual.A
+import pages.{BrandsPackagedAtOwnSitesPage, QuestionPage, _}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -65,7 +66,9 @@ class ReturnsController @Inject()(
   def onPageLoad(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      // TODO - is there a less couply way to pass this implicit in?
       implicit val amountsFormat = Json.format[Amounts]
+
       val sdilEnrolment = request.sdilEnrolment
       val subscription = request.subscription
       val isSmallProducer = subscription.activity.smallProducer

@@ -214,7 +214,8 @@ object AmountToPaySummary  {
       ),
       SummaryListRowViewModel(
         key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward))).withCssClass("balance-brought-forward align-right")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward)))
+          .withCssClass("balance-brought-forward align-right")
       ),
       SummaryListRowViewModel(
         key = "total",
