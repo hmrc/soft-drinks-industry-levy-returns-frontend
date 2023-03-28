@@ -112,6 +112,7 @@ class CheckYourAnswersController @Inject()(
       )(request,messages))
     }) recoverWith {
       case t: Throwable =>
+        println(Console.YELLOW + t.getMessage + Console.WHITE)
         logger.error(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
         Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
     }

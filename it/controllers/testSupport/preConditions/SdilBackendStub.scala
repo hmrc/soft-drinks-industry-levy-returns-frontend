@@ -53,7 +53,6 @@ case class SdilBackendStub()
 
   val returnPeriod = ReturnPeriod(2018, 1)
 
-
   def retrieveSubscription(identifier: String, refNum: String) = {
     stubFor(
       get(
@@ -71,5 +70,15 @@ case class SdilBackendStub()
           ok(Json.toJson(List(returnPeriod)).toString())))
     builder
   }
+
+  def balance(sdilRef: String, withAssessment: Boolean) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/$withAssessment"))
+        .willReturn(
+          ok(Json.toJson(BigDecimal(1000)).toString())))
+    builder
+  }
+
 }
 
