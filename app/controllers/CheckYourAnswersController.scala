@@ -87,6 +87,7 @@ class CheckYourAnswersController @Inject()(
           sdilConnector.balance(sdilEnrolment, withAssessment = false)
         }
     } yield {
+
       val totalForQuarter = calculateTotalForQuarter(answers, isSmallProducer.getOrElse(false))
       val total = totalForQuarter - balanceBroughtForward
       val isNilReturn = totalForQuarter == 0
@@ -213,7 +214,10 @@ class CheckYourAnswersController @Inject()(
       calculateHighBandTotalForQuarter(userAnswers, higherBandCostPerLitre, smallProducer)
   }
 
-  private def calculateLowBandTotalForQuarter(userAnswers: UserAnswers, lowBandCostPerLitre: BigDecimal, smallProducer: Boolean)(implicit messages: Messages): BigDecimal = {
+  private def calculateLowBandTotalForQuarter(userAnswers: UserAnswers,
+                                              lowBandCostPerLitre: BigDecimal,
+                                              smallProducer: Boolean): BigDecimal = {
+
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
@@ -229,7 +233,10 @@ class CheckYourAnswersController @Inject()(
     }
   }
 
-  private def calculateHighBandTotalForQuarter(userAnswers: UserAnswers, highBandCostPerLitre: BigDecimal, smallProducer: Boolean)(implicit messages: Messages): BigDecimal = {
+  private def calculateHighBandTotalForQuarter(userAnswers: UserAnswers,
+                                               highBandCostPerLitre: BigDecimal,
+                                               smallProducer: Boolean): BigDecimal = {
+
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
