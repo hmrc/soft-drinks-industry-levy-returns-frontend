@@ -16,19 +16,23 @@
 
 package connectors
 
-import models.retrieved.RetrievedSubscription
-import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
+import models.{FinancialLineItem,ReturnPeriod}
 import play.api.Configuration
-import repositories.{SDILSessionCache, SDILSessionKeys}
-import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw, _}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import models.retrieved.RetrievedSubscription
+import repositories.{SDILSessionCache, SDILSessionKeys}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-class SoftDrinksIndustryLevyConnector @Inject()(val http: HttpClient,
-                                                val configuration: Configuration,
-                                                sdilSessionCache: SDILSessionCache)(implicit ec: ExecutionContext) extends ServicesConfig(configuration) {
+
+class SoftDrinksIndustryLevyConnector @Inject()(
+    val http: HttpClient,
+    val configuration: Configuration,
+    sdilSessionCache: SDILSessionCache
+  )(implicit ec: ExecutionContext)
+  extends ServicesConfig(configuration) {
 
   lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
 
@@ -50,9 +54,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(val http: HttpClient,
   private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
 
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
-    http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
-      case Some(a) => Some(a)
-      case _ => None
+        http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
+        case Some(a) => Some(a)
+        case _ => None
   }
 
   def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {
@@ -60,11 +64,17 @@ class SoftDrinksIndustryLevyConnector @Inject()(val http: HttpClient,
     returnPeriods.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
   }
 
-  def balance(sdilRef: String, withAssessment: Boolean)(implicit hc: HeaderCarrier): Future[BigDecimal] =
+  def balance(
+               sdilRef: String,
+               withAssessment: Boolean
+             )(implicit hc: HeaderCarrier): Future[BigDecimal] =
     http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
 
-  def balanceHistory(sdilRef: String, withAssessment: Boolean)(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
-    import models.FinancialLineItem.formatter
+  def balanceHistory(
+                      sdilRef: String,
+                      withAssessment: Boolean
+                    )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+    import FinancialLineItem.formatter
     http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
 
