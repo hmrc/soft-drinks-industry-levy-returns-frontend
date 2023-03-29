@@ -16,10 +16,10 @@
 
 package connectors
 
-import models.{FinancialLineItem,ReturnPeriod}
+import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.retrieved.RetrievedSubscription
 import repositories.{SDILSessionCache, SDILSessionKeys}
