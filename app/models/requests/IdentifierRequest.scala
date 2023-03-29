@@ -16,8 +16,8 @@
 
 package models.requests
 
-import models.ReturnPeriod
 import models.retrieved.RetrievedSubscription
+import models.ReturnPeriod
 import play.api.mvc.{Request, WrappedRequest}
 
 case class IdentifierRequest[A] (request: Request[A],

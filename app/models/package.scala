@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import cats.implicits.toFoldableOps
 import play.api.libs.json._
 
 package object models {
@@ -143,5 +142,4 @@ package object models {
       }
     }
   }
-
 }

@@ -17,8 +17,8 @@
 package models.requests
 
 import models.retrieved.RetrievedSubscription
-import models.{ReturnPeriod, UserAnswers}
 import play.api.mvc.{Request, WrappedRequest}
+import models.{ReturnPeriod, UserAnswers}
 
 case class OptionalDataRequest[A] (request: Request[A],
                                    sdilEnrolment: String,
