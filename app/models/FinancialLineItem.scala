@@ -17,7 +17,7 @@
 package models
 
 import play.api.i18n.Messages
-import play.api.libs.json._
+import play.api.libs.json.{Format, JsObject, JsResult, JsString, JsValue, Json}
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate => Date}
@@ -39,7 +39,6 @@ case class ReturnCharge(period: ReturnPeriod, amount: BigDecimal) extends Financ
       "financiallineitem.returncharge",
       formatter.format(period.start),
       String.format("MMMM yyyy", period.end)
-      // period.end.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
     )
   def date = period.deadline
 }
