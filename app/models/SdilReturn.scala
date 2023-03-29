@@ -16,14 +16,10 @@
 
 package models
 
-import cats.implicits._
-import models.requests.DataRequest
-import pages.{BrandsPackagedAtOwnSitesPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage}
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
 import java.time.LocalDateTime
-import scala.collection.immutable.ListMap
 
 
 case class SdilReturn(
