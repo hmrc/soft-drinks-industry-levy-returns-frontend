@@ -42,8 +42,6 @@ class ReturnsControllerSpec extends SpecBase {
   val amounts = Amounts(zero, zero, zero)
   val mockSessionCache = mock[SDILSessionCache]
   when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-
-  val returnPeriods = List(ReturnPeriod(2020, 0), ReturnPeriod(2023, 1))
   val returnPeriodsContainingBaseReturnPeriod = List(ReturnPeriod(2020, 0), ReturnPeriod(2023, 1), returnPeriod)
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
