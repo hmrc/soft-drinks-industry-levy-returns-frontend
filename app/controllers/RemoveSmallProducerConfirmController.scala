@@ -88,7 +88,7 @@ class RemoveSmallProducerConfirmController @Inject()(
               Redirect(navigator.nextPage(RemoveSmallProducerConfirmPage, mode, updatedAnswers))
             }
           }
-        }
+          }
       )
   }
 }
