@@ -1,0 +1,38 @@
+@import views.html.helpers._
+
+@this(
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukSummaryList: GovukSummaryList,
+        saveAndContinueButton: saveAndContinueButton,
+)
+
+@(form: Form[_], mode: Mode, siteList: SummaryList)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("packagingSiteDetails.title.heading", siteList.rows.size))) {
+
+    @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.title-heading", siteList.rows.size)</h1>
+        <p class="govuk-body-m">@messages("packagingSiteDetails.info")</p>
+
+        @govukSummaryList(siteList)
+
+        <h2 class="govuk-heading-m">@messages("packagingSiteDetails.addAnotherPackingSite")</h2>
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(""), None
+            )
+        )
+
+        @saveAndContinueButton(messages)
+    }
+}
