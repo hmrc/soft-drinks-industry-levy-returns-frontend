@@ -18,7 +18,7 @@ package connectors
 
 import base.SpecBase
 import com.typesafe.config.ConfigFactory
-import models.ReturnPeriod
+import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
 import models.retrieved.RetrievedSubscription
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -26,7 +26,9 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import repositories.SDILSessionCache
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import utilitlies.ReturnsHelper
+import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -49,6 +51,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, localConfig, mockSDILSessionCache)
 
   implicit val hc = HeaderCarrier()
+
+  val utr: String = "1234567891"
 
   "SoftDrinksIndustryLevyConnector" - {
 
@@ -88,7 +92,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
 
       "return a oldest pending return period successfully" in {
-        val utr: String = "1234567891"
+
         val returnPeriod = ReturnPeriod(year = 2022, quarter = 3)
         when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(List(returnPeriod)))
         val res = softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr)
@@ -100,6 +104,62 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
             response mustEqual Some(returnPeriod)
         }
       }
+
+      "return balance successfully" in {
+        when(mockHttp.GET[BigDecimal](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(BigDecimal(1000)))
+        val res = softDrinksIndustryLevyConnector.balance(sdilNumber, false)
+
+        whenReady(
+          res
+        ) {
+          response =>
+            response mustEqual BigDecimal(1000)
+        }
+      }
+
+    "return balance history successfully" in {
+
+      when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialItemList))
+
+      val res = softDrinksIndustryLevyConnector.balanceHistory(sdilNumber, false)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustEqual financialItemList
+      }
     }
+
+    "return returns-pending successfully" in {
+
+      when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(returnPeriods))
+
+      val res = softDrinksIndustryLevyConnector.returns_pending(utr)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustEqual returnPeriods
+      }
+    }
+
+//    "return returns-update successfully" in {
+//
+//      val response = HttpResponse(200,Json.obj(),Map("",Seq()))
+//      when(mockHttp.POST[SdilReturn, HttpResponse](any(), any())).thenReturn(Future.successful(response))
+//
+//      val res = softDrinksIndustryLevyConnector.returns_update(utr, returnPeriod, ReturnsHelper.emptyReturn)
+//
+//      whenReady(
+//        res
+//      ) {
+//        response =>
+//          response mustEqual Some(200)
+//      }
+//    }
+
+  }
 
 }
