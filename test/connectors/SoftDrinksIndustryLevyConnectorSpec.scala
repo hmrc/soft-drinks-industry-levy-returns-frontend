@@ -145,21 +145,6 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-//    "return returns-update successfully" in {
-//
-//      val response = HttpResponse(200,Json.obj(),Map("",Seq()))
-//      when(mockHttp.POST[SdilReturn, HttpResponse](any(), any())).thenReturn(Future.successful(response))
-//
-//      val res = softDrinksIndustryLevyConnector.returns_update(utr, returnPeriod, ReturnsHelper.emptyReturn)
-//
-//      whenReady(
-//        res
-//      ) {
-//        response =>
-//          response mustEqual Some(200)
-//      }
-//    }
-
   }
 
 }
