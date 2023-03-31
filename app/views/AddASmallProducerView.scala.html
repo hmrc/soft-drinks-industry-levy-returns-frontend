@@ -30,12 +30,12 @@
 
 @(form: Form[_],
   mode: Mode,
-  sdilReference: Option[String] = None)(implicit request: Request[_], messages: Messages)
+  sdilReference: String)(implicit request: Request[_], messages: Messages)
 
 @htmlContent = {
     <label class="govuk-heading-s">@messages("addASmallProducer.referenceNumber")</label>
 }
-@action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdilReference.get) else routes.AddASmallProducerController.onSubmit(mode)}
+@action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdilReference) else routes.AddASmallProducerController.onSubmit(mode)}
 
 @layout(pageTitle = title(form, messages("addASmallProducer.title"))) {
     @formHelper(action = action, Symbol("autoComplete") -> "off") {
