@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package repositories
+package utilitlies
 
-object SDILSessionKeys {
+object Constants {
 
-  val SUBSCRIPTION = "SUBSCRIPTION"
-  val AMOUNTS = "AMOUNTS"
-  val ROW_CALCULATIONS = "ROW-CALCULATIONS"
+  val LOW = "low"
+  val HIGH = "high"
+  val BAND_LEVY = "BandLevy"
 
 }

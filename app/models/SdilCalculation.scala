@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package repositories
+package models
 
-object SDILSessionKeys {
+import play.api.libs.json.{Json, Reads, Writes}
 
-  val SUBSCRIPTION = "SUBSCRIPTION"
-  val AMOUNTS = "AMOUNTS"
-  val ROW_CALCULATIONS = "ROW-CALCULATIONS"
+case class SdilCalculation(lowBandLevy: Double, highBandLevy: Double)
 
+object SdilCalculation {
+  implicit val format = Json.format[SdilCalculation]
+  implicit val writes: Writes[SdilCalculation] = Json.writes
+  implicit val reads: Reads[SdilCalculation] = Json.reads
 }

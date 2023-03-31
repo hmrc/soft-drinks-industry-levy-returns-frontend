@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import models.{Amounts, ReturnPeriod, UserAnswers}
+import models.{Amounts, ReturnPeriod, UserAnswers, SdilCalculation}
 import pages._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.ReturnsHelper
+import utilitlies.{CacheHelper, LevyCalculator, ReturnsHelper}
 import utilitlies.ReturnsHelper.{extractReturnPeriod, extractTotal, listItemsWithTotal}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -68,14 +68,18 @@ class CheckYourAnswersController @Inject()(
                             userAnswers: Option[UserAnswers] = None
                            )(implicit hc: HeaderCarrier, messages: Messages) = {
 
+    val balanceAllEnabled = config.balanceAllEnabled
+    val sdilEnrolment = request.sdilEnrolment
+    val returnPeriod = extractReturnPeriod(request)
+
     val answers = userAnswers match {
       case Some(answers) => answers
       case _ => request.userAnswers
     }
 
-    val balanceAllEnabled = config.balanceAllEnabled
-    val sdilEnrolment = request.sdilEnrolment
-    val returnPeriod = extractReturnPeriod(request)
+    val rowCalculations = LevyCalculator.calculateLevyForAnswers(answers)
+    val cacheHelper = new CacheHelper(sessionCache)
+    cacheHelper.cacheRowAmounts(sdilEnrolment, rowCalculations)
 
     (for {
       isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
@@ -92,7 +96,8 @@ class CheckYourAnswersController @Inject()(
       val totalForQuarter = calculateTotalForQuarter(answers, isSmallProducer.getOrElse(false))
       val total = totalForQuarter - balanceBroughtForward
       val isNilReturn = totalForQuarter == 0
-      cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
+      cacheHelper.cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
+
       Ok(view(request.subscription.orgName,
         formattedReturnPeriodQuarter(returnPeriod),
         ownBrandsAnswers(answers),
@@ -114,6 +119,8 @@ class CheckYourAnswersController @Inject()(
         Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
     }
   }
+
+
 
   private def formattedReturnPeriodQuarter(returnPeriod: ReturnPeriod)(implicit messages: Messages) = {
     returnPeriod.quarter match {
@@ -251,10 +258,4 @@ class CheckYourAnswersController @Inject()(
     }
   }
 
-  private def cacheAmounts(sdilEnrolment: String, amounts: Amounts) = {
-    sessionCache.save(sdilEnrolment, SDILSessionKeys.AMOUNTS, amounts).map {
-      case result if !result.id.isEmpty => result
-      case _ => throw new RuntimeException(s"Failed to save amounts in session cache for $sdilEnrolment")
-    }
-  }
 }
