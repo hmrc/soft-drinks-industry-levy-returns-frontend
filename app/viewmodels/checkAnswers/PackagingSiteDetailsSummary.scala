@@ -86,7 +86,7 @@ object PackagingSiteDetailsSummary {
     }
 
     val addressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.get)}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}
+      s"""${HtmlFormat.escape(site.tradingName.head)}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}
       ${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }
 
@@ -95,7 +95,7 @@ object PackagingSiteDetailsSummary {
     }
 
     val separatePostCodeAddressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.get)}<br>${
+      s"""${HtmlFormat.escape(site.tradingName.head)}<br>${
         HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))
       }<br>${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }

@@ -83,9 +83,7 @@ class PackagingSiteDetailsController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            sdilReturn = SdilReturn.apply(updatedAnswers)
-            retrievedSubs <- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
-          } yield Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
+          } yield Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, updatedAnswers))
       )
   }
 }

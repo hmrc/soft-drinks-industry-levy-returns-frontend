@@ -89,12 +89,11 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         application.injector.instanceOf[PackagingSiteDetailsView]
 
         val result = route(application, request).value
-
-        val smallProducersSummaryList: List[SummaryListRow] =
+        val packagingSiteSummaryList: List[SummaryListRow] =
           PackagingSiteDetailsSummary.row2(List())(messages(application))
 
         SummaryListViewModel(
-          rows = smallProducersSummaryList
+          rows = packagingSiteSummaryList
         )
 
         status(result) mustEqual OK
