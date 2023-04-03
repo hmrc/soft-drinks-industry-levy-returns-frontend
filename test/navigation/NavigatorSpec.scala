@@ -63,11 +63,6 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
 
-            "Should navigate to Check Your Answers page when no is selected in check mode" in {
-              val result = navigate(false, CheckMode)
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
-            }
-
           }
 
           "How many own brands packaged at own sites" - {
@@ -423,11 +418,105 @@ class NavigatorSpec extends SpecBase {
 
     "in Check mode" - {
 
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" - {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad()
       }
+
+
+      "Own brands" - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(OwnBrandsPage, CheckMode, UserAnswers(id, Json.obj("ownBrands" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many packed at your own own site page when yes is selected" in {
+          navigator.nextPage(OwnBrandsPage, CheckMode, UserAnswers(id, Json.obj("ownBrands" -> true))
+          ) mustBe routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Contract packer" - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(PackagedContractPackerPage, CheckMode, UserAnswers(id, Json.obj("packagedContractPacker" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many packed at your as contract packer page when yes is selected" in {
+          navigator.nextPage(PackagedContractPackerPage, CheckMode, UserAnswers(id, Json.obj("packagedContractPacker" -> true))
+          ) mustBe routes.HowManyAsAContractPackerController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Exemption for small producer " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to small producer details page when yes is selected" in {
+          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true))
+          ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+      }
+
+
+      "Brought into UK " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(BroughtIntoUKPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUK" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many brought into UK page when yes is selected" in {
+          navigator.nextPage(BroughtIntoUKPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUK" -> true))
+          ) mustBe routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Brought into from small producers UK " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many brought into uk from small producers page when yes is selected" in {
+          navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> true))
+          ) mustBe routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Claim credits for exports " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForExports" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many credits for exports page when yes is selected" in {
+          navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForExports" -> true))
+          ) mustBe routes.HowManyCreditsForExportController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Claim credits for lost or damaged " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many credits for lost or damaged page when yes is selected" in {
+          navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true))
+          ) mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
+        }
+      }
+
     }
   }
 

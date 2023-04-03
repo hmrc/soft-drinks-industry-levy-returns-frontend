@@ -198,7 +198,7 @@ class Navigator @Inject()() {
 
   private def checkClaimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
-      routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
+      routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
     } else {
       routes.CheckYourAnswersController.onPageLoad()
     }

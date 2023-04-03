@@ -51,7 +51,7 @@ class ReturnsController @Inject()(
                                    sessionCache: SDILSessionCache,
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  //Warehouse TODO -> REMOVE WHEN WAREHOUSE LIST IS MADE!
+  //Warehouse
   val tradingName: String = "Soft Juice Ltd"
   val line1: String = "3 Prospect St"
   val line2: String = "Reading"
@@ -89,7 +89,7 @@ class ReturnsController @Inject()(
               subscription,
               CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
               amounts.totalForQuarter,
-              returnPeriod, // TODO - I don't think this needs to be passed twice :)
+              returnPeriod,
               financialStatus = financialStatus(amounts.total): String,
               ownBrandsAnswers(userAnswers),
               packagedContractPackerAnswers(request, userAnswers),
@@ -99,7 +99,7 @@ class ReturnsController @Inject()(
               claimCreditsForExportsAnswers(userAnswers),
               claimCreditsForLostOrDamagedAnswers(userAnswers),
               smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList): Option[List[SmallProducer]],
-              warehouseCheck = warehouseCheck(warehouseList): Option[List[Warehouse]], //TODO CHANGE TO CHECK WAREHOUSE LIST!
+              warehouseCheck = warehouseCheck(warehouseList): Option[List[Warehouse]],
               smallProducerAnswers(userAnswers),
               warehouseAnswers(userAnswers),
               AmountToPaySummary.amountToPaySummary(amounts.totalForQuarter, amounts.balanceBroughtForward, amounts.total)
