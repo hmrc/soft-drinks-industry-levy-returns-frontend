@@ -16,25 +16,23 @@
 
 package connectors
 
-import models.{FinancialLineItem,ReturnPeriod}
-import play.api.Configuration
+import config.FrontendAppConfig
+import models.retrieved.RetrievedSubscription
+import models.{FinancialLineItem, ReturnPeriod}
+import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import models.retrieved.RetrievedSubscription
-import repositories.{SDILSessionCache, SDILSessionKeys}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
     val http: HttpClient,
-    val configuration: Configuration,
+    frontendAppConfig: FrontendAppConfig,
     sdilSessionCache: SDILSessionCache
-  )(implicit ec: ExecutionContext)
-  extends ServicesConfig(configuration) {
+  )(implicit ec: ExecutionContext) {
 
-  lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
+  lazy val sdilUrl: String = frontendAppConfig.sdilBaseUrl
 
   private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 

@@ -16,6 +16,7 @@
 
 package base
 
+import config.FrontendAppConfig
 import controllers.actions._
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
@@ -88,6 +89,7 @@ trait SpecBase
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
+  lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   //val financialLineItem = FinancialLineItem(Date(Jan,))
   val returnPeriod = ReturnPeriod(2022,1)

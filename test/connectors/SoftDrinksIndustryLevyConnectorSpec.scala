@@ -18,6 +18,7 @@ package connectors
 
 import base.SpecBase
 import com.typesafe.config.ConfigFactory
+import config.FrontendAppConfig
 import models.ReturnPeriod
 import models.retrieved.RetrievedSubscription
 import org.mockito.ArgumentMatchers.any
@@ -38,18 +39,9 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
   val (host, localPort) = ("host", "123")
 
-  val localConfig = Configuration(
-    ConfigFactory.parseString(s"""
-                                 | microservice.services.soft-drinks-industry-levy {
-                                 |    host     = "$host"
-                                 |    port     = $localPort
-                                 |  }
-                                 |""".stripMargin)
-  )
-
   val mockHttp = mock[HttpClient]
   val mockSDILSessionCache = mock[SDILSessionCache]
-  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, localConfig, mockSDILSessionCache)
+  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, frontendAppConfig, mockSDILSessionCache)
 
 
   implicit val hc = HeaderCarrier()
