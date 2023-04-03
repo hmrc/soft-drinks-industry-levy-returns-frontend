@@ -436,6 +436,15 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(OwnBrandsPage, CheckMode, UserAnswers(id, Json.obj("ownBrands" -> true))
           ) mustBe routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode)
         }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(BrandsPackagedAtOwnSitesPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("ownBrands" -> true,
+              "brandsPackagedAtOwnSites" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
       }
 
       "Contract packer" - {
@@ -449,6 +458,16 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PackagedContractPackerPage, CheckMode, UserAnswers(id, Json.obj("packagedContractPacker" -> true))
           ) mustBe routes.HowManyAsAContractPackerController.onPageLoad(CheckMode)
         }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyAsAContractPackerPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("packagedContractPacker" -> true,
+              "howManyAsAContractPacker" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
       }
 
       "Exemption for small producer " - {
@@ -461,6 +480,14 @@ class NavigatorSpec extends SpecBase {
         "Should navigate to small producer details page when yes is selected" in {
           navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true))
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyAsAContractPackerPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true,
+              "addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -476,6 +503,16 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(BroughtIntoUKPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUK" -> true))
           ) mustBe routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode)
         }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyBroughtIntoUkPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("broughtIntoUK" -> true,
+              "HowManyBroughtIntoUk" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
       }
 
       "Brought into from small producers UK " - {
@@ -489,6 +526,16 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> true))
           ) mustBe routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode)
         }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyBroughtIntoTheUKFromSmallProducersPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> true,
+              "howManyBroughtIntoTheUKFromSmallProducers" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
       }
 
       "Claim credits for exports " - {
@@ -501,6 +548,15 @@ class NavigatorSpec extends SpecBase {
         "Should navigate to how many credits for exports page when yes is selected" in {
           navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForExports" -> true))
           ) mustBe routes.HowManyCreditsForExportController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyCreditsForExportPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("claimCreditsForExports" -> true,
+              "howManyCreditsForExport" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -515,6 +571,29 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true))
           ) mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
         }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(ClaimCreditsForLostDamagedPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true,
+              "claimCreditsForLostDamaged" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+      }
+
+      "Check small producer details" - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(SmallProducerDetailsPage, CheckMode, UserAnswers(id, Json.obj("smallProducerDetails" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many credits for lost or damaged page when yes is selected" in {
+          navigator.nextPage(SmallProducerDetailsPage, CheckMode, UserAnswers(id, Json.obj("smallProducerDetails" -> true))
+          ) mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
+        }
+
       }
 
     }
