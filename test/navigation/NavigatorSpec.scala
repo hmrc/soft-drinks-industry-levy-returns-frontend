@@ -573,10 +573,10 @@ class NavigatorSpec extends SpecBase {
         }
 
         "Should navigate to Check Your Answers page when yes is selected and data present" in {
-          navigator.nextPage(ClaimCreditsForLostDamagedPage,
+          navigator.nextPage(HowManyCreditsForLostDamagedPage,
             CheckMode,
             UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true,
-              "claimCreditsForLostDamaged" ->
+              "howManyCreditsForLostDamaged" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
           ) mustBe routes.CheckYourAnswersController.onPageLoad()
         }
@@ -594,6 +594,33 @@ class NavigatorSpec extends SpecBase {
           ) mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
         }
 
+      }
+
+      "Add a small producer " - {
+
+        "Should navigate to small producer details controller when no is selected" in {
+          navigator.nextPage(AddASmallProducerPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
+          ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Remove a small producer " - {
+
+        "Should navigate to small producer details controller when yes is selected" in {
+          navigator.nextPage(RemoveSmallProducerConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> true), smallProducerList = List())
+          ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to small producer details controller when no is selected" in {
+          navigator.nextPage(RemoveSmallProducerConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> false), smallProducerList = List())
+          ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
       }
 
     }
