@@ -23,7 +23,7 @@ import forms.ClaimCreditsForLostDamagedFormProvider
 import javax.inject.Inject
 import models.{Mode, SdilReturn}
 import navigation.Navigator
-import pages.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
+import pages.{ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -69,20 +69,19 @@ class ClaimCreditsForLostDamagedController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
+          (for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForLostDamagedPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield updatedAnswers).flatMap { updatedAnswers =>
             if (value) {
-              Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers))
+              Future.successful(Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers)))
             } else {
-              val answersWithLitresRemoved =
-                updatedAnswers.remove(HowManyCreditsForLostDamagedPage) match {
-                  case Success(updatedAnswers) => updatedAnswers
-                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
-                }
-              sessionRepository.set(answersWithLitresRemoved)
-              Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, answersWithLitresRemoved))
+              Future.fromTry(updatedAnswers.remove(HowManyCreditsForLostDamagedPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers))
+                  }
+              }
             }
           }
       )

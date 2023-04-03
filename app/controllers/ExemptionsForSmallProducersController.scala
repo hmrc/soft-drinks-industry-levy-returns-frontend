@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.ExemptionsForSmallProducersFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{AddASmallProducerPage, ExemptionsForSmallProducersPage}
+import pages.{AddASmallProducerPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyCreditsForLostDamagedPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -61,26 +61,24 @@ class ExemptionsForSmallProducersController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
+          (for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptionsForSmallProducersPage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield {
+          } yield updatedAnswers).flatMap { updatedAnswers =>
             if (value) {
-              Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
+              Future.successful(Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers)))
             } else {
-              val answersWithLitresRemoved =
-                updatedAnswers.remove(AddASmallProducerPage) match {
-                  case Success(updatedAnswers) => updatedAnswers.copy(smallProducerList = List())
-                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
-                }
-              sessionRepository.set(answersWithLitresRemoved)
-              Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, answersWithLitresRemoved))
+              Future.fromTry(updatedAnswers.remove(AddASmallProducerPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
+                  }
+              }
             }
           }
       )

@@ -67,20 +67,19 @@ class ClaimCreditsForExportsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
+          (for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForExportsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield {
+          } yield updatedAnswers).flatMap { updatedAnswers =>
             if (value) {
-              Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, updatedAnswers))
+              Future.successful(Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, updatedAnswers)))
             } else {
-              val answersWithLitresRemoved =
-                updatedAnswers.remove(HowManyCreditsForExportPage) match {
-                  case Success(updatedAnswers) => updatedAnswers
-                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
-                }
-              sessionRepository.set(answersWithLitresRemoved)
-              Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, answersWithLitresRemoved))
+              Future.fromTry(updatedAnswers.remove(HowManyCreditsForExportPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, updatedAnswers))
+                  }
+              }
             }
           }
       )

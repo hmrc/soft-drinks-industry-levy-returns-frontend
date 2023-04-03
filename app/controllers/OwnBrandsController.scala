@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.OwnBrandsFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
+import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage, OwnBrandsPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -64,20 +64,20 @@ class OwnBrandsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
-          for {
+
+          (for {
             updatedAnswers <- Future.fromTry(answers.set(OwnBrandsPage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield {
+          } yield updatedAnswers).flatMap { updatedAnswers =>
             if (value) {
-              Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers))
+              Future.successful(Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers)))
             } else {
-              val answersWithLitresRemoved =
-                updatedAnswers.remove(BrandsPackagedAtOwnSitesPage) match {
-                  case Success(updatedAnswers) => updatedAnswers
-                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+              Future.fromTry(updatedAnswers.remove(BrandsPackagedAtOwnSitesPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers))
+                  }
               }
-              sessionRepository.set(answersWithLitresRemoved)
-              Redirect(navigator.nextPage(OwnBrandsPage, mode, answersWithLitresRemoved))
             }
           }
       )

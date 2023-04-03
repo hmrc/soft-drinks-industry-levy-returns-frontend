@@ -67,20 +67,19 @@ class BroughtIntoUKController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
+          (for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(BroughtIntoUKPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield updatedAnswers).flatMap { updatedAnswers =>
             if (value) {
-              Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers))
+              Future.successful(Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers)))
             } else {
-              val answersWithLitresRemoved =
-                updatedAnswers.remove(HowManyBroughtIntoUkPage) match {
-                  case Success(updatedAnswers) => updatedAnswers
-                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
-                }
-              sessionRepository.set(answersWithLitresRemoved)
-              Redirect(navigator.nextPage(BroughtIntoUKPage, mode, answersWithLitresRemoved))
+              Future.fromTry(updatedAnswers.remove(HowManyBroughtIntoUkPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers))
+                  }
+              }
             }
           }
       )

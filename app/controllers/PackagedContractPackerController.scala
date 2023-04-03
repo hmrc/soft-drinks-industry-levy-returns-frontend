@@ -22,7 +22,7 @@ import forms.PackagedContractPackerFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
+import pages.{AddASmallProducerPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, PackagedContractPackerPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -67,20 +67,19 @@ class PackagedContractPackerController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
+          (for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagedContractPackerPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield updatedAnswers).flatMap { updatedAnswers =>
             if (value) {
-              Redirect(navigator.nextPage(PackagedContractPackerPage, mode, updatedAnswers))
+              Future.successful(Redirect(navigator.nextPage(PackagedContractPackerPage, mode, updatedAnswers)))
             } else {
-              val answersWithLitresRemoved =
-                updatedAnswers.remove(HowManyAsAContractPackerPage) match {
-                  case Success(updatedAnswers) => updatedAnswers
-                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
-                }
-              sessionRepository.set(answersWithLitresRemoved)
-              Redirect(navigator.nextPage(PackagedContractPackerPage, mode, answersWithLitresRemoved))
+              Future.fromTry(updatedAnswers.remove(HowManyAsAContractPackerPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(PackagedContractPackerPage, mode, updatedAnswers))
+                  }
+              }
             }
           }
       )
