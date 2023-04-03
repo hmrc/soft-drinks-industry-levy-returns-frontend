@@ -168,6 +168,25 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
             summaryActions.first.text() should include("Remove")
             summaryActions.last.text() should include("Remove")
           }
-// links.getElementsByTag("li").first().attr("href") shouldBe ""
+
+        "edit link should go to proper url" in {
+          val html =
+            view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+
+          val editLink = doc(html).getElementsByClass("govuk-summary-list__actions")
+            .tagName("ul").tagName("li").first().getElementsByClass("govuk-link")
+          editLink.attr("href") shouldBe
+            "/soft-drinks-industry-levy-returns-frontend"
+        }
+
+        "remove link should go to proper url" in {
+          val html =
+            view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+
+          val removeLink = doc(html).getElementsByClass("govuk-summary-list__actions")
+            .tagName("ul").tagName("li").last().getElementsByClass("govuk-link")
+          removeLink.attr("href") shouldBe
+            "/soft-drinks-industry-levy-returns-frontend"
+        }
 
 }
