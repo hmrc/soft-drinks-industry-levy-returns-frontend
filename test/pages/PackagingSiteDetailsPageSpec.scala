@@ -36,7 +36,6 @@ import views.html.PackagingSiteDetailsView
 
 class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with SummaryListFluency with PageBehaviours {
 
-//  val formProvider = new PackagingSiteDetailsFormProvider()
   val form = new PackagingSiteDetailsFormProvider()
   val view: PackagingSiteDetailsView = application.injector.instanceOf[PackagingSiteDetailsView]
   val packagingSummaryList: List[SummaryListRow] =
