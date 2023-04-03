@@ -18,15 +18,13 @@ package pages
 
 import base.SpecBase
 import forms.PackagingSiteDetailsFormProvider
+import models.NormalMode
 import models.backend.{Site, UkAddress}
-import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import pages.behaviours.PageBehaviours
-import play.api.i18n.Messages
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.test.Helpers.contentAsString
 import play.twirl.api.Html
@@ -110,7 +108,6 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
             document
               .getElementsByClass("govuk-summary-list__key")
-              .get(0)
               .text should include("Wild Lemonade Group")
           }
 
@@ -119,16 +116,8 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
               view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
             val document = doc(html)
 
-            val links = document
-//
-//              .getElementsByClass("govuk-body-m")
-//              .first()
-////              .getElementsByTag("li")
-//            println(Console.YELLOW + "links is " + links + Console.WHITE)
-//            links.children()
-//              .size() shouldBe 1
-
-          //  links.get(0).text() shouldBe "Edit"
+            val summaryListContents = document.getElementsByClass("govuk-summary-list")
+            summaryListContents.text shouldNot include("Remove")
           }
 
           "have the option to add another UK packaging site" in {
@@ -141,7 +130,44 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
               .text must include("Do you want to add another UK packaging site?")
           }
 
+          "have the expected title when there are 2 packaging sites" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+            val document = doc(html)
 
+            document.title() shouldBe "You added 2 packaging sites - soft-drinks-industry-levy-returns-frontend - GOV.UK"
+          }
 
+          "have the expected heading when there are 2 packaging sites" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+            val document = doc(html)
 
-  }
+            document
+              .getElementsByTag("h1")
+              .text shouldBe "You added 2 packaging sites"
+          }
+
+          "show the correct packaging site in the list when there are 2 packaging sites" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+            val summaryListContents = doc(html)
+              .getElementsByClass("govuk-summary-list__key")
+
+            summaryListContents.size() shouldBe 2
+            summaryListContents.first.text() should include ("Wild Lemonade Group")
+            summaryListContents.last.text() should include ("29 Station Place")
+          }
+
+          "show the remove link when there are 2 packaging sites" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+
+            val summaryActions = doc(html).getElementsByClass("govuk-summary-list__actions-list")
+            summaryActions.size() shouldBe 2
+            summaryActions.first.text() should include("Remove")
+            summaryActions.last.text() should include("Remove")
+          }
+// links.getElementsByTag("li").first().attr("href") shouldBe ""
+
+}
