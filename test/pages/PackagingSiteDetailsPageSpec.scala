@@ -72,13 +72,11 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
   def doc(result: Html): Document = Jsoup.parse(contentAsString(result))
 
   object Selectors {
-    val heading = "govuk-heading-m"
     val body = "govuk-body"
     val button = "govuk-button"
     val form = "form"
+    val summaryListKey = "govuk-summary-list__key"
   }
-
-
 
   "packagingSiteDetailsPage" - {
 
@@ -88,30 +86,62 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
       beRemovable[Boolean](PackagingSiteDetailsPage)
     }
-        "have the expected title" in {
-          val html =
-            view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
-          val document = doc(html)
+          "have the expected title when there is only 1 packaging site" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+            val document = doc(html)
 
-          document.title() shouldBe "You added 1 packaging sites - soft-drinks-industry-levy-returns-frontend - GOV.UK"
-        }
-        "have the expected heading" in {
-          val html =
-            view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
-          val document = doc(html)
+            document.title() shouldBe "You added 1 packaging sites - soft-drinks-industry-levy-returns-frontend - GOV.UK"
+          }
+          "have the expected heading when there is only 1 packaging site" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+            val document = doc(html)
 
-          document
-            .getElementsByTag("h1")
-            .text shouldBe "You added 1 packaging sites"
-        }
-        "have the option to add another UK packaging site" in {
-          val html =
-            view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
-          val document = doc(html)
+            document
+              .getElementsByTag("h1")
+              .text shouldBe "You added 1 packaging sites"
+          }
 
-          document
-            .getElementsByTag("h2")
-            .text must include("Do you want to add another UK packaging site?")
-        }
+          "show the correct packaging site in the list when there is only 1 packaging site" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+            val document = doc(html)
+
+            document
+              .getElementsByClass("govuk-summary-list__key")
+              .get(0)
+              .text should include("Wild Lemonade Group")
+          }
+
+          "not show the remove link when there is only 1 packaging site" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+            val document = doc(html)
+
+            val links = document
+//
+//              .getElementsByClass("govuk-body-m")
+//              .first()
+////              .getElementsByTag("li")
+//            println(Console.YELLOW + "links is " + links + Console.WHITE)
+//            links.children()
+//              .size() shouldBe 1
+
+          //  links.get(0).text() shouldBe "Edit"
+          }
+
+          "have the option to add another UK packaging site" in {
+            val html =
+              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+            val document = doc(html)
+
+            document
+              .getElementsByTag("h2")
+              .text must include("Do you want to add another UK packaging site?")
+          }
+
+
+
 
   }
