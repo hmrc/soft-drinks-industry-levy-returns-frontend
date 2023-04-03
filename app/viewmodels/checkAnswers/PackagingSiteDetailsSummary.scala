@@ -79,6 +79,7 @@ object PackagingSiteDetailsSummary {
   }
 
   private def addressFormatting(site: Site): String = {
+    val addressFormat = determineAddressFormat(site)
     val commaFormattedSiteAddress = site.address.lines.map(line => { if (line.isEmpty) "" else line + ", " })
 
     val addressNoTradingName = {
@@ -86,7 +87,7 @@ object PackagingSiteDetailsSummary {
     }
 
     val addressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.head)}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}
+      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}
       ${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }
 
@@ -95,12 +96,10 @@ object PackagingSiteDetailsSummary {
     }
 
     val separatePostCodeAddressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.head)}<br>${
+      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${
         HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))
       }<br>${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }
-
-    val addressFormat = determineAddressFormat(site)
 
     addressFormat match {
       case "separatePostCodeAddressNoTradingName" => separatePostCodeAddressNoTradingName
@@ -112,7 +111,7 @@ object PackagingSiteDetailsSummary {
 
   private def determineAddressFormat(site: Site) = {
     val addressLength = site.address.lines.toString().length
-    if (site.tradingName.get.isEmpty) {
+    if (site.tradingName.getOrElse("").isEmpty) {
       if ((addressLength > 41 && addressLength < 47) || (addressLength > 97 && addressLength < 104)) {
         "separatePostCodeAddressNoTradingName"
       } else {
