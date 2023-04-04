@@ -540,13 +540,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementById("change-lowband-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("-£1800.00")
+        page.getElementsByTag("dd").text() must include("-£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("-£4800.00")
+        page.getElementsByTag("dd").text() must include("-£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.lowband.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.highband.hidden"))
@@ -600,13 +600,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementById("change-lowband-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("-£1800.00")
+        page.getElementsByTag("dd").text() must include("-£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("-£4800.00")
+        page.getElementsByTag("dd").text() must include("-£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.lowband.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.highband.hidden"))

@@ -102,8 +102,8 @@ object HowManyCreditsForLostDamagedSummary  {
 
     answers.get(HowManyCreditsForLostDamagedPage).map {
       answer =>
-        val levy = "-£" + String.format("%.2f", (answer.lowBand * lowBandCostPerLitre.toDouble))
-        val value = HtmlFormat.escape(levy).toString
+        val levy = answer.lowBand * lowBandCostPerLitre.toDouble * -1
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
 
         SummaryListRowViewModel(
           key = "lowBandLevy",
@@ -136,8 +136,8 @@ object HowManyCreditsForLostDamagedSummary  {
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyCreditsForLostDamagedPage).map {
       answer =>
-        val levy = "-£" + String.format("%.2f", (answer.highBand * highBandCostPerLitre.toDouble))
-        val value = HtmlFormat.escape(levy).toString
+        val levy = answer.highBand * highBandCostPerLitre.toDouble * -1
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
 
         SummaryListRowViewModel(
           key = "highBandLevy",
