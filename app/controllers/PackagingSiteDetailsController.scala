@@ -60,12 +60,12 @@ class PackagingSiteDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val packagingSiteSummaryAliasList: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteList)
-      val aliasList: SummaryList = SummaryListViewModel(
-        rows = packagingSiteSummaryAliasList
+      val packagingSiteSummaryList: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteList)
+      val siteList: SummaryList = SummaryListViewModel(
+        rows = packagingSiteSummaryList
       )
 
-      Ok(view(preparedForm, mode, aliasList))
+      Ok(view(preparedForm, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

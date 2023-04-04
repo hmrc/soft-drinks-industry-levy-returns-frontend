@@ -90,6 +90,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
             document.title() shouldBe "You added 1 packaging sites - soft-drinks-industry-levy-returns-frontend - GOV.UK"
           }
+
           "have the expected heading when there is only 1 packaging site" in {
             val html =
               view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))

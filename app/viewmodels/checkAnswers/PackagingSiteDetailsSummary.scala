@@ -82,23 +82,20 @@ object PackagingSiteDetailsSummary {
     val addressFormat = determineAddressFormat(site)
     val commaFormattedSiteAddress = site.address.lines.map(line => { if (line.isEmpty) "" else line + ", " })
 
-    val addressNoTradingName = {
+    lazy val addressNoTradingName = {
       s"""${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }
 
-    val addressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}
-      ${HtmlFormat.escape(site.address.postCode)}""".stripMargin
+    lazy val addressWithTradingName = {
+      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }
 
-    val separatePostCodeAddressNoTradingName = {
+    lazy val separatePostCodeAddressNoTradingName = {
       s"""${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}<br>${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }
 
-    val separatePostCodeAddressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${
-        HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))
-      }<br>${HtmlFormat.escape(site.address.postCode)}""".stripMargin
+    lazy val separatePostCodeAddressWithTradingName = {
+      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}<br>${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }
 
     addressFormat match {
@@ -110,18 +107,20 @@ object PackagingSiteDetailsSummary {
   }
 
   private def determineAddressFormat(site: Site) = {
+
     val addressLength = site.address.lines.toString().length
-    if (site.tradingName.getOrElse("").isEmpty) {
-      if ((addressLength > 41 && addressLength < 47) || (addressLength > 97 && addressLength < 104)) {
+
+    if (site.tradingName.getOrElse("") == "") {
+      if ((addressLength > 44 && addressLength < 50) || (addressLength > 97 && addressLength < 104)) {
         "separatePostCodeAddressNoTradingName"
       } else {
         "addressNoTradingName"
       }
     } else {
-      if ((addressLength < 42 || addressLength > 46) && (addressLength < 98 || addressLength > 105)) {
-        "addressWithTradingName"
-      } else {
+      if ((addressLength > 44 && addressLength < 50) || (addressLength > 97 && addressLength < 104)) {
         "separatePostCodeAddressWithTradingName"
+      } else {
+        "addressWithTradingName"
       }
     }
   }
