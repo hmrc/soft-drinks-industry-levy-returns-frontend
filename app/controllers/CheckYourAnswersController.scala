@@ -48,6 +48,7 @@ class CheckYourAnswersController @Inject()(
                                             view: CheckYourAnswersView,
                                             sdilConnector: SoftDrinksIndustryLevyConnector,
                                             sessionCache: SDILSessionCache,
+                                            levyCalculator: LevyCalculator,
                                           ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val lowerBandCostPerLitre: BigDecimal = config.lowerBandCostPerLitre
@@ -77,7 +78,7 @@ class CheckYourAnswersController @Inject()(
       case _ => request.userAnswers
     }
 
-    val rowCalculations = LevyCalculator.calculateLevyForAnswers(answers)
+    val rowCalculations = levyCalculator.calculateLevyForAnswers(answers)
     val cacheHelper = new CacheHelper(sessionCache)
     cacheHelper.cacheRowAmounts(sdilEnrolment, rowCalculations)
 

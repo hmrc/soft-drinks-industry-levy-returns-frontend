@@ -142,8 +142,7 @@ object SmallProducerDetailsSummary  {
 
   def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
 
-    val levyTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._1 * lowBandCostPerLitre.toDouble).sum
-    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levyTotal)).toString
+    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
 
     Some(SummaryListRowViewModel(
       key = "lowBandLevy",
@@ -169,8 +168,7 @@ object SmallProducerDetailsSummary  {
 
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
 
-    val levyTotal = answers.smallProducerList.map(smallProducer => smallProducer.litreage._2 * highBandCostPerLitre.toDouble).sum
-    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levyTotal)).toString
+    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
 
     Some(SummaryListRowViewModel(
       key = "highBandLevy",
