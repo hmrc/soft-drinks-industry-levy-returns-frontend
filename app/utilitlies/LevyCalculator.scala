@@ -32,7 +32,7 @@ class LevyCalculator @Inject()(config:FrontendAppConfig) {
     Map(
       BrandsPackagedAtOwnSitesPage.toString -> brandsPackagedAtOwnSitesCalculation(answers),
       HowManyAsAContractPackerPage.toString -> howManyAsAContractPackerCalculation(answers),
-      SmallProducerDetailsPage.toString -> smallProducerCalculation(answers),
+      ExemptionsForSmallProducersPage.toString -> exemptionForSmallProducersCalculation(answers),
       HowManyBroughtIntoUkPage.toString -> howManyBroughtIntoUKCalculation(answers),
       HowManyBroughtIntoTheUKFromSmallProducersPage.toString -> howManyBroughtIntoUKFromSmallProducersCalculation(answers),
       HowManyCreditsForExportPage.toString -> howManyCreditsForExportsCalculation(answers),
@@ -54,9 +54,9 @@ class LevyCalculator @Inject()(config:FrontendAppConfig) {
     }
   }
 
-  private def smallProducerCalculation(answers: UserAnswers) = {
+  private def exemptionForSmallProducersCalculation(answers: UserAnswers) = {
     val smallProducerTotals = answers.smallProducerList.foldLeft(0L, 0L)((x, y) => (x |+| (y.litreage._1, y.litreage._2)))
-    SdilCalculation(smallProducerTotals._1, smallProducerTotals._2)
+    SdilCalculation(levyForLowBand(smallProducerTotals._1), levyForHighBand(smallProducerTotals._2))
   }
 
   private def howManyBroughtIntoUKCalculation(answers: UserAnswers) = {
@@ -75,13 +75,13 @@ class LevyCalculator @Inject()(config:FrontendAppConfig) {
 
   private def howManyCreditsForExportsCalculation(answers: UserAnswers) = {
     answers.get(HowManyCreditsForExportPage) match {
-      case Some(page) => SdilCalculation(levyForLowBand(page.lowBand), levyForHighBand(page.highBand))
+      case Some(page) => SdilCalculation(levyForLowBand(page.lowBand) * -1, levyForHighBand(page.highBand) * -1)
       case _ => nilCalculation
     }
   }
   private def howManyCreditsForLostOrDamagedCalculation(answers: UserAnswers) = {
     answers.get(HowManyCreditsForLostDamagedPage) match {
-      case Some(page) => SdilCalculation(levyForLowBand(page.lowBand), levyForHighBand(page.highBand))
+      case Some(page) => SdilCalculation(levyForLowBand(page.lowBand) * -1, levyForHighBand(page.highBand) * -1)
       case _ => nilCalculation
     }
   }
