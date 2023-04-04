@@ -43,7 +43,6 @@ object AmountToPaySummary  {
 
 
     val smallProducerDetailsAnswers = answers.smallProducerList
-    // TODO - will the following two ever not be zero
     val smallProducerDetailsLowBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._1 * lowBandCostPerLitre * 0).sum
     val smallProducerDetailsHighBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._2 * lowBandCostPerLitre * 0).sum
     val smallProducerDetailsTotal = smallProducerDetailsLowBandCost + smallProducerDetailsHighBandCost
@@ -145,7 +144,6 @@ object AmountToPaySummary  {
 
   def balance(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal, smallProducerStatus: Boolean, balanceBroughtForward: BigDecimal): BigDecimal = {
 
-    // TODO - ask Jake why he is adding the total from small producer
     val smallProducerAnswerListTotal = calculatChargeFromPages(answers, lowBandCostPerLitre, highBandCostPerLitre)
     def calculateSubtotal(
                            costLower: BigDecimal,
