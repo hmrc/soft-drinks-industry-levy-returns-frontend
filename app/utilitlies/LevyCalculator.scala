@@ -28,16 +28,6 @@ object LevyCalculator {
   val lowBandRate = 0.18
   val highBandRate = 0.24
 
-  def levyForLowBand(litreage: Long): Double = {
-    // TODO - do results such as 779.939999 need to be rounded down?
-    litreage * lowBandRate
-  }
-
-  def levyForHighBand(litreage: Long): Double = {
-    // TODO - do results such as 779.939999 need to be rounded down?
-    litreage * highBandRate
-  }
-
   def calculateLevyForAnswers(answers: UserAnswers): Map[String, SdilCalculation] = {
 
     val nilCalculation = SdilCalculation(0, 0)
@@ -57,6 +47,14 @@ object LevyCalculator {
       HowManyAsAContractPackerPage.toString -> howManyAsAContractPackerCalculation
     )
 
+  }
+
+  private def levyForLowBand(litreage: Long): Double = {
+    litreage * lowBandRate
+  }
+
+  private def levyForHighBand(litreage: Long): Double = {
+    litreage * highBandRate
   }
 
 }
