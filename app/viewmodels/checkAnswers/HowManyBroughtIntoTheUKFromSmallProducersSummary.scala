@@ -98,13 +98,10 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
     }
 
 
-  def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-
+  def lowBandLevyRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        // TODO - are there any conditions under which this is chargeable ????? if not then we don't need lowBandCostPerLitre to be passed in
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
-
         SummaryListRowViewModel(
           key = "lowBandLevy",
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
@@ -133,12 +130,10 @@ object HowManyBroughtIntoTheUKFromSmallProducersSummary  {
         )
     }
 
-  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
+  def highBandLevyRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map {
       answer =>
-        // TODO - are there any conditions under which this is chargeable ?????
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(0)).toString
-
         SummaryListRowViewModel(
           key = "highBandLevy",
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),

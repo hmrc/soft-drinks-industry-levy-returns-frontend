@@ -165,9 +165,9 @@ class CheckYourAnswersController @Inject()(
     SummaryListViewModel(rows = Seq(
       BroughtIntoUkFromSmallProducersSummary.row(userAnswers),
       HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandRow(userAnswers),
-      HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandLevyRow(userAnswers, lowerBandCostPerLitre),
+      HowManyBroughtIntoTheUKFromSmallProducersSummary.lowBandLevyRow(userAnswers),
       HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandRow(userAnswers),
-      HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers, higherBandCostPerLitre)
+      HowManyBroughtIntoTheUKFromSmallProducersSummary.highBandLevyRow(userAnswers)
     ).flatten)
   }
 
