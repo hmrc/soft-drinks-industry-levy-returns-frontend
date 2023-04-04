@@ -27,19 +27,12 @@ import viewmodels.implicits._
 object PackAtBusinessAddressSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-
-    // TODO - retrieve the address list and set the value returned in teh view row to the size
-    //  i.e addressList.size which will probably be saved in the user answers
-
-
     answers.get(PackAtBusinessAddressPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRowViewModel(
           key     = "packagingSites",
-          value   = ValueViewModel("1").withCssClass("align-right"), //- TODO Change value to number of sites after the page is implemented
+          value   = ValueViewModel("1").withCssClass("align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("packAtBusinessAddress.change.hidden"))
