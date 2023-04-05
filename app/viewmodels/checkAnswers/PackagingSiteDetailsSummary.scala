@@ -80,6 +80,7 @@ object PackagingSiteDetailsSummary {
 
   private def addressFormatting(site: Site): String = {
     val addressFormat = determineAddressFormat(site)
+
     val commaFormattedSiteAddress = site.address.lines.map(line => { if (line.isEmpty) "" else line + ", " })
 
     lazy val addressNoTradingName = {
@@ -99,29 +100,34 @@ object PackagingSiteDetailsSummary {
     }
 
     addressFormat match {
-      case "separatePostCodeAddressNoTradingName" => separatePostCodeAddressNoTradingName
-      case "addressNoTradingName" => addressNoTradingName
-      case "addressWithTradingName" => addressWithTradingName
-      case "separatePostCodeAddressWithTradingName" => separatePostCodeAddressWithTradingName
+      case SeparatePostCodeAddressNoTradingName => separatePostCodeAddressNoTradingName
+      case AddressNoTradingName => addressNoTradingName
+      case AddressWithTradingName => addressWithTradingName
+      case SeparatePostCodeAddressWithTradingName => separatePostCodeAddressWithTradingName
     }
   }
 
-  private def determineAddressFormat(site: Site) = {
+  private def determineAddressFormat(site: Site): AddressMatching = {
 
     val addressLength = site.address.lines.toString().length
 
     if (site.tradingName.getOrElse("") == "") {
       if ((addressLength > 44 && addressLength < 50) || (addressLength > 97 && addressLength < 104)) {
-        "separatePostCodeAddressNoTradingName"
+        SeparatePostCodeAddressNoTradingName
       } else {
-        "addressNoTradingName"
+        AddressNoTradingName
       }
     } else {
       if ((addressLength > 44 && addressLength < 50) || (addressLength > 97 && addressLength < 104)) {
-        "separatePostCodeAddressWithTradingName"
+        SeparatePostCodeAddressWithTradingName
       } else {
-        "addressWithTradingName"
+        AddressWithTradingName
       }
     }
   }
 }
+sealed trait AddressMatching
+case object SeparatePostCodeAddressNoTradingName extends AddressMatching
+case object AddressNoTradingName extends AddressMatching
+case object SeparatePostCodeAddressWithTradingName extends AddressMatching
+case object AddressWithTradingName extends AddressMatching

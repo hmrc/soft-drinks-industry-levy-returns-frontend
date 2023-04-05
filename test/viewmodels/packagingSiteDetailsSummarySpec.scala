@@ -65,7 +65,6 @@ class packagingSiteDetailsSummarySpec extends SpecBase {
     None,
     None)
 
-
   val PackagingSiteEvenLongerAddress = Site(
     UkAddress(List("29 Station Rd", "This address will auto wrap but not in postcode", "it is 4 lines 103 char", "Cambridge"), "CB1 2FP"),
     Some("10"),
@@ -74,7 +73,6 @@ class packagingSiteDetailsSummarySpec extends SpecBase {
 
   val packagingSiteListWith2 = List(PackagingSite1, addressWith3AddressLines)
   val packagingSiteListWith1 = List(PackagingSite1)
-
 
   "row2" - {
 
@@ -133,7 +131,7 @@ class packagingSiteDetailsSummarySpec extends SpecBase {
     val expectedAddressContent = HtmlContent("29 Station Rd, This address will auto wrap but not in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
 
     packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
-  }
+    }
 
   }
 

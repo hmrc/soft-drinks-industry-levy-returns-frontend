@@ -29,7 +29,7 @@
 
 @layout(pageTitle = title(form, messages("packagingSiteDetails.title.heading", siteList.rows.size))) {
 
-    @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

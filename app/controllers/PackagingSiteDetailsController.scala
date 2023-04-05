@@ -19,21 +19,19 @@ package controllers
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.PackagingSiteDetailsFormProvider
-
-import javax.inject.Inject
-import models.{Mode, SdilReturn}
+import models.Mode
 import navigation.Navigator
 import pages.PackagingSiteDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.PackagingSiteDetailsView
-import models.backend.Site
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.checkAnswers.PackagingSiteDetailsSummary
 import viewmodels.govuk.summarylist._
+import views.html.PackagingSiteDetailsView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PackagingSiteDetailsController @Inject()(
@@ -54,15 +52,13 @@ class PackagingSiteDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val packagingSiteList: List[Site] = request.userAnswers.packagingSiteList
       val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val packagingSiteSummaryList: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteList)
       val siteList: SummaryList = SummaryListViewModel(
-        rows = packagingSiteSummaryList
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
       )
 
       Ok(view(preparedForm, mode, siteList))
@@ -70,10 +66,8 @@ class PackagingSiteDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val packagingSiteList: List[Site] = request.userAnswers.packagingSiteList
-      val packagingSiteSummaryList: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteList)
       val siteList: SummaryList = SummaryListViewModel(
-        rows = packagingSiteSummaryList
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
       )
       form.bindFromRequest().fold(
         formWithErrors =>
