@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package repositories
+package utilitlies
 
-object SDILSessionKeys {
+import java.util.Locale
+import models.Amounts
 
-  val SUBSCRIPTION = "SUBSCRIPTION"
-  val AMOUNTS = "AMOUNTS"
-  val ROW_CALCULATIONS = "ROW-CALCULATIONS"
+object CurrencyFormatter {
 
+  private val currencyFormatter = java.text.NumberFormat.getCurrencyInstance(Locale.UK)
+
+  def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String = {
+    currencyFormatter.format(d)
+  }
 }

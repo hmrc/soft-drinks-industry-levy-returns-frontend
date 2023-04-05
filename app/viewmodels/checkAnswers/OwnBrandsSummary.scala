@@ -26,23 +26,30 @@ import viewmodels.implicits._
 
 object OwnBrandsSummary  {
 
-  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] = {
-
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(OwnBrandsPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRowViewModel(
           key = "ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel",
-          value = ValueViewModel(value),
-          actions = if(checkAnswers == true){ Seq(
+          value = ValueViewModel(value).withCssClass("align-right")
+        )
+    }
+  }
+
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(OwnBrandsPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
+        SummaryListRowViewModel(
+          key = "reportingOwnBrandsPackagedAtYourOwnSite",
+          value = ValueViewModel(value).withCssClass("align-right"),
+          actions = Seq(
             ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
               .withAttribute("id", "change-own-brands")
               .withVisuallyHiddenText(messages("ownBrands.change.hidden")) // TODO - what should this say?
-          )}else Seq()
+          )
         )
-
     }
   }
 

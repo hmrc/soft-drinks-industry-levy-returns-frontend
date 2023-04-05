@@ -16,14 +16,78 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukInput: GovukInput
 )
 
-@(list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(alias: String,
+  returnPeriod: String,
+  ownBrandsAnswers: SummaryList,
+  packagedContractPackerAnswers: SummaryList,
+  exemptionsForSmallProducersAnswers: SummaryList,
+  broughtIntoTheUKAnswers: SummaryList,
+  broughtIntoTheUKSmallProducersAnswers: SummaryList,
+  claimCreditsForExportsAnswers: SummaryList,
+  claimCreditsForLostOrDamagedAnswers: SummaryList,
+  amountToPayTitle: String,
+  amountToPay: SummaryList,
+  subheader: Option[String] = None,
+  registeredSites: Option[SummaryList],
+  nilReturn: Boolean)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+    <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
+    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-    @govukSummaryList(list)
+    @subheader match {
+        case Some(amount) => {
+            <h2 class="govuk-heading-m" id="cya-sub-header">@subheader</h2>
+        }
+        case _ => {
+            <br>
+        }
+    }
+
+    <h2 class="govuk-heading-m">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
+    @govukSummaryList(ownBrandsAnswers)
+
+    <h2 class="govuk-heading-m">@messages("contractPackedAtYourOwnSite")</h2>
+    @govukSummaryList(packagedContractPackerAnswers)
+
+    <h2 class="govuk-heading-m">@messages("contractPackedForRegisteredSmallProducers")</h2>
+    @govukSummaryList(exemptionsForSmallProducersAnswers)
+
+    <h2 class="govuk-heading-m">@messages("broughtIntoTheUK")</h2>
+    @govukSummaryList(broughtIntoTheUKAnswers)
+
+    <h2 class="govuk-heading-m">@messages("broughtIntoTheUKFromSmallProducers")</h2>
+    @govukSummaryList(broughtIntoTheUKSmallProducersAnswers)
+
+    <h2 class="govuk-heading-m">@messages("exported")</h2>
+    @govukSummaryList(claimCreditsForExportsAnswers)
+
+    <h2 class="govuk-heading-m">@messages("lostOrDestroyed")</h2>
+    @govukSummaryList(claimCreditsForLostOrDamagedAnswers)
+
+    <h2 class="govuk-heading-m" id="amount-to-pay-title">@amountToPayTitle</h2>
+    @govukSummaryList(amountToPay)
+
+    @registeredSites match {
+        case Some(site) => {
+            <h2 class="govuk-heading-m" id="registered-sites">@messages("registeredUkSites")</h2>
+            @govukSummaryList(site)
+        }
+        case _ => {
+            <br>
+        }
+    }
+
+    <h2 class="govuk-heading-m">@messages("sendYourReturn")</h2>
+    <p class="govuk-body govuk-!-margin-bottom-5">@messages("sendYourReturnConfirmation")</p>
+    <a class="govuk-button" id="confirm-and-submit" role="button" data-module="govuk-button" href="@routes.ReturnsController.onPageLoad(nilReturn)">@messages("confirmDetailsAndSendReturn")</a>
+
+    <p class = "govuk-body-m">
+        <a href="javascript:window.print()" class="govuk-link" id="print-page-cya">@messages("site.print")</a>
+    </p>
 }

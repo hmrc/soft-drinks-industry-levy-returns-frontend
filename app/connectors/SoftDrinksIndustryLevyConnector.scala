@@ -16,10 +16,10 @@
 
 package connectors
 
-import models.{FinancialLineItem,ReturnPeriod}
+import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.retrieved.RetrievedSubscription
 import repositories.{SDILSessionCache, SDILSessionKeys}
@@ -77,4 +77,15 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     import FinancialLineItem.formatter
     http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
+
+  def returns_pending(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+
+  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map {
+      response => Some(response.status)
+    }
+  }
+
 }

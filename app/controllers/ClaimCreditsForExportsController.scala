@@ -22,7 +22,8 @@ import forms.ClaimCreditsForExportsFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.ClaimCreditsForExportsPage
+import pages.{ClaimCreditsForExportsPage, HowManyCreditsForExportPage}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ClaimCreditsForExportsView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class ClaimCreditsForExportsController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -44,6 +46,7 @@ class ClaimCreditsForExportsController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -64,10 +67,21 @@ class ClaimCreditsForExportsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
+          (for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForExportsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, updatedAnswers))
+          } yield updatedAnswers).flatMap { updatedAnswers =>
+            if (value) {
+              Future.successful(Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, updatedAnswers)))
+            } else {
+              Future.fromTry(updatedAnswers.remove(HowManyCreditsForExportPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(ClaimCreditsForExportsPage, mode, updatedAnswers))
+                  }
+              }
+            }
+          }
       )
   }
 }
