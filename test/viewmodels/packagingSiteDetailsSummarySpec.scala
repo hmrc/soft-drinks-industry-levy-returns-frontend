@@ -65,10 +65,16 @@ class packagingSiteDetailsSummarySpec extends SpecBase {
     None,
     None)
 
-  val PackagingSiteEvenLongerAddress = Site(
+  val PackagingSiteEvenLongerAddressNoTradeName = Site(
     UkAddress(List("29 Station Rd", "This address will auto wrap but not in postcode", "it is 4 lines 103 char", "Cambridge"), "CB1 2FP"),
     Some("10"),
     None,
+    None)
+
+  val PackagingSiteEvenLongerAddressWithTradeName = Site(
+    UkAddress(List("29 Station Rd", "This address will auto wrap but not in postcode", "it is 4 lines 103 char", "Cambridge"), "CB1 2FP"),
+    Some("10"),
+    Some("Test Trading Name Inc"),
     None)
 
   val packagingSiteListWith2 = List(PackagingSite1, addressWith3AddressLines)
@@ -127,10 +133,17 @@ class packagingSiteDetailsSummarySpec extends SpecBase {
       packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
     }
     "should autowrap and place a break before the post code if the address line and post code length is between 98 & 103 characters" in {
-    val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(List(PackagingSiteEvenLongerAddress))
+    val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(List(PackagingSiteEvenLongerAddressNoTradeName))
     val expectedAddressContent = HtmlContent("29 Station Rd, This address will auto wrap but not in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
 
     packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
+    }
+
+    "should place a break after a trading name AND autowrap and place a break before the post code if the address line and post code length is between 98 & 103 characters" in {
+      val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(List(PackagingSiteEvenLongerAddressWithTradeName))
+      val expectedAddressContent = HtmlContent("Test Trading Name Inc<br>29 Station Rd, This address will auto wrap but not in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
+
+      packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
     }
 
   }
