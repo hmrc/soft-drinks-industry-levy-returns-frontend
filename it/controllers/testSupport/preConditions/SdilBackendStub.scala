@@ -76,7 +76,7 @@ case class SdilBackendStub()
       get(
         urlPathMatching(s"/balance/$sdilRef/$withAssessment"))
         .willReturn(
-          ok(Json.toJson(BigDecimal(1000)).toString())))
+          ok(Json.toJson(BigDecimal(10000)).toString())))
     builder
   }
 
@@ -85,7 +85,9 @@ case class SdilBackendStub()
       get(
         urlPathMatching(s"/balance/$sdilRef/history/all/$withAssessment"))
         .willReturn(
-          ok(Json.toJson[Seq[FinancialLineItem]](List(ReturnCharge(returnPeriod, BigDecimal(1000)))).toString())))
+          ok(Json.toJson[Seq[FinancialLineItem]](List(
+            ReturnCharge(returnPeriod, BigDecimal(1000)),
+            ReturnCharge(ReturnPeriod(2018, 2), BigDecimal(1000)))).toString())))
     builder
   }
 }

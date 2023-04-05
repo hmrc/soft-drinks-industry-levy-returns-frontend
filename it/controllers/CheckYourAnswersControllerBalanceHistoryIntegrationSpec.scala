@@ -2,8 +2,11 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
+import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
 
@@ -31,5 +34,6 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends Specificat
         }
       }
     }
+
   }
 }

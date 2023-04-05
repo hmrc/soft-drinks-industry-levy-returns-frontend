@@ -14,7 +14,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
 import play.api.inject._
-import repositories.SessionRepository
+import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.health.HealthController
@@ -60,6 +60,7 @@ trait TestConfiguration
   val sessionAndAuth  = Map("authToken" -> AUTHORIZE_HEADER_VALUE, "sessionId" -> sessionId)
 
   lazy val mongo: SessionRepository = app.injector.instanceOf[SessionRepository]
+  lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
   def setAnswers(userAnswers: UserAnswers)(implicit timeout: Duration): Unit  = Await.result(mongo.set(userAnswers), timeout)
   def getAnswers(id: String)(implicit timeout: Duration): Option[UserAnswers] = Await.result(mongo.get(id), timeout)
 
