@@ -121,8 +121,6 @@ class CheckYourAnswersController @Inject()(
     }
   }
 
-
-
   private def formattedReturnPeriodQuarter(returnPeriod: ReturnPeriod)(implicit messages: Messages) = {
     returnPeriod.quarter match {
       case 0 => s"${Messages("firstQuarter")} ${returnPeriod.year}"

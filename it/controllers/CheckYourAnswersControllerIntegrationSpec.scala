@@ -7,14 +7,18 @@ import play.api.test.WsTestClient
 
 class CheckYourAnswersControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
 
+  override def configParams: Map[String, Any] = Map(
+    "balanceAll.enabled" -> false
+  )
+
   "CheckYourAnswersController" should {
 
     "Load when valid user answers present" in {
 
       setAnswers(checkYourAnswersFullAnswers)
 
-      given
-        .commonPrecondition
+      given.commonPrecondition
+      given.sdilBackend.balance("XKSDIL000000022", false)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/check-your-answers")

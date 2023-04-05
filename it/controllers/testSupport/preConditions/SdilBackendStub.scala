@@ -81,7 +81,6 @@ case class SdilBackendStub()
   }
 
   def balanceHistory(sdilRef: String, withAssessment: Boolean) = {
-
     stubFor(
       get(
         urlPathMatching(s"/balance/$sdilRef/history/all/$withAssessment"))

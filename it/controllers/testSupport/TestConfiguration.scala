@@ -83,21 +83,21 @@ trait TestConfiguration
     "json.encryption.previousKeys" -> "[]"
   )
 
+  override implicit lazy val app: Application = appBuilder().build()
 
-  override implicit lazy val app: Application = {
+  def configParams: Map[String, Any] = Map()
+
+  protected def appBuilder(): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .in(Environment.simple(mode = Mode.Dev))
-      .configure(config)
+      .configure(config ++ configParams)
       .overrides(
         bind[DataRetrievalAction].to[DataRetrievalActionImpl],
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[AuthenticatedIdentifierAction],
         bind[Clock].toInstance(Clock.systemDefaultZone().withZone(ZoneOffset.UTC))
       )
-      .build()
-
   }
-
 
   app.injector.instanceOf[HealthController]
 
