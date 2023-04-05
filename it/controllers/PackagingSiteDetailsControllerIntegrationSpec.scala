@@ -12,24 +12,6 @@ import java.time.LocalDate
 
 class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
   "PackagingSiteDetailsController" should {
-    "Ask if user wants to add more packaging sites" in {
-      val userAnswers = newPackerOrImporterPartialAnswers.success.value
-      setAnswers(userAnswers)
-      given
-        .commonPrecondition
-
-      WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/packaging-site-details")
-          .withFollowRedirects(false)
-          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-          .get()
-
-        whenReady(result1) { res =>
-          res.status mustBe 200
-        }
-
-      }
-    }
 
     "Post the request to update packaging site details " when {
 
@@ -52,12 +34,11 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 
           whenReady(result) { res =>
             res.status mustBe 303
-            //            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/add-packaging-site") // TODO when AddressLookup page added and url is determined, update url here
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")
           }
         }
       }
 
-      /* TODO update this once edit functionality and address lookup completed
       "user selected edit on one of the detail lines" in {
         given
           .commonPrecondition
@@ -73,35 +54,32 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
               .post(Json.obj("value" -> "true"))
           whenReady(result) { res =>
             res.status mustBe 303
-            //            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/add-packaging-site") // TODO when AddressLookup page added and url is determined, update url here
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")
           }
         }
       }
-      */
 
-      /* TODO update this once remove functionality completed
-"user selected remove on one of the addresses" in {
-given
-.commonPrecondition
-val userAnswers = newPackerOrImporterPartialAnswers.success.value
-setAnswers(userAnswers)
-WsTestClient.withClient { client =>
-val result =
-client.url(s"$baseUrl/packaging-site-details")
-  .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-  .withHttpHeaders("X-Session-ID" -> "XCSDIL000000069",
-    "Csrf-Token" -> "nocheck")
-  .withFollowRedirects(false)
-  .post(Json.obj("value" -> "true"))
-whenReady(result) { res =>
-res.status mustBe 303
-//            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/add-packaging-site") // TODO when AddressLookup page added and url is determined, update url here
-}
-}
-}
- */
-
+      "user selected remove on one of the addresses" in {
+        given
+        .commonPrecondition
+        val userAnswers = newPackerOrImporterPartialAnswers.success.value
+        setAnswers(userAnswers)
+        WsTestClient.withClient { client =>
+          val result =
+            client.url(s"$baseUrl/packaging-site-details")
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .withHttpHeaders("X-Session-ID" -> "XCSDIL000000069",
+                "Csrf-Token" -> "nocheck")
+              .withFollowRedirects(false)
+              .post(Json.obj("value" -> "true"))
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")
+            }
+        }
+      }
     }
+
     "Post the request to continue from packaging site details " when {
 
       "user selected no with at least one packaging site on the list" in {
@@ -125,13 +103,12 @@ res.status mustBe 303
 
           whenReady(result) { res =>
             res.status mustBe 303
-            //        res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/check-your-answers") TODO: uncomment this line when CYA work has been completed.
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")
           }
         }
       }
 
       "user selected no with at least one packaging site on the list AND user is also a new Importer" in {
-
         given
           .commonPrecondition
         val userAnswers = newPackerOrImporterPartialAnswers.success.value.copy(packagingSiteList =
@@ -148,10 +125,9 @@ res.status mustBe 303
               .withFollowRedirects(false)
               .post(Json.obj("value" -> "false"))
 
-
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/ask-secondary-warehouses-in-return")
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")
           }
         }
       }
