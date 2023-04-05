@@ -80,9 +80,9 @@ class CheckYourAnswersController @Inject()(
 
     val rowCalculations = levyCalculator.calculateLevyForAnswers(answers)
     val cacheHelper = new CacheHelper(sessionCache)
-    cacheHelper.cacheRowAmounts(sdilEnrolment, rowCalculations)
 
     (for {
+      cacheRowAmounts <- cacheHelper.cacheRowAmounts(sdilEnrolment, rowCalculations)
       isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
       balanceBroughtForward <-
         if (balanceAllEnabled) {

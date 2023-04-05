@@ -1143,7 +1143,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         route(application, request).value
       }
 
-      verify(secondMockSdilSessionCache, times(2)).save(any(),any(),any())(any())
+      verify(secondMockSdilSessionCache, times(1)).save(any(),any(),any())(any())
       intercept[RuntimeException](
         result mustBe an[RuntimeException]
       )
