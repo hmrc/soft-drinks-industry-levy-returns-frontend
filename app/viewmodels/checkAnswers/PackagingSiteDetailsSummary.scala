@@ -21,7 +21,7 @@ import models.backend.Site
 import models.{CheckMode, UserAnswers}
 import pages.PackagingSiteDetailsPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
+import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
@@ -78,26 +78,47 @@ object PackagingSiteDetailsSummary {
     }.toList
   }
 
-  private def addressFormatting(site: Site): String = {
+  private def addressFormatting(site: Site): Html = {
     val addressFormat = determineAddressFormat(site)
 
     val commaFormattedSiteAddress = site.address.lines.map(line => { if (line.isEmpty) "" else line + ", " })
+    val htmlSiteAddress = HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))
+    val htmlPostcode = HtmlFormat.escape(site.address.postCode)
+    val htmlTradingName = HtmlFormat.escape(site.tradingName.getOrElse(""))
+    val breakLine = Html("<br>")
 
     lazy val addressNoTradingName = {
-      s"""${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}${HtmlFormat.escape(site.address.postCode)}""".stripMargin
+      HtmlFormat.fill(Seq(
+        htmlSiteAddress,
+        htmlPostcode
+      ))
     }
 
     lazy val addressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}
-      ${HtmlFormat.escape(site.address.postCode)}""".stripMargin
+      HtmlFormat.fill(Seq(
+        htmlTradingName,
+        breakLine,
+        htmlSiteAddress,
+        htmlPostcode
+      ))
     }
 
     lazy val separatePostCodeAddressNoTradingName = {
-      s"""${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}<br>${HtmlFormat.escape(site.address.postCode)}""".stripMargin
+      HtmlFormat.fill(Seq(
+        htmlSiteAddress,
+        breakLine,
+        htmlPostcode
+      ))
     }
 
     lazy val separatePostCodeAddressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}<br>${HtmlFormat.escape(site.address.postCode)}""".stripMargin
+      HtmlFormat.fill(Seq(
+        htmlTradingName,
+        breakLine,
+        htmlSiteAddress,
+        breakLine,
+        htmlPostcode
+      ))
     }
 
     addressFormat match {
