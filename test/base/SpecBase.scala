@@ -145,13 +145,11 @@ trait SpecBase
                                     userAnswers: Option[UserAnswers] = None,
                                     returnPeriod: Option[ReturnPeriod] = None,
                                     subscriptionDetails: RetrievedSubscription = aSubscription): GuiceApplicationBuilder = {
-  val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
 
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].toInstance (new FakeIdentifierAction(subscriptionDetails)),
-        bind[IdentifierAction].toInstance(new FakeIdentifierAction(subscriptionDetails, returnPeriod, bodyParsers)),
+        bind[IdentifierAction].toInstance(new FakeIdentifierAction(subscriptionDetails)),
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
 

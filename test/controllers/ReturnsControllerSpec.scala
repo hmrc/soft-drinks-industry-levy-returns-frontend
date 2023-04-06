@@ -622,7 +622,7 @@ class ReturnsControllerSpec extends SpecBase {
 
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List())
       val subscription = aSubscription.copy(activity = RetrievedActivity(true, true, false,false,false))
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod), Some(subscription)).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod), subscription).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
