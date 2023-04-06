@@ -22,29 +22,31 @@ import controllers.routes
 import pages._
 import models._
 import models.retrieved.RetrievedSubscription
+import uk.gov.hmrc.auth.core.InternalError
 
 
 @Singleton
 class Navigator @Inject()() {
 
-  private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
-    case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
-    case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
-    case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad()
-    case ClaimCreditsForLostDamagedPage => userAnswers => _ => _ => _ => claimCreditsForLostDamagedPageNavigation(userAnswers)
-    case ClaimCreditsForExportsPage => userAnswers => _ => _ => _ => claimCreditsForExportPageNavigation(userAnswers)
-    case AddASmallProducerPage => _ => _ => _ => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
-    case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => _ => _ => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
-    case HowManyBroughtIntoUkPage => _ => _ => _ => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
-    case BroughtIntoUKPage => userAnswers => _ => _ => _ => broughtIntoUkPageNavigation(userAnswers)
-    case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => _ => _ => _ => routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
-    case HowManyAsAContractPackerPage => _ => _ => _ => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
-    case ExemptionsForSmallProducersPage => userAnswers => _ => _ => _ => exemptionForSmallProducersPageNavigation(userAnswers)
-    case SmallProducerDetailsPage => userAnswers => _ => _ => smallProducerMissing => smallProducerDetailsPageNavigation(userAnswers, smallProducerMissing)
-    case BrandsPackagedAtOwnSitesPage => _ => _ => _ => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
-    case PackagedContractPackerPage => userAnswers => _ => _ => _ => packagedContractPackerPageNavigation(userAnswers)
-    case OwnBrandsPage => userAnswers => _ => _ => _ => ownBrandPageNavigation(userAnswers)
-    case _ => _ => _ => _ => _ => routes.IndexController.onPageLoad
+  private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Option[Map[String,Boolean]]=> Call = {
+    case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ =>  _ =>removeSmallProducerConfirmPageNavigation(userAnswers)
+    case HowManyCreditsForExportPage => _ => _ => _ => _ =>  _ =>routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+    case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ =>  _ =>routes.CheckYourAnswersController.onPageLoad()
+    case ClaimCreditsForLostDamagedPage => userAnswers => _ => _ => _ => changedRegistation =>
+      claimCreditsForLostDamagedPageNavigation(userAnswers, changedRegistation)
+    case ClaimCreditsForExportsPage => userAnswers => _ => _ => _ =>  _ =>claimCreditsForExportPageNavigation(userAnswers)
+    case AddASmallProducerPage => _ => _ => _ => _ =>  _ =>routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => _ => _ =>  _ =>broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
+    case HowManyBroughtIntoUkPage => _ => _ => _ => _ =>  _ =>routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
+    case BroughtIntoUKPage => userAnswers => _ => _ => _ =>  _ =>broughtIntoUkPageNavigation(userAnswers)
+    case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => _ => _ => _ =>  _ =>routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
+    case HowManyAsAContractPackerPage => _ => _ => _ => _ =>  _ =>routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    case ExemptionsForSmallProducersPage => userAnswers => _ => _ => _ =>  _ =>exemptionForSmallProducersPageNavigation(userAnswers)
+    case SmallProducerDetailsPage => userAnswers => _ => _ => smallProducerMissing =>  _ =>smallProducerDetailsPageNavigation(userAnswers, smallProducerMissing)
+    case BrandsPackagedAtOwnSitesPage => _ => _ => _ => _ =>  _ =>routes.PackagedContractPackerController.onPageLoad(NormalMode)
+    case PackagedContractPackerPage => userAnswers => _ => _ => _ =>  _ =>packagedContractPackerPageNavigation(userAnswers)
+    case OwnBrandsPage => userAnswers => _ => _ => _ =>  _ =>ownBrandPageNavigation(userAnswers)
+    case _ => _ => _ => _ => _ =>  _ =>routes.IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
@@ -77,9 +79,10 @@ class Navigator @Inject()() {
                userAnswers: UserAnswers,
                sdilReturn: Option[SdilReturn] = None,
                subscription: Option[RetrievedSubscription] = None,
-               smallProducerMissing: Option[Boolean] = None): Call =
+               smallProducerMissing: Option[Boolean] = None,
+               changedRegistation:Option[Map[String,Boolean]] = None): Call =
     mode match {
-      case NormalMode => normalRoutes(page)(userAnswers)(sdilReturn)(subscription)(smallProducerMissing)
+      case NormalMode => normalRoutes(page)(userAnswers)(sdilReturn)(subscription)(smallProducerMissing)(changedRegistation)
       case CheckMode => checkRouteMap(page)(userAnswers)
       case EditMode => EditRouteMap(page)(userAnswers)
       case _ => sys.error("Mode should be Normal, Check or Edit")
@@ -157,17 +160,14 @@ class Navigator @Inject()() {
     }
   }
 
-  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
-
-    val isNewImporter = false
-    val isNewPacker = false
-
+  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers, newRegistationChecker: Option[Map[String,Boolean]] ) = {
     if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
-    } else if (isNewImporter || isNewPacker) {
-      routes.ReturnChangeRegistrationController.onPageLoad()
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      newRegistationChecker match {
+        case Some(regChange) => routes.ReturnChangeRegistrationController.onPageLoad()
+        case _ => routes.CheckYourAnswersController.onPageLoad()
+      }
     }
   }
 
