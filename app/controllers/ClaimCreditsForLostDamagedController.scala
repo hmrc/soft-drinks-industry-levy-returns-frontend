@@ -23,7 +23,8 @@ import forms.ClaimCreditsForLostDamagedFormProvider
 import javax.inject.Inject
 import models.{Mode, SdilReturn}
 import navigation.Navigator
-import pages.ClaimCreditsForLostDamagedPage
+import pages.{ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ClaimCreditsForLostDamagedView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class ClaimCreditsForLostDamagedController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -46,6 +48,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -66,12 +69,21 @@ class ClaimCreditsForLostDamagedController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
+          (for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForLostDamagedPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            sdilReturn = SdilReturn.apply(updatedAnswers)
-            retrievedSubs <- sdilConnector.retrieveSubscription(request.sdilEnrolment, "sdil")
-          } yield Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers, Some(sdilReturn), retrievedSubs))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield updatedAnswers).flatMap { updatedAnswers =>
+            if (value) {
+              Future.successful(Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers)))
+            } else {
+              Future.fromTry(updatedAnswers.remove(HowManyCreditsForLostDamagedPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers))
+                  }
+              }
+            }
+          }
       )
   }
 }

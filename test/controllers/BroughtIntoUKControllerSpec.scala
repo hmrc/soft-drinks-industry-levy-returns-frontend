@@ -154,5 +154,26 @@ class BroughtIntoUKControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to the next page removing litreage data from user answers, when valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          ).build()
+
+      running(application) {
+        val request = FakeRequest(POST, broughtIntoUKRoute).withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode).url
+      }
+    }
+
   }
 }

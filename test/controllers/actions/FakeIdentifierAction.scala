@@ -27,8 +27,7 @@ class FakeIdentifierAction(subscriptionDetails: RetrievedSubscription)(implicit 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
     block(IdentifierRequest(request, "id", subscriptionDetails, Some(ReturnPeriod(2023,1))))
 
-  override def parser: BodyParser[AnyContent] =
-    bodyParsers.default
+  override def parser: BodyParser[AnyContent] = bodyParsers.default
 
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

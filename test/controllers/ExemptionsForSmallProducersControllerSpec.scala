@@ -154,5 +154,27 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
       }
     }
 
+    "must redirect to the next page removing litreage data from user answers, when valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          ).build()
+
+      running(application) {
+        val request = FakeRequest(POST, exemptionsForSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+      }
+    }
+
+
   }
 }

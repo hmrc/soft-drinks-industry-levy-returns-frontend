@@ -1,7 +1,7 @@
 package controllers.testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.ReturnPeriod
+import models.{FinancialLineItem, ReturnCharge, ReturnPeriod}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import play.api.libs.json.Json
@@ -53,7 +53,6 @@ case class SdilBackendStub()
 
   val returnPeriod = ReturnPeriod(2018, 1)
 
-
   def retrieveSubscription(identifier: String, refNum: String) = {
     stubFor(
       get(
@@ -69,6 +68,26 @@ case class SdilBackendStub()
         urlPathMatching(s"/returns/$utr/pending"))
         .willReturn(
           ok(Json.toJson(List(returnPeriod)).toString())))
+    builder
+  }
+
+  def balance(sdilRef: String, withAssessment: Boolean) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/$withAssessment"))
+        .willReturn(
+          ok(Json.toJson(BigDecimal(10000)).toString())))
+    builder
+  }
+
+  def balanceHistory(sdilRef: String, withAssessment: Boolean) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/history/all/$withAssessment"))
+        .willReturn(
+          ok(Json.toJson[Seq[FinancialLineItem]](List(
+            ReturnCharge(returnPeriod, BigDecimal(1000)),
+            ReturnCharge(ReturnPeriod(2018, 2), BigDecimal(1000)))).toString())))
     builder
   }
 }

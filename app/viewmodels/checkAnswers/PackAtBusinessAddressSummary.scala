@@ -26,19 +26,18 @@ import viewmodels.implicits._
 
 object PackAtBusinessAddressSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(PackAtBusinessAddressPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRowViewModel(
-          key     = "packAtBusinessAddress.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
+          key     = "packagingSites",
+          value   = ValueViewModel("1").withCssClass("align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("packAtBusinessAddress.change.hidden"))
           )
         )
     }
+  }
 }

@@ -1,8 +1,8 @@
 package controllers.testSupport
 
-import models.{AddASmallProducer, BrandsPackagedAtOwnSites, HowManyAsAContractPacker, HowManyBroughtIntoUk, UserAnswers}
+import models.{AddASmallProducer, BrandsPackagedAtOwnSites, HowManyAsAContractPacker, HowManyBroughtIntoUk, HowManyCreditsForExport, HowManyCreditsForLostDamaged, UserAnswers}
 import org.scalatest.TryValues
-import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, OwnBrandsPage, PackagedContractPackerPage, RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
+import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
 import play.api.libs.json.Json
 
 import scala.concurrent.duration.DurationInt
@@ -109,4 +109,17 @@ trait ITCoreTestData extends TryValues {
     .set(BroughtIntoUkFromSmallProducersPage, false).success.value
     .set(ClaimCreditsForExportsPage, false)
 
+  def checkYourAnswersFullAnswers = emptyUserAnswers
+    .set(OwnBrandsPage, true).success.value
+    .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
+    .set(PackagedContractPackerPage, true).success.value
+    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand)).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(lowBand, highBand)).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, true).success.value
+    .set(HowManyCreditsForExportPage, HowManyCreditsForExport(lowBand, highBand)).success.value
+    .set(ClaimCreditsForLostDamagedPage, true).success.value
+    .set(HowManyCreditsForLostDamagedPage, HowManyCreditsForLostDamaged(lowBand, highBand)).success.value
 }

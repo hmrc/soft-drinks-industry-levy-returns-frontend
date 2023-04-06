@@ -20,29 +20,39 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.BroughtIntoUkFromSmallProducersPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object BroughtIntoUkFromSmallProducersSummary  {
 
-  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(BroughtIntoUkFromSmallProducersPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
+        SummaryListRow(
+          key = "broughtIntoUKFromSmallProducers.checkYourAnswersLabel",
+          value = ValueViewModel(value).withCssClass("align-right")
+        )
+    }
+  }
+
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(BroughtIntoUkFromSmallProducersPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRow(
-          key     = "broughtIntoUKFromSmallProducers.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = if(checkAnswers == true) {
-            Some(
-              Actions("",
-                items =
-                  Seq(
+        SummaryListRowViewModel(
+          key     = "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers",
+          value   = ValueViewModel(value).withCssClass("align-right"),
+          actions = Seq(
             ActionItemViewModel("site.change", routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-brought-into-uk-small-producers")
               .withVisuallyHiddenText(messages("broughtIntoUkFromSmallProducers.change.hidden"))
-          )))}else None
+          )
         )
     }
+  }
+
 }

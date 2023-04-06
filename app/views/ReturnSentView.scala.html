@@ -45,9 +45,7 @@
   warehouseCheck: Option[List[Warehouse]],
   smallProducerAnswers: SummaryList,
   warehouseAnswers: SummaryList,
-  quarter: SummaryList,
-  balanceBroughtForward: SummaryList,
-  total: SummaryList)(implicit request: Request[_], messages: Messages)
+  amountsRow: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("returnSent.title"))) {
 
@@ -183,14 +181,8 @@
         case "noPayNeeded" =>  Some(messages("checkYourAnswers.noPayNeeded.title"))
         })
     </h2>
-    <p class="govuk-body" id = "quarter">
-        @govukSummaryList(quarter)
-    </p>
-    <p class="govuk-body" id = "balanceBroughtForward">
-        @govukSummaryList(balanceBroughtForward)
-    </p>
-    <p class="govuk-body" id = "total">
-        @govukSummaryList(total)
+    <p class="govuk-body">
+        @govukSummaryList(amountsRow)
     </p>
 </div>
 

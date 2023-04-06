@@ -18,17 +18,19 @@ package controllers
 
 import controllers.actions._
 import forms.OwnBrandsFormProvider
-import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.OwnBrandsPage
+import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage, OwnBrandsPage}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.OwnBrandsView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class OwnBrandsController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -42,6 +44,7 @@ class OwnBrandsController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
@@ -60,12 +63,23 @@ class OwnBrandsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
-
         value =>
-          for {
+
+          (for {
             updatedAnswers <- Future.fromTry(answers.set(OwnBrandsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield updatedAnswers).flatMap { updatedAnswers =>
+            if (value) {
+              Future.successful(Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers)))
+            } else {
+              Future.fromTry(updatedAnswers.remove(BrandsPackagedAtOwnSitesPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(OwnBrandsPage, mode, updatedAnswers))
+                  }
+              }
+            }
+          }
       )
   }
 }
