@@ -29,12 +29,6 @@ class packagingSiteDetailsSummarySpec extends SpecBase {
       Some("Test trading name 1"),
       None)
 
-  val PackagingSite1 = Site(
-    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-    None,
-    Some("Wild Lemonade Group"),
-    None)
-
   val address44Characters = Site(
     UkAddress(List("29 Station Rd", "The Railyard", "Cambridge"), "CB1 2FP"),
     Some("10"),
@@ -77,8 +71,6 @@ class packagingSiteDetailsSummarySpec extends SpecBase {
     Some("Test Trading Name Inc"),
     None)
 
-  val packagingSiteListWith2 = Map(("1290u840958", PackagingSite1), ("908734097210", addressWith3AddressLines))
-  val packagingSiteListWith1 = Map(("937849301282", PackagingSite1))
   val packagingSiteListWith3 = Map(("rieajnldkaljnk13", address45Characters), ("jfkladnlr12", address47Characters), ("jgklaj;ll;e;o", address49Characters))
 
   "row2" - {
@@ -140,9 +132,11 @@ class packagingSiteDetailsSummarySpec extends SpecBase {
     packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
     }
 
-    "should place a break after a trading name AND autowrap and place a break before the post code if the address line and post code length is between 98 & 103 characters" in {
+    "should place a break after a trading name AND autowrap and place a break before the post code if the address line " +
+      "and post code length is between 98 & 103 characters" in {
       val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map(("56458678", PackagingSiteEvenLongerAddressWithTradeName)))
-      val expectedAddressContent = HtmlContent("Test Trading Name Inc<br>29 Station Rd, This address will auto wrap but not in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
+      val expectedAddressContent = HtmlContent("Test Trading Name Inc<br>29 Station Rd, This address will auto wrap but not " +
+        "in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
 
       packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
     }

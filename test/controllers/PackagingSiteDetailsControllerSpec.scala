@@ -19,7 +19,6 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.PackagingSiteDetailsFormProvider
-import models.backend.{Site, UkAddress}
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -40,27 +39,11 @@ import scala.concurrent.Future
 
 class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency{
 
-  val PackagingSite1 = Site(
-    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-    None,
-    Some("Wild Lemonade Group"),
-    None)
-
-  val PackagingSite2 = Site(
-    UkAddress(List("30 Rhes Priordy", "East London"), "E73 2RP"),
-    Some("10"),
-    None,
-    None)
-
   val formProvider = new PackagingSiteDetailsFormProvider()
   val form = formProvider()
 
   lazy val packagingSiteDetailsRoute = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
-  val packagingSiteListWith2 = Map(("65465465", PackagingSite1), ("579864152", PackagingSite2))
-  val packagingSiteListWith1 = Map(("14658478", PackagingSite1))
-
-  val userAnswersWith1PackagingSite = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
-  val userAnswersWith2PackagingSites = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith2)
+  lazy val userAnswersWith1PackagingSite = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
 
   "packagingSiteDetails Controller" - {
 

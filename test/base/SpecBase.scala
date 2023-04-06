@@ -95,7 +95,7 @@ trait SpecBase
     deregDate = None
   )
 
-  val subscriptionWithCopacker = RetrievedSubscription(
+  lazy val subscriptionWithCopacker = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",
@@ -109,13 +109,20 @@ trait SpecBase
     deregDate = None
   )
 
-  def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
-  def completedUserAnswers = UserAnswers(sdilNumber, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
+  lazy val emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+  lazy val completedUserAnswers = UserAnswers(sdilNumber, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
     true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
     "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj(
       "lowBand" -> 259, "highBand" -> 923), "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports"
       -> false, "claimCreditsForLostDamaged" -> false), List.empty, Map.empty)
 
+  lazy val PackagingSite1 = Site(
+    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+    None,
+    Some("Wild Lemonade Group"),
+    None)
+
+  lazy val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(

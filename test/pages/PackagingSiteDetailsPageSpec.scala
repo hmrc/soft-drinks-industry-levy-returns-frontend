@@ -45,11 +45,6 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
   SummaryListViewModel(
     rows = packagingSummaryList
   )
-  val PackagingSite1 = Site(
-    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-    None,
-    Some("Wild Lemonade Group"),
-    None)
 
   val PackagingSite2 = Site(
     UkAddress(List("29 Station Place", "Cambridge"), "CB1 2FP"),
@@ -58,15 +53,12 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
     None)
 
   val packagingSiteListWith2 = Map(("56454651", PackagingSite1), ("45541277", PackagingSite2))
-  val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
 
-  val packagingSiteSummaryAliasList1: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteListWith1)
-  val aliasList1: SummaryList = SummaryListViewModel(
-    rows = packagingSiteSummaryAliasList1
+  val summaryList1: SummaryList = SummaryListViewModel(
+    rows = PackagingSiteDetailsSummary.row2(packagingSiteListWith1)
   )
-  val packagingSiteSummaryAliasList2: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteListWith2)
-  val aliasList2: SummaryList = SummaryListViewModel(
-    rows = packagingSiteSummaryAliasList2
+  val summaryList2: SummaryList = SummaryListViewModel(
+    rows = PackagingSiteDetailsSummary.row2(packagingSiteListWith2)
   )
   def doc(result: Html): Document = Jsoup.parse(contentAsString(result))
 
@@ -87,7 +79,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
     }
           "have the expected title when there is only 1 packaging site" in {
             val html =
-              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList1)(FakeRequest(), messages(application))
             val document = doc(html)
 
             document.title() shouldBe "You added 1 packaging sites - soft-drinks-industry-levy-returns-frontend - GOV.UK"
@@ -95,7 +87,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
           "have the expected heading when there is only 1 packaging site" in {
             val html =
-              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList1 )(FakeRequest(), messages(application))
             val document = doc(html)
 
             document
@@ -105,7 +97,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
           "show the correct packaging site in the list when there is only 1 packaging site" in {
             val html =
-              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList1 )(FakeRequest(), messages(application))
             val document = doc(html)
 
             document
@@ -115,7 +107,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
           "not show the remove link when there is only 1 packaging site" in {
             val html =
-              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList1)(FakeRequest(), messages(application))
             val document = doc(html)
 
             val summaryListContents = document.getElementsByClass("govuk-summary-list")
@@ -124,7 +116,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
           "have the option to add another UK packaging site" in {
             val html =
-              view(form.apply(), NormalMode, aliasList1)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList1)(FakeRequest(), messages(application))
             val document = doc(html)
 
             document
@@ -134,7 +126,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
           "have the expected title when there are 2 packaging sites" in {
             val html =
-              view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList2)(FakeRequest(), messages(application))
             val document = doc(html)
 
             document.title() shouldBe "You added 2 packaging sites - soft-drinks-industry-levy-returns-frontend - GOV.UK"
@@ -142,7 +134,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
           "have the expected heading when there are 2 packaging sites" in {
             val html =
-              view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList2)(FakeRequest(), messages(application))
             val document = doc(html)
 
             document
@@ -152,7 +144,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
           "show the correct packaging site in the list when there are 2 packaging sites" in {
             val html =
-              view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList2)(FakeRequest(), messages(application))
             val summaryListContents = doc(html)
               .getElementsByClass("govuk-summary-list__key")
 
@@ -163,7 +155,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
           "show the remove link when there are 2 packaging sites" in {
             val html =
-              view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+              view(form.apply(), NormalMode, summaryList2)(FakeRequest(), messages(application))
 
             val summaryActions = doc(html).getElementsByClass("govuk-summary-list__actions-list")
             summaryActions.size() shouldBe 2
@@ -173,7 +165,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
         "edit link should go to proper url" in {
           val html =
-            view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+            view(form.apply(), NormalMode, summaryList2)(FakeRequest(), messages(application))
 
           val editLink = doc(html).getElementsByClass("govuk-summary-list__actions")
             .tagName("ul").tagName("li").first().getElementsByClass("govuk-link")
@@ -183,7 +175,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
         "remove link should go to proper url" in {
           val html =
-            view(form.apply(), NormalMode, aliasList2)(FakeRequest(), messages(application))
+            view(form.apply(), NormalMode, summaryList2)(FakeRequest(), messages(application))
 
           val removeLink = doc(html).getElementsByClass("govuk-summary-list__actions")
             .tagName("ul").tagName("li").last().getElementsByClass("govuk-link")
