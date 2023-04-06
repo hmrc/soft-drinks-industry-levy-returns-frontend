@@ -16,17 +16,17 @@
 
 package pages
 
-import models.HowManyAsAContractPacker
+import models.LitresInBands
 import pages.behaviours.PageBehaviours
 
 class HowManyAsAContractPackerPageSpec extends PageBehaviours {
 
   "HowManyAsAContractPackerPage" - {
 
-    beRetrievable[HowManyAsAContractPacker](HowManyAsAContractPackerPage)
+    beRetrievable[LitresInBands](HowManyAsAContractPackerPage)
 
-    beSettable[HowManyAsAContractPacker](HowManyAsAContractPackerPage)
+    beSettable[LitresInBands](HowManyAsAContractPackerPage)
 
-    beRemovable[HowManyAsAContractPacker](HowManyAsAContractPackerPage)
+    beRemovable[LitresInBands](HowManyAsAContractPackerPage)
   }
 }

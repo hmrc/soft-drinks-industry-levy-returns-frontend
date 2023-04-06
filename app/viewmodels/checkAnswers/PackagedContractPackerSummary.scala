@@ -16,40 +16,48 @@
 
 package viewmodels.checkAnswers
 
+import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.PackagedContractPackerPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object PackagedContractPackerSummary  {
+object PackagedContractPackerSummary extends ReturnDetailsSummaryList {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(PackagedContractPackerPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        SummaryListRowViewModel(
-          key     = "reportingContractPackedAtYourOwnSite",
-          value   = ValueViewModel(value).withCssClass("align-right"),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-contract-packer")
-              .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
-          )
-        )
+  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
+    val litresDetails = if (userAnswers.get(PackagedContractPackerPage).contains(true)) {
+      HowManyAsAContractPackerSummary.rows(userAnswers, isCheckAnswers)
+    } else {
+      Seq.empty
+    }
+      SummaryListViewModel(rows =
+        row(userAnswers) ++ litresDetails
+      )
     }
   }
 
-  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(PackagedContractPackerPage).map {
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
+    answers.get(PackagedContractPackerPage).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
-        SummaryListRow(
-          key = "reportingContractPackedAtYourOwnSite.checkYourAnswersLabel",
-          value = ValueViewModel(value).withCssClass("align-right")
+        Seq(SummaryListRowViewModel(
+          key = "reportingContractPackedAtYourOwnSite",
+          value = ValueViewModel(value).withCssClass("align-right"),
+          actions = if (isCheckAnswers) {
+            Seq(
+              ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
+                .withAttribute("id", "change-contract-packer")
+                .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
+            )
+          } else {
+            Seq.empty
+          }
+        )
         )
     }
-  }
+
 }

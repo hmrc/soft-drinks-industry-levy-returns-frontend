@@ -22,11 +22,12 @@ import controllers.routes
 import pages._
 import models._
 import models.retrieved.RetrievedSubscription
+import services.ReturnService
 import uk.gov.hmrc.auth.core.InternalError
 
 
 @Singleton
-class Navigator @Inject()() {
+class Navigator @Inject()(returnService: ReturnService) {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Option[Map[String,Boolean]]=> Call = {
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ =>  _ =>removeSmallProducerConfirmPageNavigation(userAnswers)

@@ -74,11 +74,11 @@ trait ModelGenerators {
       } yield BrandsPackagedAtOwnSites(lowBand, highBand)
     }
 
-  implicit lazy val arbitraryHowManyAsAContractPacker: Arbitrary[HowManyAsAContractPacker] =
+  implicit lazy val arbitraryHowManyAsAContractPacker: Arbitrary[LitresInBands] =
     Arbitrary {
       for {
         lowBand <- arbitrary[Long]
         highBand <- arbitrary[Long]
-      } yield HowManyAsAContractPacker(lowBand, highBand)
+      } yield LitresInBands(lowBand, highBand)
     }
 }
