@@ -100,7 +100,7 @@ trait ITCoreTestData extends TryValues {
   def removeSmallProducerConfirmFullAnswers = addASmallProducerPartialAnswers.success.value
     .set(RemoveSmallProducerConfirmPage, true)
 
-  def newPackerOrImporterPartialAnswers = emptyUserAnswers
+  def newPackerPartialAnswers = emptyUserAnswers
     .set(OwnBrandsPage, false).success.value
     .set(PackagedContractPackerPage, true).success.value
     .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand)).success.value

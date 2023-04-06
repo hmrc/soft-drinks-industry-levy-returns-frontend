@@ -19,7 +19,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 
         given
           .commonPrecondition
-        val userAnswers = newPackerOrImporterPartialAnswers.success.value
+        val userAnswers = newPackerPartialAnswers.success.value
         setAnswers(userAnswers)
 
         WsTestClient.withClient { client =>
@@ -42,7 +42,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
       "user selected edit on one of the detail lines" in {
         given
           .commonPrecondition
-        val userAnswers = newPackerOrImporterPartialAnswers.success.value
+        val userAnswers = newPackerPartialAnswers.success.value
         setAnswers(userAnswers)
         WsTestClient.withClient { client =>
           val result =
@@ -62,7 +62,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
       "user selected remove on one of the addresses" in {
         given
         .commonPrecondition
-        val userAnswers = newPackerOrImporterPartialAnswers.success.value
+        val userAnswers = newPackerPartialAnswers.success.value
         setAnswers(userAnswers)
         WsTestClient.withClient { client =>
           val result =
@@ -86,8 +86,8 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 
         given
           .commonPrecondition
-        val userAnswers = newPackerOrImporterPartialAnswers.success.value.copy(packagingSiteList =
-          List(Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
+        val userAnswers = newPackerPartialAnswers.success.value.copy(packagingSiteList =
+          Map("4564561" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
             Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
         setAnswers(userAnswers)
 
@@ -111,8 +111,8 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
       "user selected no with at least one packaging site on the list AND user is also a new Importer" in {
         given
           .commonPrecondition
-        val userAnswers = newPackerOrImporterPartialAnswers.success.value.copy(packagingSiteList =
-          List(Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
+        val userAnswers = newPackerPartialAnswers.success.value.copy(packagingSiteList =
+          Map("6541651568" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
             Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
         setAnswers(userAnswers)
 

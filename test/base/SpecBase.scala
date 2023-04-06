@@ -114,7 +114,7 @@ trait SpecBase
     true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
     "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj(
       "lowBand" -> 259, "highBand" -> 923), "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports"
-      -> false, "claimCreditsForLostDamaged" -> false), List.empty, List.empty)
+      -> false, "claimCreditsForLostDamaged" -> false), List.empty, Map.empty)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

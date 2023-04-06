@@ -47,21 +47,21 @@ object PackagingSiteDetailsSummary {
     }
 
 
-  def row2(packagingSiteList: List[Site])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(packagingSiteList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
     packagingSiteList.map {
       site =>
         ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(site.address.lines.toString())
+            HtmlFormat.escape(site._2.address.lines.toString())
           )
         )
         SummaryListRow(
           key = Key(
             content =
-              HtmlContent(addressFormatting(site)),
+              HtmlContent(addressFormatting(site._2)),
             classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
           ),
-          actions = if (packagingSiteList.length > 1) {
+          actions = if (packagingSiteList.size > 1) {
             Some(Actions("", Seq(
               ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url)
                 .withVisuallyHiddenText(messages("packagingSiteDetails.hidden")),
@@ -75,7 +75,7 @@ object PackagingSiteDetailsSummary {
             )))
           }
         )
-    }
+    }.toList
   }
 
   private def addressFormatting(site: Site): String = {
@@ -88,7 +88,8 @@ object PackagingSiteDetailsSummary {
     }
 
     lazy val addressWithTradingName = {
-      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}${HtmlFormat.escape(site.address.postCode)}""".stripMargin
+      s"""${HtmlFormat.escape(site.tradingName.getOrElse(""))}<br>${HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))}
+      ${HtmlFormat.escape(site.address.postCode)}""".stripMargin
     }
 
     lazy val separatePostCodeAddressNoTradingName = {

@@ -56,8 +56,8 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
   val form = formProvider()
 
   lazy val packagingSiteDetailsRoute = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
-  val packagingSiteListWith2 = List(PackagingSite1, PackagingSite2)
-  val packagingSiteListWith1 = List(PackagingSite1)
+  val packagingSiteListWith2 = Map(("65465465", PackagingSite1), ("579864152", PackagingSite2))
+  val packagingSiteListWith1 = Map(("14658478", PackagingSite1))
 
   val userAnswersWith1PackagingSite = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
   val userAnswersWith2PackagingSites = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith2)
@@ -74,7 +74,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         val packagingSummaryList: List[SummaryListRow] =
-          PackagingSiteDetailsSummary.row2(List())(messages(application))
+          PackagingSiteDetailsSummary.row2(Map.empty)(messages(application))
 
         SummaryListViewModel(
           rows = packagingSummaryList
@@ -105,7 +105,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         val result = route(application, request).value
         val packagingSiteSummaryList: List[SummaryListRow] =
-          PackagingSiteDetailsSummary.row2(List())(messages(application))
+          PackagingSiteDetailsSummary.row2(Map.empty)(messages(application))
 
         SummaryListViewModel(
           rows = packagingSiteSummaryList
@@ -160,7 +160,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         val packagingSiteSummaryList: List[SummaryListRow] =
-          PackagingSiteDetailsSummary.row2(List())(messages(application))
+          PackagingSiteDetailsSummary.row2(Map.empty)(messages(application))
 
         val list: SummaryList = SummaryListViewModel(
           rows = packagingSiteSummaryList

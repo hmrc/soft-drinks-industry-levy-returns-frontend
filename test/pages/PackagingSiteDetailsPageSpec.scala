@@ -25,6 +25,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import pages.behaviours.PageBehaviours
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.test.Helpers.contentAsString
 import play.twirl.api.Html
@@ -39,7 +40,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
   val form = new PackagingSiteDetailsFormProvider()
   val view: PackagingSiteDetailsView = application.injector.instanceOf[PackagingSiteDetailsView]
   val packagingSummaryList: List[SummaryListRow] =
-    PackagingSiteDetailsSummary.row2(List())(messages(application))
+    PackagingSiteDetailsSummary.row2(Map.empty)(messages(application))
 
   SummaryListViewModel(
     rows = packagingSummaryList
@@ -51,13 +52,14 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
     None)
 
   val PackagingSite2 = Site(
-    UkAddress(List("29 Station Place", "Cambridge`"), "CB1 2FP"),
+    UkAddress(List("29 Station Place", "Cambridge"), "CB1 2FP"),
     Some("10"),
     None,
     None)
 
-  val packagingSiteListWith2 = List(PackagingSite1, PackagingSite2)
-  val packagingSiteListWith1 = List(PackagingSite1)
+  val packagingSiteListWith2 = Map(("56454651", PackagingSite1), ("45541277", PackagingSite2))
+  val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
+
   val packagingSiteSummaryAliasList1: List[SummaryListRow] = PackagingSiteDetailsSummary.row2(packagingSiteListWith1)
   val aliasList1: SummaryList = SummaryListViewModel(
     rows = packagingSiteSummaryAliasList1
