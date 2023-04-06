@@ -35,7 +35,7 @@
 @htmlContent = {
     <label class="govuk-heading-s">@messages("addASmallProducer.referenceNumber")</label>
 }
-@action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdilReference.get) else routes.AddASmallProducerController.onSubmit(mode)}
+@action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdilReference.getOrElse("")) else routes.AddASmallProducerController.onSubmit(mode)}
 
 @layout(pageTitle = title(form, messages("addASmallProducer.title"))) {
     @formHelper(action = action, Symbol("autoComplete") -> "off") {
