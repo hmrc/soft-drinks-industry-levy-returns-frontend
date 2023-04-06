@@ -30,23 +30,6 @@ import viewmodels.implicits._
 
 object PackagingSiteDetailsSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PackagingSiteDetailsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key = "packagingSiteDetails.checkYourAnswersLabel",
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("packagingSiteDetails.change.hidden"))
-          )
-        )
-    }
-
-
   def row2(packagingSiteList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
     packagingSiteList.map {
       site =>

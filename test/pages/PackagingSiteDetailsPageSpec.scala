@@ -25,7 +25,6 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import pages.behaviours.PageBehaviours
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.test.Helpers.contentAsString
 import play.twirl.api.Html
