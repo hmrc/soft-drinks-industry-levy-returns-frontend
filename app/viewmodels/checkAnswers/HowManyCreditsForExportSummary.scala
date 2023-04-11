@@ -100,7 +100,7 @@ object HowManyCreditsForExportSummary  {
             items =
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-export-credits")
+                  .withAttribute(("id", "change-lowband-export-credits"))
                   .withVisuallyHiddenText(messages("exported.lowband.hidden"))
               )))
         )
@@ -136,7 +136,7 @@ object HowManyCreditsForExportSummary  {
               items =
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
-                    .withAttribute("id", "change-highband-export-credits")
+                    .withAttribute(("id", "change-highband-export-credits"))
                     .withVisuallyHiddenText(messages("exported.highband.hidden"))
                 )))
         )

@@ -17,15 +17,13 @@
 package viewmodels.checkAnswers
 
 import config.FrontendAppConfig
-import controllers.routes
-import models.{CheckMode, LitresInBands, UserAnswers}
-import pages.{HowManyAsAContractPackerPage, QuestionPage}
+import models.{LitresInBands, UserAnswers}
+import pages.QuestionPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import utilitlies.CurrencyFormatter
-import viewmodels.checkAnswers.HowManyAsAContractPackerSummary.{highBandRow, lowBandRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -87,7 +85,7 @@ trait SummaryListRowLitresHelper {
               items =
                 Seq(
                   ActionItemViewModel("site.change", actionUrl)
-                    .withAttribute("id", s"change-$band-litreage-$bandActionIdKey")
+                    .withAttribute(("id", s"change-$band-litreage-$bandActionIdKey"))
                     .withVisuallyHiddenText(messages(s"${bandHiddenKey}.$band.hidden")))))
           } else {
             None

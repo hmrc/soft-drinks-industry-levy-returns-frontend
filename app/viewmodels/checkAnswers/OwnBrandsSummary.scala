@@ -19,7 +19,7 @@ package viewmodels.checkAnswers
 import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.{OwnBrandsPage, QuestionPage}
+import pages.OwnBrandsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.govuk.summarylist._
@@ -39,7 +39,7 @@ object OwnBrandsSummary extends ReturnDetailsSummaryList  {
   }
 
 
-  def ownBrandRow(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+  def ownBrandRow(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Seq[SummaryListRow] = {
       answers.get(OwnBrandsPage).fold[Seq[SummaryListRow]](Seq.empty) {
         answer =>
           val value = if (answer) "site.yes" else "site.no"
@@ -50,7 +50,7 @@ object OwnBrandsSummary extends ReturnDetailsSummaryList  {
               actions = if(isCheckAnswers) {
                 Seq(
                   ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
-                    .withAttribute("id", "change-own-brands")
+                    .withAttribute(("id", "change-own-brands"))
                     .withVisuallyHiddenText(messages("ownBrands.change.hidden")) // TODO - what should this say?
                 )
               } else {

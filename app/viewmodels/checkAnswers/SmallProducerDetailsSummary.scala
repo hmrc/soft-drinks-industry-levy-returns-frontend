@@ -25,7 +25,6 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import utilitlies.CurrencyFormatter
-import viewmodels.checkAnswers.HowManyCreditsForExportSummary.{returnsHighBandLevyRow, returnsHighBandRow, returnsLowBandLevyRow, returnsLowBandRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -146,7 +145,7 @@ object SmallProducerDetailsSummary  {
         items =
           Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-lowband-litreage-small-producers")
+              .withAttribute(("id", "change-lowband-litreage-small-producers"))
               .withVisuallyHiddenText(messages("contractPackedForRegisteredSmallProducers.lowband.hidden"))
           )))))
   }
@@ -172,7 +171,7 @@ object SmallProducerDetailsSummary  {
         items =
           Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-highband-litreage-small-producers")
+              .withAttribute(("id", "change-highband-litreage-small-producers"))
               .withVisuallyHiddenText(messages("contractPackedForRegisteredSmallProducers.highband.hidden"))
           )))))
   }

@@ -50,7 +50,7 @@ object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryList {
             actions = if (isCheckAnswers) {
               Seq(
               ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
-                .withAttribute("id", "change-exemption-small-producers")
+                .withAttribute(("id", "change-exemption-small-producers"))
                 .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
             )
             } else {

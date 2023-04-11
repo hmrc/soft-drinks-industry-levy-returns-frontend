@@ -39,7 +39,7 @@ object BroughtIntoUKSummary extends ReturnDetailsSummaryList  {
     )
   }
 
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Seq[SummaryListRow] = {
     answers.get(BroughtIntoUKPage).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
@@ -50,7 +50,7 @@ object BroughtIntoUKSummary extends ReturnDetailsSummaryList  {
             actions = if(isCheckAnswers) {
               Seq(
                 ActionItemViewModel("site.change", routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-brought-into-uk")
+                  .withAttribute(("id", "change-brought-into-uk"))
                   .withVisuallyHiddenText(messages("broughtIntoUK.change.hidden"))
               )
             } else {

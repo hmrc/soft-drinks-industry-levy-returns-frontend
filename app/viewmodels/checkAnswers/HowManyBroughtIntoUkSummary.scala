@@ -25,7 +25,6 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import utilitlies.CurrencyFormatter
-import viewmodels.checkAnswers.HowManyCreditsForExportSummary.{returnsHighBandLevyRow, returnsHighBandRow, returnsLowBandLevyRow, returnsLowBandRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -100,7 +99,7 @@ object HowManyBroughtIntoUkSummary  {
             items =
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-litreage-brought-into-uk")
+                  .withAttribute(("id", "change-lowband-litreage-brought-into-uk"))
                   .withVisuallyHiddenText(messages("broughtIntoTheUK.lowband.hidden"))
               )))
         )

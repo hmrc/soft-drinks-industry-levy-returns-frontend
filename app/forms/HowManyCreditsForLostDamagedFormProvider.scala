@@ -21,16 +21,16 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.HowManyCreditsForLostDamaged
+import models.LitresInBands
 
 class HowManyCreditsForLostDamagedFormProvider @Inject() extends Mappings {
 
-   def apply(): Form[HowManyCreditsForLostDamaged] = Form(
+   def apply(): Form[LitresInBands] = Form(
      mapping(
        "lowBand" -> litres(
          "lowBand"),
        "highBand" -> litres(
          "highBand")
-    )(HowManyCreditsForLostDamaged.apply)(HowManyCreditsForLostDamaged.unapply)
+    )(LitresInBands.apply)(LitresInBands.unapply)
    )
  }

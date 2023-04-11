@@ -22,7 +22,7 @@ import models.{CheckMode, UserAnswers}
 import pages.ClaimCreditsForExportsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -50,7 +50,7 @@ object ClaimCreditsForExportsSummary extends ReturnDetailsSummaryList {
             actions = if (isCheckAnswers) {
               Seq(
               ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
-                .withAttribute("id", "change-exports")
+                .withAttribute(("id", "change-exports"))
                 .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
               )
             } else {

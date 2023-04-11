@@ -19,7 +19,7 @@ package viewmodels.checkAnswers
 import config.FrontendAppConfig
 import models.UserAnswers
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 trait ReturnDetailsSummaryList {
 

@@ -50,7 +50,7 @@ object PackagedContractPackerSummary extends ReturnDetailsSummaryList {
             actions = if (isCheckAnswers) {
               Seq(
                 ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-contract-packer")
+                  .withAttribute(("id", "change-contract-packer"))
                   .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
               )
             } else {

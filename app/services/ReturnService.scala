@@ -18,18 +18,13 @@ package services
 
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.requests.DataRequest
 import models.retrieved.RetrievedSubscription
-import models.{ReturnPeriod, SdilReturn, SmallProducer, UserAnswers, Warehouse}
+import models.{ReturnPeriod, SdilReturn, UserAnswers}
 import pages._
-import play.api.i18n.Messages
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.ReturnsHelper
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton

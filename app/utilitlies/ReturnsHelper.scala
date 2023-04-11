@@ -17,7 +17,7 @@
 package utilitlies
 
 import models.requests.DataRequest
-import models.{FinancialLineItem, SdilReturn, SmallProducer, UserAnswers}
+import models.{FinancialLineItem, SdilReturn, UserAnswers}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 

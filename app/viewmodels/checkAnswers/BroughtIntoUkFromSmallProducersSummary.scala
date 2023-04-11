@@ -50,7 +50,7 @@ object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryList {
             actions = if (isCheckAnswers) {
               Seq(
               ActionItemViewModel("site.change", routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
-                .withAttribute("id", "change-brought-into-uk-small-producers")
+                .withAttribute(("id", "change-brought-into-uk-small-producers"))
                 .withVisuallyHiddenText(messages("broughtIntoUkFromSmallProducers.change.hidden"))
               )
             } else {

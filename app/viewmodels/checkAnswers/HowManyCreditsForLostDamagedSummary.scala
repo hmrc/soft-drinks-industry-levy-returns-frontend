@@ -17,8 +17,8 @@
 package viewmodels.checkAnswers
 
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.HowManyCreditsForLostDamagedPage
+import models.{CheckMode, LitresInBands, UserAnswers}
+import pages.{HowManyCreditsForLostDamagedPage, QuestionPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -97,7 +97,7 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
             items =
               Seq(
                 ActionItemViewModel("site.change", routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-lost-destroyed")
+                  .withAttribute(("id", "change-lowband-lost-destroyed"))
                   .withVisuallyHiddenText(messages("lostOrDestroyed.lowband.hidden"))
               )))
         )
@@ -133,7 +133,7 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
               items =
                 Seq(
                   ActionItemViewModel("site.change", routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url)
-                    .withAttribute("id", "change-highband-lost-destroyed")
+                    .withAttribute(("id", "change-highband-lost-destroyed"))
                     .withVisuallyHiddenText(messages("lostOrDestroyed.highband.hidden"))
                 )))
         )

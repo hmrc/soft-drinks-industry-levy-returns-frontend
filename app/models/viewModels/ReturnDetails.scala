@@ -17,29 +17,11 @@
 package models.viewModels
 
 import config.FrontendAppConfig
-import connectors.SoftDrinksIndustryLevyConnector
-import controllers.actions._
-import models.requests.DataRequest
-import models.retrieved.RetrievedSubscription
-import models.viewModels.ReturnDetails
-import models.{Address, Amounts, SdilReturn, SmallProducer, UserAnswers, Warehouse}
-import pages._
-import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.{SDILSessionCache, SDILSessionKeys}
-import services.ReturnService
+import models.{Amounts, SmallProducer, UserAnswers, Warehouse}
+import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.ReturnsHelper.extractReturnPeriod
-import utilitlies.{CurrencyFormatter, ReturnsHelper}
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.ReturnSentView
-
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 case class ReturnDetails(ownBrandsAnswer: SummaryList,
                          packagedContractPackerAnswers: SummaryList,
@@ -55,7 +37,8 @@ case class ReturnDetails(ownBrandsAnswer: SummaryList,
                          amountsRow: SummaryList
                         ) {
   //ToDo when warehouse list is in user answers remove it from def and use userAnswers
-  def this(userAnswers: UserAnswers, isCheckAnswers: Boolean = false, amounts: Amounts, warehouseList: List[Warehouse])(implicit request: DataRequest[AnyContent], messages: Messages, config: FrontendAppConfig) = this(
+  def this(userAnswers: UserAnswers, isCheckAnswers: Boolean = false, amounts: Amounts, warehouseList: List[Warehouse])
+          (implicit messages: Messages, config: FrontendAppConfig) = this(
       ownBrandsAnswer = OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers),
       packagedContractPackerAnswers = PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers),
       exemptionsForSmallProducersAnswers = ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers),
@@ -72,60 +55,6 @@ case class ReturnDetails(ownBrandsAnswer: SummaryList,
 }
 
 object ReturnDetails {
-
-
-  def packagedContractPackerAnswers(request: DataRequest[AnyContent], userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages, config: FrontendAppConfig) = {
-    PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers)
-  }
-
-  def exemptionForSmallProducersAnswers(userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages, config: FrontendAppConfig) = {
-    ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers)
-  }
-
-  def broughtIntoUKAnswers(userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages, config: FrontendAppConfig) = {
-    BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers)
-  }
-
-  def broughtIntoUKFromSmallProducerAnswers(userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages, config: FrontendAppConfig) = {
-        BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers,false)
-  }
-
-  def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    SummaryListViewModel(rows = Seq(SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)))
-  }
-
-  def smallProducerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    SummaryListViewModel(rows = Seq(SmallProducerDetailsSummary.producerList(userAnswers)).flatten)
-  }
-
-  def claimCreditsForLostOrDamagedAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers),
-        HowManyCreditsForLostDamagedSummary.returnsLowBandRow(userAnswers),
-        HowManyCreditsForLostDamagedSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyCreditsForLostDamagedSummary.returnsHighBandRow(userAnswers),
-        HowManyCreditsForLostDamagedSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers)).flatten)
-    }
-  }
-
-  def claimCreditsForExportsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        ClaimCreditsForExportsSummary.returnsRow(userAnswers),
-        HowManyCreditsForExportSummary.returnsLowBandRow(userAnswers),
-        HowManyCreditsForExportSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyCreditsForExportSummary.returnsHighBandRow(userAnswers),
-        HowManyCreditsForExportSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(ClaimCreditsForExportsSummary.returnsRow(userAnswers)).flatten)
-    }
-  }
-
   private def smallProducerCheck(userAnswers: UserAnswers): Option[List[SmallProducer]] = {
     val smallProducerList = userAnswers.smallProducerList
     if (smallProducerList.length > 0) Some(smallProducerList) else None

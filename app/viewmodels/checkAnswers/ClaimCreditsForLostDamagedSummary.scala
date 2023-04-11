@@ -22,7 +22,7 @@ import models.{CheckMode, UserAnswers}
 import pages.ClaimCreditsForLostDamagedPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -51,7 +51,7 @@ object ClaimCreditsForLostDamagedSummary extends ReturnDetailsSummaryList {
             actions = if (isCheckAnswers) {
               Seq(
               ActionItemViewModel("site.change", routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url)
-                .withAttribute("id", "change-credits-lost-damaged")
+                .withAttribute(("id", "change-credits-lost-damaged"))
                 .withVisuallyHiddenText(messages("claimCreditsForLostDamaged.change.hidden"))
             )
             } else {

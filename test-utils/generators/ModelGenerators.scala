@@ -33,12 +33,12 @@ trait ModelGenerators {
       } yield AddASmallProducer(producerName,referenceNumber,lowBand, highBand)
     }
 
-  implicit lazy val arbitraryHowManyCreditsForLostDamaged: Arbitrary[HowManyCreditsForLostDamaged] =
+  implicit lazy val arbitraryHowManyCreditsForLostDamaged: Arbitrary[LitresInBands] =
     Arbitrary {
       for {
         lowBand <- arbitrary[Long]
         highBand <- arbitrary[Long]
-      } yield HowManyCreditsForLostDamaged(lowBand, highBand)
+      } yield LitresInBands(lowBand, highBand)
     }
 
   implicit lazy val arbitraryHowManyBoughtIntoUk: Arbitrary[HowManyBroughtIntoUk] =

@@ -1,6 +1,6 @@
 package controllers.testSupport
 
-import models.{AddASmallProducer, BrandsPackagedAtOwnSites, HowManyBroughtIntoUk, HowManyCreditsForExport, HowManyCreditsForLostDamaged, LitresInBands, UserAnswers}
+import models.{AddASmallProducer, BrandsPackagedAtOwnSites, HowManyBroughtIntoUk, HowManyCreditsForExport, LitresInBands, UserAnswers}
 import org.scalatest.TryValues
 import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
 import play.api.libs.json.Json
@@ -112,5 +112,5 @@ trait ITCoreTestData extends TryValues {
     .set(ClaimCreditsForExportsPage, true).success.value
     .set(HowManyCreditsForExportPage, HowManyCreditsForExport(lowBand, highBand)).success.value
     .set(ClaimCreditsForLostDamagedPage, true).success.value
-    .set(HowManyCreditsForLostDamagedPage, HowManyCreditsForLostDamaged(lowBand, highBand)).success.value
+    .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
 }

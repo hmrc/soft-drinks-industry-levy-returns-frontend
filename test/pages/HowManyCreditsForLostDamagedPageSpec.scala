@@ -16,17 +16,17 @@
 
 package pages
 
-import models.HowManyCreditsForLostDamaged
+import models.LitresInBands
 import pages.behaviours.PageBehaviours
 
 class HowManyCreditsForLostDamagedPageSpec extends PageBehaviours {
 
   "HowManyCreditsForLostDamagedPage" - {
 
-    beRetrievable[HowManyCreditsForLostDamaged](HowManyCreditsForLostDamagedPage)
+    beRetrievable[LitresInBands](HowManyCreditsForLostDamagedPage)
 
-    beSettable[HowManyCreditsForLostDamaged](HowManyCreditsForLostDamagedPage)
+    beSettable[LitresInBands](HowManyCreditsForLostDamagedPage)
 
-    beRemovable[HowManyCreditsForLostDamaged](HowManyCreditsForLostDamagedPage)
+    beRemovable[LitresInBands](HowManyCreditsForLostDamagedPage)
   }
 }
