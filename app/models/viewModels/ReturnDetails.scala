@@ -58,7 +58,7 @@ case class ReturnDetails(ownBrandsAnswer: SummaryList,
   def this(userAnswers: UserAnswers, isCheckAnswers: Boolean = false, amounts: Amounts, warehouseList: List[Warehouse])(implicit request: DataRequest[AnyContent], messages: Messages, config: FrontendAppConfig) = this(
       ownBrandsAnswer = OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers),
       packagedContractPackerAnswers = PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers),
-      exemptionsForSmallProducersAnswers = ReturnDetails.exemptionForSmallProducersAnswers(userAnswers),
+      exemptionsForSmallProducersAnswers = ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers),
       broughtIntoUkAnswers = BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers),
       broughtIntoUkSmallProducerAnswers = BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers,isCheckAnswers),
       claimCreditsForExportsAnswers = ClaimCreditsForExportsSummary.summaryList(userAnswers,isCheckAnswers),
@@ -73,52 +73,22 @@ case class ReturnDetails(ownBrandsAnswer: SummaryList,
 
 object ReturnDetails {
 
-  def broughtIntoUKFromSmallProducerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandRow(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandRow(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers)).flatten)
-    }
+
+  def packagedContractPackerAnswers(request: DataRequest[AnyContent], userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages, config: FrontendAppConfig) = {
+    PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers)
   }
 
-  def broughtIntoUKAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(BroughtIntoUKPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        BroughtIntoUKSummary.returnsRow(userAnswers),
-        HowManyBroughtIntoUkSummary.returnsLowBandRow(userAnswers),
-        HowManyBroughtIntoUkSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyBroughtIntoUkSummary.returnsHighBandRow(userAnswers),
-        HowManyBroughtIntoUkSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(BroughtIntoUKSummary.returnsRow(userAnswers)).flatten)
-    }
+  def exemptionForSmallProducersAnswers(userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages, config: FrontendAppConfig) = {
+    ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers)
   }
 
-  def exemptionForSmallProducersAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        ExemptionsForSmallProducersSummary.returnsRow(userAnswers),
-        SmallProducerDetailsSummary.returnsLowBandRow(userAnswers),
-        SmallProducerDetailsSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        SmallProducerDetailsSummary.returnsHighBandRow(userAnswers),
-        SmallProducerDetailsSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(ExemptionsForSmallProducersSummary.returnsRow(userAnswers)).flatten)
-    }
+  def broughtIntoUKAnswers(userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages, config: FrontendAppConfig) = {
+    BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers)
   }
 
-  def packagedContractPackerAnswers(request: DataRequest[AnyContent], userAnswers: UserAnswers)(implicit messages: Messages) = {
-
+  def broughtIntoUKFromSmallProducerAnswers(userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages, config: FrontendAppConfig) = {
+        BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers,false)
   }
-
 
   def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
     SummaryListViewModel(rows = Seq(SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)))
