@@ -16,14 +16,14 @@
 
 package controllers.actions
 
-import base.SpecBase
-import models.ReturnPeriod
 
-import javax.inject.Inject
+import models.ReturnPeriod
 import models.requests.IdentifierRequest
 import models.retrieved.RetrievedSubscription
 import play.api.mvc._
+import base.SpecBase
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FakeIdentifierAction @Inject()(subscription: Option[RetrievedSubscription],
@@ -38,3 +38,4 @@ class FakeIdentifierAction @Inject()(subscription: Option[RetrievedSubscription]
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 }
+

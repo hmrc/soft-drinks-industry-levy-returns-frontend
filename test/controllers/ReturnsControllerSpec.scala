@@ -19,19 +19,17 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedActivity
-import models.{Amounts, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers}
+import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import org.scalatest.matchers.must.Matchers
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SDILSessionCache
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 

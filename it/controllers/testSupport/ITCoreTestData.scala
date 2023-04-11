@@ -100,6 +100,15 @@ trait ITCoreTestData extends TryValues {
   def removeSmallProducerConfirmFullAnswers = addASmallProducerPartialAnswers.success.value
     .set(RemoveSmallProducerConfirmPage, true)
 
+  def newPackerPartialAnswers = emptyUserAnswers
+    .set(OwnBrandsPage, false).success.value
+    .set(PackagedContractPackerPage, true).success.value
+    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand)).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, false).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, false)
+
   def checkYourAnswersFullAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value

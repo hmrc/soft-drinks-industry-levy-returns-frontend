@@ -16,12 +16,10 @@
 
 package base
 
-import config.FrontendAppConfig
 import controllers.actions._
 import models.backend.{Contact, Site, UkAddress}
-import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{ReturnPeriod, SmallProducer, UserAnswers}
+import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -78,7 +76,6 @@ object SpecBase {
   )
 
 }
-
 trait SpecBase
   extends AnyFreeSpec
     with Matchers
@@ -150,19 +147,43 @@ trait SpecBase
     warehouseSites = List(),
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
-  )  // TODO - can we remove this one and use teh one in teh object instead?
+  )
 
-  def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+  lazy val subscriptionWithCopacker = RetrievedSubscription(
+    utr = "0000000022",
+    sdilRef = "XKSDIL000000022",
+    orgName = "Super Lemonade Plc",
+    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = false,
+      voluntaryRegistration = false),
+    liabilityDate = LocalDate.of(2018, 4, 19),
+    productionSites = List(),
+    warehouseSites = List(),
+    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+    deregDate = None
+  )
 
+  lazy val emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+  lazy val completedUserAnswers = UserAnswers(sdilNumber, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
+    true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
+    "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj(
+      "lowBand" -> 259, "highBand" -> 923), "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports"
+      -> false, "claimCreditsForLostDamaged" -> false), List.empty, Map.empty)
+
+  lazy val PackagingSite1 = Site(
+    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+    None,
+    Some("Wild Lemonade Group"),
+    None)
+
+  lazy val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None,
                                     returnPeriod: Option[ReturnPeriod] = None,
                                     subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
-
     val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
-
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
@@ -171,6 +192,5 @@ trait SpecBase
       )
 
   }
-
 
 }
