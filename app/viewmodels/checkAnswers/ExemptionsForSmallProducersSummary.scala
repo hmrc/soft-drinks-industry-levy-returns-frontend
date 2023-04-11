@@ -16,38 +16,46 @@
 
 package viewmodels.checkAnswers
 
+import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.ExemptionsForSmallProducersPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ExemptionsForSmallProducersSummary  {
+object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryList {
 
-  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExemptionsForSmallProducersPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        SummaryListRow(
-          key = "exemptionsForSmallProducers.checkYourAnswersLabel",
-          value = ValueViewModel(value).withCssClass("align-right")
-        )
+  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
+    val litreDetails = if (userAnswers.get(ExemptionsForSmallProducersPage).contains(true)) {
+      SmallProducerDetailsSummary.rows(userAnswers, isCheckAnswers)
+    } else {
+      Seq.empty
     }
+    SummaryListViewModel(rows =
+      row(userAnswers, isCheckAnswers) ++ litreDetails
+    )
   }
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ExemptionsForSmallProducersPage).map {
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
+    answers.get(ExemptionsForSmallProducersPage).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
-        SummaryListRowViewModel(
-          key     = "exemptionForRegisteredSmallProducers",
-          value   = ValueViewModel(value).withCssClass("align-right"),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-exemption-small-producers")
-              .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
+        Seq(
+          SummaryListRowViewModel(
+            key     = "exemptionForRegisteredSmallProducers",
+            value   = ValueViewModel(value).withCssClass("align-right"),
+            actions = if (isCheckAnswers) {
+              Seq(
+              ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
+                .withAttribute("id", "change-exemption-small-producers")
+                .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
+            )
+            } else {
+              Seq.empty
+            }
           )
         )
     }

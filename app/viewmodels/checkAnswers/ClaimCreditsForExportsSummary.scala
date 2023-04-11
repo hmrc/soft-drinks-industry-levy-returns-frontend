@@ -21,7 +21,7 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.ClaimCreditsForExportsPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, SummaryList}
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
