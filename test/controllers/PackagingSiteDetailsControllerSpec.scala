@@ -54,20 +54,19 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
 
-        val result = route(application, request).value
-
         val packagingSummaryList: List[SummaryListRow] =
-          PackagingSiteDetailsSummary.row2(Map.empty)(messages(application))
+          PackagingSiteDetailsSummary.row2(userAnswersWith1PackagingSite.packagingSiteList)(messages(application))
 
-        SummaryListViewModel(
+        val summaryList = SummaryListViewModel(
           rows = packagingSummaryList
         )
-
-        application.injector.instanceOf[PackagingSiteDetailsView]
+       val result = route(application, request).value
+       val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
+        contentAsString(result) mustEqual view(form, NormalMode, summaryList)(request, messages(application)).toString
         page.title() must include("You added 1 packaging sites")
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
         page.getElementsByTag("h2").text() must include("Do you want to add another UK packaging site?")
@@ -76,26 +75,26 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      UserAnswers(sdilNumber).set(PackagingSiteDetailsPage, true).success.value
+      val updatedUserAnswers = userAnswersWith1PackagingSite.set(PackagingSiteDetailsPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWith1PackagingSite)).build()
+      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-        application.injector.instanceOf[PackagingSiteDetailsView]
-
-        val result = route(application, request).value
-        val packagingSiteSummaryList: List[SummaryListRow] =
-          PackagingSiteDetailsSummary.row2(Map.empty)(messages(application))
-
-        SummaryListViewModel(
-          rows = packagingSiteSummaryList
+        val packagingSummaryList: List[SummaryListRow] =
+          PackagingSiteDetailsSummary.row2(userAnswersWith1PackagingSite.packagingSiteList)(messages(application))
+        val summaryList = SummaryListViewModel(
+          rows = packagingSummaryList
         )
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
+
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
         page.title() must include("You added 1 packaging sites")
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
         page.getElementById("value").`val`() mustEqual "true"
