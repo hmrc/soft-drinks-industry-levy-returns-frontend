@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
+
 import models.{Amounts, UserAnswers}
 import pages._
 import play.api.i18n.Messages

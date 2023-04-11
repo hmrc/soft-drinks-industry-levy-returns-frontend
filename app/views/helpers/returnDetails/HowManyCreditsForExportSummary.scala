@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
+import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, LitresInBands, UserAnswers}
-import pages.{HowManyCreditsForLostDamagedPage, QuestionPage}
+import models.{CheckMode, UserAnswers}
+import pages.HowManyCreditsForExportPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,16 +28,19 @@ import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
+object HowManyCreditsForExportSummary  {
 
-  override val actionUrl = routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url
-  override val bandActionIdKey: String = "contract-packer"
-  override val bandHiddenKey: String = "contractPackedAtYourOwnSite"
-
-  override val page: QuestionPage[LitresInBands] = HowManyCreditsForLostDamagedPage
+  def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    Seq(
+      returnsLowBandRow(answers),
+      returnsLowBandLevyRow(answers, config.lowerBandCostPerLitre),
+      returnsHighBandRow(answers),
+      returnsHighBandLevyRow(answers, config.higherBandCostPerLitre)
+    ).flatten
+  }
 
   def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyCreditsForLostDamagedPage).map {
+    answers.get(HowManyCreditsForExportPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRow(
@@ -48,12 +52,10 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
   }
 
   def returnsLowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-
-    answers.get(HowManyCreditsForLostDamagedPage).map {
+    answers.get(HowManyCreditsForExportPage).map {
       answer =>
         val levy = answer.lowBand * lowBandCostPerLitre.toDouble * -1
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-
         SummaryListRowViewModel(
           key = "lowBandLevy",
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
@@ -62,7 +64,7 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
   }
 
   def returnsHighBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyCreditsForLostDamagedPage).map {
+    answers.get(HowManyCreditsForExportPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
         SummaryListRow(
@@ -74,10 +76,10 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
   }
 
   def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyCreditsForLostDamagedPage).map {
+    answers.get(HowManyCreditsForExportPage).map {
       answer =>
         val levy = answer.highBand * highBandCostPerLitre.toDouble * -1
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
+        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy).toString)
         SummaryListRowViewModel(
           key = "highBandLevy",
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
@@ -85,8 +87,9 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
     }
   }
 
+
   def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HowManyCreditsForLostDamagedPage).map {
+    answers.get(HowManyCreditsForExportPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRow(
@@ -96,9 +99,9 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
           actions = Some(Actions("",
             items =
               Seq(
-                ActionItemViewModel("site.change", routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url)
-                  .withAttribute(("id", "change-lowband-lost-destroyed"))
-                  .withVisuallyHiddenText(messages("lostOrDestroyed.lowband.hidden"))
+                ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
+                  .withAttribute(("id", "change-lowband-export-credits"))
+                  .withVisuallyHiddenText(messages("exported.lowband.hidden"))
               )))
         )
     }
@@ -106,7 +109,7 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
 
   def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
 
-    answers.get(HowManyCreditsForLostDamagedPage).map {
+    answers.get(HowManyCreditsForExportPage).map {
       answer =>
         val levy = answer.lowBand * lowBandCostPerLitre.toDouble * -1
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
@@ -120,7 +123,7 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
   }
 
   def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HowManyCreditsForLostDamagedPage).map {
+    answers.get(HowManyCreditsForExportPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
 
@@ -132,15 +135,15 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
             Actions("",
               items =
                 Seq(
-                  ActionItemViewModel("site.change", routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url)
-                    .withAttribute(("id", "change-highband-lost-destroyed"))
-                    .withVisuallyHiddenText(messages("lostOrDestroyed.highband.hidden"))
+                  ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
+                    .withAttribute(("id", "change-highband-export-credits"))
+                    .withVisuallyHiddenText(messages("exported.highband.hidden"))
                 )))
         )
     }
 
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HowManyCreditsForLostDamagedPage).map {
+    answers.get(HowManyCreditsForExportPage).map {
       answer =>
         val levy = answer.highBand * highBandCostPerLitre.toDouble * -1
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
@@ -151,4 +154,5 @@ object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
           actions = Seq()
         )
     }
+
 }

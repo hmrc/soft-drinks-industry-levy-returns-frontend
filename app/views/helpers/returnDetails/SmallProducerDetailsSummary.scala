@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
 import config.FrontendAppConfig
 import controllers.routes
@@ -22,6 +22,7 @@ import models.{CheckMode, SmallProducer, UserAnswers}
 import pages.SmallProducerDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import utilitlies.CurrencyFormatter
@@ -114,8 +115,8 @@ object SmallProducerDetailsSummary  {
         )
     }
 
-  def row2(smallProducersList: List[SmallProducer])(implicit messages: Messages): List[SummaryListRow] = {
-    smallProducersList.map {
+  def row2(smallProducersList: List[SmallProducer])(implicit messages: Messages): SummaryList = {
+    val rows = smallProducersList.map {
     smallProducer =>
       val value = ValueViewModel(
         HtmlContent(
@@ -133,6 +134,8 @@ object SmallProducerDetailsSummary  {
         )
       )
     }
+
+    SummaryListViewModel(rows)
   }
 
   def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {

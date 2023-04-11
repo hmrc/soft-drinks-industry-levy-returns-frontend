@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
 import config.FrontendAppConfig
 import controllers.routes
@@ -30,7 +30,7 @@ object ClaimCreditsForLostDamagedSummary extends ReturnDetailsSummaryList {
 
   override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
     val litresDetails = if (userAnswers.get(ClaimCreditsForLostDamagedPage).contains(true)) {
-      HowManyCreditsForExportSummary.rows(userAnswers, isCheckAnswers)
+      HowManyCreditsForLostDamagedSummary.rows(userAnswers, isCheckAnswers)
     } else {
       Seq.empty
     }

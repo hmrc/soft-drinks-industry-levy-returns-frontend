@@ -17,24 +17,16 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
-import models.requests.DataRequest
-import models.retrieved.RetrievedSubscription
-import models.viewModels.ReturnDetails
-import models.{Address, Amounts, SdilReturn, SmallProducer, UserAnswers, Warehouse}
-import pages._
+import models.{Address, Amounts, Warehouse}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import services.ReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.CurrencyFormatter
 import utilitlies.ReturnsHelper.extractReturnPeriod
-import utilitlies.{CurrencyFormatter, ReturnsHelper}
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
 
 import javax.inject.Inject
@@ -88,16 +80,13 @@ class ReturnsController @Inject()(
               Redirect(routes.JourneyRecoveryController.onPageLoad())
             }
 
-            val returnDetails = new ReturnDetails(userAnswers, false, amounts, warehouseList)(implicitly, config)
-
             Ok(view(returnPeriod,
+              userAnswers,
+              amounts,
               subscription,
               CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
-              amounts.totalForQuarter,
-              returnPeriod,
-              financialStatus = financialStatus(amounts.total): String,
-              returnDetails = returnDetails
-            ))
+              financialStatus = financialStatus(amounts.total)
+            )(implicitly, implicitly, config))
           case _ =>
             logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
             Redirect(routes.JourneyRecoveryController.onPageLoad())

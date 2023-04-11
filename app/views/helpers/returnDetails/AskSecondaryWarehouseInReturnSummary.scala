@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
 import controllers.routes
-import models.UserAnswers
-import pages.RemoveSmallProducerConfirmPage
+import models.{CheckMode, UserAnswers}
+import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object RemoveSmallProducerConfirmSummary  {
+object AskSecondaryWarehouseInReturnSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RemoveSmallProducerConfirmPage).map {
+    answers.get(AskSecondaryWarehouseInReturnPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "removeSmallProducerConfirm.checkYourAnswersLabel",
+          key     = "askSecondaryWarehouseInReturn.checkYourAnswersLabel",
           value   = ValueViewModel(value).withCssClass("align-right"),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.RemoveSmallProducerConfirmController.onPageLoad("CheckMode").url)
-              .withVisuallyHiddenText(messages("removeSmallProducerConfirm.change.hidden"))
+            ActionItemViewModel("site.change", routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("askSecondaryWarehouseInReturn.change.hidden"))
           )
         )
     }

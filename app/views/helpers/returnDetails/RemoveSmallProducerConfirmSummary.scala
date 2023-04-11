@@ -14,30 +14,31 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.PackAtBusinessAddressPage
+import models.UserAnswers
+import pages.RemoveSmallProducerConfirmPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object PackAtBusinessAddressSummary  {
+object RemoveSmallProducerConfirmSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(PackAtBusinessAddressPage).map {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(RemoveSmallProducerConfirmPage).map {
       answer =>
+
         val value = if (answer) "site.yes" else "site.no"
+
         SummaryListRowViewModel(
-          key     = "packagingSites",
-          value   = ValueViewModel("1").withCssClass("align-right"),
+          key     = "removeSmallProducerConfirm.checkYourAnswersLabel",
+          value   = ValueViewModel(value).withCssClass("align-right"),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("packAtBusinessAddress.change.hidden"))
+            ActionItemViewModel("site.change", routes.RemoveSmallProducerConfirmController.onPageLoad("CheckMode").url)
+              .withVisuallyHiddenText(messages("removeSmallProducerConfirm.change.hidden"))
           )
         )
     }
-  }
 }

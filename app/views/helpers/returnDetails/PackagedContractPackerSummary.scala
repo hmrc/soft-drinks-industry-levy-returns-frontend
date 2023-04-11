@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
 import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.BroughtIntoUKPage
+import pages.PackagedContractPackerPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object BroughtIntoUKSummary extends ReturnDetailsSummaryList  {
+object PackagedContractPackerSummary extends ReturnDetailsSummaryList {
 
   override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
-    val litresDetails = if (userAnswers.get(BroughtIntoUKPage).contains(true)) {
-      HowManyBroughtIntoUkSummary.rows(userAnswers, isCheckAnswers)
+    val litresDetails = if (userAnswers.get(PackagedContractPackerPage).contains(true)) {
+      HowManyAsAContractPackerSummary.rows(userAnswers, isCheckAnswers)
     } else {
       Seq.empty
     }
@@ -39,19 +39,19 @@ object BroughtIntoUKSummary extends ReturnDetailsSummaryList  {
     )
   }
 
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Seq[SummaryListRow] = {
-    answers.get(BroughtIntoUKPage).fold[Seq[SummaryListRow]](Seq.empty) {
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
+    answers.get(PackagedContractPackerPage).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
         Seq(
           SummaryListRowViewModel(
-            key     = "reportingLiableDrinksBroughtIntoTheUK",
-            value   = ValueViewModel(value).withCssClass("align-right"),
-            actions = if(isCheckAnswers) {
+            key = "reportingContractPackedAtYourOwnSite",
+            value = ValueViewModel(value).withCssClass("align-right"),
+            actions = if (isCheckAnswers) {
               Seq(
-                ActionItemViewModel("site.change", routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
-                  .withAttribute(("id", "change-brought-into-uk"))
-                  .withVisuallyHiddenText(messages("broughtIntoUK.change.hidden"))
+                ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
+                  .withAttribute(("id", "change-contract-packer"))
+                  .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
               )
             } else {
               Seq.empty

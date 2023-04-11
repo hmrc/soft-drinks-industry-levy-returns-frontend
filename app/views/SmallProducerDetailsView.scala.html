@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import models.SmallProducer
+@import views.helpers.returnDetails._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -23,7 +26,7 @@
     govukSummaryList: GovukSummaryList
 )
 
-@(form: Form[_], mode: Mode, smallProducerList: SummaryList)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, smallProducerList: List[SmallProducer])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("smallProducerDetails.title"))) {
 
@@ -33,8 +36,8 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("smallProducerDetails.heading1", smallProducerList.rows.size)</h1>
-        @govukSummaryList(smallProducerList)
+        <h1 class="govuk-heading-m">@messages("smallProducerDetails.heading1", smallProducerList.length)</h1>
+        @govukSummaryList(SmallProducerDetailsSummary.row2(smallProducerList))
 
         <h2 class="govuk-heading-m">@messages("smallProducerDetails.heading2")</h2>
 

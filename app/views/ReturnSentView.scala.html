@@ -19,38 +19,41 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import java.time.format.DateTimeFormatter
 @import models.retrieved.RetrievedSubscription
-@import models.viewModels.ReturnDetails
+@import views.html.helpers._
+@import config.FrontendAppConfig
+
 
 @this(
         layout: templates.Layout,
         govukPanel : GovukPanel,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
-        govukTable : GovukTable
+        govukTable : GovukTable,
+        returnDetailsSummary: returnDetailsSummary
+
 )
 
-@(returnDate:ReturnPeriod,
+@(returnPeriod: ReturnPeriod,
+  userAnswers: UserAnswers,
+  amounts: Amounts,
   subscription: RetrievedSubscription,
   amountOwed:String,
-  balance: BigDecimal,
-  paymentDate:ReturnPeriod,
-  financialStatus: String,
-  returnDetails: ReturnDetails)(implicit request: Request[_], messages: Messages)
+  financialStatus: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("returnSent.title"))) {
 
     @govukPanel(Panel(
     title = Text(messages("returnSent.title")),
-    content = HtmlContent(messages("returnSent.panel.returnMessage", returnDate.start.format(DateTimeFormatter.ofPattern("MMMM")), returnDate.end.format(DateTimeFormatter.ofPattern("MMMM")), returnDate.start.getYear.toString, subscription.orgName))
+    content = HtmlContent(messages("returnSent.panel.returnMessage", returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.end.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.start.getYear.toString, subscription.orgName))
     ))
     <p class = "govuk-body-m">
     <a href="javascript:window.print()" class="govuk-link">@messages("site.print")</a>
     </p>
 
     <p class="govuk-body">@messages("returnSent.returnsDoneMessage",
-        returnDate.start.format(DateTimeFormatter.ofPattern("MMMM")),
-        returnDate.end.format(DateTimeFormatter.ofPattern("MMMM")),
-        returnDate.start.getYear.toString,
+        returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")),
+        returnPeriod.end.format(DateTimeFormatter.ofPattern("MMMM")),
+        returnPeriod.start.getYear.toString,
         subscription.orgName,
         LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
         LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))</p>
@@ -59,9 +62,9 @@
        @messages("returnSent.headerOne")
     </h1>
 
-    @if(balance > 0){
+    @if(amounts.totalForQuarter > 0){
     <p class="govuk-body">
-        @Html(messages("returnSent.paymentsBlurb.payby", amountOwed, paymentDate.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))))
+        @Html(messages("returnSent.paymentsBlurb.payby", amountOwed, returnPeriod.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))))
     </p>
     <p class="govuk-body">
         @messages("returnSent.paymentsBlurb.payby.info",subscription.sdilRef)
@@ -69,16 +72,16 @@
     <p class = "govuk-body-m">
     <a class="govuk-link" href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">@messages("retutnSent.paymentBlurb.paybyLink")</a>
     </p>
-    }else if(balance < 0){
+    }else if(amounts.totalForQuarter < 0){
     <p class="govuk-body">@messages("returnSent.paymentsBlurb.nothingOwed")</p>
     <p class="govuk-body">@messages("returnSent.paymentsBlurb.credited")</p>
     }else{
     <p class="govuk-body">@messages("returnSent.paymentsBlurb.nothingOwed")</p>
     }
     <p class="govuk-body">@messages("returnSent.paymentsBlurb.nextReturn",
-        paymentDate.next.start.format(DateTimeFormatter.ofPattern("MMMM")),
-        paymentDate.next.end.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
-        paymentDate.next.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))),
+        returnPeriod.next.start.format(DateTimeFormatter.ofPattern("MMMM")),
+        returnPeriod.next.end.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+        returnPeriod.next.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))),
     </p>
 
     <h1 class="govuk-heading-m">
@@ -101,97 +104,6 @@
 
 <details class="govuk-details" data-module="govuk-details">
 
-    <div class = "ownBrands">
-        <h2 class="govuk-heading-m">
-            @messages("returnSent.ownBrands")
-        </h2>
-        <p class="govuk-body">
-            @govukSummaryList(returnDetails.ownBrandsAnswer)
-        </p>
-    </div>
-
-    <div class = "packagedContractPacker">
-        <h2 class="govuk-heading-m">
-            @messages("returnSent.packagedContractPacker")
-        </h2>
-        <p class="govuk-body">
-            @govukSummaryList(returnDetails.packagedContractPackerAnswers)
-        </p>
-    </div>
-
-    <div class = "exemptionsForSmallProducers">
-        <h2 class="govuk-heading-m">
-            @messages("returnSent.exemptionsForSmallProducers")
-        </h2>
-        <p class="govuk-body">
-            @govukSummaryList(returnDetails.exemptionsForSmallProducersAnswers)
-        </p>
-    </div>
-
-    <div class = "broughtIntoUk">
-        <h2 class="govuk-heading-m">
-            @messages("returnSent.broughtIntoUk")
-        </h2>
-        <p class="govuk-body">
-            @govukSummaryList(returnDetails.broughtIntoUkAnswers)
-        </p>
-    </div>
-
-    <div class = "broughtIntoUkSmallProducers">
-        <h2 class="govuk-heading-m">
-            @messages("returnSent.broughtIntoUkSmallProducer")
-        </h2>
-        <p class="govuk-body">
-            @govukSummaryList(returnDetails.broughtIntoUkSmallProducerAnswers)
-        </p>
-    </div>
-
-    <div class = "claimCreditsForExports">
-        <h2 class="govuk-heading-m">
-            @messages("returnSent.exported")
-        </h2>
-        <p class="govuk-body">
-            @govukSummaryList(returnDetails.claimCreditsForExportsAnswers)
-        </p>
-    </div>
-
-    <div class = "claimCreditsForLostDamagedAnswers">
-        <h2 class="govuk-heading-m">
-            @messages("returnSent.lostDestroyed")
-        </h2>
-        <p class="govuk-body">
-            @govukSummaryList(returnDetails.claimCreditsForLostDamagedAnswers)
-        </p>
-    </div>
-</details>
-<div class = "claimCreditsForLostDamagedAnswers">
-    <h2 class="govuk-heading-m" id="amountDue">
-        @(financialStatus match {case "amountToPay" =>  Some(messages("checkYourAnswers.amountToPay.title"))
-        case "creditedPay" =>  Some(messages("checkYourAnswers.creditedPay.title"))
-        case "noPayNeeded" =>  Some(messages("checkYourAnswers.noPayNeeded.title"))
-        })
-    </h2>
-    <p class="govuk-body">
-        @govukSummaryList(returnDetails.amountsRow)
-    </p>
-</div>
-
-<div class = "Registered Sites">
-    @if(returnDetails.smallProducerCheck != None || returnDetails.warehouseCheck != None){
-    <h2 class="govuk-heading-m">
-        @messages("returnSent.RegisteredSites")
-    </h2>
-    }
-    @if(returnDetails.smallProducerCheck != None){
-    <p class="govuk-body">
-        @govukSummaryList(returnDetails.smallProducerAnswers)
-    </p>
-    }
-    @if(returnDetails.warehouseCheck != None){
-    <p class="govuk-body">
-        @govukSummaryList(returnDetails.warehouseAnswers)
-    </p>
-    }
-</div>
+    @returnDetailsSummary(returnPeriod, userAnswers, amounts, false)
 
 }
