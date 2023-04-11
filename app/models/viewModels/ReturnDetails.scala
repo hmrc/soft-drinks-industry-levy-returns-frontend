@@ -54,7 +54,8 @@ case class ReturnDetails(ownBrandsAnswer: SummaryList,
                          warehouseAnswers: SummaryList,
                          amountsRow: SummaryList
                         ) {
-  def this(userAnswers: UserAnswers, isCheckAnswers: Boolean = false)(implicit request: DataRequest[AnyContent], messages: Messages, config: FrontendAppConfig) = this(
+  //ToDo when warehouse list is in user answers remove it from def and use userAnswers
+  def this(userAnswers: UserAnswers, isCheckAnswers: Boolean = false, amounts: Amounts, warehouseList: List[Warehouse])(implicit request: DataRequest[AnyContent], messages: Messages, config: FrontendAppConfig) = this(
       ownBrandsAnswer = OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers),
       packagedContractPackerAnswers = PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers),
       exemptionsForSmallProducersAnswers = ReturnDetails.exemptionForSmallProducersAnswers(userAnswers),
@@ -62,11 +63,11 @@ case class ReturnDetails(ownBrandsAnswer: SummaryList,
       broughtIntoUkSmallProducerAnswers = BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers,isCheckAnswers),
       claimCreditsForExportsAnswers = ClaimCreditsForExportsSummary.summaryList(userAnswers,isCheckAnswers),
       claimCreditsForLostDamagedAnswers = ClaimCreditsForLostDamagedSummary.summaryList(userAnswers,isCheckAnswers),
-      smallProducerCheck = smallProducerCheck, //TODO not sure what to add here?
-      warehouseCheck = warehouseCheck, //TODO not sure what to add here?
+      smallProducerCheck = ReturnDetails.smallProducerCheck(userAnswers),
+      warehouseCheck = ReturnDetails.warehouseCheck(warehouseList), //TODO use UserAnswers when warehouse is in model
       smallProducerAnswers = SummaryListViewModel(rows = Seq(SmallProducerDetailsSummary.producerList(userAnswers)).flatten),
       warehouseAnswers = SummaryListViewModel(rows = Seq(SecondaryWarehouseDetailsSummary.warehouseList(userAnswers))),
-      amountsRow = AmountToPaySummary.amountToPaySummary()
+      amountsRow = AmountToPaySummary.amountToPaySummary(amounts)
     )
 }
 
@@ -153,6 +154,16 @@ object ReturnDetails {
     } else {
       SummaryListViewModel(rows = Seq(ClaimCreditsForExportsSummary.returnsRow(userAnswers)).flatten)
     }
+  }
+
+  private def smallProducerCheck(userAnswers: UserAnswers): Option[List[SmallProducer]] = {
+    val smallProducerList = userAnswers.smallProducerList
+    if (smallProducerList.length > 0) Some(smallProducerList) else None
+  }
+
+  //TODO use UserAnswers when warehouseList is in model
+  private def warehouseCheck(warehouseList: List[Warehouse]): Option[List[Warehouse]] = {
+    if (warehouseList.length > 0) Some(warehouseList) else None
   }
 
 }

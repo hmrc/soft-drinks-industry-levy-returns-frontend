@@ -15,7 +15,7 @@
  */
 
 package viewmodels.checkAnswers
-import models.UserAnswers
+import models.{Amounts, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import play.api.libs.json.Format.GenericFormat
@@ -168,7 +168,11 @@ object AmountToPaySummary  {
     ) - balanceBroughtForward
   }
 
-  def amountToPaySummary(totalForQuarter: BigDecimal, balanceBroughtForward: BigDecimal, total: BigDecimal)(implicit messages: Messages) = {
+  def amountToPaySummary(amounts: Amounts)(implicit messages: Messages) = {
+
+    val totalForQuarter: BigDecimal = amounts.totalForQuarter
+    val balanceBroughtForward: BigDecimal = amounts.balanceBroughtForward
+    val total: BigDecimal = amounts.total
 
     val negatedBalanceBroughtForward = balanceBroughtForward * -1
 
