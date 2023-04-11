@@ -26,18 +26,7 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object OwnBrandsSummary extends ReturnDetailsSummaryList  {
-
-//  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-//    answers.get(OwnBrandsPage).map {
-//      answer =>
-//        val value = if (answer) "site.yes" else "site.no"
-//        SummaryListRowViewModel(
-//          key = "ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel",
-//          value = ValueViewModel(value).withCssClass("align-right")
-//        )
-//    }
-//  }
-
+  
   override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
     val litreDetails = if (userAnswers.get(OwnBrandsPage).contains(true)) {
       BrandsPackagedAtOwnSitesSummary.rows(userAnswers, isCheckAnswers)

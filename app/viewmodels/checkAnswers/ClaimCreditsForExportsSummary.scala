@@ -16,46 +16,48 @@
 
 package viewmodels.checkAnswers
 
+import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.ClaimCreditsForExportsPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, SummaryList}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ClaimCreditsForExportsSummary  {
+object ClaimCreditsForExportsSummary extends ReturnDetailsSummaryList {
 
-  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ClaimCreditsForExportsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRow(
-          key = "claimCreditsForExports.checkYourAnswersLabel",
-          value = ValueViewModel(value).withCssClass("align-right")
-        )
+  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
+    val litresDetails = if (userAnswers.get(ClaimCreditsForExportsPage).contains(true)) {
+      HowManyCreditsForExportSummary.rows(userAnswers, isCheckAnswers)
+    } else {
+      Seq.empty
     }
+    SummaryListViewModel(rows =
+      row(userAnswers, isCheckAnswers) ++ litresDetails
+    )
   }
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ClaimCreditsForExportsPage).map {
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
+    answers.get(ClaimCreditsForExportsPage).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "claimingCreditForExportedLiableDrinks",
-          value   = ValueViewModel(value).withCssClass("align-right"),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-exports")
-              .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+        Seq(
+          SummaryListRowViewModel(
+            key     = "claimingCreditForExportedLiableDrinks",
+            value   = ValueViewModel(value).withCssClass("align-right"),
+            actions = if (isCheckAnswers) {
+              Seq(
+              ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+                .withAttribute("id", "change-exports")
+                .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+              )
+            } else {
+              Seq.empty
+            }
           )
         )
     }
   }
-
 }

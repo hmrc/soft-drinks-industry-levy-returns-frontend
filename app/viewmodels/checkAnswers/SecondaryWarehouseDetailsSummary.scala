@@ -29,7 +29,7 @@ import viewmodels.implicits._
 object SecondaryWarehouseDetailsSummary  {
 
   def warehouseList(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val value = 1.toString //answers.warehouseList.length.toString
+    val value = 1.toString //TODO -> answers.warehouseList.length.toString
     SummaryListRow(
       key = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
       value = ValueViewModel(value)

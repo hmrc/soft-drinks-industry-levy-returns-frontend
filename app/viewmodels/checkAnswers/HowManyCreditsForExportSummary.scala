@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers
 
+import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.HowManyCreditsForExportPage
@@ -28,6 +29,15 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object HowManyCreditsForExportSummary  {
+
+  def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    Seq(
+      returnsLowBandRow(answers),
+      returnsLowBandLevyRow(answers, config.lowerBandCostPerLitre),
+      returnsHighBandRow(answers),
+      returnsHighBandLevyRow(answers, config.higherBandCostPerLitre)
+    ).flatten
+  }
 
   def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(HowManyCreditsForExportPage).map {

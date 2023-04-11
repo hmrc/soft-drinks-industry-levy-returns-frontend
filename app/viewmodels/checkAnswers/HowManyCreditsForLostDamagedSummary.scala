@@ -27,7 +27,13 @@ import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object HowManyCreditsForLostDamagedSummary  {
+object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
+
+  override val actionUrl = routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url
+  override val bandActionIdKey: String = "contract-packer"
+  override val bandHiddenKey: String = "contractPackedAtYourOwnSite"
+
+  override val page: QuestionPage[LitresInBands] = HowManyCreditsForLostDamagedPage
 
   def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(HowManyCreditsForLostDamagedPage).map {

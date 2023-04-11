@@ -16,38 +16,46 @@
 
 package viewmodels.checkAnswers
 
+import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.BroughtIntoUKPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object BroughtIntoUKSummary  {
+object BroughtIntoUKSummary extends ReturnDetailsSummaryList  {
 
-  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(BroughtIntoUKPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        SummaryListRow(
-          key = "broughtIntoUK.checkYourAnswersLabel",
-          value = ValueViewModel(value).withCssClass("align-right")
-        )
+  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
+    val litresDetails = if (userAnswers.get(BroughtIntoUKPage).contains(true)) {
+      HowManyBroughtIntoUkSummary.rows(userAnswers, isCheckAnswers)
+    } else {
+      Seq.empty
     }
+    SummaryListViewModel(rows =
+      row(userAnswers) ++ litresDetails
+    )
   }
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(BroughtIntoUKPage).map {
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    answers.get(BroughtIntoUKPage).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
-        SummaryListRowViewModel(
-          key     = "reportingLiableDrinksBroughtIntoTheUK",
-          value   = ValueViewModel(value).withCssClass("align-right"),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-brought-into-uk")
-              .withVisuallyHiddenText(messages("broughtIntoUK.change.hidden"))
+        Seq(
+          SummaryListRowViewModel(
+            key     = "reportingLiableDrinksBroughtIntoTheUK",
+            value   = ValueViewModel(value).withCssClass("align-right"),
+            actions = if(isCheckAnswers) {
+              Seq(
+                ActionItemViewModel("site.change", routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
+                  .withAttribute("id", "change-brought-into-uk")
+                  .withVisuallyHiddenText(messages("broughtIntoUK.change.hidden"))
+              )
+            } else {
+              Seq.empty
+            }
           )
         )
     }

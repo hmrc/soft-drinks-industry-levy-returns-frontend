@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers
 
+import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.HowManyBroughtIntoUkPage
@@ -24,10 +25,20 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import utilitlies.CurrencyFormatter
+import viewmodels.checkAnswers.HowManyCreditsForExportSummary.{returnsHighBandLevyRow, returnsHighBandRow, returnsLowBandLevyRow, returnsLowBandRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object HowManyBroughtIntoUkSummary  {
+
+  def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    Seq(
+      returnsLowBandRow(answers),
+      returnsLowBandLevyRow(answers, config.lowerBandCostPerLitre),
+      returnsHighBandRow(answers),
+      returnsHighBandLevyRow(answers, config.higherBandCostPerLitre)
+    ).flatten
+  }
 
   def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(HowManyBroughtIntoUkPage).map {

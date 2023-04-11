@@ -34,30 +34,30 @@ object PackagedContractPackerSummary extends ReturnDetailsSummaryList {
     } else {
       Seq.empty
     }
-      SummaryListViewModel(rows =
-        row(userAnswers) ++ litresDetails
-      )
-    }
+    SummaryListViewModel(rows =
+      row(userAnswers) ++ litresDetails
+    )
   }
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
     answers.get(PackagedContractPackerPage).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
-        Seq(SummaryListRowViewModel(
-          key = "reportingContractPackedAtYourOwnSite",
-          value = ValueViewModel(value).withCssClass("align-right"),
-          actions = if (isCheckAnswers) {
-            Seq(
-              ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
-                .withAttribute("id", "change-contract-packer")
-                .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
-            )
-          } else {
-            Seq.empty
-          }
-        )
+        Seq(
+          SummaryListRowViewModel(
+            key = "reportingContractPackedAtYourOwnSite",
+            value = ValueViewModel(value).withCssClass("align-right"),
+            actions = if (isCheckAnswers) {
+              Seq(
+                ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
+                  .withAttribute("id", "change-contract-packer")
+                  .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
+              )
+            } else {
+              Seq.empty
+            }
+          )
         )
     }
-
+  }
 }
