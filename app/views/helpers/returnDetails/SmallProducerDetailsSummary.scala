@@ -34,10 +34,10 @@ object SmallProducerDetailsSummary  {
 
   def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     Seq(
-      returnsLowBandRow(answers),
-      returnsLowBandLevyRow(answers, config.lowerBandCostPerLitre),
-      returnsHighBandRow(answers),
-      returnsHighBandLevyRow(answers, config.higherBandCostPerLitre)
+      lowBandRow(answers),
+      lowBandLevyRow(answers, config.lowerBandCostPerLitre),
+      highBandRow(answers),
+      highBandLevyRow(answers, config.higherBandCostPerLitre)
     ).flatten
   }
 

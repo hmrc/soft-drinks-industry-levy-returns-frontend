@@ -35,11 +35,11 @@ object BroughtIntoUKSummary extends ReturnDetailsSummaryList  {
       Seq.empty
     }
     SummaryListViewModel(rows =
-      row(userAnswers) ++ litresDetails
+      row(userAnswers, isCheckAnswers) ++ litresDetails
     )
   }
 
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Seq[SummaryListRow] = {
+  def row(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Seq[SummaryListRow] = {
     answers.get(BroughtIntoUKPage).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
         val value = if (answer) "site.yes" else "site.no"

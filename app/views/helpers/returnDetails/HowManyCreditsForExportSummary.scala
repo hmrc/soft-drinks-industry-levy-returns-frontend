@@ -18,8 +18,8 @@ package views.helpers.returnDetails
 
 import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.HowManyCreditsForExportPage
+import models.{CheckMode, LitresInBands, UserAnswers}
+import pages.{HowManyCreditsForExportPage, QuestionPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -28,131 +28,11 @@ import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object HowManyCreditsForExportSummary  {
+object HowManyCreditsForExportSummary extends SummaryListRowLitresHelper {
 
-  def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
-    Seq(
-      returnsLowBandRow(answers),
-      returnsLowBandLevyRow(answers, config.lowerBandCostPerLitre),
-      returnsHighBandRow(answers),
-      returnsHighBandLevyRow(answers, config.higherBandCostPerLitre)
-    ).flatten
-  }
+  override val actionUrl = routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url
+  override val bandActionIdKey: String = "exported"
+  override val bandHiddenKey: String = "claimingCreditForExportedLiableDrinks"
 
-  def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyCreditsForExportPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.lowBand.toString).toString
-        SummaryListRow(
-          key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border"
-        )
-    }
-  }
-
-  def returnsLowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyCreditsForExportPage).map {
-      answer =>
-        val levy = answer.lowBand * lowBandCostPerLitre.toDouble * -1
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-        SummaryListRowViewModel(
-          key = "lowBandLevy",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
-        )
-    }
-  }
-
-  def returnsHighBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyCreditsForExportPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
-        SummaryListRow(
-          key = "litresInTheHighBand",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border"
-        )
-    }
-  }
-
-  def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyCreditsForExportPage).map {
-      answer =>
-        val levy = answer.highBand * highBandCostPerLitre.toDouble * -1
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy).toString)
-        SummaryListRowViewModel(
-          key = "highBandLevy",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
-        )
-    }
-  }
-
-
-  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HowManyCreditsForExportPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.lowBand.toString).toString
-        SummaryListRow(
-          key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border",
-          actions = Some(Actions("",
-            items =
-              Seq(
-                ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
-                  .withAttribute(("id", "change-lowband-export-credits"))
-                  .withVisuallyHiddenText(messages("exported.lowband.hidden"))
-              )))
-        )
-    }
-
-
-  def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-
-    answers.get(HowManyCreditsForExportPage).map {
-      answer =>
-        val levy = answer.lowBand * lowBandCostPerLitre.toDouble * -1
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-
-        SummaryListRowViewModel(
-          key = "lowBandLevy",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          actions = Seq()
-        )
-    }
-  }
-
-  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HowManyCreditsForExportPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
-
-        SummaryListRow(
-          key = "litresInTheHighBand",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border",
-          actions = Some(
-            Actions("",
-              items =
-                Seq(
-                  ActionItemViewModel("site.change", routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url)
-                    .withAttribute(("id", "change-highband-export-credits"))
-                    .withVisuallyHiddenText(messages("exported.highband.hidden"))
-                )))
-        )
-    }
-
-  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HowManyCreditsForExportPage).map {
-      answer =>
-        val levy = answer.highBand * highBandCostPerLitre.toDouble * -1
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-
-        SummaryListRowViewModel(
-          key = "highBandLevy",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          actions = Seq()
-        )
-    }
-
+  override val page: QuestionPage[LitresInBands] = HowManyCreditsForExportPage
 }

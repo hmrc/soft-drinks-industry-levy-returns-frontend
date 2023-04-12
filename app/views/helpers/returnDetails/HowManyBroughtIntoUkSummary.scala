@@ -16,144 +16,15 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.HowManyBroughtIntoUkPage
-import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
-import utilitlies.CurrencyFormatter
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.{CheckMode, LitresInBands}
+import pages.{HowManyBroughtIntoUkPage, QuestionPage}
 
-object HowManyBroughtIntoUkSummary  {
+object HowManyBroughtIntoUkSummary  extends SummaryListRowLitresHelper{
 
-  def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
-    Seq(
-      returnsLowBandRow(answers),
-      returnsLowBandLevyRow(answers, config.lowerBandCostPerLitre),
-      returnsHighBandRow(answers),
-      returnsHighBandLevyRow(answers, config.higherBandCostPerLitre)
-    ).flatten
-  }
-
-  def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyBroughtIntoUkPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.lowBand.toString).toString
-        SummaryListRow(
-          key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border"
-        )
-    }
-  }
-
-  def returnsLowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyBroughtIntoUkPage).map {
-      answer =>
-        val levy = answer.lowBand * lowBandCostPerLitre.toDouble
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-        SummaryListRowViewModel(
-          key = "lowBandLevy",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
-        )
-    }
-  }
-
-  def returnsHighBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HowManyBroughtIntoUkPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
-        SummaryListRow(
-          key = "litresInTheHighBand",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border"
-        )
-    }
-
-  def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyBroughtIntoUkPage).map {
-      answer =>
-        val levy = answer.highBand * highBandCostPerLitre.toDouble
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-        SummaryListRowViewModel(
-          key = "highBandLevy",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
-        )
-    }
-  }
-
-
-  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyBroughtIntoUkPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.lowBand.toString).toString
-        SummaryListRow(
-          key = "litresInTheLowBand",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border",
-          actions = Some(Actions("",
-            items =
-              Seq(
-                ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
-                  .withAttribute(("id", "change-lowband-litreage-brought-into-uk"))
-                  .withVisuallyHiddenText(messages("broughtIntoTheUK.lowband.hidden"))
-              )))
-        )
-    }
-  }
-
-  def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-
-    answers.get(HowManyBroughtIntoUkPage).map {
-      answer =>
-        val levy = answer.lowBand * lowBandCostPerLitre.toDouble
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-
-        SummaryListRowViewModel(
-          key = "lowBandLevy",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          actions = Seq()
-        )
-    }
-  }
-
-  def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyBroughtIntoUkPage).map {
-      answer =>
-        val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
-
-        SummaryListRow(
-          key = "litresInTheHighBand",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border",
-          actions = Some(
-            Actions("",
-              items =
-                Seq(
-                  ActionItemViewModel("site.change", routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url)
-                    .withAttribute("id", "change-highband-litreage-brought-into-uk")
-                    .withVisuallyHiddenText(messages("broughtIntoTheUK.highband.hidden"))
-                )))
-        )
-    }
-  }
-
-  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyBroughtIntoUkPage).map {
-      answer =>
-        val levy = answer.highBand * highBandCostPerLitre.toDouble
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-
-        SummaryListRowViewModel(
-          key = "highBandLevy",
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          actions = Seq()
-        )
-    }
-  }
+  override val actionUrl = routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url
+  override val bandActionIdKey: String = "brought-into-uk"
+  override val bandHiddenKey: String = "ownBrandsPackagedAtYourOwnSite"
+  override val page: QuestionPage[LitresInBands] = HowManyBroughtIntoUkPage
 
 }
