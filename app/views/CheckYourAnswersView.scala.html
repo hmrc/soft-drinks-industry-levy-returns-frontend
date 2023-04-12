@@ -85,7 +85,7 @@
 
     <h2 class="govuk-heading-m">@messages("sendYourReturn")</h2>
     <p class="govuk-body govuk-!-margin-bottom-5">@messages("sendYourReturnConfirmation")</p>
-    <a class="govuk-button" id="confirm-and-submit" role="button" data-module="govuk-button" href="@routes.ReturnsController.onPageLoad(nilReturn)">@messages("confirmDetailsAndSendReturn")</a>
+    <a class="govuk-button" id="confirm-and-submit" role="button" data-module="govuk-button" href="@routes.ReturnSentController.onPageLoad()">@messages("confirmDetailsAndSendReturn")</a>
 
     <p class = "govuk-body-m">
         <a href="javascript:window.print()" class="govuk-link" id="print-page-cya">@messages("site.print")</a>
