@@ -73,13 +73,19 @@ class ClaimCreditsForLostDamagedController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForLostDamagedPage, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield updatedAnswers).flatMap { updatedAnswers =>
+            val sdilReturn = SdilReturn.apply(updatedAnswers)
             if (value) {
-              Future.successful(Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers)))
+              Future.successful(Redirect(navigator.nextPage(
+                ClaimCreditsForLostDamagedPage, mode, updatedAnswers,
+                Some(sdilReturn), Some(request.subscription))))
             } else {
               Future.fromTry(updatedAnswers.remove(HowManyCreditsForLostDamagedPage)).flatMap {
                 updatedAnswers =>
                   sessionRepository.set(updatedAnswers).map {
-                    _ => Redirect(navigator.nextPage(ClaimCreditsForLostDamagedPage, mode, updatedAnswers))
+                    _ =>
+                      Redirect(navigator.nextPage(
+                        ClaimCreditsForLostDamagedPage, mode, updatedAnswers,
+                        Some(sdilReturn), Some(request.subscription)))
                   }
               }
             }
