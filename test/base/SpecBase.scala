@@ -16,10 +16,13 @@
 
 package base
 
+import config.FrontendAppConfig
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
+import org.mockito.MockitoSugar.mock
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -32,6 +35,7 @@ import play.api.libs.json.Json
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubControllerComponents
+import repositories.{CacheMap, SDILSessionCache, SessionRepository}
 
 import java.time.LocalDate
 
