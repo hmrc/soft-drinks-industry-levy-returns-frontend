@@ -254,10 +254,11 @@ class NavigatorSpec extends SpecBase {
 
           "Claim credits for Lost damaged " - {
 
-            def navigate(value: Boolean, userAnswers: Boolean => UserAnswers, sdilReturn: SdilReturn,
+            def navigate(value: Boolean, userAnswers: Boolean => UserAnswers,
+                         sdilReturn: Option[SdilReturn] = None,
                          subscription: Option[RetrievedSubscription] = Some(aSubscription)) = {
                 navigator.nextPage(ClaimCreditsForLostDamagedPage,
-                NormalMode, userAnswers(value), Some(sdilReturn), subscription)
+                NormalMode, userAnswers(value), sdilReturn, subscription)
             }
 
             "select Yes to navigate to How many credits for lost damaged page" in {
@@ -276,7 +277,7 @@ class NavigatorSpec extends SpecBase {
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
                 result mustBe routes.CheckYourAnswersController.onPageLoad()
               }
             }
@@ -288,7 +289,7 @@ class NavigatorSpec extends SpecBase {
                     "claimCreditsForLostDamaged" -> value))
 
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
                 result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
               }
             }
@@ -300,7 +301,7 @@ class NavigatorSpec extends SpecBase {
                     "claimCreditsForLostDamaged" -> value))
 
                 val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
                 result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
               }
             }
@@ -320,7 +321,7 @@ class NavigatorSpec extends SpecBase {
                 val importerSubscription = aSubscription.copy(activity = importerActivity)
 
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn, Some(importerSubscription))
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
                 result mustBe routes.CheckYourAnswersController.onPageLoad()
               }
             }
@@ -340,23 +341,44 @@ class NavigatorSpec extends SpecBase {
                 val importerSubscription = aSubscription.copy(activity = importerActivity)
 
                 val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn, Some(importerSubscription))
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
                 result mustBe routes.CheckYourAnswersController.onPageLoad()
               }
             }
 
             "select No to navigate to Check your answers controller page " - {
-              "when no subscription or return available" in {
+              "when no subscription is available" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
                 val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn, None)
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), None)
                 result mustBe routes.CheckYourAnswersController.onPageLoad()
               }
             }
 
+            "select No to navigate to Check your answers controller page " - {
+              "when no return is available" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val result = navigate(false, (_ => userAnswers(false)), None)
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
+              }
+            }
+
+            "select No to navigate to Check your answers controller page " - {
+              "when no return nor subscription is available" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val result = navigate(false, (_ => userAnswers(false)), None, None)
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
+              }
+            }
 
           }
 
