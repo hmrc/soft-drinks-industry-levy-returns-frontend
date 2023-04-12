@@ -30,8 +30,8 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
-    case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad()
-    case ClaimCreditsForLostDamagedPage => userAnswers => _ => _ => _ => claimCreditsForLostDamagedPageNavigation(userAnswers)
+    case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt => _ =>
+      claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
     case ClaimCreditsForExportsPage => userAnswers => _ => _ => _ => claimCreditsForExportPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => _ => _ => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => _ => _ => broughtIntoUkfromSmallProducersPageNavigation(userAnswers)
@@ -157,17 +157,23 @@ class Navigator @Inject()() {
     }
   }
 
-  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
-
-    val isNewImporter = false
-    val isNewPacker = false
-
+  private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers,
+                                                       sdilReturnOpt: Option[SdilReturn],
+                                                       subscriptionOpt: Option[RetrievedSubscription]) = {
     if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
-    } else if (isNewImporter || isNewPacker) {
-      routes.ReturnChangeRegistrationController.onPageLoad()
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      (sdilReturnOpt, subscriptionOpt) match {
+        case (Some(sdilReturn), Some(subscription)) =>
+          val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+          val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
+          if (isNewImporter || isNewPacker){
+            routes.ReturnChangeRegistrationController.onPageLoad()
+          } else {
+            routes.CheckYourAnswersController.onPageLoad()
+          }
+        case _ => routes.CheckYourAnswersController.onPageLoad()
+      }
     }
   }
 
