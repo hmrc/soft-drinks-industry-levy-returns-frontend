@@ -14,48 +14,31 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.ClaimCreditsForExportsPage
+import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ClaimCreditsForExportsSummary  {
+object AskSecondaryWarehouseInReturnSummary  {
 
-  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ClaimCreditsForExportsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRow(
-          key = "claimCreditsForExports.checkYourAnswersLabel",
-          value = ValueViewModel(value).withCssClass("align-right")
-        )
-    }
-  }
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(ClaimCreditsForExportsPage).map {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(AskSecondaryWarehouseInReturnPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "claimingCreditForExportedLiableDrinks",
+          key     = "askSecondaryWarehouseInReturn.checkYourAnswersLabel",
           value   = ValueViewModel(value).withCssClass("align-right"),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-exports")
-              .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+            ActionItemViewModel("site.change", routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("askSecondaryWarehouseInReturn.change.hidden"))
           )
         )
     }
-  }
-
 }

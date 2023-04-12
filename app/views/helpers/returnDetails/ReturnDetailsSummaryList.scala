@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package views.helpers.returnDetails
 
-import play.api.libs.json._
+import config.FrontendAppConfig
+import models.UserAnswers
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
-case class HowManyCreditsForLostDamaged (lowBand: Long, highBand: Long)
+trait ReturnDetailsSummaryList {
 
-object HowManyCreditsForLostDamaged {
-  implicit val format = Json.format[HowManyCreditsForLostDamaged]
+  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList
+
 }

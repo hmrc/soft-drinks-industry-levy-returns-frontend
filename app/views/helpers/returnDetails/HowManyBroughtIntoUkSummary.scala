@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package views.helpers.returnDetails
 
-import models.LitresInBands
-import pages.behaviours.PageBehaviours
+import controllers.routes
+import models.{CheckMode, LitresInBands}
+import pages.{HowManyBroughtIntoUkPage, QuestionPage}
 
-class HowManyAsAContractPackerPageSpec extends PageBehaviours {
+object HowManyBroughtIntoUkSummary  extends SummaryListRowLitresHelper{
 
-  "HowManyAsAContractPackerPage" - {
+  override val actionUrl = routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url
+  override val bandActionIdKey: String = "brought-into-uk"
+  override val bandHiddenKey: String = "ownBrandsPackagedAtYourOwnSite"
+  override val page: QuestionPage[LitresInBands] = HowManyBroughtIntoUkPage
 
-    beRetrievable[LitresInBands](HowManyAsAContractPackerPage)
-
-    beSettable[LitresInBands](HowManyAsAContractPackerPage)
-
-    beRemovable[LitresInBands](HowManyAsAContractPackerPage)
-  }
 }

@@ -1,6 +1,6 @@
 package controllers.testSupport
 
-import models.{AddASmallProducer, BrandsPackagedAtOwnSites, HowManyAsAContractPacker, HowManyBroughtIntoUk, HowManyCreditsForExport, HowManyCreditsForLostDamaged, UserAnswers}
+import models.{AddASmallProducer, BrandsPackagedAtOwnSites, HowManyBroughtIntoUk, HowManyCreditsForExport, LitresInBands, UserAnswers}
 import org.scalatest.TryValues
 import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
 import play.api.libs.json.Json
@@ -30,7 +30,7 @@ trait ITCoreTestData extends TryValues {
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand))
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
 
   def howManyAsContractPackerPartialAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
@@ -46,7 +46,7 @@ trait ITCoreTestData extends TryValues {
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand)).success.value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
     .set(ExemptionsForSmallProducersPage, true)
 
   def broughtIntoUkPartialAnswers = exemptionsForSmallProducersFullAnswers.success.value
@@ -63,7 +63,7 @@ trait ITCoreTestData extends TryValues {
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand)).success.value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
     .set(ExemptionsForSmallProducersPage, false).success.value
     .set(BroughtIntoUKPage, true).success.value
     .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(lowBand, highBand)).success.value
@@ -113,7 +113,7 @@ trait ITCoreTestData extends TryValues {
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, BrandsPackagedAtOwnSites(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, HowManyAsAContractPacker(lowBand, highBand)).success.value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
     .set(ExemptionsForSmallProducersPage, false).success.value
     .set(BroughtIntoUKPage, true).success.value
     .set(HowManyBroughtIntoUkPage, HowManyBroughtIntoUk(lowBand, highBand)).success.value
@@ -121,5 +121,5 @@ trait ITCoreTestData extends TryValues {
     .set(ClaimCreditsForExportsPage, true).success.value
     .set(HowManyCreditsForExportPage, HowManyCreditsForExport(lowBand, highBand)).success.value
     .set(ClaimCreditsForLostDamagedPage, true).success.value
-    .set(HowManyCreditsForLostDamagedPage, HowManyCreditsForLostDamaged(lowBand, highBand)).success.value
+    .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
 }

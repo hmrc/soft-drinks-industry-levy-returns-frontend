@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package views.helpers.returnDetails
 
-import play.api.libs.json._
+import controllers.routes
+import models.{CheckMode, LitresInBands}
+import pages.{HowManyAsAContractPackerPage, QuestionPage}
 
-case class HowManyAsAContractPacker (lowBand: Long, highBand: Long)
+object HowManyAsAContractPackerSummary extends SummaryListRowLitresHelper {
 
-object HowManyAsAContractPacker {
-  implicit val format = Json.format[HowManyAsAContractPacker]
+  override val actionUrl = routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url
+  override val bandActionIdKey: String = "contract-packer"
+  override val bandHiddenKey: String = "contractPackedAtYourOwnSite"
+
+  override val page: QuestionPage[LitresInBands] = HowManyAsAContractPackerPage
+
 }

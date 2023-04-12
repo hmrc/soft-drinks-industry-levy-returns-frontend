@@ -16,10 +16,10 @@
 
 package pages
 
-import models.HowManyCreditsForExport
+import models.LitresInBands
 import play.api.libs.json.JsPath
 
-case object HowManyCreditsForExportPage extends QuestionPage[HowManyCreditsForExport] {
+case object HowManyCreditsForExportPage extends QuestionPage[LitresInBands] {
 
   override def path: JsPath = JsPath \ toString
 

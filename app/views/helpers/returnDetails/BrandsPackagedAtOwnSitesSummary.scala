@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
+import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.HowManyAsAContractPackerPage
+import pages.BrandsPackagedAtOwnSitesPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,10 +28,18 @@ import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object HowManyAsAContractPackerSummary  {
+object BrandsPackagedAtOwnSitesSummary {
+  def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    Seq(
+      returnsLowBandRow(answers),
+      returnsLowBandLevyRow(answers, config.lowerBandCostPerLitre),
+      returnsHighBandRow(answers),
+      returnsHighBandLevyRow(answers, config.higherBandCostPerLitre)
+    ).flatten
+  }
 
-  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyAsAContractPackerPage).map {
+  def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRow(
@@ -40,15 +49,16 @@ object HowManyAsAContractPackerSummary  {
           actions = Some(Actions("",
             items =
               Seq(
-                ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
-                  .withAttribute("id", "change-lowband-litreage-contract-packer")
-                  .withVisuallyHiddenText(messages("contractPackedAtYourOwnSite.lowband.hidden"))))))
+                ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
+                  .withAttribute(("id", "change-lowband-litreage-own-site"))
+                  .withVisuallyHiddenText(messages("ownBrandsPackagedAtYourOwnSite.lowband.hidden"))
+              )))
+        )
     }
-  }
+
 
   def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-
-    answers.get(HowManyAsAContractPackerPage).map {
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val levy = answer.lowBand * lowBandCostPerLitre.toDouble
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
@@ -62,10 +72,9 @@ object HowManyAsAContractPackerSummary  {
   }
 
   def highBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyAsAContractPackerPage).map {
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
-
         SummaryListRow(
           key = "litresInTheHighBand",
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
@@ -74,18 +83,19 @@ object HowManyAsAContractPackerSummary  {
             Actions("",
               items =
                 Seq(
-                  ActionItemViewModel("site.change", routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url)
-                    .withAttribute("id", "change-highband-litreage-contract-packer")
-                    .withVisuallyHiddenText(messages("contractPackedAtYourOwnSite.highband.hidden"))))))
+                  ActionItemViewModel("site.change", routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url)
+                    .withAttribute(("id", "change-highband-litreage-own-site"))
+                    .withVisuallyHiddenText(messages("ownBrandsPackagedAtYourOwnSite.highband.hidden"))
+                )))
+        )
     }
   }
 
   def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyAsAContractPackerPage).map {
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val levy = answer.highBand * highBandCostPerLitre.toDouble
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-
         SummaryListRowViewModel(
           key = "highBandLevy",
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
@@ -94,8 +104,8 @@ object HowManyAsAContractPackerSummary  {
     }
   }
 
-  def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyAsAContractPackerPage).map {
+  def returnsLowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.lowBand.toString).toString
         SummaryListRow(
@@ -104,10 +114,9 @@ object HowManyAsAContractPackerSummary  {
           classes = "govuk-summary-list__row--no-border"
         )
     }
-  }
 
   def returnsLowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyAsAContractPackerPage).map {
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val levy = answer.lowBand * lowBandCostPerLitre.toDouble
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
@@ -117,9 +126,8 @@ object HowManyAsAContractPackerSummary  {
         )
     }
   }
-
-  def returnsHighBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyAsAContractPackerPage).map {
+  def returnsHighBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val value = HtmlFormat.escape(answer.highBand.toString).toString + "<br/>"
         SummaryListRow(
@@ -128,10 +136,9 @@ object HowManyAsAContractPackerSummary  {
           classes = "govuk-summary-list__row--no-border"
         )
     }
-  }
 
-  def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    answers.get(HowManyAsAContractPackerPage).map {
+  def returnsHighBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(BrandsPackagedAtOwnSitesPage).map {
       answer =>
         val levy = answer.highBand * highBandCostPerLitre.toDouble
         val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
@@ -140,5 +147,5 @@ object HowManyAsAContractPackerSummary  {
           value = ValueViewModel(HtmlContent(value)).withCssClass("align-right")
         )
     }
-  }
+
 }

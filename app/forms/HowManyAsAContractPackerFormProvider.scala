@@ -16,21 +16,21 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.LitresInBands
 import play.api.data.Form
 import play.api.data.Forms._
-import models.HowManyAsAContractPacker
+
+import javax.inject.Inject
 
 class HowManyAsAContractPackerFormProvider @Inject() extends Mappings {
 
-   def apply(): Form[HowManyAsAContractPacker] = Form(
+   def apply(): Form[LitresInBands] = Form(
      mapping(
        "lowBand" -> litres(
          "lowBand"),
        "highBand" -> litres(
          "highBand")
-     )(HowManyAsAContractPacker.apply)(HowManyAsAContractPacker.unapply)
+     )(LitresInBands.apply)(LitresInBands.unapply)
    )
  }

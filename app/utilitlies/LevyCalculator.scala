@@ -55,7 +55,7 @@ class LevyCalculator @Inject()(config:FrontendAppConfig) {
   }
 
   private def exemptionForSmallProducersCalculation(answers: UserAnswers) = {
-    val smallProducerTotals = answers.smallProducerList.foldLeft(0L, 0L)((x, y) => (x |+| (y.litreage._1, y.litreage._2)))
+    val smallProducerTotals = answers.smallProducerList.foldLeft((0L, 0L))((x, y) => (x |+| (y.litreage._1, y.litreage._2)))
     SdilCalculation(levyForLowBand(smallProducerTotals._1), levyForHighBand(smallProducerTotals._2))
   }
 

@@ -16,10 +16,10 @@
 
 package pages
 
-import models.HowManyBroughtIntoUk
+import models.LitresInBands
 import play.api.libs.json.JsPath
 
-case object HowManyBroughtIntoUkPage extends QuestionPage[HowManyBroughtIntoUk] {
+case object HowManyBroughtIntoUkPage extends QuestionPage[LitresInBands] {
 
   override def path: JsPath = JsPath \ toString
 

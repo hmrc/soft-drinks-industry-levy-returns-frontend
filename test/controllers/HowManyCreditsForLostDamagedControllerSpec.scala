@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.HowManyCreditsForLostDamagedFormProvider
-import models.{NormalMode, HowManyCreditsForLostDamaged, UserAnswers}
+import models.{NormalMode, LitresInBands, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -89,7 +89,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(HowManyCreditsForLostDamaged(value1, value2)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(value1, value2)), NormalMode)(request, messages(application)).toString
       }
     }
 

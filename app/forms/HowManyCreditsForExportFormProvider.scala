@@ -17,20 +17,19 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.HowManyCreditsForExport
+import models.{HowManyCreditsForExport, LitresInBands}
 
 class HowManyCreditsForExportFormProvider @Inject() extends Mappings {
 
-   def apply(): Form[HowManyCreditsForExport] = Form(
+   def apply(): Form[LitresInBands] = Form(
      mapping(
        "lowBand" -> litres(
          "lowBand"),
        "highBand" -> litres(
          "highBand")
-    )(HowManyCreditsForExport.apply)(HowManyCreditsForExport.unapply)
+    )(LitresInBands.apply)(LitresInBands.unapply)
    )
  }

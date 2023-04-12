@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package views.helpers.returnDetails
 
-import models.LitresInBands
-import pages.behaviours.PageBehaviours
+import controllers.routes
+import models.{CheckMode, LitresInBands}
+import pages.{HowManyCreditsForLostDamagedPage, QuestionPage}
 
-class HowManyAsAContractPackerPageSpec extends PageBehaviours {
+object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
 
-  "HowManyAsAContractPackerPage" - {
+  override val actionUrl = routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+  override val bandActionIdKey: String = "lost-destroyed"
+  override val bandHiddenKey: String = "lostOrDestroyed"
 
-    beRetrievable[LitresInBands](HowManyAsAContractPackerPage)
+  override val page: QuestionPage[LitresInBands] = HowManyCreditsForLostDamagedPage
 
-    beSettable[LitresInBands](HowManyAsAContractPackerPage)
 
-    beRemovable[LitresInBands](HowManyAsAContractPackerPage)
-  }
 }

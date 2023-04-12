@@ -16,6 +16,7 @@
 
 package models
 
+import cats.implicits._
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
@@ -34,7 +35,9 @@ case class SdilReturn(
                      ) {
 
   private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
-
+  def totalpackSmallLitres: (Long, Long) = packSmall.map(x => x.litreage).combineAll
+  def totalPacked: (Long, Long) = packLarge |+| totalpackSmallLitres
+  def totalImported: (Long, Long) = importLarge |+| importSmall
   def total: BigDecimal = sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
 
   type Litres = Long

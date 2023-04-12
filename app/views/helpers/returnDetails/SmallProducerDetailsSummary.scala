@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
+import config.FrontendAppConfig
 import controllers.routes
 import models.{CheckMode, SmallProducer, UserAnswers}
 import pages.SmallProducerDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import utilitlies.CurrencyFormatter
@@ -29,6 +31,15 @@ import viewmodels.implicits._
 
 
 object SmallProducerDetailsSummary  {
+
+  def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    Seq(
+      lowBandRow(answers),
+      lowBandLevyRow(answers, config.lowerBandCostPerLitre),
+      highBandRow(answers),
+      highBandLevyRow(answers, config.higherBandCostPerLitre)
+    ).flatten
+  }
 
   def producerList(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(SmallProducerDetailsPage).map {
@@ -104,8 +115,8 @@ object SmallProducerDetailsSummary  {
         )
     }
 
-  def row2(smallProducersList: List[SmallProducer])(implicit messages: Messages): List[SummaryListRow] = {
-    smallProducersList.map {
+  def row2(smallProducersList: List[SmallProducer])(implicit messages: Messages): SummaryList = {
+    val rows = smallProducersList.map {
     smallProducer =>
       val value = ValueViewModel(
         HtmlContent(
@@ -123,6 +134,8 @@ object SmallProducerDetailsSummary  {
         )
       )
     }
+
+    SummaryListViewModel(rows)
   }
 
   def lowBandRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
@@ -135,7 +148,7 @@ object SmallProducerDetailsSummary  {
         items =
           Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-lowband-litreage-small-producers")
+              .withAttribute(("id", "change-lowband-litreage-small-producers"))
               .withVisuallyHiddenText(messages("contractPackedForRegisteredSmallProducers.lowband.hidden"))
           )))))
   }
@@ -161,7 +174,7 @@ object SmallProducerDetailsSummary  {
         items =
           Seq(
             ActionItemViewModel("site.change", routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
-              .withAttribute("id", "change-highband-litreage-small-producers")
+              .withAttribute(("id", "change-highband-litreage-small-producers"))
               .withVisuallyHiddenText(messages("contractPackedForRegisteredSmallProducers.highband.hidden"))
           )))))
   }

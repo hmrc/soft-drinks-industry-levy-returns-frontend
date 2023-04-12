@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.LitresInBands
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.Json
 
-class HowManyAsAContractPackerPageSpec extends PageBehaviours {
+case class LitresInBands(lowBand: Long, highBand: Long)
 
-  "HowManyAsAContractPackerPage" - {
-
-    beRetrievable[LitresInBands](HowManyAsAContractPackerPage)
-
-    beSettable[LitresInBands](HowManyAsAContractPackerPage)
-
-    beRemovable[LitresInBands](HowManyAsAContractPackerPage)
-  }
+object LitresInBands {
+  implicit val format = Json.format[LitresInBands]
 }

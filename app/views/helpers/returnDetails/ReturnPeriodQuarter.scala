@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package views.helpers.returnDetails
 
-import models.LitresInBands
-import pages.behaviours.PageBehaviours
+import models.ReturnPeriod
+import play.api.i18n.Messages
 
-class HowManyAsAContractPackerPageSpec extends PageBehaviours {
+object ReturnPeriodQuarter {
 
-  "HowManyAsAContractPackerPage" - {
-
-    beRetrievable[LitresInBands](HowManyAsAContractPackerPage)
-
-    beSettable[LitresInBands](HowManyAsAContractPackerPage)
-
-    beRemovable[LitresInBands](HowManyAsAContractPackerPage)
+  def formatted(returnPeriod: ReturnPeriod)(implicit messages: Messages): String = {
+    returnPeriod.quarter match {
+      case 0 => s"${Messages("firstQuarter")} ${returnPeriod.year}"
+      case 1 => s"${Messages("secondQuarter")} ${returnPeriod.year}"
+      case 2 => s"${Messages("thirdQuarter")} ${returnPeriod.year}"
+      case 3 => s"${Messages("fourthQuarter")} ${returnPeriod.year}"
+    }
   }
 }
