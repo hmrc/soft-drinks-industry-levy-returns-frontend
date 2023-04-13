@@ -18,21 +18,21 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import navigation.Navigator
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import models.requests.DataRequest
 import models.{Address, Amounts, NormalMode, SmallProducer, UserAnswers, Warehouse}
-import navigation.Navigator
 import pages._
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.Messages
 import repositories.{SDILSessionCache, SDILSessionKeys}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.CurrencyFormatter
 import utilitlies.ReturnsHelper.extractReturnPeriod
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
-
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -47,7 +47,6 @@ class ReturnSentController @Inject()(
                                       view: ReturnSentView,
                                       sessionCache: SDILSessionCache,
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
 
   //Warehouse
   val tradingName: String = "Soft Juice Ltd"
@@ -119,6 +118,7 @@ class ReturnSentController @Inject()(
       ).flatten)
     } else {
       SummaryListViewModel(rows = Seq(ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers)).flatten)
+
     }
   }
 
