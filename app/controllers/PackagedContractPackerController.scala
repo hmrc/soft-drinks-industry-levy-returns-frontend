@@ -18,11 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.PackagedContractPackerFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{AddASmallProducerPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, PackagedContractPackerPage}
+import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,8 +28,8 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackagedContractPackerView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class PackagedContractPackerController @Inject()(
                                                  override val messagesApi: MessagesApi,

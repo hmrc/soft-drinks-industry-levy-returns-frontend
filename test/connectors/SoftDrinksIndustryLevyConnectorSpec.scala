@@ -18,17 +18,15 @@ package connectors
 
 import base.SpecBase
 import com.typesafe.config.ConfigFactory
-import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
 import models.retrieved.RetrievedSubscription
+import models.{FinancialLineItem, ReturnPeriod}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import repositories.SDILSessionCache
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import utilitlies.ReturnsHelper
-import play.api.libs.json.Json
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

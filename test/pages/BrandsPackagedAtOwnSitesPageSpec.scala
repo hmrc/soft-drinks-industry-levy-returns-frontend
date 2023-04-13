@@ -16,17 +16,17 @@
 
 package pages
 
-import models.BrandsPackagedAtOwnSites
+import models.LitresInBands
 import pages.behaviours.PageBehaviours
 
 class BrandsPackagedAtOwnSitesPageSpec extends PageBehaviours {
 
   "BrandsPackagedAtOwnSitesPage" - {
 
-    beRetrievable[BrandsPackagedAtOwnSites](BrandsPackagedAtOwnSitesPage)
+    beRetrievable[LitresInBands](BrandsPackagedAtOwnSitesPage)
 
-    beSettable[BrandsPackagedAtOwnSites](BrandsPackagedAtOwnSitesPage)
+    beSettable[LitresInBands](BrandsPackagedAtOwnSitesPage)
 
-    beRemovable[BrandsPackagedAtOwnSites](BrandsPackagedAtOwnSitesPage)
+    beRemovable[LitresInBands](BrandsPackagedAtOwnSitesPage)
   }
 }

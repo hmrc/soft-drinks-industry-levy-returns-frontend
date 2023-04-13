@@ -27,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 
 
 @Singleton
-class Navigator @Inject()(returnService: ReturnService) {
+class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Option[Map[String,Boolean]]=> Call = {
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ =>  _ =>removeSmallProducerConfirmPageNavigation(userAnswers)

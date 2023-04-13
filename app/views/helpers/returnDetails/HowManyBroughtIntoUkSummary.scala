@@ -17,14 +17,12 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{HowManyBroughtIntoUkPage, QuestionPage}
+import models.CheckMode
 
 object HowManyBroughtIntoUkSummary  extends SummaryListRowLitresHelper{
 
   override val actionUrl = routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "brought-into-uk"
   override val bandHiddenKey: String = "ownBrandsPackagedAtYourOwnSite"
-  override val page: QuestionPage[LitresInBands] = HowManyBroughtIntoUkPage
 
 }

@@ -19,11 +19,10 @@ package utilitlies
 import config.FrontendAppConfig
 import models.UserAnswers
 import pages._
-import play.api.i18n.Messages
 
 object TotalForQuarter {
 
-  def calculateTotal(userAnswers: UserAnswers, smallProducer: Boolean)(implicit messages: Messages, config: FrontendAppConfig) = {
+  def calculateTotal(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig) = {
     val lowerBandCostPerLitre: BigDecimal = config.lowerBandCostPerLitre
     val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
 

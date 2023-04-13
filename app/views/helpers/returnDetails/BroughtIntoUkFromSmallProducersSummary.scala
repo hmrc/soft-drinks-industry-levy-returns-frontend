@@ -16,49 +16,17 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import pages.BroughtIntoUkFromSmallProducersPage
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.{CheckMode, LitresInBands}
+import pages.{BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoTheUKFromSmallProducersPage, QuestionPage}
 
-object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryList {
+object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
-    val litresDetails = if (userAnswers.get(BroughtIntoUkFromSmallProducersPage).contains(true)) {
-      HowManyBroughtIntoTheUKFromSmallProducersSummary.rows(userAnswers, isCheckAnswers)
-    } else {
-      Seq.empty
-    }
-    SummaryListViewModel(rows =
-      row(userAnswers, isCheckAnswers) ++ litresDetails
-    )
-  }
-
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
-    answers.get(BroughtIntoUkFromSmallProducersPage).fold[Seq[SummaryListRow]](Seq.empty) {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        Seq(
-          SummaryListRowViewModel(
-            key     = "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers",
-            value   = ValueViewModel(value).withCssClass("align-right"),
-            actions = if (isCheckAnswers) {
-              Seq(
-              ActionItemViewModel("site.change", routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
-                .withAttribute(("id", "change-brought-into-uk-small-producers"))
-                .withVisuallyHiddenText(messages("broughtIntoUkFromSmallProducers.change.hidden"))
-              )
-            } else {
-              Seq.empty
-            }
-          )
-        )
-    }
-  }
-
+  override val page: QuestionPage[Boolean] = BroughtIntoUkFromSmallProducersPage
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoTheUKFromSmallProducersPage)
+  override val summaryLitres: SummaryListRowLitresHelper = HowManyBroughtIntoTheUKFromSmallProducersSummary
+  override val key: String = "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers"
+  override val action: String = routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+  override val actionId: String = "change-brought-into-uk-small-producers"
+  override val hiddenText: String = "broughtIntoUkFromSmallProducers"
 }

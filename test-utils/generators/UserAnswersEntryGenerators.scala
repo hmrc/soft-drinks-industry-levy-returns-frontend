@@ -106,7 +106,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[HowManyCreditsForExportPage.type]
-        value <- arbitrary[HowManyCreditsForExport].map(Json.toJson(_))
+        value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -131,7 +131,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[HowManyBroughtIntoTheUKFromSmallProducersPage.type]
-        value <- arbitrary[HowManyBroughtIntoTheUKFromSmallProducers].map(Json.toJson(_))
+        value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -147,7 +147,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[HowManyBroughtIntoUkPage.type]
-        value <- arbitrary[HowManyBroughtIntoUk].map(Json.toJson(_))
+        value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -173,7 +173,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[BrandsPackagedAtOwnSitesPage.type]
-        value <- arbitrary[BrandsPackagedAtOwnSites].map(Json.toJson(_))
+        value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
 

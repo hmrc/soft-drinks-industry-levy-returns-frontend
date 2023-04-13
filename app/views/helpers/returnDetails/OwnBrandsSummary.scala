@@ -16,48 +16,18 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.OwnBrandsPage
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.{CheckMode, LitresInBands}
+import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage, QuestionPage}
 
-object OwnBrandsSummary extends ReturnDetailsSummaryList  {
-  
-  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
-    val litreDetails = if (userAnswers.get(OwnBrandsPage).contains(true)) {
-      BrandsPackagedAtOwnSitesSummary.rows(userAnswers, isCheckAnswers)
-    } else {
-      Seq.empty
-    }
-    SummaryListViewModel(rows =
-      ownBrandRow(userAnswers, isCheckAnswers) ++ litreDetails
-    )
-  }
+object OwnBrandsSummary extends ReturnDetailsSummaryListWithLitres  {
 
+  override val page: QuestionPage[Boolean] = OwnBrandsPage
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(BrandsPackagedAtOwnSitesPage)
+  override val summaryLitres: SummaryListRowLitresHelper = BrandsPackagedAtOwnSitesSummary
+  override val key: String = "reportingOwnBrandsPackagedAtYourOwnSite"
+  override val action: String = routes.OwnBrandsController.onPageLoad(CheckMode).url
+  override val actionId: String = "change-own-brands"
+  override val hiddenText: String = "ownBrands"
 
-  def ownBrandRow(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Seq[SummaryListRow] = {
-      answers.get(OwnBrandsPage).fold[Seq[SummaryListRow]](Seq.empty) {
-        answer =>
-          val value = if (answer) "site.yes" else "site.no"
-          Seq(
-            SummaryListRowViewModel(
-              key = "reportingOwnBrandsPackagedAtYourOwnSite",
-              value = ValueViewModel(value).withCssClass("align-right"),
-              actions = if(isCheckAnswers) {
-                Seq(
-                  ActionItemViewModel("site.change", routes.OwnBrandsController.onPageLoad(CheckMode).url)
-                    .withAttribute(("id", "change-own-brands"))
-                    .withVisuallyHiddenText(messages("ownBrands.change.hidden")) // TODO - what should this say?
-                )
-              } else {
-                Seq.empty
-              }
-            )
-          )
-      }
-    }
 }

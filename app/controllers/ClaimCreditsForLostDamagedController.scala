@@ -19,11 +19,9 @@ package controllers
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.ClaimCreditsForLostDamagedFormProvider
-
-import javax.inject.Inject
-import models.{Mode, SdilReturn}
+import models.Mode
 import navigation.Navigator
-import pages.{ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage}
+import pages.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,8 +29,8 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ClaimCreditsForLostDamagedView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class ClaimCreditsForLostDamagedController @Inject()(
                                          override val messagesApi: MessagesApi,

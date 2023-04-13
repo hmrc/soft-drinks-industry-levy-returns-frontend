@@ -17,16 +17,12 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{HowManyCreditsForLostDamagedPage, QuestionPage}
+import models.CheckMode
 
 object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
 
   override val actionUrl = routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "lost-destroyed"
   override val bandHiddenKey: String = "lostOrDestroyed"
-
-  override val page: QuestionPage[LitresInBands] = HowManyCreditsForLostDamagedPage
-
 
 }

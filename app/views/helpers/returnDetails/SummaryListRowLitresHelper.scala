@@ -17,8 +17,7 @@
 package views.helpers.returnDetails
 
 import config.FrontendAppConfig
-import models.{LitresInBands, UserAnswers}
-import pages.QuestionPage
+import models.LitresInBands
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -32,85 +31,59 @@ trait SummaryListRowLitresHelper {
   val actionUrl: String
   val bandActionIdKey: String
   val bandHiddenKey: String
-  val page: QuestionPage[LitresInBands]
 
   val lowBand = "lowband"
   val highBand = "highband"
 
-  def rows(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+  def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     Seq(
-      lowBandRow(answers, isCheckAnswers),
-      lowBandLevyRow(answers, config.lowerBandCostPerLitre),
-      highBandRow(answers, isCheckAnswers),
-      highBandLevyRow(answers, config.higherBandCostPerLitre)
-    ).flatten
+      bandRow(litresInBands.lowBand, lowBand, isCheckAnswers),
+      bandLevyRow(litresInBands.lowBand, config.lowerBandCostPerLitre, lowBand),
+      bandRow(litresInBands.highBand, highBand, isCheckAnswers),
+      bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand)
+    )
   }
 
-  def lowBandRow(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] = {
-    bandRow(answers, lowBand, isCheckAnswers)
-  }
-
-  def lowBandLevyRow(answers: UserAnswers, lowBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    bandLevyRow(answers, lowBandCostPerLitre, lowBand)
-  }
-
-  def highBandRow(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] = {
-    bandRow(answers, highBand, isCheckAnswers)
-  }
-
-  def highBandLevyRow(answers: UserAnswers, highBandCostPerLitre: BigDecimal)(implicit messages: Messages): Option[SummaryListRow] = {
-    bandLevyRow(answers, highBandCostPerLitre, highBand)
-  }
-
-  private def bandRow(answers: UserAnswers, band: String, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] = {
-    val key = if(band == lowBand) {
+  private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
+    val key = if (band == lowBand) {
       "litresInTheLowBand"
     } else {
       "litresInTheHighBand"
     }
-    answers.get(page).map {
-      answer =>
-        val bandLitres = if(band == lowBand) {
-          answer.lowBand.toString
-        } else {
-          answer.highBand.toString
-        }
-        val value = HtmlFormat.escape(bandLitres).toString
-        SummaryListRow(
-          key = key,
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          classes = "govuk-summary-list__row--no-border",
-          actions = if(isCheckAnswers) {
-            Some(Actions("",
-              items =
-                Seq(
-                  ActionItemViewModel("site.change", actionUrl)
-                    .withAttribute(("id", s"change-$band-litreage-$bandActionIdKey"))
-                    .withVisuallyHiddenText(messages(s"${bandHiddenKey}.$band.hidden")))))
-          } else {
-            None
-          }
-        )
-    }
+    val value = HtmlFormat.escape(litres.toString).toString
+    SummaryListRow(
+      key = key,
+      value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
+      classes = "govuk-summary-list__row--no-border",
+      actions = action(isCheckAnswers, band)
+    )
+}
+
+private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
+  val key = if (band == lowBand) {
+    "lowBandLevy"
+  } else {
+    "highBandLevy"
+  }
+      val levy = litres * bandCostPerLitre.toDouble
+      val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
+
+      SummaryListRowViewModel(
+        key = key,
+        value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
+        actions = Seq()
+      )
   }
 
-  private def bandLevyRow(answers: UserAnswers, bandCostPerLitre: BigDecimal, band: String)(implicit messages: Messages): Option[SummaryListRow] = {
-    val key = if (band == lowBand) {
-      "lowBandLevy"
-    } else {
-      "highBandLevy"
-    }
-    answers.get(page).map {
-      answer =>
-        val levy = answer.lowBand * bandCostPerLitre.toDouble
-        val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
-
-        SummaryListRowViewModel(
-          key = key,
-          value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-          actions = Seq()
-        )
-    }
+  def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if (isCheckAnswers) {
+    Some(Actions("",
+      items =
+        Seq(
+          ActionItemViewModel("site.change", actionUrl)
+            .withAttribute(("id", s"change-$band-litreage-$bandActionIdKey"))
+            .withVisuallyHiddenText(messages(s"${bandHiddenKey}.$band.hidden")))))
+  } else {
+    None
   }
 
 }

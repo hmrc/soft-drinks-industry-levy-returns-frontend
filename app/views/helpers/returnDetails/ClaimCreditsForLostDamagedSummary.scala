@@ -16,49 +16,17 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.ClaimCreditsForLostDamagedPage
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.{CheckMode, LitresInBands}
+import pages.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, QuestionPage}
 
-object ClaimCreditsForLostDamagedSummary extends ReturnDetailsSummaryList {
+object ClaimCreditsForLostDamagedSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
-    val litresDetails = if (userAnswers.get(ClaimCreditsForLostDamagedPage).contains(true)) {
-      HowManyCreditsForLostDamagedSummary.rows(userAnswers, isCheckAnswers)
-    } else {
-      Seq.empty
-    }
-    SummaryListViewModel(rows =
-      row(userAnswers, isCheckAnswers) ++ litresDetails
-    )
-  }
-
-
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
-    answers.get(ClaimCreditsForLostDamagedPage).fold[Seq[SummaryListRow]](Seq.empty) {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        Seq(
-          SummaryListRowViewModel(
-            key     = "claimingCreditForLostOrDestroyedLiableDrinks",
-            value   = ValueViewModel(value).withCssClass("align-right"),
-            actions = if (isCheckAnswers) {
-              Seq(
-              ActionItemViewModel("site.change", routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url)
-                .withAttribute(("id", "change-credits-lost-damaged"))
-                .withVisuallyHiddenText(messages("claimCreditsForLostDamaged.change.hidden"))
-            )
-            } else {
-              Seq.empty
-            }
-          )
-        )
-    }
-  }
+  override val page: QuestionPage[Boolean] = ClaimCreditsForLostDamagedPage
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyCreditsForLostDamagedPage)
+  override val summaryLitres: SummaryListRowLitresHelper = HowManyCreditsForLostDamagedSummary
+  override val key: String = "claimingCreditForLostOrDestroyedLiableDrinks"
+  override val action: String = routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+  override val actionId: String = "change-credits-lost-damaged"
+  override val hiddenText: String = "claimCreditsForLostDamaged"
 }

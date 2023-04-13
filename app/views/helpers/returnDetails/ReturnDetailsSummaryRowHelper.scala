@@ -16,29 +16,41 @@
 
 package views.helpers.returnDetails
 
-import controllers.routes
 import models.UserAnswers
-import pages.RemoveSmallProducerConfirmPage
+import pages.QuestionPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object RemoveSmallProducerConfirmSummary  {
+trait ReturnDetailsSummaryRowHelper {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RemoveSmallProducerConfirmPage).map {
+  val page: QuestionPage[Boolean]
+  val key: String
+  val action: String
+  val actionId: String
+  val hiddenText: String
+
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
+    answers.get(page).fold[Seq[SummaryListRow]](Seq.empty) {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "removeSmallProducerConfirm.checkYourAnswersLabel",
-          value   = ValueViewModel(value).withCssClass("align-right"),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.RemoveSmallProducerConfirmController.onPageLoad("CheckMode").url)
-              .withVisuallyHiddenText(messages("removeSmallProducerConfirm.change.hidden"))
+        Seq(
+          SummaryListRowViewModel(
+            key = key,
+            value = ValueViewModel(value).withCssClass("align-right"),
+            actions = if (isCheckAnswers) {
+              Seq(
+                ActionItemViewModel("site.change", action)
+                  .withAttribute(("id", actionId))
+                  .withVisuallyHiddenText(messages(s"$hiddenText.change.hidden"))
+              )
+            } else {
+              Seq.empty
+            }
           )
         )
     }
+  }
+
 }

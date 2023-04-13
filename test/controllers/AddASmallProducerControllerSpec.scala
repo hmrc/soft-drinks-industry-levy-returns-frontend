@@ -457,7 +457,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        val res = result.value.map( res => res.get)
+        result.value.map( res => res.get)
       }
     }
 

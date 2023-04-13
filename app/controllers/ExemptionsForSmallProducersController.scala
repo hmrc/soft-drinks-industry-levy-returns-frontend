@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.ExemptionsForSmallProducersFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{AddASmallProducerPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyCreditsForLostDamagedPage}
+import pages.{AddASmallProducerPage, ExemptionsForSmallProducersPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +30,6 @@ import views.html.ExemptionsForSmallProducersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class ExemptionsForSmallProducersController @Inject()(
                                          override val messagesApi: MessagesApi,

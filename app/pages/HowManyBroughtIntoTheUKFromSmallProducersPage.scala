@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{HowManyBroughtIntoTheUKFromSmallProducers, LitresInBands}
+import models.LitresInBands
 import play.api.libs.json.JsPath
 
 case object HowManyBroughtIntoTheUKFromSmallProducersPage extends QuestionPage[LitresInBands] {

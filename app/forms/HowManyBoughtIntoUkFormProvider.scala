@@ -16,11 +16,12 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import models.LitresInBands
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{HowManyBroughtIntoUk, LitresInBands}
+
+import javax.inject.Inject
 
 class HowManyBoughtIntoUkFormProvider @Inject() extends Mappings {
 

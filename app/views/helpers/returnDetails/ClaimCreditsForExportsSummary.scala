@@ -16,48 +16,17 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.ClaimCreditsForExportsPage
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.{CheckMode, LitresInBands}
+import pages.{ClaimCreditsForExportsPage, HowManyCreditsForExportPage, QuestionPage}
 
-object ClaimCreditsForExportsSummary extends ReturnDetailsSummaryList {
+object ClaimCreditsForExportsSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
-    val litresDetails = if (userAnswers.get(ClaimCreditsForExportsPage).contains(true)) {
-      HowManyCreditsForExportSummary.rows(userAnswers, isCheckAnswers)
-    } else {
-      Seq.empty
-    }
-    SummaryListViewModel(rows =
-      row(userAnswers, isCheckAnswers) ++ litresDetails
-    )
-  }
-
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
-    answers.get(ClaimCreditsForExportsPage).fold[Seq[SummaryListRow]](Seq.empty) {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        Seq(
-          SummaryListRowViewModel(
-            key     = "claimingCreditForExportedLiableDrinks",
-            value   = ValueViewModel(value).withCssClass("align-right"),
-            actions = if (isCheckAnswers) {
-              Seq(
-              ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
-                .withAttribute(("id", "change-exports"))
-                .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
-              )
-            } else {
-              Seq.empty
-            }
-          )
-        )
-    }
-  }
+  override val page: QuestionPage[Boolean] = ClaimCreditsForExportsPage
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyCreditsForExportPage)
+  override val summaryLitres: SummaryListRowLitresHelper = HowManyCreditsForExportSummary
+  override val key: String = "claimingCreditForExportedLiableDrinks"
+  override val action: String = routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+  override val actionId: String = "change-exports"
+  override val hiddenText: String = "claimCreditsForExports"
 }

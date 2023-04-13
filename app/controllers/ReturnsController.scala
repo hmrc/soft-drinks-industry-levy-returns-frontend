@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.{Address, Amounts, Warehouse}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import services.ReturnService
@@ -96,10 +96,14 @@ class ReturnsController @Inject()(
 
 
   private def financialStatus(total: BigDecimal): String = {
-    total match {
-      case total if total > 0 => "amountToPay"
-      case total if total < 0 => "creditedPay"
-      case total if total == 0 => "noPayNeeded"
+    if(total == 0) {
+      "noPayNeeded"
+    } else {
+      if(total > 0) {
+        "amountToPay"
+      } else {
+        "creditedPay"
+      }
     }
   }
 }

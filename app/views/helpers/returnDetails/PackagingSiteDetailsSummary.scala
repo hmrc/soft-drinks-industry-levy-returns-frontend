@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
 import controllers.routes
 import models.backend.Site
-import models.{CheckMode, UserAnswers}
-import pages.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, SummaryList}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object PackagingSiteDetailsSummary {
+
+  def summaryList(packagingSiteList: Map[String, Site])(implicit messages: Messages): SummaryList = {
+    SummaryListViewModel(
+      rows = row2(packagingSiteList)
+    )
+  }
 
   def row2(packagingSiteList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
     packagingSiteList.map {

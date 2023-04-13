@@ -20,15 +20,13 @@ import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.PackagingSiteDetailsFormProvider
 import models.Mode
+import models.backend.Site
 import navigation.Navigator
 import pages.PackagingSiteDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.PackagingSiteDetailsSummary
-import viewmodels.govuk.summarylist._
 import views.html.PackagingSiteDetailsView
 
 import javax.inject.Inject
@@ -57,18 +55,15 @@ class PackagingSiteDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val siteList: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
-      )
+      val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
 
       Ok(view(preparedForm, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val siteList: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
-      )
+      val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),

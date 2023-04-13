@@ -16,48 +16,17 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.PackagedContractPackerPage
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.{CheckMode, LitresInBands}
+import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage, QuestionPage}
 
-object PackagedContractPackerSummary extends ReturnDetailsSummaryList {
+object PackagedContractPackerSummary extends ReturnDetailsSummaryListWithLitres  {
 
-  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
-    val litresDetails = if (userAnswers.get(PackagedContractPackerPage).contains(true)) {
-      HowManyAsAContractPackerSummary.rows(userAnswers, isCheckAnswers)
-    } else {
-      Seq.empty
-    }
-    SummaryListViewModel(rows =
-      row(userAnswers) ++ litresDetails
-    )
-  }
-
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
-    answers.get(PackagedContractPackerPage).fold[Seq[SummaryListRow]](Seq.empty) {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        Seq(
-          SummaryListRowViewModel(
-            key = "reportingContractPackedAtYourOwnSite",
-            value = ValueViewModel(value).withCssClass("align-right"),
-            actions = if (isCheckAnswers) {
-              Seq(
-                ActionItemViewModel("site.change", routes.PackagedContractPackerController.onPageLoad(CheckMode).url)
-                  .withAttribute(("id", "change-contract-packer"))
-                  .withVisuallyHiddenText(messages("packagedContractPacker.change.hidden"))
-              )
-            } else {
-              Seq.empty
-            }
-          )
-        )
-    }
-  }
+  override val page: QuestionPage[Boolean] = PackagedContractPackerPage
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyAsAContractPackerPage)
+  override val summaryLitres: SummaryListRowLitresHelper = HowManyAsAContractPackerSummary
+  override val key: String = "reportingContractPackedAtYourOwnSite"
+  override val action: String = routes.PackagedContractPackerController.onPageLoad(CheckMode).url
+  override val actionId: String = "change-contract-packer"
+  override val hiddenText: String = "packagedContractPacker"
 }

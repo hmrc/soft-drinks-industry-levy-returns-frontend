@@ -16,11 +16,12 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import models.LitresInBands
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{HowManyCreditsForExport, LitresInBands}
+
+import javax.inject.Inject
 
 class HowManyCreditsForExportFormProvider @Inject() extends Mappings {
 

@@ -16,24 +16,13 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, LitresInBands, UserAnswers}
-import pages.{HowManyBroughtIntoTheUKFromSmallProducersPage, QuestionPage}
-import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
-import utilitlies.CurrencyFormatter
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.CheckMode
 
 object HowManyBroughtIntoTheUKFromSmallProducersSummary extends SummaryListRowLitresHelper {
 
   override val actionUrl = routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "brought-into-uk-from-small-producers"
   override val bandHiddenKey: String = "broughtIntoTheUKFromSmallProducers"
-
-  override val page: QuestionPage[LitresInBands] = HowManyBroughtIntoTheUKFromSmallProducersPage
 
 }

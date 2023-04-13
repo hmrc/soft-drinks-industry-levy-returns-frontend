@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.OwnBrandsFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{AddASmallProducerPage, BrandsPackagedAtOwnSitesPage, ExemptionsForSmallProducersPage, OwnBrandsPage}
+import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +30,6 @@ import views.html.OwnBrandsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class OwnBrandsController @Inject()(
                                          override val messagesApi: MessagesApi,

@@ -16,17 +16,8 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, LitresInBands, UserAnswers}
-import pages.{HowManyCreditsForExportPage, QuestionPage}
-import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
-import utilitlies.CurrencyFormatter
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.CheckMode
 
 object HowManyCreditsForExportSummary extends SummaryListRowLitresHelper {
 
@@ -34,5 +25,4 @@ object HowManyCreditsForExportSummary extends SummaryListRowLitresHelper {
   override val bandActionIdKey: String = "exported"
   override val bandHiddenKey: String = "claimingCreditForExportedLiableDrinks"
 
-  override val page: QuestionPage[LitresInBands] = HowManyCreditsForExportPage
 }

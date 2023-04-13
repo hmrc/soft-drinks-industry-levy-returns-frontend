@@ -18,7 +18,7 @@ package models.backend
 
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
 
-trait RetrievedAddress {
+sealed trait RetrievedAddress {
   def lines: List[String]
   def country: String
 }

@@ -16,48 +16,19 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
 import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages.ExemptionsForSmallProducersPage
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.{CheckMode, LitresInBands}
+import pages.{ExemptionsForSmallProducersPage, QuestionPage}
 
-object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryList {
+object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
-    val litreDetails = if (userAnswers.get(ExemptionsForSmallProducersPage).contains(true)) {
-      SmallProducerDetailsSummary.rows(userAnswers, isCheckAnswers)
-    } else {
-      Seq.empty
-    }
-    SummaryListViewModel(rows =
-      row(userAnswers, isCheckAnswers) ++ litreDetails
-    )
-  }
+  override val page: QuestionPage[Boolean] = ExemptionsForSmallProducersPage
+  override val key: String = "exemptionForRegisteredSmallProducers"
+  override val action: String = routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+  override val actionId: String = "change-exemption-small-producers"
+  override val hiddenText: String = "exemptionsForSmallProducers"
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = None
+  override val summaryLitres: SummaryListRowLitresHelper = SmallProducerDetailsSummary
+  override val isSmallProducerLitres: Boolean = true
 
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
-    answers.get(ExemptionsForSmallProducersPage).fold[Seq[SummaryListRow]](Seq.empty) {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        Seq(
-          SummaryListRowViewModel(
-            key     = "exemptionForRegisteredSmallProducers",
-            value   = ValueViewModel(value).withCssClass("align-right"),
-            actions = if (isCheckAnswers) {
-              Seq(
-              ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
-                .withAttribute(("id", "change-exemption-small-producers"))
-                .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
-            )
-            } else {
-              Seq.empty
-            }
-          )
-        )
-    }
-  }
 }

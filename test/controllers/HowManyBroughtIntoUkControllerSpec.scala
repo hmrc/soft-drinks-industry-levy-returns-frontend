@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.HowManyBoughtIntoUkFormProvider
-import models.{NormalMode, HowManyBroughtIntoUk, UserAnswers}
+import models.{NormalMode, LitresInBands, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -89,7 +89,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(HowManyBroughtIntoUk(value1, value2)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(value1, value2)), NormalMode)(request, messages(application)).toString
       }
     }
 

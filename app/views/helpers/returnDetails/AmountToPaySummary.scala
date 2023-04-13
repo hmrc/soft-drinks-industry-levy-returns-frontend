@@ -16,160 +16,16 @@
 
 package views.helpers.returnDetails
 
-import models.{Amounts, UserAnswers}
-import pages._
+import models.Amounts
 import play.api.i18n.Messages
-import play.api.libs.json.Format.GenericFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object AmountToPaySummary  {
-
-  def calculatChargeFromPages(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal): List[BigDecimal] = {
-
-    // Page 2 HowManyAsAContractPacker
-    val howManyAsAContractPackerAnswers = answers.get(HowManyAsAContractPackerPage)
-    val howManyAsAContractPackerLowBand = if (answers.get(PackagedContractPackerPage) == Some(true)) {
-      howManyAsAContractPackerAnswers.map(answer => answer.lowBand).getOrElse(0L)
-    } else 0L
-    val howManyAsAContractPackerLowBandCost = lowBandCostPerLitre * howManyAsAContractPackerLowBand * 1
-    val howManyAsAContractPackerHighBand = if (answers.get(PackagedContractPackerPage) == Some(true)) {
-      howManyAsAContractPackerAnswers.map(answer => answer.highBand).getOrElse(0L)
-    } else 0L
-    val howManyAsAContractPackerHighBandCost = highBandCostPerLitre * howManyAsAContractPackerHighBand * 1
-    val howManyAsAContractPackerTotal = howManyAsAContractPackerLowBandCost + howManyAsAContractPackerHighBandCost
-
-
-    val smallProducerDetailsAnswers = answers.smallProducerList
-    val smallProducerDetailsLowBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._1 * lowBandCostPerLitre * 0).sum
-    val smallProducerDetailsHighBandCost = smallProducerDetailsAnswers.map(answer => answer.litreage._2 * lowBandCostPerLitre * 0).sum
-    val smallProducerDetailsTotal = smallProducerDetailsLowBandCost + smallProducerDetailsHighBandCost
-
-    // Page 3 add-small-producer
-    val howManyBroughtIntoUkAnswers = answers.get(HowManyBroughtIntoUkPage)
-    val howManyBroughtIntoUkLowBand = if (answers.get(BroughtIntoUKPage) == Some(true)) {
-      howManyBroughtIntoUkAnswers.map(answer => answer.lowBand).getOrElse(0L)
-    } else 0L
-    val howManyBroughtIntoUkLowBandCost = (lowBandCostPerLitre * howManyBroughtIntoUkLowBand * 1)
-    val howManyBroughtIntoUkHighBand = if (answers.get(BroughtIntoUKPage) == Some(true)) {
-      howManyBroughtIntoUkAnswers.map(answer => answer.highBand).getOrElse(0L)
-    } else 0L
-    val howManyBroughtIntoUkHighBandCost = (highBandCostPerLitre * howManyBroughtIntoUkHighBand * 1)
-    val howManyBroughtIntoUkTotal = howManyBroughtIntoUkLowBandCost + howManyBroughtIntoUkHighBandCost
-
-    val howManyBroughtIntoTheUKFromSmallProducersAnswers = answers.get(HowManyBroughtIntoTheUKFromSmallProducersPage)
-    val howManyBroughtIntoTheUKFromSmallProducersLowBand = if (answers.get(BroughtIntoUkFromSmallProducersPage) == Some(true)) {
-      howManyBroughtIntoTheUKFromSmallProducersAnswers.map(answer => answer.lowBand).getOrElse(0L)
-    } else 0L
-    val howManyBroughtIntoTheUKFromSmallProducersLowBandCost = (lowBandCostPerLitre * howManyBroughtIntoTheUKFromSmallProducersLowBand * 1)
-    val howManyBroughtIntoTheUKFromSmallProducersHighBand = if (answers.get(BroughtIntoUkFromSmallProducersPage) == Some(true)) {
-      howManyBroughtIntoTheUKFromSmallProducersAnswers.map(answer => answer.highBand).getOrElse(0L)
-    } else 0L
-    val howManyBroughtIntoTheUKFromSmallProducersHighBandCost = (highBandCostPerLitre * howManyBroughtIntoTheUKFromSmallProducersHighBand * 1)
-    val howManyBroughtIntoTheUKFromSmallProducersTotal = howManyBroughtIntoTheUKFromSmallProducersLowBandCost + howManyBroughtIntoTheUKFromSmallProducersHighBandCost
-
-    val howManyCreditsForExportAnswers = answers.get(HowManyCreditsForExportPage)
-    val howManyCreditsForExportLowBand = if (answers.get(ClaimCreditsForExportsPage) == Some(true)) {
-      howManyCreditsForExportAnswers.map(answer => answer.lowBand).getOrElse(0L)
-    } else 0L
-    val howManyCreditsForExportLowBandCost = (lowBandCostPerLitre * howManyCreditsForExportLowBand * -1)
-    val howManyCreditsForExportHighBand = if (answers.get(ClaimCreditsForExportsPage) == Some(true)) {
-      howManyCreditsForExportAnswers.map(answer => answer.highBand).getOrElse(0L)
-    } else 0L
-    val howManyCreditsForExportHighBandCost = (lowBandCostPerLitre * howManyCreditsForExportHighBand * -1)
-    val howManyCreditsForExportTotal = howManyCreditsForExportLowBandCost + highBandCostPerLitre * howManyCreditsForExportHighBand * -1
-
-    val howManyCreditsForLostDamagedAnswers = answers.get(HowManyCreditsForLostDamagedPage)
-    val howManyCreditsForLostDamagedLowBand = if (answers.get(ClaimCreditsForLostDamagedPage) == Some(true)) {
-      howManyCreditsForLostDamagedAnswers.map(answer => answer.lowBand).getOrElse(0L)
-    } else 0L
-    val howManyCreditsForLostDamagedLowBandCost = (lowBandCostPerLitre * howManyCreditsForLostDamagedLowBand * -1)
-    val howManyCreditsForLostDamagedHighBand = if (answers.get(ClaimCreditsForLostDamagedPage) == Some(true)) {
-      howManyCreditsForLostDamagedAnswers.map(answer => answer.highBand).getOrElse(0L)
-    } else 0L
-    val howManyCreditsForLostDamagedTotal = lowBandCostPerLitre * howManyCreditsForLostDamagedLowBand * -1 + highBandCostPerLitre * howManyCreditsForLostDamagedHighBand * -1
-
-    List(
-      howManyAsAContractPackerTotal,
-      smallProducerDetailsTotal,
-      howManyBroughtIntoUkTotal,
-      howManyBroughtIntoTheUKFromSmallProducersTotal,
-      howManyCreditsForExportTotal,
-      howManyCreditsForLostDamagedTotal
-    )
-  }
-
-  def balanceBroughtForward(balanceBroughtForward: BigDecimal)(implicit messages: Messages): SummaryListRow = {
-    val formattedBalanceBroughtForward = CurrencyFormatter.formatAmountOfMoneyWithPoundSign(balanceBroughtForward)
-    SummaryListRow(
-      key = "balanceBroughtForward.checkYourAnswersLabel",
-      value = ValueViewModel(HtmlContent(formattedBalanceBroughtForward)),
-      actions = None
-    )
-  }
-
-  def total(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal, smallProducerStatus: Boolean, balanceBroughtForward: BigDecimal)(implicit messages: Messages): SummaryListRow = {
-    val smallProducerAnswerListTotal = calculatChargeFromPages(answers, lowBandCostPerLitre, highBandCostPerLitre)
-
-    def calculateSubtotal(
-                           costLower: BigDecimal,
-                           costHigher: BigDecimal,
-                           smallProducerAnswerListTotal: List[BigDecimal]
-                         ): BigDecimal = {
-      if (smallProducerStatus) {
-        smallProducerAnswerListTotal.sum
-      } else {
-        val ownBranduserAnswers = answers.get(BrandsPackagedAtOwnSitesPage)
-        val lowBand = ownBranduserAnswers.map(answer => answer.lowBand).getOrElse(0L)
-        val highBand = ownBranduserAnswers.map(answer => answer.highBand).getOrElse(0L)
-        val ownBrandTotal = costLower * lowBand * 1 + costHigher * highBand * 1
-        val largeProducerListTotal = ownBrandTotal + smallProducerAnswerListTotal.sum
-        largeProducerListTotal
-      }
-    }
-
-    val total: String = CurrencyFormatter.formatAmountOfMoneyWithPoundSign(calculateSubtotal(lowBandCostPerLitre,
-      highBandCostPerLitre,
-      smallProducerAnswerListTotal
-    ) - balanceBroughtForward)
-
-    SummaryListRow(
-      key = "total.checkYourAnswersLabel",
-      value = ValueViewModel(HtmlContent(total)),
-      actions = None
-    )
-  }
-
-  def balance(answers: UserAnswers, lowBandCostPerLitre: BigDecimal, highBandCostPerLitre: BigDecimal, smallProducerStatus: Boolean, balanceBroughtForward: BigDecimal): BigDecimal = {
-
-    val smallProducerAnswerListTotal = calculatChargeFromPages(answers, lowBandCostPerLitre, highBandCostPerLitre)
-    def calculateSubtotal(
-                           costLower: BigDecimal,
-                           costHigher: BigDecimal,
-                           smallProducerAnswerListTotal: List[BigDecimal]
-                         ): BigDecimal = {
-      if (smallProducerStatus) {
-        smallProducerAnswerListTotal.sum
-      } else {
-        val ownBranduserAnswers = answers.get(BrandsPackagedAtOwnSitesPage)
-        val lowBand = ownBranduserAnswers.map(answer => answer.lowBand).getOrElse(0L)
-        val highBand = ownBranduserAnswers.map(answer => answer.highBand).getOrElse(0L)
-        val ownBrandTotal = costLower * lowBand * 1 + costHigher * highBand * 1
-        val largeProducerListTotal = ownBrandTotal + smallProducerAnswerListTotal.sum
-        largeProducerListTotal
-      }
-    }
-
-    calculateSubtotal(lowBandCostPerLitre,
-      highBandCostPerLitre,
-      smallProducerAnswerListTotal
-    ) - balanceBroughtForward
-  }
-
-  def amountToPaySummary(amounts: Amounts)(implicit messages: Messages) = {
+  def amountToPaySummary(amounts: Amounts)(implicit messages: Messages): SummaryList = {
 
     val totalForQuarter: BigDecimal = amounts.totalForQuarter
     val balanceBroughtForward: BigDecimal = amounts.balanceBroughtForward

@@ -75,6 +75,9 @@ class CheckYourAnswersController @Inject()(
       case _ => request.userAnswers
     }
 
+    println("&&&&&&&&HHHHHHHHHHH")
+    println(answers)
+
     val rowCalculations = levyCalculator.calculateLevyForAnswers(answers)
     val cacheHelper = new CacheHelper(sessionCache)
 
@@ -91,7 +94,7 @@ class CheckYourAnswersController @Inject()(
         }
     } yield {
 
-      val totalForQuarter = TotalForQuarter.calculateTotal(answers, isSmallProducer.getOrElse(false))(messages, config)
+      val totalForQuarter = TotalForQuarter.calculateTotal(answers, isSmallProducer.getOrElse(false))(config)
       val total = totalForQuarter - balanceBroughtForward
       val isNilReturn = totalForQuarter == 0
       val amounts = Amounts(totalForQuarter, balanceBroughtForward, total)

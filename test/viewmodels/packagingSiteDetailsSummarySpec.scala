@@ -19,7 +19,7 @@ package viewmodels
 import base.SpecBase
 import models.backend.{Site, UkAddress}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
-import viewmodels.checkAnswers.PackagingSiteDetailsSummary
+import views.helpers.returnDetails.PackagingSiteDetailsSummary
 
 class packagingSiteDetailsSummarySpec extends SpecBase {
 
