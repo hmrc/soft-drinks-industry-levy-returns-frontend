@@ -17,15 +17,13 @@
 package controllers
 
 import controllers.actions._
-import models.{NormalMode, UserAnswers}
 import navigation.Navigator
-import pages.PackagedContractPackerPage
-
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
+
+import javax.inject.Inject
 
 class ReturnSentController @Inject()(
 override val messagesApi: MessagesApi,
@@ -37,7 +35,7 @@ override val messagesApi: MessagesApi,
   view: IndexView//TODO
   ) extends FrontendBaseController with I18nSupport {
 
-    def onPageLoad: Action[AnyContent] = (identify andThen getData) {
+    def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
       implicit request =>
         Ok(view())
     }
