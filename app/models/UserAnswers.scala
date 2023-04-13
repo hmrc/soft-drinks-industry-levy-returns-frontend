@@ -29,7 +29,7 @@ final case class UserAnswers(
                               data: JsObject = Json.obj(),
                               smallProducerList: List[SmallProducer] = List.empty,
                               packagingSiteList: Map[String, Site] = Map.empty,
-                              submitted:Boolean = false,
+                              submitted:Boolean = true,
                               lastUpdated: Instant = Instant.now
                             ) {
 

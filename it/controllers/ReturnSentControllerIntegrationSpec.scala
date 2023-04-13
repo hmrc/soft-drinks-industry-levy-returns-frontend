@@ -5,11 +5,11 @@ import org.scalatest.TryValues
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
-class ReturnSentControllerIntergrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class ReturnSentControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
   "ReturnSentController" should {
     "Redirect to beginning of journey when no returns sent" in {
       val userAnswers = smallProducerDetaisPartialAnswers.success.value
-      setAnswers(userAnswers)
+      setAnswers(userAnswers.copy(submitted = false))
       given
         .commonPrecondition
 
