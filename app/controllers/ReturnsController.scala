@@ -85,25 +85,7 @@ class ReturnsController @Inject()(
               Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
             }
 
-            Ok(view(returnPeriod,
-              subscription,
-              CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
-              amounts.totalForQuarter,
-              returnPeriod,
-              financialStatus = financialStatus(amounts.total): String,
-              ownBrandsAnswers(userAnswers),
-              packagedContractPackerAnswers(request, userAnswers),
-              exemptionForSmallProducersAnswers(userAnswers),
-              broughtIntoUKAnswers(userAnswers),
-              broughtIntoUKFromSmallProducerAnswers(userAnswers),
-              claimCreditsForExportsAnswers(userAnswers),
-              claimCreditsForLostOrDamagedAnswers(userAnswers),
-              smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList): Option[List[SmallProducer]],
-              warehouseCheck = warehouseCheck(warehouseList): Option[List[Warehouse]],
-              smallProducerAnswers(userAnswers),
-              warehouseAnswers(userAnswers),
-              AmountToPaySummary.amountToPaySummary(amounts.totalForQuarter, amounts.balanceBroughtForward, amounts.total)
-            ))
+           Redirect(routes.ReturnSentController.onPageLoad())
           case _ =>
             logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
             Redirect(routes.JourneyRecoveryController.onPageLoad())
