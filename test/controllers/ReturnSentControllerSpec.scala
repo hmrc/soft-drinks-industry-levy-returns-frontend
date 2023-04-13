@@ -74,7 +74,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -96,7 +96,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -125,7 +125,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -147,7 +147,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -176,7 +176,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -195,7 +195,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -217,7 +217,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -247,7 +247,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -269,7 +269,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -299,7 +299,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -321,7 +321,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -351,7 +351,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -373,7 +373,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -407,7 +407,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -424,7 +424,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -445,7 +445,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -467,7 +467,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -488,7 +488,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -509,7 +509,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -531,7 +531,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -554,7 +554,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
