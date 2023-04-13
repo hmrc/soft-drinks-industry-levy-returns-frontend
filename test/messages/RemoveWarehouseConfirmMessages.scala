@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package messages
 
-import play.api.libs.json.JsPath
+object RemoveWarehouseConfirmMessages extends BaseMessages {
 
-case object RemoveWarehouseConfirmPage extends QuestionPage[Boolean] {
+  val title = "Are you sure you want to remove this warehouse?"
+  val address = "33 Rhes Priordy East London E73 2RP"
+  val errorMessage= "Select yes if you want to remove warehouse"
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "removeWarehouse"
 }

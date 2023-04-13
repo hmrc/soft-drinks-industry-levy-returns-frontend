@@ -24,7 +24,7 @@ govukButton: GovukButton
 
 @(form: Form[_], mode: Mode, address: String, index: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("removePackingSite.title"))) {
+@layout(pageTitle = title(form, messages("removeWarehouseConfirm.title"))) {
     @formHelper(action = routes.RemoveWarehouseConfirmController.onSubmit(index), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {

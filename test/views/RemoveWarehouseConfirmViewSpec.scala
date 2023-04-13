@@ -17,10 +17,11 @@
 package views
 
 import org.jsoup.nodes.Document
-import forms.{RemoveSmallProducerConfirmFormProvider, RemoveWarehouseConfirmFormProvider}
+import forms.RemoveWarehouseConfirmFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import views.html.RemoveWarehouseConfirmView
+import views.html.{RemoveSmallProducerConfirmView, RemoveWarehouseConfirmView}
+import messages.RemoveWarehouseConfirmMessages
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -37,7 +38,7 @@ class RemoveWarehouseConfirmViewSpec extends ViewSpecHelper  {
   def documentPopForm(isYes: Boolean = true) = {
     val popForm = form.apply()
       .fill(isYes)
-    val popView = view(popForm, NormalMode, "33 Rhes Priordy East London E73 2RP", "1")(FakeRequest(), testMessages)
+    val popView = view(popForm, NormalMode, " 33 Rhes Priordy East London E73 2RP", "1")(FakeRequest(), testMessages)
     doc(popView)
   }
 
