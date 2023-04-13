@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedActivity
-import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{Amounts, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -43,7 +43,6 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     val amounts = Amounts(zero, zero, zero)
     val mockSessionCache = mock[SDILSessionCache]
     when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-    val returnPeriodsContainingBaseReturnPeriod = List(ReturnPeriod(2020, 0), ReturnPeriod(2023, 1), returnPeriod)
     val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
     when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriods)
