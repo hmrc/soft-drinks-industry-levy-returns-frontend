@@ -29,6 +29,7 @@ final case class UserAnswers(
                               data: JsObject = Json.obj(),
                               smallProducerList: List[SmallProducer] = List.empty,
                               packagingSiteList: Map[String, Site] = Map.empty,
+                              warehouseList: Map[String, Warehouse] = Map.empty,
                               submitted:Boolean = true,
                               lastUpdated: Instant = Instant.now
                             ) {
@@ -95,6 +96,7 @@ object UserAnswers {
         (__ \ "data").read[JsObject] and
         (__ \ "smallProducerList").read[List[SmallProducer]] and
         (__ \ "packagingSiteList").read[Map[String, Site]] and
+        (__ \ "warhouseList").read[Map[String, Warehouse]] and
         (__ \ "submitted").read[Boolean] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
       ) (UserAnswers.apply _)
@@ -109,6 +111,7 @@ object UserAnswers {
         (__ \ "data").write[JsObject] and
         (__ \ "smallProducerList").write[List[SmallProducer]] and
         (__ \ "packagingSiteList").write[Map[String, Site]] and
+        (__ \ "warhouseList").write[Map[String, Warehouse]] and
         (__ \ "submitted").write[Boolean] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
       ) (unlift(UserAnswers.unapply))

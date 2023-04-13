@@ -373,3 +373,5 @@ packagingSiteDetails.addAnotherPackingSite = Do you want to add another UK packa
 packagingSiteDetails.error.required = Select yes if you need to add another packaging site
 packagingSiteDetails.change.hidden = Packaging Site Details
 packagingSiteDetails.hidden = packaging site
+
+removeWarehouseConfirm.title = Are you sure you want to remove this warehouse?
