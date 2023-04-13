@@ -7,7 +7,7 @@ import play.api.test.WsTestClient
 
 class ReturnSentControllerIntergrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
   "ReturnSentController" should {
-    "Display the user their answers" in {
+    "Redirect to beginning of journey when no returns sent" in {
       val userAnswers = smallProducerDetaisPartialAnswers.success.value
       setAnswers(userAnswers)
       given
@@ -20,7 +20,7 @@ class ReturnSentControllerIntergrationSpec extends Specifications with TestConfi
           .get()
 
         whenReady(result1) { res =>
-          res.status mustBe 200
+          res.status mustBe 303
         }
 
       }
