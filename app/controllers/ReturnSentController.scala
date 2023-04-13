@@ -19,22 +19,21 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import models.requests.DataRequest
-import models.{Address, Amounts, NormalMode, SdilReturn, SmallProducer, UserAnswers, Warehouse}
-import viewmodels.govuk.summarylist._
+import models.{Address, Amounts, NormalMode, SmallProducer, UserAnswers, Warehouse}
 import navigation.Navigator
 import pages._
 import play.api.Logger
-
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.{CurrencyFormatter, ReturnsHelper}
+import utilitlies.CurrencyFormatter
 import utilitlies.ReturnsHelper.extractReturnPeriod
 import viewmodels.checkAnswers._
-import views.html.{IndexView, ReturnSentView}
+import viewmodels.govuk.summarylist._
+import views.html.ReturnSentView
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ReturnSentController @Inject()(
