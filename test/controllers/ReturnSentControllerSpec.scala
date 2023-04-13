@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedActivity
-import models.{Amounts, SmallProducer, UserAnswers}
+import models.{Amounts, NormalMode, SmallProducer, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -50,7 +50,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must not show return sent page as return has not been sent" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(), submitted = false)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -61,6 +61,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).get mustEqual routes.OwnBrandsController.onPageLoad(NormalMode).url
       }
 
     }

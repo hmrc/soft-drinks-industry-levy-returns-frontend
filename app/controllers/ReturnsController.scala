@@ -36,7 +36,7 @@ import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class ReturnsController @Inject()(
@@ -74,7 +74,7 @@ class ReturnsController @Inject()(
       } yield {
         session match {
           case Some(amounts) =>
-            if (pendingReturns.contains(returnPeriod)) {
+             if (pendingReturns.contains(returnPeriod)) {
               sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted(nilReturn, subscription, userAnswers)).map {
                 case Some(OK) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
                 case _ => logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
@@ -82,7 +82,7 @@ class ReturnsController @Inject()(
               }
             } else {
               logger.error(s"Pending returns for $sdilEnrolment don't contain the return for year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-              Redirect(routes.JourneyRecoveryController.onPageLoad())
+              Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
             }
 
             Ok(view(returnPeriod,
