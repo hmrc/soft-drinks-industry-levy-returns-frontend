@@ -16,23 +16,26 @@
 
 package controllers.actions
 
-import base.SpecBase
+
 import models.ReturnPeriod
+import models.requests.IdentifierRequest
+import models.retrieved.RetrievedSubscription
+import play.api.mvc._
+import base.SpecBase
 
 import javax.inject.Inject
-import models.requests.IdentifierRequest
-import play.api.mvc._
-
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeIdentifierAction @Inject()(bodyParsers: PlayBodyParsers) extends IdentifierAction {
+class FakeIdentifierAction @Inject()(subscription: Option[RetrievedSubscription],
+                                     returnPeriod: Option[ReturnPeriod],
+                                     bodyParsers: BodyParser[AnyContent]) extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, "id", SpecBase.aSubscription, Some(ReturnPeriod(2023,1))))
+    block(IdentifierRequest(request, "id", subscription.getOrElse(SpecBase.aSubscription), returnPeriod))
 
-  override def parser: BodyParser[AnyContent] =
-    bodyParsers.default
+  override def parser: BodyParser[AnyContent] = bodyParsers
 
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 }
+

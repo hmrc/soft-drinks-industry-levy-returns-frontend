@@ -38,14 +38,13 @@ class ReturnChangeRegistrationController @Inject()(
                                        view: ReturnChangeRegistrationView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       Ok(view())
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData) {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
-      Redirect(navigator.nextPage(PackagedContractPackerPage, NormalMode, answers))
+      Redirect(navigator.nextPage(PackagedContractPackerPage, NormalMode, request.userAnswers))
   }
 }

@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import pages._
 import models._
+import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import play.api.libs.json.Json
 
 class NavigatorSpec extends SpecBase {
@@ -31,7 +32,7 @@ class NavigatorSpec extends SpecBase {
   val superJuiceProducerAlias = "Super Juice Ltd"
   val referenceNumber1 = "XZSDIL000000234"
   val referenceNumber2 = "XZSDIL000000235"
-  val literage = (10L, 20L)
+  val litreage = (10L, 20L)
 
   "Navigator" - {
 
@@ -49,8 +50,8 @@ class NavigatorSpec extends SpecBase {
 
           "Own brand packaged at own site page" - {
 
-             def navigate(value: Boolean) = navigator.nextPage(OwnBrandsPage,
-              NormalMode,
+             def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(OwnBrandsPage,
+               mode,
               UserAnswers(id, Json.obj("ownBrands" -> value)))
 
             "select Yes to navigate to How Many own brands packaged at own sites page" in {
@@ -62,6 +63,7 @@ class NavigatorSpec extends SpecBase {
               val result = navigate(false)
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
+
           }
 
           "How many own brands packaged at own sites" - {
@@ -79,8 +81,8 @@ class NavigatorSpec extends SpecBase {
 
           "Packaged as a contract packer" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(PackagedContractPackerPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(PackagedContractPackerPage,
+              mode,
               UserAnswers(id, Json.obj("packagedContractPacker" -> value)))
 
             "select Yes to navigate to How Many packaged as contract packer" in {
@@ -91,6 +93,11 @@ class NavigatorSpec extends SpecBase {
             "select No to navigate to exemptions for small producers page" in {
               val result = navigate(false)
               result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+            }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
 
           }
@@ -110,8 +117,8 @@ class NavigatorSpec extends SpecBase {
 
           "Exemptions for small producers" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(ExemptionsForSmallProducersPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(ExemptionsForSmallProducersPage,
+              mode,
               UserAnswers(sdilNumber, Json.obj("exemptionsForSmallProducers" -> value)))
 
             "select Yes to navigate to Add small producer pager" in {
@@ -119,12 +126,11 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
             }
 
-
             "should navigate to small producer details page when yes is selected and there are is greater than 0 small producers" in {
               val result = navigator.nextPage(ExemptionsForSmallProducersPage,
                 NormalMode,
                 UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true),
-                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage)))
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage)))
               )
 
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
@@ -135,12 +141,17 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
             }
 
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
           }
 
           "Brought into UK" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(BroughtIntoUKPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(BroughtIntoUKPage,
+              mode,
               UserAnswers(sdilNumber, Json.obj("broughtIntoUK" -> value)))
 
             "select Yes to navigate to How many brought into UK pager" in {
@@ -151,6 +162,11 @@ class NavigatorSpec extends SpecBase {
             "select No to navigate to brought into uk page" in {
               val result = navigate(false)
               result mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
+            }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
 
           }
@@ -170,8 +186,8 @@ class NavigatorSpec extends SpecBase {
 
           "Brought into UK from small producers" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(BroughtIntoUkFromSmallProducersPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(BroughtIntoUkFromSmallProducersPage,
+              mode,
               UserAnswers(sdilNumber, Json.obj("broughtIntoUkFromSmallProducers" -> value)))
 
             "select Yes to navigate to How many brought into UK pager" in {
@@ -182,6 +198,11 @@ class NavigatorSpec extends SpecBase {
             "select No to navigate to brought into uk page" in {
               val result = navigate(false)
               result mustBe routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
+            }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
 
           }
@@ -199,8 +220,8 @@ class NavigatorSpec extends SpecBase {
 
           "Claim credits for export" - {
 
-            def navigate(value: Boolean) = navigator.nextPage(ClaimCreditsForExportsPage,
-              NormalMode,
+            def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(ClaimCreditsForExportsPage,
+              mode,
               UserAnswers(sdilNumber, Json.obj("claimCreditsForExports" -> value)))
 
             "select Yes to navigate to How many credits for export page" in {
@@ -211,6 +232,11 @@ class NavigatorSpec extends SpecBase {
             "select No to navigate to brought into uk page" in {
               val result = navigate(false)
               result mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+            }
+
+            "Should navigate to Check Your Answers page when no is selected in check mode" in {
+              val result = navigate(false, CheckMode)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
           }
 
@@ -228,13 +254,12 @@ class NavigatorSpec extends SpecBase {
 
           "Claim credits for Lost damaged " - {
 
-            def navigate(value: Boolean, userAnswers: Boolean => UserAnswers, sdilReturn: SdilReturn) =
-              navigator.nextPage(ClaimCreditsForLostDamagedPage,
-              NormalMode,
-              userAnswers(value),
-              Some(sdilReturn),
-              Some(aSubscription)
-            )
+            def navigate(value: Boolean, userAnswers: Boolean => UserAnswers,
+                         sdilReturn: Option[SdilReturn] = None,
+                         subscription: Option[RetrievedSubscription] = Some(aSubscription)) = {
+                navigator.nextPage(ClaimCreditsForLostDamagedPage,
+                NormalMode, userAnswers(value), sdilReturn, subscription)
+            }
 
             "select Yes to navigate to How many credits for lost damaged page" in {
               def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
@@ -246,41 +271,115 @@ class NavigatorSpec extends SpecBase {
               result mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
             }
 
-            "select No to navigate to return change registration page" - {
-
-              "when user is a new Importer" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-                  Json.obj(
-                    "HowManyBroughtIntoUk" -> HowManyBroughtIntoUk(100L, 100L),
-                    "claimCreditsForLostDamaged" -> value))
-                val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(100L, 100L),(0L,0L),(0L,0L),(0L,0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
-              }
-
-              "when user is a new packer" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-                  Json.obj(
-                    "howManyAsAContractPacker" -> HowManyAsAContractPacker(100L, 100L),
-                    "claimCreditsForLostDamaged" -> value))
-                val sdilReturn = SdilReturn((0L,0L),(100L, 100L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
-              }
-
-            }
-            //TODO change Index controller page to check your answers page once ready
-            "select No to navigate to Index controller page " - {
+            "select No to navigate to check your answers controller page " - {
               "when user is a not a new Importer" in {
                 def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
-                val result = navigate(false, (_ => userAnswers(false)), sdilReturn)
-                result mustBe routes.IndexController.onPageLoad() //TODO change it to check your answers page once ready
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
               }
-
             }
+
+            "select No to navigate to return change registration controller page " - {
+              "when user is a new Importer" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "select No to navigate to return change registration controller page " - {
+              "when user is a new packer" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "select No to navigate to Index controller page " - {
+              "when user is a new importer and subscription activity is importer" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val importerActivity = RetrievedActivity(
+                  smallProducer = false,
+                  largeProducer = true,
+                  contractPacker = false,
+                  importer = true,
+                  voluntaryRegistration = false)
+                val importerSubscription = aSubscription.copy(activity = importerActivity)
+
+                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
+              }
+            }
+
+            "select No to navigate to Check your answers controller page " - {
+              "when user is a new packer and subscription activity is packer" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val importerActivity = RetrievedActivity(
+                  smallProducer = false,
+                  largeProducer = true,
+                  contractPacker = true,
+                  importer = false,
+                  voluntaryRegistration = false)
+                val importerSubscription = aSubscription.copy(activity = importerActivity)
+
+                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
+              }
+            }
+
+            "select No to navigate to Check your answers controller page " - {
+              "when no subscription is available" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), None)
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
+              }
+            }
+
+            "select No to navigate to Check your answers controller page " - {
+              "when no return is available" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val result = navigate(false, (_ => userAnswers(false)), None)
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
+              }
+            }
+
+            "select No to navigate to Check your answers controller page " - {
+              "when no return nor subscription is available" in {
+                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                  Json.obj(
+                    "claimCreditsForLostDamaged" -> value))
+
+                val result = navigate(false, (_ => userAnswers(false)), None, None)
+                result mustBe routes.CheckYourAnswersController.onPageLoad()
+              }
+            }
+
           }
 
           "Small producer details" -{
@@ -310,7 +409,7 @@ class NavigatorSpec extends SpecBase {
               val result = navigator.nextPage(SmallProducerDetailsPage,
                 NormalMode,
                 UserAnswers(id, Json.obj("smallProducerDetails" -> false),
-                smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))))
+                smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))))
 
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
 
@@ -343,7 +442,7 @@ class NavigatorSpec extends SpecBase {
                 UserAnswers(
                   id,
                   Json.obj("removeSmallProducerConfirm" -> true),
-                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))
                 ))
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
             }
@@ -358,8 +457,8 @@ class NavigatorSpec extends SpecBase {
                   id,
                   Json.obj("removeSmallProducerConfirm" -> true),
                   smallProducerList = List(
-                    SmallProducer(superColaProducerAlias, referenceNumber1, literage),
-                    SmallProducer(superJuiceProducerAlias, referenceNumber2, literage))
+                    SmallProducer(superColaProducerAlias, referenceNumber1, litreage),
+                    SmallProducer(superJuiceProducerAlias, referenceNumber2, litreage))
                 ))
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
             }
@@ -387,7 +486,7 @@ class NavigatorSpec extends SpecBase {
                 UserAnswers(
                   id,
                   Json.obj("removeSmallProducerConfirm" -> false),
-                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, literage))
+                  smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))
                 ))
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
             }
@@ -402,8 +501,8 @@ class NavigatorSpec extends SpecBase {
                   id,
                   Json.obj("removeSmallProducerConfirm" -> false),
                   smallProducerList = List(
-                    SmallProducer(superColaProducerAlias, referenceNumber1, literage),
-                    SmallProducer(superJuiceProducerAlias, referenceNumber2, literage))
+                    SmallProducer(superColaProducerAlias, referenceNumber1, litreage),
+                    SmallProducer(superJuiceProducerAlias, referenceNumber2, litreage))
                 )
               )
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
@@ -417,11 +516,211 @@ class NavigatorSpec extends SpecBase {
 
     "in Check mode" - {
 
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" - {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad()
       }
+
+
+      "Own brands" - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(OwnBrandsPage, CheckMode, UserAnswers(id, Json.obj("ownBrands" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many packed at your own own site page when yes is selected" in {
+          navigator.nextPage(OwnBrandsPage, CheckMode, UserAnswers(id, Json.obj("ownBrands" -> true))
+          ) mustBe routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(BrandsPackagedAtOwnSitesPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("ownBrands" -> true,
+              "brandsPackagedAtOwnSites" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+      }
+
+      "Contract packer" - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(PackagedContractPackerPage, CheckMode, UserAnswers(id, Json.obj("packagedContractPacker" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many packed at your as contract packer page when yes is selected" in {
+          navigator.nextPage(PackagedContractPackerPage, CheckMode, UserAnswers(id, Json.obj("packagedContractPacker" -> true))
+          ) mustBe routes.HowManyAsAContractPackerController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyAsAContractPackerPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("packagedContractPacker" -> true,
+              "howManyAsAContractPacker" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+      }
+
+      "Exemption for small producer " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to small producer details page when yes is selected" in {
+          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true))
+          ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyAsAContractPackerPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true,
+              "addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+      }
+
+
+      "Brought into UK " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(BroughtIntoUKPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUK" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many brought into UK page when yes is selected" in {
+          navigator.nextPage(BroughtIntoUKPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUK" -> true))
+          ) mustBe routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyBroughtIntoUkPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("broughtIntoUK" -> true,
+              "HowManyBroughtIntoUk" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+      }
+
+      "Brought into from small producers UK " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many brought into uk from small producers page when yes is selected" in {
+          navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> true))
+          ) mustBe routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyBroughtIntoTheUKFromSmallProducersPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> true,
+              "howManyBroughtIntoTheUKFromSmallProducers" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+      }
+
+      "Claim credits for exports " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForExports" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many credits for exports page when yes is selected" in {
+          navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForExports" -> true))
+          ) mustBe routes.HowManyCreditsForExportController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyCreditsForExportPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("claimCreditsForExports" -> true,
+              "howManyCreditsForExport" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+      }
+
+      "Claim credits for lost or damaged " - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many credits for lost or damaged page when yes is selected" in {
+          navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true))
+          ) mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to Check Your Answers page when yes is selected and data present" in {
+          navigator.nextPage(HowManyCreditsForLostDamagedPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true,
+              "howManyCreditsForLostDamaged" ->
+                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+      }
+
+      "Check small producer details" - {
+
+        "Should navigate to Check Your Answers page when no is selected" in {
+          navigator.nextPage(SmallProducerDetailsPage, CheckMode, UserAnswers(id, Json.obj("smallProducerDetails" -> false))
+          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+        }
+
+        "Should navigate to how many credits for lost or damaged page when yes is selected" in {
+          navigator.nextPage(SmallProducerDetailsPage, CheckMode, UserAnswers(id, Json.obj("smallProducerDetails" -> true))
+          ) mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
+        }
+
+      }
+
+      "Add a small producer " - {
+
+        "Should navigate to small producer details controller when no is selected" in {
+          navigator.nextPage(AddASmallProducerPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
+          ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Remove a small producer " - {
+
+        "Should navigate to small producer details controller when yes is selected" in {
+          navigator.nextPage(RemoveSmallProducerConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> true), smallProducerList = List())
+          ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to small producer details controller when no is selected" in {
+          navigator.nextPage(RemoveSmallProducerConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> false), smallProducerList = List())
+          ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+      }
+
     }
   }
 

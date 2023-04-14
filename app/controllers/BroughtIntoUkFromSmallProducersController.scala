@@ -22,7 +22,8 @@ import forms.BroughtIntoUkFromSmallProducersFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.BroughtIntoUkFromSmallProducersPage
+import pages.{BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoTheUKFromSmallProducersPage}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BroughtIntoUkFromSmallProducersView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class BroughtIntoUkFromSmallProducersController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -44,6 +46,7 @@ class BroughtIntoUkFromSmallProducersController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -66,7 +69,19 @@ class BroughtIntoUkFromSmallProducersController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(BroughtIntoUkFromSmallProducersPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, updatedAnswers))
+          } yield {
+            if (value) {
+              Redirect(navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, updatedAnswers))
+            } else {
+              val answersWithLitresRemoved =
+                updatedAnswers.remove(HowManyBroughtIntoTheUKFromSmallProducersPage) match {
+                  case Success(updatedAnswers) => updatedAnswers
+                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
+                }
+              sessionRepository.set(answersWithLitresRemoved)
+              Redirect(navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, answersWithLitresRemoved))
+            }
+          }
       )
   }
 }

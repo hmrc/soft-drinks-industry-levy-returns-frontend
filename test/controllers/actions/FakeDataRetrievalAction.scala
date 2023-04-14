@@ -26,7 +26,6 @@ class FakeDataRetrievalAction(userAnswers: Option[UserAnswers], returnPeriod: Op
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
     Future(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers, request.returnPeriod))
 
-
   override protected implicit val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 }

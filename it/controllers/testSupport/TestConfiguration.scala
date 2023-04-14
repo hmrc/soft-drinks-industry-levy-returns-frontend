@@ -3,6 +3,7 @@ package controllers.testSupport
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import config.FrontendAppConfig
 import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, DataRetrievalActionImpl, IdentifierAction}
 import models.UserAnswers
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
@@ -13,7 +14,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
 import play.api.inject._
-import repositories.SessionRepository
+import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.health.HealthController
@@ -59,6 +60,7 @@ trait TestConfiguration
   val sessionAndAuth  = Map("authToken" -> AUTHORIZE_HEADER_VALUE, "sessionId" -> sessionId)
 
   lazy val mongo: SessionRepository = app.injector.instanceOf[SessionRepository]
+  lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
   def setAnswers(userAnswers: UserAnswers)(implicit timeout: Duration): Unit  = Await.result(mongo.set(userAnswers), timeout)
   def getAnswers(id: String)(implicit timeout: Duration): Option[UserAnswers] = Await.result(mongo.get(id), timeout)
 
@@ -82,21 +84,21 @@ trait TestConfiguration
     "json.encryption.previousKeys" -> "[]"
   )
 
+  override implicit lazy val app: Application = appBuilder().build()
 
-  override implicit lazy val app: Application = {
+  def configParams: Map[String, Any] = Map()
+
+  protected def appBuilder(): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .in(Environment.simple(mode = Mode.Dev))
-      .configure(config)
+      .configure(config ++ configParams)
       .overrides(
         bind[DataRetrievalAction].to[DataRetrievalActionImpl],
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[AuthenticatedIdentifierAction],
         bind[Clock].toInstance(Clock.systemDefaultZone().withZone(ZoneOffset.UTC))
       )
-      .build()
-
   }
-
 
   app.injector.instanceOf[HealthController]
 

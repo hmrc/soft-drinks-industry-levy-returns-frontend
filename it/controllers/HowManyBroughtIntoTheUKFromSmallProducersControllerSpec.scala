@@ -1,13 +1,14 @@
 package controllers
 
-import controllers.testSupport.{Specifications, TestConfiguration}
+import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import org.scalatest.TryValues
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
-class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specifications with TestConfiguration {
+class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
   "HowManyBroughtIntoTheUKFromSmallProducersController" should {
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
-
+      setAnswers(broughtIntoUkFullAnswers.success.value)
       given
         .commonPrecondition
 

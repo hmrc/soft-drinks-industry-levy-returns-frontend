@@ -38,7 +38,7 @@ case class ReturnCharge(period: ReturnPeriod, amount: BigDecimal) extends Financ
     Messages(
       "financiallineitem.returncharge",
       formatter.format(period.start),
-      period.end.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+      String.format("MMMM yyyy", period.end)
     )
   def date = period.deadline
 }

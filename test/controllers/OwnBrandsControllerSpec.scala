@@ -20,11 +20,13 @@ import base.SpecBase
 import forms.OwnBrandsFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.OwnBrandsPage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -32,6 +34,7 @@ import repositories.SessionRepository
 import views.html.OwnBrandsView
 
 import scala.concurrent.Future
+import scala.util.Try
 
 class OwnBrandsControllerSpec extends SpecBase with MockitoSugar {
 
@@ -123,5 +126,27 @@ class OwnBrandsControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
       }
     }
+
+    "must redirect to the next page removing litreage data from user answers, when valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          ).build()
+
+      running(application) {
+        val request = FakeRequest(POST, ownBrandsRoute).withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.PackagedContractPackerController.onPageLoad(NormalMode).url
+      }
+    }
+
   }
 }

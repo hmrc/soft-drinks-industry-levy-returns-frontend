@@ -20,7 +20,8 @@ import controllers.actions._
 import forms.ExemptionsForSmallProducersFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.ExemptionsForSmallProducersPage
+import pages.{AddASmallProducerPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyCreditsForLostDamagedPage}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +30,7 @@ import views.html.ExemptionsForSmallProducersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class ExemptionsForSmallProducersController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -43,6 +45,7 @@ class ExemptionsForSmallProducersController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -57,15 +60,27 @@ class ExemptionsForSmallProducersController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
+          (for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptionsForSmallProducersPage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
+          } yield updatedAnswers).flatMap { updatedAnswers =>
+            if (value) {
+              Future.successful(Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers)))
+            } else {
+              Future.fromTry(updatedAnswers.remove(AddASmallProducerPage)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).map {
+                    _ => Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
+                  }
+              }
+            }
+          }
       )
   }
 

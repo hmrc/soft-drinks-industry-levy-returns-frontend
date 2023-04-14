@@ -13,6 +13,7 @@ GET         /refresh-session                             controllers.KeepAliveCo
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
+GET         /check-your-answers/no-activity-to-report    controllers.CheckYourAnswersController.noActivityToReport()
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -115,9 +116,15 @@ POST       /secondary-warehouse-details                         controllers.Seco
 GET        /change-secondary-warehouse-details                  controllers.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-secondary-warehouse-details                  controllers.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /pack-at-business-address-in-return                        controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /pack-at-business-address-in-return                       controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /change-pack-at-business-address-in-return                  controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-pack-at-business-address-in-return                 controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /pack-at-business-address-in-return                  controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /pack-at-business-address-in-return                  controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-pack-at-business-address-in-return           controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-pack-at-business-address-in-return           controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /return-sent                                             controllers.ReturnSentController.onPageLoad
+GET        /packaging-site-details                              controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /packaging-site-details                              controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /submit-return/nil-return/:nilReturn                 controllers.ReturnsController.onPageLoad(nilReturn: Boolean)
+GET        /return-sent                                        controllers.ReturnSentController.onPageLoad()

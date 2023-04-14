@@ -27,22 +27,35 @@ import viewmodels.implicits._
 
 object ClaimCreditsForExportsSummary  {
 
-  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(ClaimCreditsForExportsPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRow(
-          key     = "claimCreditsForExports.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = if(checkAnswers == true) {  Some(
-            Actions("",
-              items =Seq(
-            ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
-              ))
-          )}else None
+          key = "claimCreditsForExports.checkYourAnswersLabel",
+          value = ValueViewModel(value).withCssClass("align-right")
         )
     }
+  }
+
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(ClaimCreditsForExportsPage).map {
+      answer =>
+
+        val value = if (answer) "site.yes" else "site.no"
+
+        SummaryListRowViewModel(
+          key     = "claimingCreditForExportedLiableDrinks",
+          value   = ValueViewModel(value).withCssClass("align-right"),
+          actions = Seq(
+            ActionItemViewModel("site.change", routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-exports")
+              .withVisuallyHiddenText(messages("claimCreditsForExports.change.hidden"))
+          )
+        )
+    }
+  }
+
 }

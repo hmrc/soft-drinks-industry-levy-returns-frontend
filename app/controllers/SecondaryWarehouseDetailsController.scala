@@ -18,9 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.SecondaryWarehouseDetailsFormProvider
-
-import javax.inject.Inject
-import models.{Address, Mode, UserAnswers, Warehouse}
+import models.{Address, Mode, Warehouse}
 import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +27,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SecondaryWarehouseDetailsView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryWarehouseDetailsController @Inject()(
@@ -47,26 +46,25 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val spList = List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val list: List[Warehouse] = spList
-      val preparedForm = request.userAnswers.flatMap(_.get(SecondaryWarehouseDetailsPage)) match {
+      val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
       Ok(view(preparedForm, mode,list))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val list: List[Warehouse] = spList
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, list))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(SecondaryWarehouseDetailsPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(SecondaryWarehouseDetailsPage, mode, updatedAnswers))
       )

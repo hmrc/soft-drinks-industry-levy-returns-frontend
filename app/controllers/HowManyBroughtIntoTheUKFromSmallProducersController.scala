@@ -18,9 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.HowManyBroughtIntoTheUKFromSmallProducersFormProvider
-
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.HowManyBroughtIntoTheUKFromSmallProducersPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +27,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.HowManyBroughtIntoTheUKFromSmallProducersView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
@@ -45,10 +44,10 @@ class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(HowManyBroughtIntoTheUKFromSmallProducersPage)) match {
+      val preparedForm = request.userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -56,16 +55,15 @@ class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(HowManyBroughtIntoTheUKFromSmallProducersPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(HowManyBroughtIntoTheUKFromSmallProducersPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HowManyBroughtIntoTheUKFromSmallProducersPage, mode, updatedAnswers))
       )

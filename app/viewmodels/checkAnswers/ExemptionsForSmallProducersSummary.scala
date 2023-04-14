@@ -20,30 +20,36 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.ExemptionsForSmallProducersPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object ExemptionsForSmallProducersSummary  {
 
-  def row(answers: UserAnswers, checkAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+  def returnsRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     answers.get(ExemptionsForSmallProducersPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRow(
-          key     = "exemptionsForSmallProducers.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = if(checkAnswers == true) {
-            Some(
-              Actions("",
-                items =
-                  Seq(
-            ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
-              .withAttribute(("id", "change-exemptions-for-small-producers"))
-              .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
-          )))}else None
+          key = "exemptionsForSmallProducers.checkYourAnswersLabel",
+          value = ValueViewModel(value).withCssClass("align-right")
         )
     }
+  }
+
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    answers.get(ExemptionsForSmallProducersPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
+        SummaryListRowViewModel(
+          key     = "exemptionForRegisteredSmallProducers",
+          value   = ValueViewModel(value).withCssClass("align-right"),
+          actions = Seq(
+            ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
+              .withAttribute("id", "change-exemption-small-producers")
+              .withVisuallyHiddenText(messages("exemptionsForSmallProducers.change.hidden"))
+          )
+        )
+    }
+  }
 }

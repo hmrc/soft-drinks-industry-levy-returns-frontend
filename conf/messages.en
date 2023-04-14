@@ -45,8 +45,8 @@ index.title = soft-drinks-industry-levy-returns-frontend
 index.heading = soft-drinks-industry-levy-returns-frontend
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
-checkYourAnswers.title = Check Your Answers
-checkYourAnswers.heading = Check Your Answers
+checkYourAnswers.title = Check your answers before sending your update
+checkYourAnswers.heading = Check your answers before sending your update
 
 
 journeyRecovery.title = Sorry, there is a problem with the service
@@ -253,6 +253,69 @@ secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehous
 secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
 secondaryWarehouseDetails.remove.hidden = remove UK warehouse
 
+
+firstQuarter = January to March
+secondQuarter = April to June
+thirdQuarter = July to September
+fourthQuarter = October to December
+
+litresInTheLowBand = Litres in the low band
+lowBandLevy = Low band levy
+litresInTheHighBand = Litres in the high band
+highBandLevy = High band levy
+
+ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
+reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
+ownBrandsPackagedAtYourOwnSite.lowband.hidden = low band litres of own brands packaged at your own site
+ownBrandsPackagedAtYourOwnSite.highband.hidden = high band litres of own brands packaged at your own site
+
+contractPackedAtYourOwnSite = Contract packed at your own site
+reportingContractPackedAtYourOwnSite = Reporting contract packed at your own sites?
+contractPackedAtYourOwnSite.lowband.hidden = low band litres of contract packed at your own site
+contractPackedAtYourOwnSite.highband.hidden = high band litres of contract packed at your own site
+
+contractPackedForRegisteredSmallProducers = Contract packed for registered small producers
+exemptionForRegisteredSmallProducers = Exemption for registered small producers?
+contractPackedForRegisteredSmallProducers.lowband.hidden = low band total litres of contract packed for registered small producers
+contractPackedForRegisteredSmallProducers.highband.hidden = high band total litres of contract packed for registered small producers
+
+broughtIntoTheUK = Brought into the UK
+reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK?
+broughtIntoTheUK.lowband.hidden = low band litres of liable drinks brought into the UK
+broughtIntoTheUK.highband.hidden = high band litres of liable drinks brought into the UK
+
+broughtIntoTheUKFromSmallProducers = Brought into the UK from small producers
+reportingLiableDrinksBroughtIntoTheUKFromSmallProducers = Reporting liable drinks brought into the UK from small producers
+broughtIntoTheUKFromSmallProducers.lowband.hidden = low band litres of liable drinks brought into the UK from small producers
+broughtIntoTheUKFromSmallProducers.highband.hidden = high band litres of liable drinks brought into the UK from small producers
+
+exported = Exported
+claimingCreditForExportedLiableDrinks = Claiming credit for exported liable drinks?
+exported.lowband.hidden = low band litres if claiming credit for exported liable drinks
+exported.highband.hidden = high band litres if claiming credit for exported liable drinks
+
+lostOrDestroyed = Lost or destroyed
+claimingCreditForLostOrDestroyedLiableDrinks = Claiming credit for lost or destroyed liable drinks?
+lostOrDestroyed.lowband.hidden = low band litres if claiming credit for lost or destroyed liable drinks
+lostOrDestroyed.highband.hidden = high band litres if claiming credit for lost or destroyed liable drinks
+
+amountToPay = Amount to pay
+youDoNotNeedToPayAnything = You do not need to pay anything
+youNeedToPay = You need to pay {0}
+amountYouWillBeCredited = Amount you will be credited
+yourSoftDrinksLevyAccountsWillBeCredited = Your Soft Drinks Levy Account will be credited {0}
+totalThisQuarter = Total this quarter
+balanceBroughtForward = Balance brought forward
+total = Total
+financiallineitem.returncharge = Return <br/><span class="form-hint">for {0} to {1}</span>
+
+registeredUkSites = Registered UK Sites
+packagingSites = Packaging Sites
+
+sendYourReturn = Send your return
+sendYourReturnConfirmation = By submitting this return you are confirming that, to the best of your knowledge, the details you are providing are correct.
+confirmDetailsAndSendReturn = Confirm details and send return
+
 reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site
 exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?
 ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site
@@ -300,3 +363,11 @@ litresInTheHighBand = Litres in the high band
 litresInTheLowBand = Litres in the low band
 highBandLevy = High band levy
 lowBandLevy = Low band levy
+
+packagingSiteDetails.title.heading = You added {0} packaging sites
+packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+packagingSiteDetails.checkYourAnswersLabel = PackagingSiteDetails
+packagingSiteDetails.addAnotherPackingSite = Do you want to add another UK packaging site?
+packagingSiteDetails.error.required = Select yes if you need to add another packaging site
+packagingSiteDetails.change.hidden = Packaging Site Details
+packagingSiteDetails.hidden = packaging site

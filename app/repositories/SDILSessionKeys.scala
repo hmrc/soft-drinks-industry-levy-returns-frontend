@@ -19,5 +19,7 @@ package repositories
 object SDILSessionKeys {
 
   val SUBSCRIPTION = "SUBSCRIPTION"
+  val AMOUNTS = "AMOUNTS"
+  val ROW_CALCULATIONS = "ROW-CALCULATIONS"
 
 }

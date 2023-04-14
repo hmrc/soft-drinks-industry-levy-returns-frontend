@@ -16,6 +16,9 @@
 
 package models
 
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{Format, JsPath, Json, OFormat}
+
 import java.time.LocalDateTime
 import cats.implicits._
 import SdilReturn._
@@ -53,12 +56,23 @@ case class SdilReturn(
 }
 
 object SdilReturn {
+
+    implicit val longTupleFormatter: Format[(Long, Long)] = (
+      (JsPath \ "lower").format[Long] and
+        (JsPath \ "higher").format[Long]
+      )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
+      Tuple2.unapply(x)
+    }))
+
+    implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
+    implicit val returnsFormat = Json.format[SdilReturn]
+
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
 
   def apply(userAnswers: UserAnswers)(implicit request: DataRequest[_]): SdilReturn = {
-    val lowOwnBrand =  userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
+    val lowOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
     val highOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
     val lowPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
     val highPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
@@ -66,7 +80,7 @@ object SdilReturn {
     val lowImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
     val highImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
     val lowImportSmall = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
-    val highImportSmall= userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.highBand).getOrElse(0L)
+    val highImportSmall = userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.highBand).getOrElse(0L)
     val lowExports = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
     val highExports = userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
     val lowWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)

@@ -30,6 +30,7 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+    case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad()
     case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt => _ =>
       claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
     case ClaimCreditsForExportsPage => userAnswers => _ => _ => _ => claimCreditsForExportPageNavigation(userAnswers)
@@ -48,6 +49,22 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
+    case OwnBrandsPage => userAnswers => checkOwnBrandPageNavigation(userAnswers)
+    case BrandsPackagedAtOwnSitesPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case PackagedContractPackerPage => userAnswers => checkPackagedContractPackerPageNavigation(userAnswers)
+    case HowManyAsAContractPackerPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case ExemptionsForSmallProducersPage => userAnswers => checkExemptionForSmallProducersPageNavigation(userAnswers)
+    case SmallProducerDetailsPage => userAnswers => checkSmallProducerDetailsPageNavigation(userAnswers)
+    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
+    case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => checkBroughtIntoUkfromSmallProducersPageNavigation(userAnswers)
+    case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case ClaimCreditsForExportsPage => userAnswers => checkClaimCreditsForExportPageNavigation(userAnswers)
+    case HowManyCreditsForExportPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case ClaimCreditsForLostDamagedPage => userAnswers => checkClaimCreditsForLostDamagedPageNavigation(userAnswers)
+    case HowManyCreditsForLostDamagedPage => _ => routes.CheckYourAnswersController.onPageLoad()
     case _ => _ => routes.CheckYourAnswersController.onPageLoad()
   }
 
@@ -144,28 +161,96 @@ class Navigator @Inject()() {
   private def claimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers,
                                                        sdilReturnOpt: Option[SdilReturn],
                                                        subscriptionOpt: Option[RetrievedSubscription]) = {
-    if(userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
+
+    if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
     } else {
-      (sdilReturnOpt, subscriptionOpt)  match {
+      (sdilReturnOpt, subscriptionOpt) match {
         case (Some(sdilReturn), Some(subscription)) =>
           val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
           val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-          if(isNewImporter || isNewPacker) routes.ReturnChangeRegistrationController.onPageLoad() else routes.IndexController.onPageLoad()
-          //TODO IndexController to be replaced with CYA page
-        case _ => routes.IndexController.onPageLoad() //TODO to be replaced with CYA page
+          if (isNewImporter || isNewPacker){
+            routes.ReturnChangeRegistrationController.onPageLoad()
+          } else {
+            routes.CheckYourAnswersController.onPageLoad()
+          }
+        case _ => routes.CheckYourAnswersController.onPageLoad()
       }
+    }
+  }
+
+  private def checkBroughtIntoUkPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = BroughtIntoUKPage).contains(true)) {
+      routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def checkBroughtIntoUkfromSmallProducersPageNavigation(userAnswers: UserAnswers) = {
+    if(userAnswers.get(page = BroughtIntoUkFromSmallProducersPage).contains(true)) {
+      routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def checkClaimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
+      routes.HowManyCreditsForExportController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def checkClaimCreditsForLostDamagedPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
+      routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+
+  private def checkOwnBrandPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = OwnBrandsPage).contains(true)) {
+      routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def checkPackagedContractPackerPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = PackagedContractPackerPage).contains(true)) {
+      routes.HowManyAsAContractPackerController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def checkExemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
+      routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def checkSmallProducerDetailsPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
+      routes.AddASmallProducerController.onPageLoad(CheckMode)
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
     }
   }
 
   private def packAtBusinessAddressPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = PackAtBusinessAddressPage).contains(true)) {
-      routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+      routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     } else {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }
   }
-
 
 
 }

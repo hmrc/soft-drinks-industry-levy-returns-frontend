@@ -34,7 +34,7 @@ object RemoveSmallProducerConfirmSummary  {
 
         SummaryListRowViewModel(
           key     = "removeSmallProducerConfirm.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
+          value   = ValueViewModel(value).withCssClass("align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.RemoveSmallProducerConfirmController.onPageLoad("CheckMode").url)
               .withVisuallyHiddenText(messages("removeSmallProducerConfirm.change.hidden"))

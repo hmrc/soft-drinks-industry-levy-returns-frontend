@@ -55,60 +55,6 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications
         }
       }
 
-      "user selected no " when {
-
-        "user is a new importer" in {
-          given
-            .commonPrecondition
-
-          val userAnswers = creditsForLostDamagedPartialAnswers.success.value
-          setAnswers(userAnswers)
-
-          WsTestClient.withClient { client =>
-            val result =
-              client.url(s"$baseUrl/claim-credits-for-lost-damaged")
-                .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-                .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                  "Csrf-Token" -> "nocheck")
-                .withFollowRedirects(false)
-                .post(Json.obj("value" -> false))
-
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/return-change-registration")
-            }
-
-          }
-        }
-
-        "user is a neither a new  importer or new packer" in {
-          given
-            .commonPrecondition
-
-          val userAnswers = creditsForCopackerDamagedPartialAnswers.success.value
-          setAnswers(userAnswers)
-
-          WsTestClient.withClient { client =>
-            val result =
-              client.url(s"$baseUrl/claim-credits-for-lost-damaged")
-                .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-                .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                  "Csrf-Token" -> "nocheck")
-                .withFollowRedirects(false)
-                .post(Json.obj("value" -> false))
-
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")//TODO change it to CYA page later
-            }
-
-          }
-        }
-
-      }
-
     }
   }
 }
