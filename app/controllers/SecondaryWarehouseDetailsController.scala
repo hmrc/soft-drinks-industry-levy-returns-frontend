@@ -18,17 +18,17 @@ package controllers
 
 import controllers.actions._
 import forms.SecondaryWarehouseDetailsFormProvider
-import models.{Address, Mode, Warehouse}
+import models.Mode
 import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.SecondaryWarehouseDetailsView
 import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import viewmodels.govuk.summarylist._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import views.html.SecondaryWarehouseDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

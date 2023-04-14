@@ -58,6 +58,7 @@ class Navigator @Inject()() {
     case ExemptionsForSmallProducersPage => userAnswers => checkExemptionForSmallProducersPageNavigation(userAnswers)
     case SmallProducerDetailsPage => userAnswers => checkSmallProducerDetailsPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case RemoveWarehouseConfirmPage =>  _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad()
@@ -149,6 +150,14 @@ class Navigator @Inject()() {
       routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     } else {
       routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def removeWarehouseConfirmPageNavigation(userAnswers: UserAnswers):Call = {
+    if (userAnswers.get(page = RemoveWarehouseConfirmPage).contains(true)) {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    } else {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
     }
   }
 
@@ -262,12 +271,6 @@ class Navigator @Inject()() {
     }
   }
 
-  private def removeWarehouseConfirmPageNavigation(userAnswers: UserAnswers):Call = {
-    if (userAnswers.get(page = RemoveWarehouseConfirmPage).contains(true)) {
-      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-    } else {
-      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-    }
-  }
+
 
 }

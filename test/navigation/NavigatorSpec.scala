@@ -66,6 +66,21 @@ class NavigatorSpec extends SpecBase {
 
           }
 
+          "Remove a warehouse" - {
+            "Should navigate to small producer details controller when yes is selected" in {
+              navigator.nextPage(RemoveWarehouseConfirmPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("removeWarehouse" -> true))
+              ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+            }
+            "Should navigate to small producer details controller when no is selected" in {
+              navigator.nextPage(RemoveWarehouseConfirmPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("removeWarehouse" -> false))
+              ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+            }
+          }
+
           "How many own brands packaged at own sites" - {
 
             "select save and continue to navigate to packaged as contract packer page" in {
@@ -701,6 +716,21 @@ class NavigatorSpec extends SpecBase {
             CheckMode,
             UserAnswers(id, Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Remove a warehouse" - {
+        "Should navigate to small producer details controller when yes is selected" in {
+          navigator.nextPage(RemoveWarehouseConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeWarehouse" -> true))
+          ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+        }
+        "Should navigate to small producer details controller when no is selected" in {
+          navigator.nextPage(RemoveWarehouseConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeWarehouse" -> false))
+          ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         }
       }
 

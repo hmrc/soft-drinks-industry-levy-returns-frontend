@@ -20,7 +20,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.RemoveWarehouseConfirmFormProvider
 import models.{Mode, NormalMode, Warehouse}
 import navigation.Navigator
-import pages.{RemoveWarehouseConfirmPage, SecondaryWarehouseDetailsPage}
+import pages.RemoveWarehouseConfirmPage
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
