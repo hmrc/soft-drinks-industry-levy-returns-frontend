@@ -28,6 +28,8 @@ import models.retrieved.RetrievedSubscription
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
+    case SecondaryWarehouseDetailsPage => userAnswers => _ => _ => _ => secondaryWarehouseDetailsPageNavigation(userAnswers)
+    case RemoveWarehouseConfirmPage => userAnswers => _ => _ => _ => removeWarehouseConfirmPageNavigation (userAnswers)
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad()
@@ -252,5 +254,20 @@ class Navigator @Inject()() {
     }
   }
 
+  private def secondaryWarehouseDetailsPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = SecondaryWarehouseDetailsPage).contains(true)) {
+      routes.IndexController.onPageLoad()
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def removeWarehouseConfirmPageNavigation(userAnswers: UserAnswers):Call = {
+    if (userAnswers.get(page = RemoveWarehouseConfirmPage).contains(true)) {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    } else {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    }
+  }
 
 }

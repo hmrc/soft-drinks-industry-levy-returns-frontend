@@ -18,9 +18,11 @@ package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.RemoveWarehouseConfirmFormProvider
-import models.{Mode, Warehouse}
+import models.{Mode, NormalMode, Warehouse}
 import navigation.Navigator
 import pages.{RemoveWarehouseConfirmPage, SecondaryWarehouseDetailsPage}
+import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -43,21 +45,32 @@ class RemoveWarehouseConfirmController @Inject()(
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(mode: Mode, index: String): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-
-        val preparedForm = request.userAnswers.get(RemoveWarehouseConfirmPage) match {
+        val preparedForm: Form[Boolean] = request.userAnswers.get(RemoveWarehouseConfirmPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
 
-        val warehouseList = request.userAnswers.warehouseList
-        val warehouseToRemove:Warehouse = warehouseList(index)
-        val formattedAddress = s"${warehouseToRemove.tradingName}, ${warehouseToRemove.address.line1}, ${warehouseToRemove.address.line2}, ${warehouseToRemove.address.line3}, ${warehouseToRemove.address.line4}, ${warehouseToRemove.address.postcode}"
+        request.userAnswers.warehouseList.get(index) match {
+           case Some(warehouse) =>
+             val formattedAddress = s"${warehouse.tradingName}," +
+             s" ${warehouse.address.line1}," +
+             s" ${warehouse.address.line2}," +
+             s" ${warehouse.address.line3}," +
+             s" ${warehouse.address.line4}," +
+             s" ${warehouse.address.postcode}"
+             Ok(view(preparedForm, mode, formattedAddress, index))
+           case _ => logger.warn(s"Warhouse index $index doesn't exist ${request.userAnswers.id} warehouse list length: ${request.userAnswers.warehouseList.size}")
 
-        Ok(view(preparedForm, mode, formattedAddress, index))
+            Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode))
+         }
+
+
+
     }
 
   def onSubmit(mode: Mode, index: String): Action[AnyContent] =
@@ -79,14 +92,14 @@ class RemoveWarehouseConfirmController @Inject()(
                 updatedAnswersFinal = updatedAnswers.copy(warehouseList = modifiedWarehouseMap)
                 _ <- sessionRepository.set(updatedAnswersFinal)
               } yield {
-                Redirect(navigator.nextPage(SecondaryWarehouseDetailsPage, mode, updatedAnswersFinal))
+                Redirect(navigator.nextPage(RemoveWarehouseConfirmPage, mode, updatedAnswersFinal))
               }
             }else{
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveWarehouseConfirmPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
-                Redirect(navigator.nextPage(SecondaryWarehouseDetailsPage, mode, updatedAnswers))
+                Redirect(navigator.nextPage(RemoveWarehouseConfirmPage, mode, updatedAnswers))
               }
             }
         )

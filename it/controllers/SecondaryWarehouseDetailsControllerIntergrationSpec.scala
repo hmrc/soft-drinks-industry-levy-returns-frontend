@@ -4,6 +4,7 @@ import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguratio
 import org.scalatest.TryValues
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
+import play.mvc.Http.HeaderNames
 
 class SecondaryWarehouseDetailsControllerIntergrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
   "SecondaryWarehouseDetailsController" should {
@@ -57,7 +58,8 @@ class SecondaryWarehouseDetailsControllerIntergrationSpec extends Specifications
           .get()
 
         whenReady(result) { res =>
-          res.status mustBe 500
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some("/soft-drinks-industry-levy-returns-frontend/secondary-warehouse-details")
         }
       }
     }
