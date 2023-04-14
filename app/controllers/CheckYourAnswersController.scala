@@ -75,9 +75,6 @@ class CheckYourAnswersController @Inject()(
       case _ => request.userAnswers
     }
 
-    println("&&&&&&&&HHHHHHHHHHH")
-    println(answers)
-
     val rowCalculations = levyCalculator.calculateLevyForAnswers(answers)
     val cacheHelper = new CacheHelper(sessionCache)
 

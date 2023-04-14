@@ -28,5 +28,5 @@ object BroughtIntoUKSummary extends ReturnDetailsSummaryListWithLitres  {
   override val key: String = "reportingLiableDrinksBroughtIntoTheUK"
   override val action: String = routes.BroughtIntoUKController.onPageLoad(CheckMode).url
   override val actionId: String = "change-brought-into-uk"
-  override val hiddenText: String = "broughtIntoUK"
+  override val hiddenText: String = "broughtIntoTheUK"
 }

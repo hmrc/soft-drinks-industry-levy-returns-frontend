@@ -29,4 +29,5 @@ object ClaimCreditsForExportsSummary extends ReturnDetailsSummaryListWithLitres 
   override val action: String = routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
   override val actionId: String = "change-exports"
   override val hiddenText: String = "claimCreditsForExports"
+
 }

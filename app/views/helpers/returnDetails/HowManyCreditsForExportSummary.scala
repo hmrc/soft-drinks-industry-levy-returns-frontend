@@ -22,7 +22,8 @@ import models.CheckMode
 object HowManyCreditsForExportSummary extends SummaryListRowLitresHelper {
 
   override val actionUrl = routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url
-  override val bandActionIdKey: String = "exported"
-  override val bandHiddenKey: String = "claimingCreditForExportedLiableDrinks"
+  override val bandActionIdKey: String = "export-credits"
+  override val bandHiddenKey: String = "exported"
+  override val isNegativeLevy: Boolean = true
 
 }

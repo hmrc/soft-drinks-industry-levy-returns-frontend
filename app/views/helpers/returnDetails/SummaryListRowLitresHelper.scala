@@ -31,6 +31,9 @@ trait SummaryListRowLitresHelper {
   val actionUrl: String
   val bandActionIdKey: String
   val bandHiddenKey: String
+  val hasZeroLevy: Boolean = false
+  val isNegativeLevy: Boolean = false
+
 
   val lowBand = "lowband"
   val highBand = "highband"
@@ -60,19 +63,29 @@ trait SummaryListRowLitresHelper {
 }
 
 private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
-  val key = if (band == lowBand) {
-    "lowBandLevy"
-  } else {
-    "highBandLevy"
-  }
-      val levy = litres * bandCostPerLitre.toDouble
-      val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy)).toString
+    val key = if (band == lowBand) {
+      "lowBandLevy"
+    } else {
+      "highBandLevy"
+    }
 
-      SummaryListRowViewModel(
-        key = key,
-        value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-        actions = Seq()
-      )
+    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(litres, bandCostPerLitre))).toString
+
+    SummaryListRowViewModel(
+      key = key,
+      value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
+      actions = Seq()
+    )
+  }
+
+  private def levy(litres: BigDecimal, bandCostPerLitre: BigDecimal): BigDecimal = {
+    if (hasZeroLevy) {
+      0
+    } else if (isNegativeLevy) {
+      litres * bandCostPerLitre.toDouble * -1
+    } else {
+      litres * bandCostPerLitre.toDouble
+    }
   }
 
   def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if (isCheckAnswers) {

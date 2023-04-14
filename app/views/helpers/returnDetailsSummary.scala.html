@@ -29,36 +29,36 @@ govukSummaryList: GovukSummaryList
   amounts: Amounts,
   isCheckAnswers: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
-<h2 class="govuk-heading-m">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
+<h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
 @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m">@messages("contractPackedAtYourOwnSite")</h2>
+<h2 class="govuk-heading-m" id="contractPackedAtYourOwnSite">@messages("contractPackedAtYourOwnSite")</h2>
 @govukSummaryList(PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m">@messages("contractPackedForRegisteredSmallProducers")</h2>
+<h2 class="govuk-heading-m" id="contractPackedForRegisteredSmallProducers">@messages("contractPackedForRegisteredSmallProducers")</h2>
 @govukSummaryList(ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m">@messages("broughtIntoTheUK")</h2>
+<h2 class="govuk-heading-m" id="broughtIntoTheUK">@messages("broughtIntoTheUK")</h2>
 @govukSummaryList(BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m">@messages("broughtIntoTheUKFromSmallProducers")</h2>
+<h2 class="govuk-heading-m" id="broughtIntoTheUKFromSmallProducers">@messages("broughtIntoTheUKFromSmallProducers")</h2>
 @govukSummaryList(BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m">@messages("exported")</h2>
+<h2 class="govuk-heading-m" id="exported">@messages("exported")</h2>
 @govukSummaryList(ClaimCreditsForExportsSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m">@messages("lostOrDestroyed")</h2>
+<h2 class="govuk-heading-m" id="lostOrDestroyed">@messages("lostOrDestroyed")</h2>
 @govukSummaryList(ClaimCreditsForLostDamagedSummary.summaryList(userAnswers, isCheckAnswers))
 
 <h2 class="govuk-heading-m" id="amount-to-pay-title">@AmountToPaySummary.sectionHeaderTitle(amounts.total)</h2>
 @govukSummaryList(AmountToPaySummary.amountToPaySummary(amounts))
 
 @PackAtBusinessAddressSummary.summaryList(userAnswers, isCheckAnswers) match {
-case Some(site) => {
-<h2 class="govuk-heading-m" id="registered-sites">@messages("registeredUkSites")</h2>
-@govukSummaryList(site)
-}
-case _ => {
-<br>
-}
+ case Some(site) => {
+  <h2 class="govuk-heading-m" id="registered-sites">@messages("registeredUkSites")</h2>
+  @govukSummaryList(site)
+ }
+ case _ => {
+  <br>
+ }
 }

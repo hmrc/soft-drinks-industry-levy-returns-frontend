@@ -62,8 +62,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.ownBrands"))
-        page.getElementsByTag("dt").text() must include(Messages("ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
       }
     }
 
@@ -84,8 +83,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.ownBrands"))
-        page.getElementsByTag("dt").text() must include(Messages("ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("ownBrandsPackagedAtYourOwnSite"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
@@ -113,8 +111,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.packagedContractPacker"))
-        page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedAtYourOwnSite"))
       }
     }
 
@@ -135,8 +132,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.packagedContractPacker"))
-        page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedAtYourOwnSite"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
@@ -164,8 +160,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
-        page.getElementsByTag("dt").text() must include(Messages("exemptionsForSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
       }
     }
 
@@ -183,8 +178,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUk"))
-        page.getElementsByTag("dt").text() must include(Messages("broughtIntoUK.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUK"))
       }
     }
 
@@ -205,8 +199,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUk"))
-        page.getElementsByTag("dt").text() must include(Messages("broughtIntoUK.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUK"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
@@ -237,8 +230,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUkSmallProducer"))
-        page.getElementsByTag("dt").text() must include(Messages("broughtIntoUKFromSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUKFromSmallProducers"))
       }
     }
 
@@ -259,18 +251,17 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUkSmallProducer"))
-        page.getElementsByTag("dt").text() must include(Messages("broughtIntoUKFromSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUKFromSmallProducers"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£180")
+        page.getElementsByTag("dd").text() mustNot include("£180")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£480")
+        page.getElementsByTag("dd").text() mustNot include("£480")
       }
     }
 
@@ -289,8 +280,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
-        page.getElementsByTag("dt").text() must include(Messages("claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("exported"))
       }
     }
 
@@ -311,9 +301,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
-        page.getElementsByTag("dt").text() must include(Messages("claimCreditsForExports.checkYourAnswersLabel"))
-
+        page.getElementsByTag("h2").text() must include(Messages("exported"))
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
@@ -341,8 +329,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.lostDestroyed"))
-        page.getElementsByTag("dt").text() must include(Messages("claimCreditsForLostDamaged.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("lostOrDestroyed"))
       }
     }
 
@@ -363,8 +350,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.lostDestroyed"))
-        page.getElementsByTag("dt").text() must include(Messages("claimCreditsForLostDamaged.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(Messages("lostOrDestroyed"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
@@ -397,7 +383,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.RegisteredSites"))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
       }
     }
 
@@ -414,7 +400,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.noPayNeeded.title"))
+        page.getElementById("amount-to-pay-title").text must include(Messages("youDoNotNeedToPayAnything"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£0.00")
       }
@@ -436,7 +422,7 @@ class ReturnsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.creditedPay.title"))
+        page.getElementById("amount-to-pay-title").text must include(Messages("amountYouWillBeCredited"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include(" -£6,600.00")
       }
@@ -457,7 +443,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title").text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£6,600.00")
       }
@@ -478,7 +464,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title").text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£660.00")
       }
@@ -499,7 +485,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title").text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£0.00")
         page.getElementsByTag("dd").text() must include("£660.00")
@@ -521,7 +507,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title").text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("total.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£660.00")
       }
@@ -541,7 +527,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue").text must include(Messages("checkYourAnswers.noPayNeeded.title"))
+        page.getElementById("amount-to-pay-title").text must include(Messages("youDoNotNeedToPayAnything"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£0.00")
       }
@@ -563,7 +549,7 @@ class ReturnsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue").text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title").text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£1,332.00")
       }
