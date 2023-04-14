@@ -1,6 +1,6 @@
 package controllers.testSupport
 
-import models.{AddASmallProducer, LitresInBands, UserAnswers}
+import models.{AddASmallProducer, LitresInBands, UserAnswers, Warehouse}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
@@ -13,6 +13,10 @@ trait ITCoreTestData extends TryValues {
   val sdilNumber = "XKSDIL000000022"
   val producerName = Some("Super Cola Ltd")
   val refNumber = "XZSDIL000000234"
+  val twoWarhouses:Map[String,Warehouse] = Map("1"-> Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
+    "2" -> Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+  val userAnswerTwoWarhouses : UserAnswers = UserAnswers(sdilNumber,Json.obj(), List.empty,Map.empty,twoWarhouses)
+
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
 
@@ -100,7 +104,7 @@ trait ITCoreTestData extends TryValues {
   def removeSmallProducerConfirmFullAnswers = addASmallProducerPartialAnswers.success.value
     .set(RemoveSmallProducerConfirmPage, true)
 
-  def newPackerPartialAnswers = emptyUserAnswers
+  def newPackerPartialAnswers = userAnswerTwoWarhouses
     .set(OwnBrandsPage, false).success.value
     .set(PackagedContractPackerPage, true).success.value
     .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value

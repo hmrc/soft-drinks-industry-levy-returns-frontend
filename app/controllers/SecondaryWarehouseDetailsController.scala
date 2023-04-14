@@ -26,6 +26,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SecondaryWarehouseDetailsView
+import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
+import viewmodels.govuk.summarylist._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,24 +47,29 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  val spList = List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val list: List[Warehouse] = spList
+
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode,list))
+
+      val siteList: SummaryList = SummaryListViewModel(
+        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
+      )
+
+      Ok(view(preparedForm, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val list: List[Warehouse] = spList
+      val siteList: SummaryList = SummaryListViewModel(
+        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
+      )
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, list))),
+          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))

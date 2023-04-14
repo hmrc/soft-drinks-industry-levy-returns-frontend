@@ -25,10 +25,13 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.SecondaryWarehouseDetailsPage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.SecondaryWarehouseDetailsView
 
@@ -43,11 +46,16 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
   lazy val secondaryWarehouseDetailsRoute = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
 
+  val twoWarhouses:Map[String,Warehouse] = Map("1"-> Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
+    "2" -> Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+
+  val userAnswerTwoWarhouses : UserAnswers = UserAnswers(sdilNumber,Json.obj(), List.empty,Map.empty,twoWarhouses)
+
   "SecondaryWarehouseDetails Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarhouses)).build()
 
       running(application) {
         implicit val request = FakeRequest(GET, secondaryWarehouseDetailsRoute)
@@ -55,19 +63,25 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
-        val list: List[Warehouse] =
-        List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
-             Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+        val WarhouseMap: Map[String,Warehouse] =
+          Map("1"-> Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
+            "2" -> Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
 
+        val warehouseSummaryList: List[SummaryListRow] =
+          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+
+        val summaryList: SummaryList = SummaryListViewModel(
+          rows = warehouseSummaryList
+        )
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, summaryList)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(sdilNumber).set(SecondaryWarehouseDetailsPage, true).success.value
+      val userAnswers : UserAnswers = UserAnswers(sdilNumber,Json.obj(), List.empty,Map.empty,twoWarhouses)
+        .set(SecondaryWarehouseDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -78,14 +92,19 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val result = route(application, request).value
 
-        val list: List[Warehouse] =
-          List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
-               Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+        val WarhouseMap: Map[String,Warehouse] =
+          Map("1"-> Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
+            "2" -> Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
 
+        val warehouseSummaryList: List[SummaryListRow] =
+          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
 
+        val summaryList: SummaryList = SummaryListViewModel(
+          rows = warehouseSummaryList
+        )
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode , list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode , summaryList)(request, messages(application)).toString
       }
     }
 
@@ -117,7 +136,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarhouses)).build()
 
       running(application) {
         val request =
@@ -130,13 +149,20 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val result = route(application, request).value
 
-        val list: List[Warehouse] =
-          List(Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
-               Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+        val WarhouseMap: Map[String,Warehouse] =
+          Map("1"-> Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
+               "2" -> Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
+
+        val warehouseSummaryList: List[SummaryListRow] =
+         SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+
+        val summaryList: SummaryList = SummaryListViewModel(
+          rows = warehouseSummaryList
+        )
 
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, summaryList)(request, messages(application)).toString
       }
     }
   }

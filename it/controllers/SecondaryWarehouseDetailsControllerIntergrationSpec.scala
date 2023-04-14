@@ -25,6 +25,43 @@ class SecondaryWarehouseDetailsControllerIntergrationSpec extends Specifications
 
       }
     }
+
+    "user selected remove on one of the addresses" in {
+
+      setAnswers(newPackerPartialAnswers.success.value)
+      given
+        .commonPrecondition
+
+      WsTestClient.withClient { client =>
+        val result = client.url(s"$baseUrl/remove-warehouse-details/1")
+          .withFollowRedirects(false)
+          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+          .get()
+
+        whenReady(result) { res =>
+          res.status mustBe 200
+        }
+      }
+    }
+
+    "user inputs remove on index that doesn't exist" in {
+
+      setAnswers(newPackerPartialAnswers.success.value)
+      given
+        .commonPrecondition
+
+      WsTestClient.withClient { client =>
+        val result = client.url(s"$baseUrl/remove-warehouse-details/3")
+          .withFollowRedirects(false)
+          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+          .get()
+
+        whenReady(result) { res =>
+          res.status mustBe 500
+        }
+      }
+    }
+
   }
 
 }
