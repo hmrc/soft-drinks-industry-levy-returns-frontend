@@ -17,18 +17,14 @@
 package connectors
 
 import base.SpecBase
-import com.typesafe.config.ConfigFactory
-import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
+import models.{FinancialLineItem, ReturnPeriod}
 import models.retrieved.RetrievedSubscription
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Configuration
 import repositories.SDILSessionCache
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import utilitlies.ReturnsHelper
-import play.api.libs.json.Json
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,18 +33,9 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
   val (host, localPort) = ("host", "123")
 
-  val localConfig = Configuration(
-    ConfigFactory.parseString(s"""
-                                 | microservice.services.soft-drinks-industry-levy {
-                                 |    host     = "$host"
-                                 |    port     = $localPort
-                                 |  }
-                                 |""".stripMargin)
-  )
-
   val mockHttp = mock[HttpClient]
   val mockSDILSessionCache = mock[SDILSessionCache]
-  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, localConfig, mockSDILSessionCache)
+  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, frontendAppConfig, mockSDILSessionCache)
 
   implicit val hc = HeaderCarrier()
 
@@ -144,7 +131,6 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
           response mustEqual returnPeriods
       }
     }
-
   }
 
 }
