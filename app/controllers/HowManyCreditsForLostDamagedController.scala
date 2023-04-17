@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.HowManyCreditsForLostDamagedFormProvider
-import models.Mode
+import models.{Mode, SdilReturn}
 import navigation.Navigator
 import pages.HowManyCreditsForLostDamagedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -64,7 +64,10 @@ class HowManyCreditsForLostDamagedController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HowManyCreditsForLostDamagedPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HowManyCreditsForLostDamagedPage, mode, updatedAnswers))
+          } yield {
+            Redirect(navigator.nextPage(HowManyCreditsForLostDamagedPage, mode, updatedAnswers,
+              Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)))
+          }
       )
   }
 }

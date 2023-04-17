@@ -30,7 +30,8 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
-    case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad()
+    case HowManyCreditsForLostDamagedPage => _ => sdilReturnOpt => subscriptionOpt => _ =>
+      howManyCreditsForLostDamagedPageNavigation(sdilReturnOpt, subscriptionOpt)
     case ClaimCreditsForLostDamagedPage => userAnswers => sdilReturnOpt => subscriptionOpt => _ =>
       claimCreditsForLostDamagedPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
     case ClaimCreditsForExportsPage => userAnswers => _ => _ => _ => claimCreditsForExportPageNavigation(userAnswers)
@@ -59,7 +60,7 @@ class Navigator @Inject()() {
     case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad()
-    case BroughtIntoUkFromSmallProducersPage => userAnswers => checkBroughtIntoUkfromSmallProducersPageNavigation(userAnswers)
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => checkBroughtIntoUkFromSmallProducersPageNavigation(userAnswers)
     case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => routes.CheckYourAnswersController.onPageLoad()
     case ClaimCreditsForExportsPage => userAnswers => checkClaimCreditsForExportPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => routes.CheckYourAnswersController.onPageLoad()
@@ -165,17 +166,28 @@ class Navigator @Inject()() {
     if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
     } else {
-      (sdilReturnOpt, subscriptionOpt) match {
-        case (Some(sdilReturn), Some(subscription)) =>
-          val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
-          val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-          if (isNewImporter || isNewPacker){
-            routes.ReturnChangeRegistrationController.onPageLoad()
-          } else {
-            routes.CheckYourAnswersController.onPageLoad()
-          }
-        case _ => routes.CheckYourAnswersController.onPageLoad()
-      }
+      packerImporterPageNavigation(sdilReturnOpt, subscriptionOpt)
+    }
+  }
+
+  private def howManyCreditsForLostDamagedPageNavigation(sdilReturnOpt: Option[SdilReturn],
+                                                         subscriptionOpt: Option[RetrievedSubscription]) = {
+    packerImporterPageNavigation(sdilReturnOpt, subscriptionOpt)
+  }
+
+  private def packerImporterPageNavigation(sdilReturnOpt: Option[SdilReturn],
+                                           subscriptionOpt: Option[RetrievedSubscription]) = {
+
+    (sdilReturnOpt, subscriptionOpt) match {
+      case (Some(sdilReturn), Some(subscription)) =>
+        val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
+        val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
+        if (isNewImporter || isNewPacker) {
+          routes.ReturnChangeRegistrationController.onPageLoad()
+        } else {
+          routes.CheckYourAnswersController.onPageLoad()
+        }
+      case _ => routes.CheckYourAnswersController.onPageLoad()
     }
   }
 
@@ -187,7 +199,7 @@ class Navigator @Inject()() {
     }
   }
 
-  private def checkBroughtIntoUkfromSmallProducersPageNavigation(userAnswers: UserAnswers) = {
+  private def checkBroughtIntoUkFromSmallProducersPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = BroughtIntoUkFromSmallProducersPage).contains(true)) {
       routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode)
     } else {
