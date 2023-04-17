@@ -382,6 +382,136 @@ class NavigatorSpec extends SpecBase {
 
           }
 
+          "How many credits for Lost damaged " - {
+
+            def navigate(userAnswers: UserAnswers,
+                         sdilReturn: Option[SdilReturn] = None,
+                         subscription: Option[RetrievedSubscription]) = {
+
+              navigator.nextPage(HowManyCreditsForLostDamagedPage, NormalMode,userAnswers,sdilReturn,subscription)
+            }
+
+            "should redirect to check your answers page when neither new packer nor new importer" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val importerSubscription = aSubscription.copy(activity = sdilActivity)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(importerSubscription))
+
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
+//            "select No to navigate to check your answers controller page " - {
+//              "when user is a not a new Importer" in {
+//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+//                  Json.obj(
+//                    "claimCreditsForLostDamaged" -> value))
+//
+//                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+//                result mustBe routes.CheckYourAnswersController.onPageLoad()
+//              }
+//            }
+//
+//            "select No to navigate to return change registration controller page " - {
+//              "when user is a new Importer" in {
+//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+//                  Json.obj(
+//                    "claimCreditsForLostDamaged" -> value))
+//
+//                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
+//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+//                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+//              }
+//            }
+//
+//            "select No to navigate to return change registration controller page " - {
+//              "when user is a new packer" in {
+//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+//                  Json.obj(
+//                    "claimCreditsForLostDamaged" -> value))
+//
+//                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+//                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+//              }
+//            }
+//
+//            "select No to navigate to Index controller page " - {
+//              "when user is a new importer and subscription activity is importer" in {
+//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+//                  Json.obj(
+//                    "claimCreditsForLostDamaged" -> value))
+//
+//                val importerActivity = RetrievedActivity(
+//                  smallProducer = false,
+//                  largeProducer = true,
+//                  contractPacker = false,
+//                  importer = true,
+//                  voluntaryRegistration = false)
+//                val importerSubscription = aSubscription.copy(activity = importerActivity)
+//
+//                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
+//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
+//                result mustBe routes.CheckYourAnswersController.onPageLoad()
+//              }
+//            }
+//
+//            "select No to navigate to Check your answers controller page " - {
+//              "when user is a new packer and subscription activity is packer" in {
+//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+//                  Json.obj(
+//                    "claimCreditsForLostDamaged" -> value))
+//
+//                val importerActivity = RetrievedActivity(
+//                  smallProducer = false,
+//                  largeProducer = true,
+//                  contractPacker = true,
+//                  importer = false,
+//                  voluntaryRegistration = false)
+//                val importerSubscription = aSubscription.copy(activity = importerActivity)
+//
+//                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
+//                result mustBe routes.CheckYourAnswersController.onPageLoad()
+//              }
+//            }
+//
+//            "select No to navigate to Check your answers controller page " - {
+//              "when no subscription is available" in {
+//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+//                  Json.obj(
+//                    "claimCreditsForLostDamaged" -> value))
+//
+//                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), None)
+//                result mustBe routes.CheckYourAnswersController.onPageLoad()
+//              }
+//            }
+//
+//            "select No to navigate to Check your answers controller page " - {
+//              "when no return is available" in {
+//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+//                  Json.obj(
+//                    "claimCreditsForLostDamaged" -> value))
+//
+//                val result = navigate(false, (_ => userAnswers(false)), None)
+//                result mustBe routes.CheckYourAnswersController.onPageLoad()
+//              }
+//            }
+//
+//            "select No to navigate to Check your answers controller page " - {
+//              "when no return nor subscription is available" in {
+//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+//                  Json.obj(
+//                    "claimCreditsForLostDamaged" -> value))
+//
+//                val result = navigate(false, (_ => userAnswers(false)), None, None)
+//                result mustBe routes.CheckYourAnswersController.onPageLoad()
+//              }
+//            }
+
+          }
+
           "Small producer details" -{
 
             "should navigate to add a small producer page when yes is selected" in {
