@@ -391,12 +391,11 @@ class NavigatorSpec extends SpecBase {
               navigator.nextPage(HowManyCreditsForLostDamagedPage, NormalMode, userAnswers, sdilReturn, subscription)
             }
 
-            "should redirect to check your answers page when current sdil is neither new packer nor new importer" in {
+            "should redirect to check your answers page when current sdil is neither a packer nor an importer" in {
               val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
-
               result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
 
@@ -405,119 +404,110 @@ class NavigatorSpec extends SpecBase {
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
-
               result mustBe routes.CheckYourAnswersController.onPageLoad()
             }
 
-//            "select No to navigate to check your answers controller page " - {
-//              "when user is a not a new Importer" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "claimCreditsForLostDamaged" -> value))
-//
-//                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
-//                result mustBe routes.CheckYourAnswersController.onPageLoad()
-//              }
-//            }
-//
-//            "select No to navigate to return change registration controller page " - {
-//              "when user is a new Importer" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "claimCreditsForLostDamaged" -> value))
-//
-//                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
-//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
-//                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
-//              }
-//            }
-//
-//            "select No to navigate to return change registration controller page " - {
-//              "when user is a new packer" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "claimCreditsForLostDamaged" -> value))
-//
-//                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
-//                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
-//              }
-//            }
-//
-//            "select No to navigate to Index controller page " - {
-//              "when user is a new importer and subscription activity is importer" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "claimCreditsForLostDamaged" -> value))
-//
-//                val importerActivity = RetrievedActivity(
-//                  smallProducer = false,
-//                  largeProducer = true,
-//                  contractPacker = false,
-//                  importer = true,
-//                  voluntaryRegistration = false)
-//                val importerSubscription = aSubscription.copy(activity = importerActivity)
-//
-//                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
-//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
-//                result mustBe routes.CheckYourAnswersController.onPageLoad()
-//              }
-//            }
-//
-//            "select No to navigate to Check your answers controller page " - {
-//              "when user is a new packer and subscription activity is packer" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "claimCreditsForLostDamaged" -> value))
-//
-//                val importerActivity = RetrievedActivity(
-//                  smallProducer = false,
-//                  largeProducer = true,
-//                  contractPacker = true,
-//                  importer = false,
-//                  voluntaryRegistration = false)
-//                val importerSubscription = aSubscription.copy(activity = importerActivity)
-//
-//                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
-//                result mustBe routes.CheckYourAnswersController.onPageLoad()
-//              }
-//            }
-//
-//            "select No to navigate to Check your answers controller page " - {
-//              "when no subscription is available" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "claimCreditsForLostDamaged" -> value))
-//
-//                val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-//                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), None)
-//                result mustBe routes.CheckYourAnswersController.onPageLoad()
-//              }
-//            }
-//
-//            "select No to navigate to Check your answers controller page " - {
-//              "when no return is available" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "claimCreditsForLostDamaged" -> value))
-//
-//                val result = navigate(false, (_ => userAnswers(false)), None)
-//                result mustBe routes.CheckYourAnswersController.onPageLoad()
-//              }
-//            }
-//
-//            "select No to navigate to Check your answers controller page " - {
-//              "when no return nor subscription is available" in {
-//                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
-//                  Json.obj(
-//                    "claimCreditsForLostDamaged" -> value))
-//
-//                val result = navigate(false, (_ => userAnswers(false)), None, None)
-//                result mustBe routes.CheckYourAnswersController.onPageLoad()
-//              }
-//            }
+            "should redirect to check your answers page when current sdil is already an importer" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = true, false)
+              val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
+            "should redirect to check your answers page when current sdil is already an importer and a packer" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = true, importer = true, false)
+              val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
+            "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
+              "but meets the pack large conditions for being a new packer" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
+              "but meets the pack small conditions for being a new packer" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List(SmallProducer("","",(1L, 1L))), (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
+              "but meets the pack small and pack large conditions for being a new packer" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List(SmallProducer("", "", (1L, 1L))), (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
+              "but meets the large import conditions for being a new importer" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
+              "but meets the small import conditions for being a new importer" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (1L, 1L), (0L, 0L), (0L, 0L))
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
+              "but meets the large and small import conditions for being a new importer" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
+              "but meets the pack conditions and import conditions for being a new packer and new packer" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List(SmallProducer("", "", (1L, 1L))), (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
+
+            "should redirect to check your answers page when no return is available" in {
+              val result = navigate(emptyUserAnswers, None, Some(aSubscription))
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
+            "should redirect to check your answers page when no subscription is available" in {
+              val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List.empty, (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
+              val result = navigate(emptyUserAnswers, Some(sdilReturn), None)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
+            "should redirect to check your answers page when no return nor subscription is available" in {
+              val result = navigate(emptyUserAnswers, None, None)
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
 
           }
 
