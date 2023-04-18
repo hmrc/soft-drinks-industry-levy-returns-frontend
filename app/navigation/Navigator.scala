@@ -178,10 +178,15 @@ class Navigator @Inject()() {
   private def packerImporterPageNavigation(sdilReturnOpt: Option[SdilReturn],
                                            subscriptionOpt: Option[RetrievedSubscription]) = {
 
+
     (sdilReturnOpt, subscriptionOpt) match {
       case (Some(sdilReturn), Some(subscription)) =>
+        println(Console.YELLOW + s"New Packer : ${subscription.activity.contractPacker}" + Console.WHITE)
+        println(Console.YELLOW + s"New Importer : ${subscription.activity.importer}" + Console.WHITE)
         val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
         val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
+        println(Console.YELLOW + s"New Packer : $isNewPacker" + Console.WHITE)
+        println(Console.YELLOW + s"New Importer : $isNewImporter" + Console.WHITE)
         if (isNewImporter || isNewPacker) {
           routes.ReturnChangeRegistrationController.onPageLoad()
         } else {
