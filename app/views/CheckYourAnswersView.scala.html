@@ -17,7 +17,9 @@
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
-    govukInput: GovukInput
+    govukInput: GovukInput,
+    govukButton: GovukButton,
+    formHelper: FormWithCSRF
 )
 
 @(alias: String,
@@ -33,7 +35,7 @@
   amountToPay: SummaryList,
   subheader: Option[String] = None,
   registeredSites: Option[SummaryList],
-  nilReturn: Boolean)(implicit request: Request[_], messages: Messages)
+  submitCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -85,8 +87,10 @@
 
     <h2 class="govuk-heading-m">@messages("sendYourReturn")</h2>
     <p class="govuk-body govuk-!-margin-bottom-5">@messages("sendYourReturnConfirmation")</p>
-    <a class="govuk-button" id="confirm-and-submit" role="button" data-module="govuk-button" href="@routes.ReturnSentController.onPageLoad()">@messages("confirmDetailsAndSendReturn")</a>
 
+    @formHelper(action = submitCall, 'autoComplete -> "off") {
+      @govukButton(ButtonViewModel(messages("confirmDetailsAndSendReturn")))
+    }
     <p class = "govuk-body-m">
         <a href="javascript:window.print()" class="govuk-link" id="print-page-cya">@messages("site.print")</a>
     </p>

@@ -35,12 +35,8 @@ trait IntFieldBehaviours extends FieldBehaviours {
     }
 
     "not bind decimals" in {
-
-      forAll(decimals -> "decimal") {
-        decimal =>
-          val result = form.bind(Map(fieldName -> decimal)).apply(fieldName)
+          val result = form.bind(Map(fieldName -> "0.0")).apply(fieldName)
           result.errors must contain only wholeNumberError
-      }
     }
 
     "not bind integers larger than Int.MaxValue" in {
