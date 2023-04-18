@@ -18,12 +18,16 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
+import helpers.LoggerHelper
 import pages._
 import models._
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import org.mockito.Mockito.verify
+import org.mockito.MockitoSugar.mock
+import play.api.Logger
 import play.api.libs.json.Json
 
-class NavigatorSpec extends SpecBase {
+class NavigatorSpec extends SpecBase with LoggerHelper {
 
   val navigator = new Navigator
 
@@ -354,7 +358,7 @@ class NavigatorSpec extends SpecBase {
 
                 val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
                 val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), None)
-                result mustBe routes.CheckYourAnswersController.onPageLoad()
+                result mustBe routes.JourneyRecoveryController.onPageLoad()
               }
             }
 
@@ -365,7 +369,7 @@ class NavigatorSpec extends SpecBase {
                     "claimCreditsForLostDamaged" -> value))
 
                 val result = navigate(false, (_ => userAnswers(false)), None)
-                result mustBe routes.CheckYourAnswersController.onPageLoad()
+                result mustBe routes.JourneyRecoveryController.onPageLoad()
               }
             }
 
@@ -376,7 +380,7 @@ class NavigatorSpec extends SpecBase {
                     "claimCreditsForLostDamaged" -> value))
 
                 val result = navigate(false, (_ => userAnswers(false)), None, None)
-                result mustBe routes.CheckYourAnswersController.onPageLoad()
+                result mustBe routes.JourneyRecoveryController.onPageLoad()
               }
             }
 
@@ -494,19 +498,40 @@ class NavigatorSpec extends SpecBase {
             }
 
             "should redirect to check your answers page when no return is available" in {
-              val result = navigate(emptyUserAnswers, None, Some(aSubscription))
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              withCaptureOfLoggingFrom(navigator.logger) { events =>
+                val result = navigate(emptyUserAnswers, None, Some(aSubscription))
+                result mustBe routes.JourneyRecoveryController.onPageLoad()
+                events.collectFirst {
+                  case event =>
+                    event.getLevel.levelStr mustEqual("WARN")
+                    event.getMessage mustEqual(s"SDIL return not provided for ${aSubscription.sdilRef}")
+                }.getOrElse(fail("No logging captured"))
+              }
             }
 
             "should redirect to check your answers page when no subscription is available" in {
               val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List.empty, (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
-              val result = navigate(emptyUserAnswers, Some(sdilReturn), None)
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              withCaptureOfLoggingFrom(navigator.logger) { events =>
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), None)
+                result mustBe routes.JourneyRecoveryController.onPageLoad()
+                events.collectFirst {
+                  case event =>
+                    event.getLevel.levelStr mustEqual ("WARN")
+                    event.getMessage mustEqual ("SDIL return or subscription not provided for current unknown user")
+                }.getOrElse(fail("No logging captured"))
+              }
             }
 
             "should redirect to check your answers page when no return nor subscription is available" in {
-              val result = navigate(emptyUserAnswers, None, None)
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              withCaptureOfLoggingFrom(navigator.logger) { events =>
+                val result = navigate(emptyUserAnswers, None, None)
+                result mustBe routes.JourneyRecoveryController.onPageLoad()
+                events.collectFirst {
+                  case event =>
+                    event.getLevel.levelStr mustEqual ("WARN")
+                    event.getMessage mustEqual ("SDIL return or subscription not provided for current unknown user")
+                }.getOrElse(fail("No logging captured"))
+              }
             }
 
           }
