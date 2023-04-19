@@ -120,11 +120,8 @@ trait TestConfiguration
   }
 
   override def afterEach(): Unit = {
-    println("===== REQUESTS =====")
     wireMockServer.getAllServeEvents.asScala.toList
       .sortBy(_.getRequest.getLoggedDate)
-      .map(_.getRequest).map(r => s"${r.getLoggedDate.toInstant.toEpochMilli}\t${r.getMethod}\t${r.getUrl}")
-      .foreach(println)
-    println("===== END =====")
+      .map(_.getRequest).foreach(r => s"${r.getLoggedDate.toInstant.toEpochMilli}\t${r.getMethod}\t${r.getUrl}")
   }
 }

@@ -94,7 +94,7 @@ private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String
         Seq(
           ActionItemViewModel("site.change", actionUrl)
             .withAttribute(("id", s"change-$band-litreage-$bandActionIdKey"))
-            .withVisuallyHiddenText(messages(s"${bandHiddenKey}.$band.hidden")))))
+            .withVisuallyHiddenText(messages(s"${bandHiddenKey}.$band.litres.hidden")))))
   } else {
     None
   }

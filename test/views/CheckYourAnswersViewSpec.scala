@@ -27,45 +27,13 @@ import play.twirl.api.HtmlFormat
 import utilitlies.CurrencyFormatter
 import views.helpers.returnDetails.ReturnPeriodQuarter
 
-class CheckYourAnswersViewSpec extends ViewSpecHelper {
+class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
   val checkYourAnswersView: CheckYourAnswersView =
     application.injector.instanceOf[CheckYourAnswersView]
 
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-//  val htmlWithSA: HtmlFormat.Appendable =
-//    enrolledForPTPage(userId, true, routes.EnrolledForPTWithSAController.continue)(FakeRequest(), testMessages)
-//  val htmlWithNoSA: HtmlFormat.Appendable =
-//    enrolledForPTPage(userId, false, routes.EnrolledForPTController.continue)(FakeRequest(), testMessages)
-//  val documentWithSA = doc(htmlWithSA)
-//  val documentWithNoSA = doc(htmlWithNoSA)
-
-  object Selectors {
-    val heading = "govuk-heading-l"
-    val subHeading = "govuk-heading-m"
-    val caption = "govuk-caption-l"
-    val bodyMargin5 = "govuk-body govuk-!-margin-bottom-5"
-    val summaryListRow = "govuk-summary-list__row"
-    val summaryListKey = "govuk-summary-list__key"
-    val summaryListValue = "govuk-summary-list__value"
-    val button = "govuk-button"
-  }
-
-  object SubHeadingIds {
-    val cyaSubHeading = "cya-sub-header"
-    val ownBrands = "ownBrandsPackagedAtYourOwnSite"
-    val contractPackedAtYourOwnSite = "contractPackedAtYourOwnSite"
-    val contractPackedForRegisteredSmallProducers = "contractPackedForRegisteredSmallProducers"
-    val broughtIntoTheUK = "broughtIntoTheUK"
-    val broughtIntoTheUKFromSmallProducers = "broughtIntoTheUKFromSmallProducers"
-    val exported = "exported"
-    val lostOrDestroyed = "lostOrDestroyed"
-    val amountToPayTitle = "amount-to-pay-title"
-    val registeredSites = "registered-sites"
-    val sendYourReturn = "sendYourReturn"
-  }
 
   val amounts = Amounts(1000, 100, 1100)
 
@@ -75,7 +43,7 @@ class CheckYourAnswersViewSpec extends ViewSpecHelper {
     val document: Document = doc(html)
 
     "should have the expected title" in {
-      document.title() mustEqual Messages("checkYourAnswers.title")
+      document.title() must include(Messages("checkYourAnswers.title"))
     }
 
     "should have the expected heading" in {
@@ -108,7 +76,7 @@ class CheckYourAnswersViewSpec extends ViewSpecHelper {
         element.text() mustEqual expectedResult
       }
 
-      "when the amount total is positive" in {
+      "when the amount total is negative" in {
         val amountsWithNegativeTotal = amounts.copy(total = -1000)
         val html1: HtmlFormat.Appendable =
           checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amountsWithNegativeTotal, true)
@@ -131,13 +99,14 @@ class CheckYourAnswersViewSpec extends ViewSpecHelper {
       }
     }
 
-
-//    UserAnswersTestData.userAnswersModels.map { case (key, userAnswers) =>
-//      s"when the $key" - {
-//
-//
-//      }
-//    }
+    UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
+      s"when the $key" - {
+        val html1: HtmlFormat.Appendable =
+          checkYourAnswersView(baseAlias, returnPeriod, userAnswers, amounts, true)
+        val document1: Document = doc(html1)
+        testSummaryLists(key, document1, userAnswers, true)
+      }
+    }
 
     "should have the sendYourReturn sub heading" in {
       val element = document.getElementById("sendYourReturn")
@@ -149,6 +118,21 @@ class CheckYourAnswersViewSpec extends ViewSpecHelper {
       val element = document.getElementById("sendYourReturnConfirmation")
       element.className() mustEqual Selectors.bodyMargin5
       element.text() mustEqual Messages("sendYourReturnConfirmation")
+    }
+
+    "should include the correct govuk button" in {
+      val element = document.getElementById("confirm-and-submit")
+      element.className() mustEqual Selectors.button
+      element.text() mustEqual Messages("confirmDetailsAndSendReturn")
+      element.attr("href") mustEqual "/soft-drinks-industry-levy-returns-frontend/submit-return/nil-return/true"
+    }
+
+    "should include a link to print page" in {
+      val printPageElements = document.getElementById("printPage")
+      printPageElements.className() mustBe Selectors.bodyM
+      val link = printPageElements.getElementsByClass(Selectors.link)
+      link.text() mustEqual Messages("site.print")
+      link.attr("href") mustEqual "javascript:window.print()"
     }
 
   }

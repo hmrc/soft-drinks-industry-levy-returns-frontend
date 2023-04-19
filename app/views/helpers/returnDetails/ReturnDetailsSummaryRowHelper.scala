@@ -32,25 +32,26 @@ trait ReturnDetailsSummaryRowHelper {
   val hiddenText: String
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
-    answers.get(page).fold[Seq[SummaryListRow]](Seq.empty) {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        Seq(
-          SummaryListRowViewModel(
-            key = key,
-            value = ValueViewModel(value).withCssClass("align-right"),
-            actions = if (isCheckAnswers) {
-              Seq(
-                ActionItemViewModel("site.change", action)
-                  .withAttribute(("id", actionId))
-                  .withVisuallyHiddenText(messages(s"$hiddenText.change.hidden"))
-              )
-            } else {
-              Seq.empty
-            }
-          )
-        )
+    val value = if(answers.get(page).contains(true)) {
+      "site.yes"
+    } else {
+      "site.no"
     }
+    Seq(
+      SummaryListRowViewModel(
+        key = key,
+        value = ValueViewModel(value).withCssClass("align-right"),
+        actions = if (isCheckAnswers) {
+          Seq(
+            ActionItemViewModel("site.change", action)
+              .withAttribute(("id", actionId))
+              .withVisuallyHiddenText(messages(s"$hiddenText.change.hidden"))
+          )
+        } else {
+          Seq.empty
+        }
+      )
+    )
   }
 
 }

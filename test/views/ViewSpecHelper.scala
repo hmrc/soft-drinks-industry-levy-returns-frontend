@@ -20,14 +20,18 @@ package views
 import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.test.Helpers.contentAsString
 import play.twirl.api.Html
+import play.api.test.Helpers._
 
 import scala.jdk.CollectionConverters._
 
 trait ViewSpecHelper extends SpecBase{
 
   def doc(result: Html): Document = Jsoup.parse(contentAsString(result))
+
+  def docFromElements(result: Elements): Document = Jsoup.parse(result.html())
 
   def validateTimeoutDialog(doc: Document): Unit = {
     val timeoutDialog = doc

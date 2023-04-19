@@ -55,7 +55,7 @@ govukSummaryList: GovukSummaryList
 
 @PackAtBusinessAddressSummary.summaryList(userAnswers, isCheckAnswers) match {
  case Some(site) => {
-  <h2 class="govuk-heading-m" id="registered-sites">@messages("registeredUkSites")</h2>
+  <h2 class="govuk-heading-m" id="registeredUkSites">@messages("registeredUkSites")</h2>
   @govukSummaryList(site)
  }
  case _ => {

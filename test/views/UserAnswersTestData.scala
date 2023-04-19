@@ -1,5 +1,22 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package views
 
+import models.backend.{Site, UkAddress}
 import models.{LitresInBands, SmallProducer, UserAnswers}
 import play.api.libs.json.{JsBoolean, JsObject, Json}
 
@@ -124,22 +141,34 @@ object UserAnswersTestData {
   )
 
   val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
-  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
+  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (2000L, 1000L))
 
   val smallProducerList1Producer = List(superCola)
   val smallProducerList2Producers = List(superCola, sparkyJuice)
+  val smallProducerList0Litres = List(superCola.copy(litreage = (0L, 0L)))
+  val smallProducerListHighBandOnlyLitres = List(superCola.copy(litreage = (0L, 2000L)))
+  val smallProducerListLowBandOnlyLitres = List(superCola.copy(litreage = (1000L, 0L)))
+
+
+  val packagingSite = Site(
+    UkAddress(List("29 Station Rd", "example", "test", "Cambridge"), "CB1 2FP"),
+    Some("10"),
+    None,
+    None)
+
+  val packagingSiteList = Map("90831480921" -> packagingSite)
 
   val emptyUserDetails = create(Json.obj())
 
-  val withQuestionsAllTrueAllLitresInAllBands1SmallProducer = create(dataWithQuestionsAllTrueAndAllLitresInAllBands, smallProducerList1Producer)
+  val withQuestionsAllTrueAllLitresInAllBands1SmallProducer = create(dataWithQuestionsAllTrueAndAllLitresInAllBands, smallProducerList1Producer, true)
 
-  val withQuestionsAllTrueAllLitresInAllBands2SmallProducer = create(dataWithQuestionsAllTrueAndAllLitresInAllBands, smallProducerList2Producers)
+  val withQuestionsAllTrueAllLitresInAllBands2SmallProducer = create(dataWithQuestionsAllTrueAndAllLitresInAllBands, smallProducerList2Producers, true)
 
-  val withQuestionsAllTrueAndAllLitresInLowBandsOnly = create(dataWithQuestionsAllTrueAndAllLitresInLowBandsOnly)
-  val withQuestionsAllTrueAndAllLitresInHighBandsOnly = create(dataWithQuestionsAllTrueAndAllLitresInHighBandsOnly)
-  val withQuestionsAllTrueAndAllLitresInAllBands0 = create(dataWithQuestionsAllTrueAndAllLitresInAllBands0)
-  val withQuestionsAllFalseAndAllLitres = create(dataWithQuestionsAllFalseAndAllLitres)
-  val withQuestionsAllTrueAndNoLitres = create(dataWithQuestionsAllTrueAndNoLitres)
+  val withQuestionsAllTrueAndAllLitresInLowBandsOnly = create(dataWithQuestionsAllTrueAndAllLitresInLowBandsOnly, smallProducerListLowBandOnlyLitres, withPackagingSite = true)
+  val withQuestionsAllTrueAndAllLitresInHighBandsOnly = create(dataWithQuestionsAllTrueAndAllLitresInHighBandsOnly, smallProducerListHighBandOnlyLitres, withPackagingSite = true)
+  val withQuestionsAllTrueAndAllLitresInAllBands0 = create(dataWithQuestionsAllTrueAndAllLitresInAllBands0, smallProducerList0Litres, withPackagingSite =  true)
+  val withQuestionsAllFalseAndAllLitres = create(dataWithQuestionsAllFalseAndAllLitres, smallProducerList1Producer)
+  val withQuestionsAllTrueAndNoLitres = create(dataWithQuestionsAllTrueAndNoLitres, withPackagingSite = true)
   val withQuestionsAllFalseAndNoLitres = create(dataWithQuestionsAllFalseAndNoLitres)
 
   def questionFieldsAllTrue(key: String): Boolean = key.contains("all boolean fields true")
@@ -150,9 +179,14 @@ object UserAnswersTestData {
   def includesLitresInLowBandOnly(key: String): Boolean = key.contains("litres in low band only")
   def includesLitresInHighBandOnly(key: String): Boolean = key.contains("litres in high band only")
   def includesLitresInBothBands0(key: String): Boolean = key.contains("litres in both bands 0")
+  def includesNoLitres(key: String): Boolean = key.contains("no litres") || key.contains("user answer has no data")
 
-
-
+  def litresDefaultToZero(key: String, band: String): Boolean = {
+    band match {
+      case "lowband" => includesNoLitres(key) || includesLitresInBothBands0(key) || includesLitresInHighBandOnly(key)
+      case _ => includesNoLitres(key) || includesLitresInBothBands0(key) || includesLitresInLowBandOnly(key)
+    }
+  }
 
   val userAnswersModels = Map(
     "user answer has no data" -> emptyUserDetails,
@@ -166,11 +200,12 @@ object UserAnswersTestData {
     "user answers has all boolean fields false and no litres" -> withQuestionsAllFalseAndNoLitres
   )
 
-  private def create(data: JsObject, smallProducerList: List[SmallProducer] = List.empty): UserAnswers = {
+  private def create(data: JsObject, smallProducerList: List[SmallProducer] = List.empty, withPackagingSite: Boolean = false): UserAnswers = {
     UserAnswers(
       id = sdilRef,
       data = data,
       smallProducerList = smallProducerList,
+      packagingSiteList = if(withPackagingSite) {packagingSiteList} else {Map.empty},
       lastUpdated = Instant.now()
     )
   }
