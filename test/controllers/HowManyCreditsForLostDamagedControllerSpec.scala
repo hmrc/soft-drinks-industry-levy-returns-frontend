@@ -17,11 +17,13 @@
 package controllers
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import forms.HowManyCreditsForLostDamagedFormProvider
-import models.{NormalMode, HowManyCreditsForLostDamaged, UserAnswers}
+import models.{HowManyCreditsForLostDamaged, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import org.scalatestplus.mockito.MockitoSugar
 import pages.HowManyCreditsForLostDamagedPage
 import play.api.inject.bind
@@ -104,6 +106,48 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, howManyCreditsForLostDamagedRoute)
+            .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to the next page when actual data is submitted" in {
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "exemptionsForSmallProducers" -> false,
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 444, "highBand" -> 444),
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 10, "highBand" -> 10),
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10, "highBand" -> 10),
+      )
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
           )
           .build()
 
