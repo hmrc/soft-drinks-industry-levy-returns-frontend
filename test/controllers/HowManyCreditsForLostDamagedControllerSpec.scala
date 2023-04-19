@@ -25,7 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HowManyCreditsForLostDamagedPage
+import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, SmallProducerDetailsPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -123,20 +123,20 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
 
     "must redirect to the next page when actual data is submitted" in {
       val userAnswersData = Json.obj(
-        "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        "exemptionsForSmallProducers" -> false,
-        "smallProducerDetails" -> false,
-        "broughtIntoUK" -> true,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        "broughtIntoUkFromSmallProducers" -> true,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 444, "highBand" -> 444),
-        "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 10, "highBand" -> 10),
-        "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10, "highBand" -> 10),
+        OwnBrandsPage.toString -> true,
+        BrandsPackagedAtOwnSitesPage.toString -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        PackagedContractPackerPage.toString -> true,
+        HowManyAsAContractPackerPage.toString -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        ExemptionsForSmallProducersPage.toString -> false,
+        SmallProducerDetailsPage.toString -> false,
+        BroughtIntoUKPage.toString -> true,
+        HowManyBroughtIntoUkPage.toString -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        BroughtIntoUkFromSmallProducersPage.toString -> true,
+        HowManyBroughtIntoTheUKFromSmallProducersPage.toString -> Json.obj("lowBand" -> 444, "highBand" -> 444),
+        ClaimCreditsForExportsPage.toString -> true,
+        HowManyCreditsForExportPage.toString -> Json.obj("lowBand" -> 10, "highBand" -> 10),
+        ClaimCreditsForLostDamagedPage.toString -> true,
+        HowManyCreditsForLostDamagedPage.toString -> Json.obj("lowBand" -> 10, "highBand" -> 10),
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val mockSessionRepository = mock[SessionRepository]
