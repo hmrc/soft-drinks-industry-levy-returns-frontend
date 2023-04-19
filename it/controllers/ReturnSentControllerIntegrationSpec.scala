@@ -5,25 +5,25 @@ import org.scalatest.TryValues
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
-class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
-  "HowManyBroughtIntoTheUKFromSmallProducersController" should {
-    "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
-      setAnswers(broughtIntoUkFullAnswers.success.value)
+class ReturnSentControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+  "ReturnSentController" should {
+    "Redirect to beginning of journey when no returns sent" in {
+      val userAnswers = smallProducerDetaisPartialAnswers.success.value
+      setAnswers(userAnswers.copy(submitted = false))
       given
         .commonPrecondition
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/how-many-into-uk-small-producers")
+        val result1 = client.url(s"$baseUrl/return-sent")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
         whenReady(result1) { res =>
-          res.status mustBe 200
+          res.status mustBe 303
         }
 
       }
     }
   }
-
 }

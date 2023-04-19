@@ -17,15 +17,13 @@
 package views
 
 import config.FrontendAppConfig
-import models.{Amounts, ReturnPeriod}
+import models.Amounts
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import utilitlies.CurrencyFormatter
-import views.helpers.returnDetails.ReturnPeriodQuarter
-import views.html.{CheckYourAnswersView, ReturnSentView}
+import views.html.ReturnSentView
 
 class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
@@ -175,76 +173,4 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
       }
     }
   }
-
-//  "EnrolledForPTPage" when {
-//    "the user has SA" should {
-//      "contain the correct title" in {
-//        documentWithSA.title shouldBe EnrolledForPTPageMessages.title
-//      }
-//      "contain the correct first header" in {
-//        documentWithSA
-//          .getElementsByClass(Selectors.heading)
-//          .text shouldBe EnrolledForPTPageMessages.heading
-//      }
-//
-//      validateTimeoutDialog(documentWithSA)
-//      validateTechnicalHelpLinkPresent(documentWithSA)
-//      validateAccessibilityStatementLinkPresent(documentWithSA)
-//
-//      "contain the correct body" in {
-//        documentWithSA
-//          .getElementsByClass(Selectors.body)
-//          .text shouldBe EnrolledForPTPageMessages.paragraphSA
-//      }
-//
-//      "contain the correct second header" in {
-//        documentWithSA
-//          .getElementsByClass(Selectors.saHeading)
-//          .text shouldBe EnrolledForPTPageMessages.heading2
-//      }
-//
-//      "contain the correct button" in {
-//        documentWithSA
-//          .getElementsByClass(Selectors.button)
-//          .text shouldBe EnrolledForPTPageMessages.button
-//      }
-//
-//      "contains a form with the correct action" in {
-//        documentWithSA
-//          .select(Selectors.form)
-//          .attr("action") shouldBe EnrolledForPTPageMessages.saAction
-//      }
-//    }
-//
-//    "the user has no SA" should {
-//      "contain the correct title" in {
-//        documentWithNoSA.title shouldBe EnrolledForPTPageMessages.title
-//      }
-//      "contain the correct first header" in {
-//        documentWithNoSA
-//          .getElementsByClass("govuk-heading-xl")
-//          .text shouldBe EnrolledForPTPageMessages.heading
-//      }
-//
-//      validateTimeoutDialog(documentWithNoSA)
-//      validateTechnicalHelpLinkPresent(documentWithNoSA)
-//
-//      "contain the correct body" in {
-//        documentWithNoSA
-//          .getElementsByClass("govuk-body")
-//          .text shouldBe EnrolledForPTPageMessages.paragraphNoSA
-//      }
-//      "contain the correct button" in {
-//        documentWithNoSA
-//          .getElementsByClass("govuk-button")
-//          .text shouldBe EnrolledForPTPageMessages.button
-//      }
-//
-//      "contains a form with the correct action" in {
-//        documentWithSA
-//          .select(Selectors.form)
-//          .attr("action") shouldBe EnrolledForPTPageMessages.saAction
-//      }
-//    }
-//  }
 }

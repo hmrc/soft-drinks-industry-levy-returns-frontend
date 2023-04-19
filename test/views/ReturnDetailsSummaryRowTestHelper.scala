@@ -292,7 +292,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
 
   private def highLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
     if (UserAnswersTestData.litresDefaultToZero(key, "highband") ||
-      summaryId == SummaryHeadingIds.broughtIntoTheUKFromSmallProducers) {
+      List(SummaryHeadingIds.broughtIntoTheUKFromSmallProducers, SummaryHeadingIds.contractPackedForRegisteredSmallProducers).contains(summaryId)) {
       "£0.00"
     } else if (isNegativeLevy(summaryId)) {
       "-£240.00"

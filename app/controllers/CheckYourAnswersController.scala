@@ -25,7 +25,7 @@ import models.requests.DataRequest
 import models.{Amounts, UserAnswers}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SDILSessionCache
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,15 +42,20 @@ class CheckYourAnswersController @Inject()(
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
-                                            view: CheckYourAnswersView,
+                                            checkYourAnswersView: CheckYourAnswersView,
                                             sdilConnector: SoftDrinksIndustryLevyConnector,
                                             sessionCache: SDILSessionCache,
-                                            levyCalculator: LevyCalculator,
+                                            levyCalculator: LevyCalculator
                                           ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val lowerBandCostPerLitre: BigDecimal = config.lowerBandCostPerLitre
   val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
   val logger: Logger = Logger(this.getClass())
+
+  def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request =>
+      Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
+  }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request => constructPage(request)
@@ -95,13 +100,14 @@ class CheckYourAnswersController @Inject()(
       val total = totalForQuarter - balanceBroughtForward
       val isNilReturn = totalForQuarter == 0
       val amounts = Amounts(totalForQuarter, balanceBroughtForward, total)
+      val submitUrl: Call = routes.CheckYourAnswersController.onSubmit(isNilReturn)
       cacheHelper.cacheAmounts(sdilEnrolment, amounts)
 
-      Ok(view(request.subscription.orgName,
+      Ok(checkYourAnswersView(request.subscription.orgName,
         returnPeriod,
         answers,
         amounts,
-        isNilReturn
+        submitUrl
       )(request,messages, config))
     }) recoverWith {
       case t: Throwable =>

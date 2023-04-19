@@ -67,19 +67,6 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def nonNumerics: Gen[String] =
     alphaStr suchThat(_.size > 0)
 
-  def decimalsOps: Gen[String] =
-    arbitrary[BigDecimal]
-      . suchThat(x => x > 0 && x < decimalMax)
-      .suchThat(!_.isValidInt)
-      .map("%f".format(_))
-
-
-  def decimals: Gen[String] =
-    arbitrary[BigDecimal]
-      .suchThat(_.abs < Int.MaxValue)
-      .suchThat(!_.isValidInt)
-      .map("%f".format(_))
-
   def intsBelowValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat(_ < value)
 

@@ -25,12 +25,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import services.ReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.CurrencyFormatter
 import utilitlies.ReturnsHelper.extractReturnPeriod
 import views.html.ReturnSentView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class ReturnsController @Inject()(
@@ -42,7 +41,7 @@ class ReturnsController @Inject()(
                                    requireData: DataRequiredAction,
                                    val controllerComponents: MessagesControllerComponents,
                                    view: ReturnSentView,
-                                   sessionCache: SDILSessionCache,
+                                   sessionCache: SDILSessionCache
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   //Warehouse
@@ -70,23 +69,12 @@ class ReturnsController @Inject()(
         session match {
           case Some(amounts) =>
             if (pendingReturns.contains(returnPeriod)) {
-              returnService.returnsUpdate(subscription, returnPeriod, userAnswers, nilReturn).map {
-                case Some(OK) => logger.info(s"Return submitted for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-                case _ => logger.error(s"Failed to submit return for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-                  throw new RuntimeException(s"Failed to submit return $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}" )
-              }
+              returnService.returnsUpdate(subscription, returnPeriod, userAnswers, nilReturn)
             } else {
               logger.error(s"Pending returns for $sdilEnrolment don't contain the return for year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-              Redirect(routes.JourneyRecoveryController.onPageLoad())
+              Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
             }
-
-            Ok(view(returnPeriod,
-              userAnswers,
-              amounts,
-              subscription,
-              CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
-              financialStatus = financialStatus(amounts.total)
-            )(implicitly, implicitly, config))
+           Redirect(routes.ReturnSentController.onPageLoad())
           case _ =>
             logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
             Redirect(routes.JourneyRecoveryController.onPageLoad())

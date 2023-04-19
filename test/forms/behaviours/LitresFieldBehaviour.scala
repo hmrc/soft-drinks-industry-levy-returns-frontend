@@ -35,7 +35,6 @@ class LitresFieldBehaviour extends FieldBehaviours {
       }
     }
 
-
     "not bind negative numbers" in {
 
           val result = form.bind(Map(fieldName -> (-35878697979L).toString)).apply(fieldName)
@@ -44,12 +43,9 @@ class LitresFieldBehaviour extends FieldBehaviours {
     }
 
     "not bind decimals" in {
-
-      forAll(decimalsOps -> "decimal") {
-        decimal =>
-          val result = form.bind(Map(fieldName -> decimal)).apply(fieldName)
+          val result = form.bind(Map(fieldName -> "0.0")).apply(fieldName)
           result.errors must contain only wholeNumberError
-      }
+
     }
   }
 

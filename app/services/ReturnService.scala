@@ -16,33 +16,40 @@
 
 package services
 
-import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedSubscription
 import models.{ReturnPeriod, SdilReturn, UserAnswers}
 import pages._
+import play.api.Logger
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.ReturnsHelper
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReturnService @Inject()(config: FrontendAppConfig,
-                              sdilConnector: SoftDrinksIndustryLevyConnector) {
+class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector) {
+
+  val logger: Logger = Logger(this.getClass())
 
   def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.returns_pending(utr)
 
-  def returnsUpdate(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers, nilReturn: Boolean)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
-    sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted(nilReturn, subscription, userAnswers))
+  def returnsUpdate(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers, nilReturn: Boolean)
+                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted(nilReturn, userAnswers)).map {
+      case Some(OK) => logger.info(s"Return submitted for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+      case _ => logger.error(s"Failed to submit return for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+        throw new RuntimeException(s"Failed to submit return ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+    }
   }
 
-  def returnToBeSubmitted(nilReturn: Boolean, subscription: RetrievedSubscription, userAnswers: UserAnswers) = {
+  private def returnToBeSubmitted(nilReturn: Boolean, userAnswers: UserAnswers): SdilReturn = {
     if (nilReturn) {
       ReturnsHelper.emptyReturn
     } else {
       SdilReturn(
-        ownBrandsLitres(subscription, userAnswers),
+        ownBrandsLitres(userAnswers),
         packLargeLitres(userAnswers),
         userAnswers.smallProducerList,
         importsLitres(userAnswers),
@@ -53,7 +60,7 @@ class ReturnService @Inject()(config: FrontendAppConfig,
   }
 
 
-  private def ownBrandsLitres(subscription: RetrievedSubscription, userAnswers: UserAnswers) = {
+  private def ownBrandsLitres(userAnswers: UserAnswers) = {
     (userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L))
   }

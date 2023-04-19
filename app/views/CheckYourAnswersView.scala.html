@@ -25,6 +25,8 @@
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     govukInput: GovukInput,
+    govukButton: GovukButton,
+    formHelper: FormWithCSRF,
     returnDetailsSummary: returnDetailsSummary
 )
 
@@ -32,7 +34,7 @@
   returnPeriod: ReturnPeriod,
   userAnswers: UserAnswers,
   amounts: Amounts,
-  nilReturn: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+  submitCall: Call)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -52,8 +54,10 @@
 
     <h2 class="govuk-heading-m" id="sendYourReturn">@messages("sendYourReturn")</h2>
     <p class="govuk-body govuk-!-margin-bottom-5" id="sendYourReturnConfirmation">@messages("sendYourReturnConfirmation")</p>
-    <a class="govuk-button" id="confirm-and-submit" role="button" data-module="govuk-button" href="@routes.ReturnsController.onPageLoad(nilReturn)">@messages("confirmDetailsAndSendReturn")</a>
 
+    @formHelper(action = submitCall, 'autoComplete -> "off") {
+        @govukButton(ButtonViewModel(messages("confirmDetailsAndSendReturn")))
+    }
     <p class = "govuk-body-m" id="printPage">
         <a href="javascript:window.print()" class="govuk-link" id="print-page-cya">@messages("site.print")</a>
     </p>

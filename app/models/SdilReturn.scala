@@ -16,11 +16,14 @@
 
 package models
 
-import cats.implicits._
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
 import java.time.LocalDateTime
+import cats.implicits._
+import SdilReturn._
+import models.requests.DataRequest
+import pages._
 
 
 case class SdilReturn(
@@ -34,11 +37,13 @@ case class SdilReturn(
                        submittedOn: Option[LocalDateTime] = None
                      ) {
 
-  private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
-  def totalpackSmallLitres: (Long, Long) = packSmall.map(x => x.litreage).combineAll
-  def totalPacked: (Long, Long) = packLarge |+| totalpackSmallLitres
+  def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
-  def total: BigDecimal = sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
+
+  private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
+
+  def total: BigDecimal =
+    sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
 
   type Litres = Long
   type LitreBands = (Litres, Litres)
@@ -52,14 +57,44 @@ case class SdilReturn(
 
 object SdilReturn {
 
-    implicit val longTupleFormatter: Format[(Long, Long)] = (
-      (JsPath \ "lower").format[Long] and
-        (JsPath \ "higher").format[Long]
-      )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
-      Tuple2.unapply(x)
-    }))
+  implicit val longTupleFormatter: Format[(Long, Long)] = (
+    (JsPath \ "lower").format[Long] and
+      (JsPath \ "higher").format[Long]
+    )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
+    Tuple2.unapply(x)
+  }))
 
-    implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
-    implicit val returnsFormat = Json.format[SdilReturn]
+  implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
+  implicit val returnsFormat = Json.format[SdilReturn]
+
+  implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
+    def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
+  }
+
+  def apply(userAnswers: UserAnswers)(implicit request: DataRequest[_]): SdilReturn = {
+    val lowOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
+    val highOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
+    val lowPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
+    val highPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
+    val packSmall = request.userAnswers.smallProducerList
+    val lowImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
+    val highImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
+    val lowImportSmall = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
+    val highImportSmall = userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.highBand).getOrElse(0L)
+    val lowExports = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
+    val highExports = userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
+    val lowWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
+    val highWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
+    SdilReturn(
+      ownBrand = (lowOwnBrand, highOwnBrand),
+      packLarge = (lowPackLarge, highPackLarge),
+      packSmall = packSmall,
+      importLarge = (lowImportLarge, highImportLarge),
+      importSmall = (lowImportSmall, highImportSmall),
+      export = (lowExports, highExports),
+      wastage = (lowWastage, highWastage)
+    )
+
+  }
 
 }

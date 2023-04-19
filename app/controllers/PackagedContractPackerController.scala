@@ -18,10 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.PackagedContractPackerFormProvider
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -37,19 +36,18 @@ class PackagedContractPackerController @Inject()(
                                                  navigator: Navigator,
                                                  identify: IdentifierAction,
                                                  getData: DataRetrievalAction,
-                                                 requireData: DataRequiredAction,
                                                  formProvider: PackagedContractPackerFormProvider,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view: PackagedContractPackerView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
-  val logger: Logger = Logger(this.getClass())
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(PackagedContractPackerPage) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(PackagedContractPackerPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -57,16 +55,16 @@ class PackagedContractPackerController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-
+      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           (for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagedContractPackerPage, value))
+            updatedAnswers <- Future.fromTry(answers.set(PackagedContractPackerPage, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield updatedAnswers).flatMap { updatedAnswers =>
             if (value) {

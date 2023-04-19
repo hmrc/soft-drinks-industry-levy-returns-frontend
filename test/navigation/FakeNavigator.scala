@@ -23,11 +23,9 @@ import models.{Mode, SdilReturn, UserAnswers}
 
 class FakeNavigator(desiredRoute: Call) extends Navigator {
 
-  override def nextPage(page: Page,
-                        mode: Mode,
-                        userAnswers: UserAnswers,
-                        sdilReturn: Option[SdilReturn],
-                        subscription: Option[RetrievedSubscription],
-                        smallProducerMissing: Option[Boolean],
-                        changedRegistation: Option[Map[String, Boolean]]): Call = desiredRoute
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers,
+                        sdilReturn: Option[SdilReturn] = None,
+                        subscription: Option[RetrievedSubscription] = None,
+                        smallProducerMissing: Option[Boolean] = None): Call =
+    desiredRoute
 }

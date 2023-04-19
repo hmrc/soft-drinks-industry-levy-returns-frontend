@@ -24,5 +24,6 @@ object HowManyAsAContractPackerSummary extends SummaryListRowLitresHelper {
   override val actionUrl = routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "contract-packer"
   override val bandHiddenKey: String = "contractPackedAtYourOwnSite"
+  override val hasZeroLevy: Boolean = true
 
 }

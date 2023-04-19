@@ -13,6 +13,7 @@ GET         /refresh-session                             controllers.KeepAliveCo
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
+POST        /check-your-answers/nil-return/:nilReturn    controllers.CheckYourAnswersController.onSubmit(nilReturn: Boolean)
 GET         /check-your-answers/no-activity-to-report    controllers.CheckYourAnswersController.noActivityToReport()
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
@@ -127,4 +128,4 @@ GET        /change-packaging-site-details                       controllers.Pack
 POST       /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
 
 GET        /submit-return/nil-return/:nilReturn                 controllers.ReturnsController.onPageLoad(nilReturn: Boolean)
-#GET        /return-sent                                         controllers.ReturnsController.onPageLoad
+GET        /return-sent                                        controllers.ReturnSentController.onPageLoad()

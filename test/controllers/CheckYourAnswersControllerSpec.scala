@@ -56,7 +56,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   when(mockSdilConnector.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(100)))
   when(mockSDILSessionCache.save(any(),any(),any())(any())).thenReturn(Future.successful(cacheMap))
 
-  "Check Your Answers Controller" - {
+  "Check Your Answers Controller onPageLoad" - {
 
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
 
@@ -776,8 +776,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("sendYourReturn"))
         page.getElementsByTag("p").text() must include(Messages("sendYourReturnConfirmation"))
-        page.getElementById("confirm-and-submit").text() must include(Messages("confirmDetailsAndSendReturn"))
-        page.getElementById("confirm-and-submit").attributes().get("href") mustEqual s"$baseUrl/submit-return/nil-return/true"
+
+        val formOnPageForSubmit = page.getElementsByTag("form")
+        formOnPageForSubmit.first().attr("action") mustEqual s"$baseUrl/check-your-answers/nil-return/true"
+        formOnPageForSubmit.first().getElementsByTag("button").first().text() must include(Messages("confirmDetailsAndSendReturn"))
         page.getElementById("print-page-cya").text() must include(Messages("site.print"))
       }
     }
@@ -1229,6 +1231,40 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must not include("£79.92")
         page.getElementsByTag("dd").text() must not include("£106.56")
 
+      }
+    }
+  }
+  "Check your Answers Controller onSubmit" - {
+    "should redirect to Returns controller with nil return true" in {
+      val userAnswersData = Json.obj()
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
+        bind[SDILSessionCache].toInstance(mockSDILSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      running(application) {
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(nilReturn = true).url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).get mustBe routes.ReturnsController.onPageLoad(true).url
+      }
+    }
+    "should redirect to Returns controller with nil return false" in {
+      val userAnswersData = Json.obj()
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val application = applicationBuilder(Some(userAnswers), defaultReturnPeriod).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockConfig),
+        bind[SDILSessionCache].toInstance(mockSDILSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      running(application) {
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(nilReturn = false).url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).get mustBe routes.ReturnsController.onPageLoad(false).url
       }
     }
   }

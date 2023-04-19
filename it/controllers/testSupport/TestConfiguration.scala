@@ -74,8 +74,8 @@ trait TestConfiguration
   lazy val config = Map(
     s"microservice.services.auth.host" -> s"$wiremockHost",
     s"microservice.services.auth.port" -> s"$wiremockPort",
-    s"microservice.services.auth.bas-gateway.host" -> s"$wiremockHost",
-    s"microservice.services.auth.bas-gateway.port" -> s"$wiremockPort",
+    s"microservice.services.bas-gateway.host" -> s"$wiremockHost",
+    s"microservice.services.bas-gateway.port" -> s"$wiremockPort",
     s"microservice.services.soft-drinks-industry-levy.host" -> s"$wiremockHost",
     s"microservice.services.soft-drinks-industry-levy.port" -> s"$wiremockPort",
     "play.filters.csrf.header.bypassHeaders.X-Requested-With" -> "*",
