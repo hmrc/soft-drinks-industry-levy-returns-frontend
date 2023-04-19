@@ -76,7 +76,6 @@ class RemoveWarehouseConfirmController @Inject()(
   def onSubmit(mode: Mode, index: String): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-
         val warehouseList = request.userAnswers.warehouseList
         val warehouseToRemove:Warehouse = warehouseList(index)
         val formattedAddress = s"${warehouseToRemove.tradingName}, ${warehouseToRemove.address.line1}, ${warehouseToRemove.address.line2}, ${warehouseToRemove.address.line3}, ${warehouseToRemove.address.line4}, ${warehouseToRemove.address.postcode}"
