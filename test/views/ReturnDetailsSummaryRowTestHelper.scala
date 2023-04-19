@@ -16,6 +16,7 @@
 
 package views
 
+import base.UserAnswersTestData
 import models.UserAnswers
 import org.jsoup.nodes.Element
 import play.api.i18n.Messages
@@ -275,7 +276,9 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
 
   private def lowLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
     if (UserAnswersTestData.litresDefaultToZero(key, "lowband") ||
-      summaryId == SummaryHeadingIds.broughtIntoTheUKFromSmallProducers) {
+      List(SummaryHeadingIds.broughtIntoTheUKFromSmallProducers,
+        SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
+        .contains(summaryId)) {
       "£0.00"
     } else if (isNegativeLevy(summaryId)) {
       "-£180.00"
@@ -292,7 +295,9 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
 
   private def highLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
     if (UserAnswersTestData.litresDefaultToZero(key, "highband") ||
-      List(SummaryHeadingIds.broughtIntoTheUKFromSmallProducers, SummaryHeadingIds.contractPackedForRegisteredSmallProducers).contains(summaryId)) {
+      List(SummaryHeadingIds.broughtIntoTheUKFromSmallProducers,
+        SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
+        .contains(summaryId)) {
       "£0.00"
     } else if (isNegativeLevy(summaryId)) {
       "-£240.00"

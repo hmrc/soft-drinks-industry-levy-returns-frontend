@@ -38,6 +38,7 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
   override val action: String = routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
   override val actionId: String = "change-small-producer-details"
   override val hiddenText: String = "smallProducerDetails"
+  override val hasZeroLevy: Boolean = true
 
   def producerList(smallProducersList: List[SmallProducer])(implicit messages: Messages): SummaryList = {
     val rows = smallProducersList.map {

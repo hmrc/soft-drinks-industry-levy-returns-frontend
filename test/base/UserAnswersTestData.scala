@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package base
 
 import models.backend.{Site, UkAddress}
 import models.{LitresInBands, SmallProducer, UserAnswers}

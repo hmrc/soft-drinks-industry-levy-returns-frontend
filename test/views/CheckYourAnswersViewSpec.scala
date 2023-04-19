@@ -16,6 +16,7 @@
 
 package views
 
+import base.UserAnswersTestData
 import config.FrontendAppConfig
 import controllers.routes
 import models.{Amounts, ReturnPeriod}

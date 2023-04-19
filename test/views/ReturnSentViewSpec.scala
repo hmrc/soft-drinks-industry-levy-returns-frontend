@@ -16,6 +16,7 @@
 
 package views
 
+import base.UserAnswersTestData
 import config.FrontendAppConfig
 import models.Amounts
 import org.jsoup.nodes.Document
