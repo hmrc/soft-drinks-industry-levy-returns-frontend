@@ -22,11 +22,11 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
-import models.{Amounts, ReturnPeriod, UserAnswers, SdilCalculation}
+import models.{Amounts, ReturnPeriod, SdilCalculation, UserAnswers}
 import pages._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject()(
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
-                                            view: CheckYourAnswersView,
+                                            checkYourAnswersView: CheckYourAnswersView,
                                             sdilConnector: SoftDrinksIndustryLevyConnector,
                                             sessionCache: SDILSessionCache,
                                             levyCalculator: LevyCalculator,
@@ -54,6 +54,11 @@ class CheckYourAnswersController @Inject()(
   val lowerBandCostPerLitre: BigDecimal = config.lowerBandCostPerLitre
   val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
   val logger: Logger = Logger(this.getClass())
+
+  def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request =>
+      Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
+  }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request => constructPage(request)
@@ -94,12 +99,13 @@ class CheckYourAnswersController @Inject()(
         }
     } yield {
 
-      val totalForQuarter = calculateTotalForQuarter(answers, isSmallProducer.getOrElse(false))
-      val total = totalForQuarter - balanceBroughtForward
-      val isNilReturn = totalForQuarter == 0
+      val totalForQuarter: BigDecimal = calculateTotalForQuarter(answers, isSmallProducer.getOrElse(false))
+      val total: BigDecimal = totalForQuarter - balanceBroughtForward
+      val isNilReturn: Boolean = totalForQuarter == 0
+      val submitUrl: Call = routes.CheckYourAnswersController.onSubmit(isNilReturn)
       cacheHelper.cacheAmounts(sdilEnrolment, Amounts(totalForQuarter, balanceBroughtForward, total))
 
-      Ok(view(request.subscription.orgName,
+      Ok(checkYourAnswersView(request.subscription.orgName,
         formattedReturnPeriodQuarter(returnPeriod),
         ownBrandsAnswers(answers),
         packagedContractPackerAnswers(answers),
@@ -112,7 +118,7 @@ class CheckYourAnswersController @Inject()(
         AmountToPaySummary.amountToPaySummary(totalForQuarter, balanceBroughtForward, total),
         AmountToPaySummary.subheader(total),
         registeredSites(answers),
-        isNilReturn
+        submitUrl
       )(request,messages))
     }) recoverWith {
       case t: Throwable =>
