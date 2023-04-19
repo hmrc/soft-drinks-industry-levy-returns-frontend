@@ -497,7 +497,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               }
             }
 
-            "should redirect to check your answers page when no return is available" in {
+            "should redirect to journey recovery page when no return is available" in {
               withCaptureOfLoggingFrom(navigator.logger) { events =>
                 val result = navigate(emptyUserAnswers, None, Some(aSubscription))
                 result mustBe routes.JourneyRecoveryController.onPageLoad()
@@ -509,7 +509,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               }
             }
 
-            "should redirect to check your answers page when no subscription is available" in {
+            "should redirect to journey recovery page when no subscription is available" in {
               val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List.empty, (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
               withCaptureOfLoggingFrom(navigator.logger) { events =>
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), None)
@@ -522,7 +522,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               }
             }
 
-            "should redirect to check your answers page when no return nor subscription is available" in {
+            "should redirect to journey recovery page when no return nor subscription is available" in {
               withCaptureOfLoggingFrom(navigator.logger) { events =>
                 val result = navigate(emptyUserAnswers, None, None)
                 result mustBe routes.JourneyRecoveryController.onPageLoad()
