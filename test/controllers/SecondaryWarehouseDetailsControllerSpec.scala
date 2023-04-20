@@ -78,6 +78,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         )
 
         status(result) mustEqual OK
+
         val summaryListContents = doc(contentAsString(result))
           .getElementsByClass("govuk-summary-list__key")
 

@@ -21,6 +21,7 @@ import models.{CheckMode, UserAnswers, Warehouse}
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -55,20 +56,16 @@ object SecondaryWarehouseDetailsSummary  {
   def row2(warehouseList: Map[String,Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(s"${warehouse._2.address.line1}, ${warehouse._2.address.line2}, ${warehouse._2.address.line3}, ${warehouse._2.address.line4}, ${warehouse._2.address.postcode}")
-          )
-        )
-        SummaryListRowViewModel(
-          key     = warehouse._2.tradingName,
-          value   = value,
-          actions = Seq(
+        SummaryListRow(
+          key     = Key(HtmlContent(s"""${warehouse._2.tradingName}<br>${HtmlFormat.escape((warehouse._2.address.line1 + warehouse._2.address.line2 + warehouse._2.address.line3 + warehouse._2.address.line4) )}"""),
+          classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
+          ),
+          actions = Some(Actions("",Seq(
             ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url)
               .withVisuallyHiddenText(messages("secondaryWarehouseDetails.edit.hidden")),
             ActionItemViewModel("site.remove", routes.RemoveWarehouseConfirmController.onPageLoad(warehouse._1).url)
               .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
-          )
+          )))
         )
     }
   }.toList

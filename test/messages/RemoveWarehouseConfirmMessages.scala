@@ -20,6 +20,6 @@ object RemoveWarehouseConfirmMessages extends BaseMessages {
 
   val title = "Are you sure you want to remove this warehouse?"
   val address = "33 Rhes Priordy East London E73 2RP"
-  val errorMessage= "Select yes if you want to remove warehouse"
+  val errorMessage= "Select yes if you want to remove this warehouse"
 
 }
