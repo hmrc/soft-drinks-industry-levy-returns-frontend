@@ -241,8 +241,6 @@ addASmallProducer.error.referenceNumber.same = Small producer reference number m
 addASmallProducer.error.referenceNumber.exists = Small producer reference number must be different to a small producer reference number you have already added
 addASmallProducer.error.referenceNumber.notASmallProducer = Small producer reference number does not match a business that is currently registered as a small producer. Check and try again.
 addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
-addASmallProducer.lowBand.litres.hidden = lowBand
-addASmallProducer.highBand.litres.hidden = highBand
 
 secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.heading1 = You added {0} UK warehouses
