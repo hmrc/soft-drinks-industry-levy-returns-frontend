@@ -57,15 +57,15 @@ case class SdilReturn(
 
 object SdilReturn {
 
-    implicit val longTupleFormatter: Format[(Long, Long)] = (
-      (JsPath \ "lower").format[Long] and
-        (JsPath \ "higher").format[Long]
-      )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
-      Tuple2.unapply(x)
-    }))
+  implicit val longTupleFormatter: Format[(Long, Long)] = (
+    (JsPath \ "lower").format[Long] and
+      (JsPath \ "higher").format[Long]
+    )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
+    Tuple2.unapply(x)
+  }))
 
-    implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
-    implicit val returnsFormat = Json.format[SdilReturn]
+  implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
+  implicit val returnsFormat = Json.format[SdilReturn]
 
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll

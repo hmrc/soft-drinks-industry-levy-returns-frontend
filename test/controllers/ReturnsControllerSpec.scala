@@ -18,13 +18,10 @@ package controllers
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import models.retrieved.RetrievedActivity
-import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
-import org.jsoup.Jsoup
+import models.{Amounts, ReturnPeriod, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -65,68 +62,68 @@ class ReturnsControllerSpec extends SpecBase {
       }
     }
 
-      "must redirect to return sent when nil returns is true" in {
-        val amounts = Amounts(0, 0, 0)
-        when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-        val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
-          bind[SDILSessionCache].toInstance(mockSessionCache),
-          bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-        ).build()
+    "must redirect to return sent when nil returns is true" in {
+      val amounts = Amounts(0, 0, 0)
+      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
+      val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
+        bind[SDILSessionCache].toInstance(mockSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
 
-        running(application) {
-          val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(true).url)
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).get mustBe routes.ReturnSentController.onPageLoad().url
-        }
-      }
-
-
-      "must handle errors when submit return fails" in {
-        val amounts = Amounts(666, 666, 1332)
-
-        when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-        when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
-        when(mockSdilConnector.returns_update(any(), any(), any())(any())) thenReturn Future.successful(None)
-
-        val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
-          bind[SDILSessionCache].toInstance(mockSessionCache),
-          bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-        ).build()
-
-        val result = running(application) {
-          val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
-          route(application, request).value
-        }
-
-        intercept[RuntimeException](
-          result mustBe an[RuntimeException]
-        )
-      }
-
-      "must handle errors when no amounts returned from session" in {
-
-        when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(None)
-        when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
-        when(mockSdilConnector.returns_update(any(), any(), any())(any())) thenReturn Future.successful(None)
-
-        val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
-          bind[SDILSessionCache].toInstance(mockSessionCache),
-          bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-        ).build()
-
-        val result = running(application) {
-          val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
-          route(application, request).value
-        }
+      running(application) {
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(true).url)
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
-        intercept[RuntimeException](
-          result mustBe an[RuntimeException]
-        )
+        redirectLocation(result).get mustBe routes.ReturnSentController.onPageLoad().url
       }
     }
+
+
+    "must handle errors when submit return fails" in {
+      val amounts = Amounts(666, 666, 1332)
+
+      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
+      when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
+      when(mockSdilConnector.returns_update(any(), any(), any())(any())) thenReturn Future.successful(None)
+
+      val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
+        bind[SDILSessionCache].toInstance(mockSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
+
+      val result = running(application) {
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        route(application, request).value
+      }
+
+      intercept[RuntimeException](
+        result mustBe an[RuntimeException]
+      )
+    }
+
+    "must handle errors when no amounts returned from session" in {
+
+      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(None)
+      when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriodsContainingBaseReturnPeriod)
+      when(mockSdilConnector.returns_update(any(), any(), any())(any())) thenReturn Future.successful(None)
+
+      val application = applicationBuilder(Some(emptyUserAnswers), Some(returnPeriod)).overrides(
+        bind[SDILSessionCache].toInstance(mockSessionCache),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
+
+      val result = running(application) {
+        val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(false).url)
+        route(application, request).value
+      }
+
+      status(result) mustEqual SEE_OTHER
+
+      intercept[RuntimeException](
+        result mustBe an[RuntimeException]
+      )
+    }
+  }
 
 }

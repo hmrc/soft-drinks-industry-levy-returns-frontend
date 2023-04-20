@@ -17,7 +17,6 @@
 package forms
 
 import forms.behaviours.LongFieldBehaviour
-import play.api.data.{Form, FormError}
 
 trait LitresHelper extends LongFieldBehaviour {
 

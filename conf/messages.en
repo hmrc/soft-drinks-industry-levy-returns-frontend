@@ -69,7 +69,7 @@ packagedContractPacker.title = Are you reporting liable drinks you have packaged
 packagedContractPacker.subHeading = Do not include liable drinks you have packaged for registered small producers.
 packagedContractPacker.checkYourAnswersLabel = packagedContractPacker
 packagedContractPacker.error.required = Select yes if you are reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate
-packagedContractPacker.change.hidden = packagedContractPacker
+packagedContractPacker.change.hidden = packaged contract packer
 
 
 ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
@@ -241,8 +241,6 @@ addASmallProducer.error.referenceNumber.same = Small producer reference number m
 addASmallProducer.error.referenceNumber.exists = Small producer reference number must be different to a small producer reference number you have already added
 addASmallProducer.error.referenceNumber.notASmallProducer = Small producer reference number does not match a business that is currently registered as a small producer. Check and try again.
 addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
-addASmallProducer.lowBand.change.hidden = lowBand
-addASmallProducer.highBand.change.hidden = highBand
 
 secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.heading1 = You added {0} UK warehouses
@@ -266,38 +264,38 @@ highBandLevy = High band levy
 
 ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
 reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
-ownBrandsPackagedAtYourOwnSite.lowband.hidden = low band litres of own brands packaged at your own site
-ownBrandsPackagedAtYourOwnSite.highband.hidden = high band litres of own brands packaged at your own site
+ownBrandsPackagedAtYourOwnSite.lowband.litres.hidden = low band litres of own brands packaged at your own site
+ownBrandsPackagedAtYourOwnSite.highband.litres.hidden = high band litres of own brands packaged at your own site
 
 contractPackedAtYourOwnSite = Contract packed at your own site
 reportingContractPackedAtYourOwnSite = Reporting contract packed at your own sites?
-contractPackedAtYourOwnSite.lowband.hidden = low band litres of contract packed at your own site
-contractPackedAtYourOwnSite.highband.hidden = high band litres of contract packed at your own site
+contractPackedAtYourOwnSite.lowband.litres.hidden = low band litres of contract packed at your own site
+contractPackedAtYourOwnSite.highband.litres.hidden = high band litres of contract packed at your own site
 
 contractPackedForRegisteredSmallProducers = Contract packed for registered small producers
 exemptionForRegisteredSmallProducers = Exemption for registered small producers?
-contractPackedForRegisteredSmallProducers.lowband.hidden = low band total litres of contract packed for registered small producers
-contractPackedForRegisteredSmallProducers.highband.hidden = high band total litres of contract packed for registered small producers
+contractPackedForRegisteredSmallProducers.lowband.litres.hidden = low band total litres of contract packed for registered small producers
+contractPackedForRegisteredSmallProducers.highband.litres.hidden = high band total litres of contract packed for registered small producers
 
 broughtIntoTheUK = Brought into the UK
 reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK?
-broughtIntoTheUK.lowband.hidden = low band litres of liable drinks brought into the UK
-broughtIntoTheUK.highband.hidden = high band litres of liable drinks brought into the UK
+broughtIntoTheUK.lowband.litres.hidden = low band litres of liable drinks brought into the UK
+broughtIntoTheUK.highband.litres.hidden = high band litres of liable drinks brought into the UK
 
 broughtIntoTheUKFromSmallProducers = Brought into the UK from small producers
 reportingLiableDrinksBroughtIntoTheUKFromSmallProducers = Reporting liable drinks brought into the UK from small producers
-broughtIntoTheUKFromSmallProducers.lowband.hidden = low band litres of liable drinks brought into the UK from small producers
-broughtIntoTheUKFromSmallProducers.highband.hidden = high band litres of liable drinks brought into the UK from small producers
+broughtIntoTheUKFromSmallProducers.lowband.litres.hidden = low band litres of liable drinks brought into the UK from small producers
+broughtIntoTheUKFromSmallProducers.highband.litres.hidden = high band litres of liable drinks brought into the UK from small producers
 
 exported = Exported
 claimingCreditForExportedLiableDrinks = Claiming credit for exported liable drinks?
-exported.lowband.hidden = low band litres if claiming credit for exported liable drinks
-exported.highband.hidden = high band litres if claiming credit for exported liable drinks
+exported.lowband.litres.hidden = low band litres if claiming credit for exported liable drinks
+exported.highband.litres.hidden = high band litres if claiming credit for exported liable drinks
 
 lostOrDestroyed = Lost or destroyed
 claimingCreditForLostOrDestroyedLiableDrinks = Claiming credit for lost or destroyed liable drinks?
-lostOrDestroyed.lowband.hidden = low band litres if claiming credit for lost or destroyed liable drinks
-lostOrDestroyed.highband.hidden = high band litres if claiming credit for lost or destroyed liable drinks
+lostOrDestroyed.lowband.litres.hidden = low band litres if claiming credit for lost or destroyed liable drinks
+lostOrDestroyed.highband.litres.hidden = high band litres if claiming credit for lost or destroyed liable drinks
 
 amountToPay = Amount to pay
 youDoNotNeedToPayAnything = You do not need to pay anything
@@ -318,8 +316,10 @@ confirmDetailsAndSendReturn = Confirm details and send return
 
 reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site
 exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?
+exemptionsForSmallProducers.change.hidden = exemptions for registered small producers
 ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site
 broughtIntoUK.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
+broughtIntoUK.change.hidden = reported liable drinks brought into the UK
 claimCreditsForLostDamaged.checkYourAnswersLabel = Claiming credit for lost or destroyed liable drinks?
 broughtIntoUKFromSmallProducers.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
 
@@ -329,8 +329,9 @@ returnSent.returnsDoneMessage = Your Soft Drinks Industry Levy return from {0} t
 returnSent.headerOne = What you need to do next
 
 returnSent.paymentsBlurb.payby=You need to pay {0} by {1}.
-returnSent.paymentsBlurb.payby.info=Make sure you include your Soft Drinks Industry Levy reference {0} when making a payment.
-retutnSent.paymentBlurb.paybyLink = See how to pay the levy (opens in a new tab)
+returnSent.paymentsBlurb.payby.info1 = Make sure you include your Soft Drinks Industry Levy reference.
+returnSent.paymentsBlurb.payby.info2 = when making a payment.
+returnSent.paymentBlurb.paybyLink = See how to pay the levy (opens in a new tab)
 returnSent.paymentsBlurb.nothingOwed=You do not need to do anything else.
 returnSent.paymentsBlurb.credited = We will take the payment from your Soft Drinks Industry Levy account shortly.
 returnSent.paymentsBlurb.nextReturn=Your next return will be for {0} to {1}. You must send this return and make any \
@@ -351,6 +352,7 @@ returnSent.exported = Exported
 returnSent.lostDestroyed = Lost or destroyed
 returnSent.amountToPay = Amount to pay
 returnSent.RegisteredSites = Registered UK sites
+returnSent.details = Details of your return
 
 checkYourAnswers.amountToPay.title = Amount to pay
 checkYourAnswers.creditedPay.title = Amount you will be credited

@@ -88,7 +88,7 @@ class Navigator @Inject()() {
 
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
-     routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
+      routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
     } else {
       routes.PackagedContractPackerController.onPageLoad(NormalMode)
     }
@@ -142,13 +142,13 @@ class Navigator @Inject()() {
 
   }
 
- private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
-   if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
-     routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
-   } else {
-     routes.SmallProducerDetailsController.onPageLoad(NormalMode)
-   }
- }
+  private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
+      routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    } else {
+      routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    }
+  }
 
   private def claimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {

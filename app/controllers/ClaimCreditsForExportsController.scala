@@ -18,8 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.ClaimCreditsForExportsFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.{ClaimCreditsForExportsPage, HowManyCreditsForExportPage}
@@ -30,8 +28,8 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ClaimCreditsForExportsView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class ClaimCreditsForExportsController @Inject()(
                                          override val messagesApi: MessagesApi,

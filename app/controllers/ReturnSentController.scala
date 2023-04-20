@@ -18,21 +18,17 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.{Amounts, NormalMode}
 import navigation.Navigator
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import models.requests.DataRequest
-import models.{Address, Amounts, NormalMode, SmallProducer, UserAnswers, Warehouse}
-import pages._
-import play.api.Logger
-import play.api.i18n.Messages
 import repositories.{SDILSessionCache, SDILSessionKeys}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.CurrencyFormatter
 import utilitlies.ReturnsHelper.extractReturnPeriod
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
 import views.html.ReturnSentView
+
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -45,7 +41,7 @@ class ReturnSentController @Inject()(
                                       navigator: Navigator,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: ReturnSentView,
-                                      sessionCache: SDILSessionCache,
+                                      sessionCache: SDILSessionCache
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   //Warehouse
@@ -55,7 +51,6 @@ class ReturnSentController @Inject()(
   val line3: String = "Berkshire"
   val line4: String = "United Kingdom"
   val postcode: String = "CT44 0DF"
-  val warehouseList: List[Warehouse] = List(Warehouse(tradingName, Address(line1, line2, line3, line4, postcode)))
   val logger: Logger = Logger(this.getClass())
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -72,138 +67,18 @@ class ReturnSentController @Inject()(
         session match {
           case Some(amounts) =>
             if(userAnswers.submitted){
-            Ok(view(
-              returnPeriod,
-              subscription,
-              CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
-              amounts.totalForQuarter,
-              returnPeriod,
-              financialStatus = financialStatus(amounts.total): String,
-              ownBrandsAnswers(userAnswers),
-              packagedContractPackerAnswers(request, userAnswers),
-              exemptionForSmallProducersAnswers(userAnswers),
-              broughtIntoUKAnswers(userAnswers),
-              broughtIntoUKFromSmallProducerAnswers(userAnswers),
-              claimCreditsForExportsAnswers(userAnswers),
-              claimCreditsForLostOrDamagedAnswers(userAnswers),
-              smallProducerCheck = smallProducerCheck(request.userAnswers.smallProducerList): Option[List[SmallProducer]],
-              warehouseCheck = warehouseCheck(warehouseList): Option[List[Warehouse]],
-              smallProducerAnswers(userAnswers),
-              warehouseAnswers(userAnswers),
-              AmountToPaySummary.amountToPaySummary(amounts.totalForQuarter, amounts.balanceBroughtForward, amounts.total)
-            ))
+              Ok(view(returnPeriod,
+                userAnswers,
+                amounts,
+                subscription,
+                CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
+                financialStatus = financialStatus(amounts.total)
+              )(implicitly, implicitly, config))
             }else Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
           case _ => Logger("Session Cache returned a None")
             Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
         }
       }
-  }
-
-  private def warehouseAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    SummaryListViewModel(rows = Seq(SecondaryWarehouseDetailsSummary.warehouseList(userAnswers)))
-  }
-
-  private def smallProducerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    SummaryListViewModel(rows = Seq(SmallProducerDetailsSummary.producerList(userAnswers)).flatten)
-  }
-
-  private def claimCreditsForLostOrDamagedAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(ClaimCreditsForLostDamagedPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers),
-        HowManyCreditsForLostDamagedSummary.returnsLowBandRow(userAnswers),
-        HowManyCreditsForLostDamagedSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyCreditsForLostDamagedSummary.returnsHighBandRow(userAnswers),
-        HowManyCreditsForLostDamagedSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(ClaimCreditsForLostDamagedSummary.returnsRow(userAnswers)).flatten)
-
-    }
-  }
-
-  private def claimCreditsForExportsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(ClaimCreditsForExportsPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        ClaimCreditsForExportsSummary.returnsRow(userAnswers),
-        HowManyCreditsForExportSummary.returnsLowBandRow(userAnswers),
-        HowManyCreditsForExportSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyCreditsForExportSummary.returnsHighBandRow(userAnswers),
-        HowManyCreditsForExportSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(ClaimCreditsForExportsSummary.returnsRow(userAnswers)).flatten)
-    }
-  }
-
-  private def broughtIntoUKFromSmallProducerAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(BroughtIntoUkFromSmallProducersPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandRow(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandRow(userAnswers),
-        HowManyBroughtIntoTheUKFromSmallProducersSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(BroughtIntoUkFromSmallProducersSummary.returnsRow(userAnswers)).flatten)
-    }
-  }
-
-  private def broughtIntoUKAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(BroughtIntoUKPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        BroughtIntoUKSummary.returnsRow(userAnswers),
-        HowManyBroughtIntoUkSummary.returnsLowBandRow(userAnswers),
-        HowManyBroughtIntoUkSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyBroughtIntoUkSummary.returnsHighBandRow(userAnswers),
-        HowManyBroughtIntoUkSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(BroughtIntoUKSummary.returnsRow(userAnswers)).flatten)
-    }
-  }
-
-  private def exemptionForSmallProducersAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(ExemptionsForSmallProducersPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        ExemptionsForSmallProducersSummary.returnsRow(userAnswers),
-        SmallProducerDetailsSummary.returnsLowBandRow(userAnswers),
-        SmallProducerDetailsSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        SmallProducerDetailsSummary.returnsHighBandRow(userAnswers),
-        SmallProducerDetailsSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(ExemptionsForSmallProducersSummary.returnsRow(userAnswers)).flatten)
-    }
-  }
-
-  private def packagedContractPackerAnswers(request: DataRequest[AnyContent], userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(PackagedContractPackerPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        PackagedContractPackerSummary.returnsRow(userAnswers),
-        HowManyAsAContractPackerSummary.returnsLowBandRow(userAnswers),
-        HowManyAsAContractPackerSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        HowManyAsAContractPackerSummary.returnsHighBandRow(userAnswers),
-        HowManyAsAContractPackerSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(PackagedContractPackerSummary.returnsRow(request.userAnswers)).flatten)
-    }
-  }
-
-  private def ownBrandsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) = {
-    if (userAnswers.get(OwnBrandsPage).getOrElse(false)) {
-      SummaryListViewModel(rows = Seq(
-        OwnBrandsSummary.returnsRow(userAnswers),
-        BrandsPackagedAtOwnSitesSummary.returnsLowBandRow(userAnswers),
-        BrandsPackagedAtOwnSitesSummary.returnsLowBandLevyRow(userAnswers, config.lowerBandCostPerLitre),
-        BrandsPackagedAtOwnSitesSummary.returnsHighBandRow(userAnswers),
-        BrandsPackagedAtOwnSitesSummary.returnsHighBandLevyRow(userAnswers, config.higherBandCostPerLitre)
-      ).flatten)
-    } else {
-      SummaryListViewModel(rows = Seq(OwnBrandsSummary.returnsRow(userAnswers)).flatten)
-    }
   }
 
   private def financialStatus(total: BigDecimal): String = {
@@ -212,14 +87,6 @@ class ReturnSentController @Inject()(
       case total if total < 0 => "creditedPay"
       case total if total == 0 => "noPayNeeded"
     }
-  }
-
-  private def smallProducerCheck(smallProducerList: List[SmallProducer]): Option[List[SmallProducer]] = {
-    if (smallProducerList.length > 0) Some(smallProducerList) else None
-  }
-
-  private def warehouseCheck(warehouseList: List[Warehouse]): Option[List[Warehouse]] = {
-    if (warehouseList.length > 0) Some(warehouseList) else None
   }
 
 }

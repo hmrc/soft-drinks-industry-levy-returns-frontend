@@ -17,8 +17,8 @@
 package connectors
 
 import base.SpecBase
-import models.{FinancialLineItem, ReturnPeriod}
 import models.retrieved.RetrievedSubscription
+import models.{FinancialLineItem, ReturnPeriod}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures

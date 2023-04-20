@@ -17,7 +17,6 @@
 package utilitlies
 
 import java.util.Locale
-import models.Amounts
 
 object CurrencyFormatter {
 

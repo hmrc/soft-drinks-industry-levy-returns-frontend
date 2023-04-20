@@ -255,7 +255,7 @@ class NavigatorSpec extends SpecBase {
           "Claim credits for Lost damaged " - {
 
             def navigate(value: Boolean, userAnswers: Boolean => UserAnswers,
-                         sdilReturn: Option[SdilReturn] = None,
+                         sdilReturn: Option[SdilReturn],
                          subscription: Option[RetrievedSubscription] = Some(aSubscription)) = {
                 navigator.nextPage(ClaimCreditsForLostDamagedPage,
                 NormalMode, userAnswers(value), sdilReturn, subscription)

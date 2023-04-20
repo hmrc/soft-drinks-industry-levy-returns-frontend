@@ -30,8 +30,6 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.checkAnswers.PackagingSiteDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.PackagingSiteDetailsView
 
@@ -42,8 +40,8 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
   val formProvider = new PackagingSiteDetailsFormProvider()
   val form = formProvider()
 
-  lazy val packagingSiteDetailsRoute = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
-  lazy val userAnswersWith1PackagingSite = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
+  lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+  lazy val userAnswersWith1PackagingSite: UserAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
 
   "packagingSiteDetails Controller" - {
 
@@ -54,19 +52,15 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
 
-        val packagingSummaryList: List[SummaryListRow] =
-          PackagingSiteDetailsSummary.row2(userAnswersWith1PackagingSite.packagingSiteList)(messages(application))
+        val packagingSiteList = userAnswersWith1PackagingSite.packagingSiteList
 
-        val summaryList = SummaryListViewModel(
-          rows = packagingSummaryList
-        )
        val result = route(application, request).value
        val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        contentAsString(result) mustEqual view(form, NormalMode, summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, packagingSiteList)(request, messages(application)).toString
         page.title() must include("You added 1 packaging sites")
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
         page.getElementsByTag("h2").text() must include("Do you want to add another UK packaging site?")
@@ -83,18 +77,15 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-        val packagingSummaryList: List[SummaryListRow] =
-          PackagingSiteDetailsSummary.row2(userAnswersWith1PackagingSite.packagingSiteList)(messages(application))
-        val summaryList = SummaryListViewModel(
-          rows = packagingSummaryList
-        )
+        val packagingSiteList = userAnswersWith1PackagingSite.packagingSiteList
+
         val result = route(application, request).value
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, packagingSiteList)(request, messages(application)).toString
         page.title() must include("You added 1 packaging sites")
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
         page.getElementById("value").`val`() mustEqual "true"
@@ -141,19 +132,12 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
-        val packagingSiteSummaryList: List[SummaryListRow] =
-          PackagingSiteDetailsSummary.row2(Map.empty)(messages(application))
-
-        val list: SummaryList = SummaryListViewModel(
-          rows = packagingSiteSummaryList
-        )
-
         val result = route(application, request).value
         val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
         page.getElementsByTag("h2").text() must include("There is a problem")
-        contentAsString(result) mustEqual view(boundForm, NormalMode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, Map.empty)(request, messages(application)).toString
         page.getElementById("value-error").text() must include("Select yes if you need to add another packaging site")
       }
     }

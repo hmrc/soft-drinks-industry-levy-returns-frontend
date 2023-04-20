@@ -21,17 +21,17 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.BrandsPackagedAtOwnSites
+import models.LitresInBands
 
 class BrandsPackagedAtOwnSitesFormProvider @Inject() extends Mappings {
 
 
-   def apply(): Form[BrandsPackagedAtOwnSites] = Form(
+   def apply(): Form[LitresInBands] = Form(
      mapping(
        "lowBand" -> litres(
          "lowBand"),
        "highBand" -> litres(
          "highBand")
-    )(BrandsPackagedAtOwnSites.apply)(BrandsPackagedAtOwnSites.unapply)
+    )(LitresInBands.apply)(LitresInBands.unapply)
   )
 }

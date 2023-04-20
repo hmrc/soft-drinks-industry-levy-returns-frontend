@@ -159,12 +159,12 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£180.00")
+        page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£480.00")
+        page.getElementsByTag("dd").text() must include("£0.00")
       }
     }
 
@@ -183,7 +183,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
-        page.getElementsByTag("dt").text() must include(Messages("exemptionsForSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
       }
     }
 
@@ -281,12 +281,12 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£180")
+        page.getElementsByTag("dd").text() must include("0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£480")
+        page.getElementsByTag("dd").text() must include("0.00")
       }
     }
 
@@ -306,7 +306,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
-        page.getElementsByTag("dt").text() must include(Messages("claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
       }
     }
 
@@ -328,7 +328,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
-        page.getElementsByTag("dt").text() must include(Messages("claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
@@ -413,7 +413,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.RegisteredSites"))
+        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
       }
     }
 
@@ -430,7 +430,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.noPayNeeded.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("checkYourAnswers.noPayNeeded.title"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£0.00")
       }
@@ -452,7 +452,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.creditedPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("checkYourAnswers.creditedPay.title"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include(" -£6,600.00")
       }
@@ -473,7 +473,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£6,600.00")
       }
@@ -494,7 +494,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£660.00")
       }
@@ -515,7 +515,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£0.00")
         page.getElementsByTag("dd").text() must include("£660.00")
@@ -537,7 +537,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("total.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£660.00")
       }
