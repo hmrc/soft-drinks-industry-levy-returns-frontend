@@ -66,7 +66,7 @@ class RemoveWarehouseConfirmController @Inject()(
              Ok(view(preparedForm, mode, formattedAddress, index))
            case _ => logger.warn(s"Warhouse index $index doesn't exist ${request.userAnswers.id} warehouse list length: ${request.userAnswers.warehouseList.size}")
 
-            Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode))
+            Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
          }
 
 
@@ -76,7 +76,7 @@ class RemoveWarehouseConfirmController @Inject()(
   def onSubmit(mode: Mode, index: String): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        val warehouseList = request.userAnswers.warehouseList
+        val warehouseList: Map[String, Warehouse] = request.userAnswers.warehouseList
         val warehouseToRemove:Warehouse = warehouseList(index)
         val formattedAddress = s"${warehouseToRemove.tradingName}, ${warehouseToRemove.address.line1}, ${warehouseToRemove.address.line2}, ${warehouseToRemove.address.line3}, ${warehouseToRemove.address.line4}, ${warehouseToRemove.address.postcode}"
 
@@ -93,7 +93,7 @@ class RemoveWarehouseConfirmController @Inject()(
               } yield {
                 Redirect(navigator.nextPage(RemoveWarehouseConfirmPage, mode, updatedAnswersFinal))
               }
-            }else{
+            } else{
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveWarehouseConfirmPage, value))
                 _ <- sessionRepository.set(updatedAnswers)

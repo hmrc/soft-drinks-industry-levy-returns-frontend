@@ -20,6 +20,8 @@ import base.SpecBase
 import forms.SecondaryWarehouseDetailsFormProvider
 import models.{Address, NormalMode, UserAnswers, Warehouse}
 import navigation.{FakeNavigator, Navigator}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -40,6 +42,7 @@ import scala.concurrent.Future
 class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency {
 
   def onwardRoute = Call("GET", "/foo")
+  def doc(result: String): Document = Jsoup.parse(result)
 
   val formProvider = new SecondaryWarehouseDetailsFormProvider()
   val form = formProvider()
@@ -75,6 +78,21 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         )
 
         status(result) mustEqual OK
+        val summaryListContents = doc(contentAsString(result))
+          .getElementsByClass("govuk-summary-list__key")
+
+        summaryListContents.size() mustEqual  2
+        summaryListContents.first.text() must include ("ABC Ltd")
+        summaryListContents.last.text() must include ("Super Cola Ltd")
+
+        val summaryActions = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions-list")
+        summaryActions.size() mustEqual 2
+        summaryActions.first.text() must include("Remove")
+        summaryActions.last.text() must include("Remove")
+
+        val removeLink = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")
+          .tagName("ul").tagName("li").last().getElementsByClass("govuk-link").last()
+        removeLink.attr("href") mustEqual "/soft-drinks-industry-levy-returns-frontend/remove-warehouse-details/2"
         contentAsString(result) mustEqual view(form, NormalMode, summaryList)(request, messages(application)).toString
       }
     }

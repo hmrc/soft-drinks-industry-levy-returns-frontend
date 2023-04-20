@@ -96,7 +96,7 @@ object UserAnswers {
         (__ \ "data").read[JsObject] and
         (__ \ "smallProducerList").read[List[SmallProducer]] and
         (__ \ "packagingSiteList").read[Map[String, Site]] and
-        (__ \ "warhouseList").read[Map[String, Warehouse]] and
+        (__ \ "warehouseList").read[Map[String, Warehouse]] and
         (__ \ "submitted").read[Boolean] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
       ) (UserAnswers.apply _)
@@ -111,7 +111,7 @@ object UserAnswers {
         (__ \ "data").write[JsObject] and
         (__ \ "smallProducerList").write[List[SmallProducer]] and
         (__ \ "packagingSiteList").write[Map[String, Site]] and
-        (__ \ "warhouseList").write[Map[String, Warehouse]] and
+        (__ \ "warehouseList").write[Map[String, Warehouse]] and
         (__ \ "submitted").write[Boolean] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
       ) (unlift(UserAnswers.unapply))

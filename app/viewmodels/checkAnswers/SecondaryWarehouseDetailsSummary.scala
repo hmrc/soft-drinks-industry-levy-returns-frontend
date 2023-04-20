@@ -57,7 +57,7 @@ object SecondaryWarehouseDetailsSummary  {
       warehouse =>
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(warehouse._2.address.postcode)
+            HtmlFormat.escape(s"${warehouse._2.address.line1}, ${warehouse._2.address.line2}, ${warehouse._2.address.line3}, ${warehouse._2.address.line4}, ${warehouse._2.address.postcode}")
           )
         )
         SummaryListRowViewModel(

@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package messages
+package pages
 
-trait BaseMessages {
-  val back = "Back"
-  val edit = "Edit"
-  val remove = "Remove"
-  val change = "Change"
-  val no = "No"
-  val yes = "Yes"
-  val continue = "Continue"
-  val saveContinue = "Save and continue"
+import pages.behaviours.PageBehaviours
+
+class RemoveWarehouseConfirmPageSpec extends PageBehaviours {
+
+  "RemoveWarehouseConfirmPage" - {
+
+    beRetrievable[Boolean](RemoveWarehouseConfirmPage)
+
+    beSettable[Boolean](RemoveWarehouseConfirmPage)
+
+    beRemovable[Boolean](RemoveWarehouseConfirmPage)
+  }
+
 }
