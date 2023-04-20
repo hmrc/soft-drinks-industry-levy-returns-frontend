@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import views.html.{RemoveSmallProducerConfirmView, RemoveWarehouseConfirmView}
 import messages.RemoveWarehouseConfirmMessages
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.Html
@@ -33,7 +34,10 @@ class RemoveWarehouseConfirmViewSpec extends ViewSpecHelper  {
 
   val form = new RemoveWarehouseConfirmFormProvider
 
-  def doc(result: Html): Document = Jsoup.parse(contentAsString(result))
+  lazy val messagesApi: MessagesApi = application.injector.instanceOf[MessagesApi]
+
+  implicit lazy val testMessages: Messages =
+    messagesApi.preferred(FakeRequest())
 
   def documentPopForm(isYes: Boolean = true) = {
     val popForm = form.apply()

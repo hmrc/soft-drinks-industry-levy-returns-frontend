@@ -82,22 +82,6 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(sdilNumber,userAnswersData, List.empty, Map.empty, warehouseMap).set(RemoveWarehouseConfirmPage, true).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, removePackingSiteRoute)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[RemoveWarehouseConfirmView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, testUkAddress, testIndex)(request, messages(application)).toString
-      }
-    }
-
     "must redirect to the next page when valid data is submitted (true)" in {
 
       val mockSessionRepository = mock[SessionRepository]

@@ -18,13 +18,14 @@ package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.RemoveWarehouseConfirmFormProvider
-import models.{Mode, NormalMode, Warehouse}
+import models.{Mode, NormalMode, UserAnswers, Warehouse}
 import navigation.Navigator
 import pages.RemoveWarehouseConfirmPage
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RemoveWarehouseConfirmView
@@ -50,11 +51,6 @@ class RemoveWarehouseConfirmController @Inject()(
   def onPageLoad(mode: Mode, index: String): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        val preparedForm: Form[Boolean] = request.userAnswers.get(RemoveWarehouseConfirmPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-
         request.userAnswers.warehouseList.get(index) match {
            case Some(warehouse) =>
              val formattedAddress = s"${warehouse.tradingName}," +
@@ -63,7 +59,7 @@ class RemoveWarehouseConfirmController @Inject()(
              s" ${warehouse.address.line3}," +
              s" ${warehouse.address.line4}," +
              s" ${warehouse.address.postcode}"
-             Ok(view(preparedForm, mode, formattedAddress, index))
+             Ok(view(form, mode, formattedAddress, index))
            case _ => logger.warn(s"Warhouse index $index doesn't exist ${request.userAnswers.id} warehouse list length: ${request.userAnswers.warehouseList.size}")
 
             Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
@@ -73,21 +69,21 @@ class RemoveWarehouseConfirmController @Inject()(
 
     }
 
-  def onSubmit(mode: Mode, index: String): Action[AnyContent] =
+  def onSubmit(mode: Mode, ref: String): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
         val warehouseList: Map[String, Warehouse] = request.userAnswers.warehouseList
-        val warehouseToRemove:Warehouse = warehouseList(index)
+        val warehouseToRemove:Warehouse = warehouseList(ref)
         val formattedAddress = s"${warehouseToRemove.tradingName}, ${warehouseToRemove.address.line1}, ${warehouseToRemove.address.line2}, ${warehouseToRemove.address.line3}, ${warehouseToRemove.address.line4}, ${warehouseToRemove.address.postcode}"
 
         form.bindFromRequest().fold(
           formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress, index))),
+            Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress,ref))),
           value =>
             if(value) {
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveWarehouseConfirmPage, value))
-                modifiedWarehouseMap = warehouseList.removed(index)
+                modifiedWarehouseMap = warehouseList.removed(ref)
                 updatedAnswersFinal = updatedAnswers.copy(warehouseList = modifiedWarehouseMap)
                 _ <- sessionRepository.set(updatedAnswersFinal)
               } yield {
