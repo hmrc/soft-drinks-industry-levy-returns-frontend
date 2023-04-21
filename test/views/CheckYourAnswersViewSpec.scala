@@ -146,6 +146,5 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       link.text() mustEqual Messages("site.print")
       link.attr("href") mustEqual "javascript:window.print()"
     }
-
   }
 }

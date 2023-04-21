@@ -140,7 +140,5 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
 
       packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
     }
-
   }
-
 }

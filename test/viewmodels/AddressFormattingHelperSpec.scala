@@ -75,4 +75,4 @@ class AddressFormattingHelperSpec extends SpecBase {
       }
     }
   }
-}
+
