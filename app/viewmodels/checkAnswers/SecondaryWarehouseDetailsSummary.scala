@@ -24,6 +24,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -40,9 +41,7 @@ object SecondaryWarehouseDetailsSummary  {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SecondaryWarehouseDetailsPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRowViewModel(
           key     = "secondaryWarehouseDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value).withCssClass("align-right"),
@@ -53,13 +52,12 @@ object SecondaryWarehouseDetailsSummary  {
         )
     }
 
-  def row2(warehouseList: Map[String,Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(warehouseList: Map[String, Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
         SummaryListRow(
-          key     = Key(HtmlContent(s"""${warehouse._2.tradingName}<br>${HtmlFormat.escape((warehouse._2.address.line1 + warehouse._2.address.line2 + warehouse._2.address.line3 + warehouse._2.address.line4) )}"""),
-          classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"
-          ),
+          key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
+          classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("",Seq(
             ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url)
               .withVisuallyHiddenText(messages("secondaryWarehouseDetails.edit.hidden")),

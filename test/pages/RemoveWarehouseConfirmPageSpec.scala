@@ -23,6 +23,7 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.behaviours.PageBehaviours
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import views.ViewSpecHelper
 import views.html.RemoveWarehouseConfirmView
 
@@ -40,7 +41,7 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
   def documentPopForm(isYes: Boolean = true) = {
     val popForm = form.apply()
       .fill(isYes)
-    val popView = view(popForm, NormalMode, " 33 Rhes Priordy East London E73 2RP", "1")(FakeRequest(), testMessages)
+    val popView = view(popForm, NormalMode, Html(" 33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
     doc(popView)
   }
 
@@ -66,7 +67,7 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
     "the form is not prepopulated and has no error" - {
       val popForm = form.apply()
       val html =
-        view(popForm, NormalMode, "33 Rhes Priordy East London E73 2RP", "1")(FakeRequest(), testMessages)
+        view(popForm, NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
       val document = doc(html)
 
       "have the expected title" in {
@@ -92,7 +93,7 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
         Map("select-continue" -> "")
       )
       val html =
-        view(formWithErrors,NormalMode, "33 Rhes Priordy East London E73 2RP", "1")(FakeRequest(), testMessages)
+        view(formWithErrors,NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
       val document = doc(html)
 
       "have a page title containing error" in {

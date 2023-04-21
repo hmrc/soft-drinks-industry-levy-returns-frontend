@@ -47,7 +47,7 @@ object PackagingSiteDetailsSummary {
             Some(Actions("", Seq(
               ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url)
                 .withVisuallyHiddenText(messages("packagingSiteDetails.hidden")),
-              ActionItemViewModel("site.remove", routes.IndexController.onPageLoad().url)
+              ActionItemViewModel("site.remove", routes.RemovePackagingDetailsConfirmationController.onPageLoad(site._1).url)
                 .withVisuallyHiddenText(messages("packagingSiteDetails.hidden"))
             )))
           } else {

@@ -18,7 +18,8 @@ package controllers
 
 import base.SpecBase
 import forms.RemoveWarehouseConfirmFormProvider
-import models.{Address, NormalMode, UserAnswers, Warehouse}
+import models.backend.UkAddress
+import models.{NormalMode, UserAnswers, Warehouse}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -31,6 +32,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.RemoveWarehouseConfirmView
 
@@ -43,16 +45,16 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new RemoveWarehouseConfirmFormProvider()
   val form = formProvider()
   val testIndex = "1"
-  val testUkAddress = "Wild Lemonade Group, 33, Rhes, Priordy, East London, E73 2RP"
+  val testUkAddress = Html("Wild Lemonade Group<br>33, Rhes, Priordy, East London, E73 2RP")
   val warehouseMap = Map(("1",Warehouse(
-    tradingName = "Wild Lemonade Group",
-    address = Address(line1 = "33",line2 = "Rhes", line3 = "Priordy",line4 = "East London", postcode = "E73 2RP" ),
+    tradingName = Some("Wild Lemonade Group"),
+    address = UkAddress(List("33","Rhes", "Priordy","East London"), "E73 2RP" ),
   )))
 
   val userAnswersData = Json.obj(
     RemoveWarehouseConfirmPage.toString -> Json.obj(
       "tradingName" -> "Wild Lemonade Group",
-      "address" -> Address("33","Rhes","Priordy","East London", "E73 2RP"),
+      "address" -> UkAddress(List("33","Rhes","Priordy","East London"), "E73 2RP")
     )
   )
 
@@ -75,7 +77,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {
         val page = Jsoup.parse(contentAsString(result))
         page.title() must include(Messages("removeWarehouseConfirm.title"))
         page.getElementsByTag("h1").text() must include(Messages("removeWarehouseConfirm.title"))
-        page.getElementsByTag("p").text() must include (Messages(s"$testUkAddress"))
+        page.getElementById("warehouseToRemove").text() mustBe testUkAddress.toString().replace("<br>", " ")
         contentAsString(result) mustEqual view(form, NormalMode , testUkAddress, testIndex)(request, messages(application)).toString
       }
     }

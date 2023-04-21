@@ -1,14 +1,12 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
-import models.{Address, UserAnswers, Warehouse}
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import models.Warehouse
+import models.backend.UkAddress
 import org.scalatest.TryValues
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
-import play.api.test.Helpers.contentAsString
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
@@ -16,10 +14,11 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
   "RemovingWarehouseConfirmController" should {
     "Ask for if user wants to remove warehouses" in {
-      def doc(result: String): Document = Jsoup.parse(result)
-      val twoWarhouses:Map[String,Warehouse] = Map("1"-> Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
-        "2" -> Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
-      setAnswers(newPackerPartialAnswers.success.value.copy( warehouseList = twoWarhouses))
+      val twoWarehouses: Map[String, Warehouse] = Map(
+        "1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
+        "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+
+      setAnswers(newPackerPartialAnswers.success.value.copy( warehouseList = twoWarehouses))
       given
         .commonPrecondition
 
@@ -31,7 +30,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
         whenReady(result) { res =>
           res.status mustBe OK
-          res.body must include ("ABC Ltd, 33 Rhes Priordy, East London, Line 3, Line 4, WR53 7CX")
+          res.body must include ("ABC Ltd<br>33 Rhes Priordy, East London, Line 3, Line 4, WR53 7CX")
           res.body must include ("Are you sure you want to remove this warehouse?")
         }
 
@@ -40,11 +39,10 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
     "user selected yes to remove first warehouse" in {
 
-
-      val twoWarhouses:Map[String,Warehouse] = Map("1"-> Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
-        "2" -> Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
-      val removedWarehouseMap: Map[String,Warehouse] = Map("2" -> Warehouse("Super Cola Ltd", Address("33 Rhes Priordy", "East London","Line 3","","SA13 7CE")))
-      setAnswers(newPackerPartialAnswers.success.value.copy(id = sdilNumber , warehouseList = twoWarhouses))
+      val twoWarehouses: Map[String,Warehouse] = Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
+        "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+      val removedWarehouseMap: Map[String,Warehouse] = Map("2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+      setAnswers(newPackerPartialAnswers.success.value.copy(id = sdilNumber , warehouseList = twoWarehouses))
       given
         .commonPrecondition
 
