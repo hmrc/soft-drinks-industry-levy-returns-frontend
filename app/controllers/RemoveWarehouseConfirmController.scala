@@ -64,9 +64,6 @@ class RemoveWarehouseConfirmController @Inject()(
 
             Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
          }
-
-
-
     }
 
   def onSubmit(mode: Mode, ref: String): Action[AnyContent] =
@@ -82,7 +79,7 @@ class RemoveWarehouseConfirmController @Inject()(
           value =>
             if(value) {
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveWarehouseConfirmPage, value))
+                updatedAnswers <- Future(request.userAnswers)
                 modifiedWarehouseMap = warehouseList.removed(ref)
                 updatedAnswersFinal = updatedAnswers.copy(warehouseList = modifiedWarehouseMap)
                 _ <- sessionRepository.set(updatedAnswersFinal)

@@ -58,7 +58,7 @@ class RemoveWarehouseConfirmViewSpec extends ViewSpecHelper  {
     val form = "form"
   }
 
-  "KeepAccessToSA" - {
+  "RemoveWarehouseConfirmView" - {
     "the form is not prepopulated and has no error" - {
       val popForm = form.apply()
       val html =
