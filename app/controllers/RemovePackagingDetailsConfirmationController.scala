@@ -23,6 +23,7 @@ import javax.inject.Inject
 import models.{Mode, NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.RemovePackagingDetailsConfirmationPage
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
@@ -46,6 +47,7 @@ class RemovePackagingDetailsConfirmationController @Inject()(
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
+  val logger = Logger(this.getClass)
 
   private def getPackagingSiteAddressBaseOnRef(ref: String, userAnswers: UserAnswers): Option[Html] = {
     userAnswers.packagingSiteList
@@ -56,7 +58,9 @@ class RemovePackagingDetailsConfirmationController @Inject()(
   def onPageLoad(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
-        case None => Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode))
+        case None =>
+          logger.warn(s"user has potentially hit page and ref does not exist for packaging site $ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
+          Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode))
         case Some(packagingSiteDetails) => Ok(view(form, mode, ref, packagingSiteDetails))
       }
   }
@@ -72,7 +76,9 @@ class RemovePackagingDetailsConfirmationController @Inject()(
       }
 
       getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
-        case None => Future.successful(Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode)))
+        case None =>
+          logger.warn(s"user has potentially submit page and ref does not exist for packaging site $ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
+          Future.successful(Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode)))
         case Some(packagingSiteDetails) =>
           form.bindFromRequest().fold(
             formWithErrors =>

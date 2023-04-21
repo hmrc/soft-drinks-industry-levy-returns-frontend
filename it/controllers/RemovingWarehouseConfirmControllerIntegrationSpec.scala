@@ -33,7 +33,6 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
           res.status mustBe OK
           res.body must include ("ABC Ltd, 33 Rhes Priordy, East London, Line 3, Line 4, WR53 7CX")
           res.body must include ("Are you sure you want to remove this warehouse?")
-          println(res.body)
         }
 
       }
