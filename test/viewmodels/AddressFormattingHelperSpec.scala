@@ -66,7 +66,7 @@ class AddressFormattingHelperSpec extends SpecBase {
 
       "should place a break after a trading name AND autowrap and place a break before the post code if the address line " +
         "and post code length is between 98 & 103 characters" in {
-        val addressGreaterThan98 =  UkAddress(List("29 Station Rd", "This address will auto wrap but not in postcode", "it is 4 lines 103 char", "Cambridge"), "CB1 2FP")
+        val addressGreaterThan98 = UkAddress(List("29 Station Rd", "This address will auto wrap but not in postcode", "it is 4 lines 103 char", "Cambridge"), "CB1 2FP")
         val result = AddressFormattingHelper.addressFormatting(addressGreaterThan98, Some("Test Trading Name Inc"))
         val expectedAddressContent = Html("Test Trading Name Inc<br>29 Station Rd, This address will auto wrap but not " +
           "in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
@@ -75,4 +75,5 @@ class AddressFormattingHelperSpec extends SpecBase {
       }
     }
   }
+}
 

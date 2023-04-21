@@ -33,6 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
+import viewmodels.AddressFormattingHelper
 import views.html.RemovePackagingDetailsConfirmationView
 
 import scala.concurrent.Future
@@ -51,30 +52,55 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
       doc.getElementsByTag("h1").text() mustEqual "Are you sure you want to remove this packaging site?"
       doc.getElementsByTag("form").attr("action") mustBe routes.RemovePackagingDetailsConfirmationController.onSubmit(ref).url
     }
-    "must return OK and the correct view for a GET when packaging site exists" in {
-      val ref: String = "foo"
-      val packagingSite: Map[String, Site] = Map(ref -> Site(
-        UkAddress(List("a", "b"), "c"),
+
+    Map(
+      "No Trading name" -> Site(
+      UkAddress(List("a", "b"), "c"),
+      None,
+      None,
+      None),
+    "Trading Name" -> Site(
+      UkAddress(List("a", "b"), "c"),
+      None,
+      Some("trading"),
+      None),
+      "Trading Name AND Long Address AND Long Postcode" -> Site(
+        UkAddress(List("abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg"), "abcdefg abcdefg abcdefg abcdefg"),
         None,
         Some("trading"),
-        None))
-      val htmlExpectedInView = Html("trading<br>a, b, c")
-      val htmlExpectedAfterRender = Html("trading a, b, c")
-      val userAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSite)
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        None),
+      "No Trading Name AND Long Address AND Long Postcode" -> Site(
+        UkAddress(List("abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg"), "abcdefg abcdefg abcdefg abcdefg"),
+        None,
+        None,
+        None),
+      "No Trading Name AND no Lines AND Postcode" -> Site(
+        UkAddress(List.empty, "abcdefg abcdefg abcdefg abcdefg"),
+        None,
+        None,
+        None)
+    ).foreach { test =>
+      s"must return OK and the correct view for a GET when packaging site exists for ${test._1}" in {
+        val ref: String = "foo"
+        val htmlExpectedInView: Html = AddressFormattingHelper.addressFormatting(test._2.address, test._2.tradingName)
 
-      running(application) {
-        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(ref).url)
+        val htmlExpectedAfterRender: Html = Html(htmlExpectedInView.body.replace("<br>", " "))
+        val userAnswers = emptyUserAnswers.copy(packagingSiteList = Map(ref -> test._2))
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        val result = route(application, request).value
+        running(application) {
+          val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(ref).url)
 
-        val view = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        val contentOfResult: String = contentAsString(result)
+          val view = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
 
-        contentOfResult mustEqual view(form, NormalMode, ref, htmlExpectedInView)(request, messages(application)).toString
-        commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref)
+          status(result) mustEqual OK
+          val contentOfResult: String = contentAsString(result)
+
+          contentOfResult mustEqual view(form, NormalMode, ref, htmlExpectedInView)(request, messages(application)).toString
+          commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref)
+        }
       }
     }
     "must redirect to the main Packaging Details list page if user navigates to page without ref in user answers" in {
