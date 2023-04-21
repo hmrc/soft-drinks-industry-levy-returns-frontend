@@ -90,6 +90,30 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
 
       packagingSiteSummaryRowList.mkString mustNot include("Remove")
     }
+    "must include Correct elements in list with 2 elements" in {
+      val site1 = Site(
+        UkAddress(List("foo2", "bar2"), "wizz2"),
+        None,
+        Some("trade2"),
+        None)
+      val site2 = Site(
+        UkAddress(List("foo", "bar"), "wizz"),
+        None,
+        Some("trade"),
+        None)
+      val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map("ref1" -> site1, "ref2" -> site2))
+      packagingSiteSummaryRowList.head.key.content.asHtml.toString() mustBe "trade2<br>foo2, bar2, wizz2"
+      packagingSiteSummaryRowList.head.actions.toList.head.items.head.content.asHtml.toString() mustBe "Edit"
+      packagingSiteSummaryRowList.head.actions.toList.head.items.head.href mustBe controllers.routes.IndexController.onPageLoad().url
+      packagingSiteSummaryRowList.head.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
+      packagingSiteSummaryRowList.head.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad("ref1").url
+
+      packagingSiteSummaryRowList.last.key.content.asHtml.toString() mustBe "trade<br>foo, bar, wizz"
+      packagingSiteSummaryRowList.last.actions.toList.head.items.head.content.asHtml.toString() mustBe "Edit"
+      packagingSiteSummaryRowList.last.actions.toList.head.items.head.href mustBe controllers.routes.IndexController.onPageLoad().url
+      packagingSiteSummaryRowList.last.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
+      packagingSiteSummaryRowList.last.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad("ref2").url
+    }
   }
 
   "address formatting within Row2" - {

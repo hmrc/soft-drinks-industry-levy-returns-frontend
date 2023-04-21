@@ -22,7 +22,7 @@ govukRadios: GovukRadios,
 govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, address: String, index: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, address: Html, index: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("removeWarehouseConfirm.title"))) {
     @formHelper(action = routes.RemoveWarehouseConfirmController.onSubmit(index), 'autoComplete -> "off") {
@@ -32,7 +32,7 @@ govukButton: GovukButton
         }
 
         <h1 class="govuk-heading-m">@messages("removeWarehouseConfirm.title")</h1>
-        <p class="govuk-body-m">@address</p>
+        <p id="warehouseToRemove" class="govuk-body-m">@address</p>
 
         @govukRadios(
         RadiosViewModel.yesNo(

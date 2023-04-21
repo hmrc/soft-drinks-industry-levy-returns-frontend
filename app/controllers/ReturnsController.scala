@@ -44,14 +44,7 @@ class ReturnsController @Inject()(
                                    sessionCache: SDILSessionCache
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  //Warehouse
-  val tradingName: String = "Soft Juice Ltd"
-  val line1: String = "3 Prospect St"
-  val line2: String = "Reading"
-  val line3: String = "Berkshire"
-  val line4: String = "United Kingdom"
-  val postcode: String = "CT44 0DF"
-  val warehouseList: List[Warehouse] = List(Warehouse(tradingName, Address(line1, line2, line3, line4, postcode)))
+
   val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData).async {
