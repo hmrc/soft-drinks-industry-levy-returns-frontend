@@ -28,6 +28,8 @@ import models.retrieved.RetrievedSubscription
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
+    case SecondaryWarehouseDetailsPage => userAnswers => _ => _ => _ => secondaryWarehouseDetailsPageNavigation(userAnswers)
+    case RemoveWarehouseConfirmPage => userAnswers => _ => _ => _ => removeWarehouseConfirmPageNavigation (userAnswers)
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad()
@@ -56,6 +58,7 @@ class Navigator @Inject()() {
     case ExemptionsForSmallProducersPage => userAnswers => checkExemptionForSmallProducersPageNavigation(userAnswers)
     case SmallProducerDetailsPage => userAnswers => checkSmallProducerDetailsPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case RemoveWarehouseConfirmPage =>  _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad()
@@ -147,6 +150,14 @@ class Navigator @Inject()() {
       routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     } else {
       routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def removeWarehouseConfirmPageNavigation(userAnswers: UserAnswers):Call = {
+    if (userAnswers.get(page = RemoveWarehouseConfirmPage).contains(true)) {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    } else {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
     }
   }
 
@@ -251,6 +262,15 @@ class Navigator @Inject()() {
       routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }
   }
+
+  private def secondaryWarehouseDetailsPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = SecondaryWarehouseDetailsPage).contains(true)) {
+      routes.IndexController.onPageLoad()
+    } else {
+      routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
 
 
 }

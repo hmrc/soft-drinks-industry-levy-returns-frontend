@@ -1,6 +1,6 @@
 package controllers.testSupport
 
-import models.{AddASmallProducer, LitresInBands, UserAnswers}
+import models.{AddASmallProducer, LitresInBands, UserAnswers, Warehouse}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
@@ -13,6 +13,7 @@ trait ITCoreTestData extends TryValues {
   val sdilNumber = "XKSDIL000000022"
   val producerName = Some("Super Cola Ltd")
   val refNumber = "XZSDIL000000234"
+
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
 
