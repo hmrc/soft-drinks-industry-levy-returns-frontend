@@ -375,6 +375,5 @@ packagingSiteDetails.change.hidden = Packaging Site Details
 packagingSiteDetails.hidden = packaging site
 
 removeWarehouseConfirm.title = Are you sure you want to remove this warehouse?
-removeWarehouseConfirm.checkYourAnswersLabel = removeWarehouse
 removeWarehouseConfirm.error.required = Select yes if you want to remove this warehouse
 removeWarehouseConfirm.change.hidden = Are you sure you want to remove this warehouse?
