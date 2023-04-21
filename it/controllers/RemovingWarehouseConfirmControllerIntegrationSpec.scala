@@ -12,8 +12,9 @@ import play.api.test.Helpers.contentAsString
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class RemovingWarehouseConfirmControllerIntergrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues  {
-"RemovingWarhouseConfirmController"should {
+class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues  {
+
+  "RemovingWarehouseConfirmController" should {
     "Ask for if user wants to remove warehouses" in {
       def doc(result: String): Document = Jsoup.parse(result)
       val twoWarhouses:Map[String,Warehouse] = Map("1"-> Warehouse("ABC Ltd", Address("33 Rhes Priordy", "East London","Line 3","Line 4","WR53 7CX")),
@@ -32,7 +33,6 @@ class RemovingWarehouseConfirmControllerIntergrationSpec extends Specifications 
           res.status mustBe OK
           res.body must include ("ABC Ltd, 33 Rhes Priordy, East London, Line 3, Line 4, WR53 7CX")
           res.body must include ("Are you sure you want to remove this warehouse?")
-          println(res.body)
         }
 
       }

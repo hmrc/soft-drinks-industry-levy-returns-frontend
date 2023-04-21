@@ -63,7 +63,16 @@ class NavigatorSpec extends SpecBase {
               val result = navigate(false)
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
-
+          }
+          "Remove Packaging details confirmation if" - {
+            "Yes is selected go to Packing details page" in {
+              val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode, UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> true)))
+              result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+            }
+            "No is selected go to Packing details page" in {
+              val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode, UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> false)))
+              result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+            }
           }
 
           "Secondary warehouse details page" - {

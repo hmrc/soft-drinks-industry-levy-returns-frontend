@@ -172,7 +172,7 @@ trait SpecBase
       "lowBand" -> 259, "highBand" -> 923), "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports"
       -> false, "claimCreditsForLostDamaged" -> false), List.empty, Map.empty)
 
-  lazy val PackagingSite1 = Site(
+  val PackagingSite1 = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     None,
     Some("Wild Lemonade Group"),

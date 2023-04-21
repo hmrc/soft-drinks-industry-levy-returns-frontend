@@ -30,6 +30,7 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
     case SecondaryWarehouseDetailsPage => userAnswers => _ => _ => _ => secondaryWarehouseDetailsPageNavigation(userAnswers)
     case RemoveWarehouseConfirmPage => userAnswers => _ => _ => _ => removeWarehouseConfirmPageNavigation (userAnswers)
+    case RemovePackagingDetailsConfirmationPage => _ => _ => _ => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case HowManyCreditsForLostDamagedPage => _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad()
@@ -96,6 +97,7 @@ class Navigator @Inject()() {
       routes.PackagedContractPackerController.onPageLoad(NormalMode)
     }
   }
+
 
   private def packagedContractPackerPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = PackagedContractPackerPage).contains(true)) {
@@ -255,14 +257,6 @@ class Navigator @Inject()() {
     }
   }
 
-  private def packAtBusinessAddressPageNavigation(userAnswers: UserAnswers) = {
-    if (userAnswers.get(page = PackAtBusinessAddressPage).contains(true)) {
-      routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-    } else {
-      routes.BroughtIntoUKController.onPageLoad(NormalMode)
-    }
-  }
-
   private def secondaryWarehouseDetailsPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = SecondaryWarehouseDetailsPage).contains(true)) {
       routes.IndexController.onPageLoad()
@@ -270,7 +264,5 @@ class Navigator @Inject()() {
       routes.CheckYourAnswersController.onPageLoad()
     }
   }
-
-
 
 }

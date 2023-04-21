@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import forms.RemoveWarehouseConfirmFormProvider
-import models.backend.{Site, UkAddress}
 import models.{Address, NormalMode, UserAnswers, Warehouse}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
@@ -35,7 +34,6 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.RemoveWarehouseConfirmView
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {

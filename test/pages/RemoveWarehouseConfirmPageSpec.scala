@@ -16,17 +16,94 @@
 
 package pages
 
+import forms.RemoveWarehouseConfirmFormProvider
+import messages.RemoveWarehouseConfirmMessages
+import models.NormalMode
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.behaviours.PageBehaviours
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.FakeRequest
+import views.ViewSpecHelper
+import views.html.RemoveWarehouseConfirmView
 
-class RemoveWarehouseConfirmPageSpec extends PageBehaviours {
+class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours  {
 
-  "RemoveWarehouseConfirmPage" - {
+  lazy val view: RemoveWarehouseConfirmView = application.injector.instanceOf[RemoveWarehouseConfirmView]
 
+  val form = new RemoveWarehouseConfirmFormProvider
+
+  lazy val messagesApi: MessagesApi = application.injector.instanceOf[MessagesApi]
+
+  implicit lazy val testMessages: Messages =
+    messagesApi.preferred(FakeRequest())
+
+  def documentPopForm(isYes: Boolean = true) = {
+    val popForm = form.apply()
+      .fill(isYes)
+    val popView = view(popForm, NormalMode, " 33 Rhes Priordy East London E73 2RP", "1")(FakeRequest(), testMessages)
+    doc(popView)
+  }
+
+  object Selectors {
+    val heading = "govuk-heading-m"
+    val radios = "govuk-radios__item"
+    val radioInput = "govuk-radios__input"
+    val radioLables = "govuk-label govuk-radios__label"
+    val body = "govuk-body-m"
+    val errorSummaryTitle = "govuk-error-summary__title"
+    val errorSummaryList = "govuk-list govuk-error-summary__list"
+    val button = "govuk-button"
+    val form = "form"
+  }
+
+  "RemoveWarehouseConfirmView" - {
     beRetrievable[Boolean](RemoveWarehouseConfirmPage)
 
     beSettable[Boolean](RemoveWarehouseConfirmPage)
 
     beRemovable[Boolean](RemoveWarehouseConfirmPage)
   }
+    "the form is not prepopulated and has no error" - {
+      val popForm = form.apply()
+      val html =
+        view(popForm, NormalMode, "33 Rhes Priordy East London E73 2RP", "1")(FakeRequest(), testMessages)
+      val document = doc(html)
 
-}
+      "have the expected title" in {
+        document.getElementsByClass(Selectors.heading).text shouldBe RemoveWarehouseConfirmMessages.title
+      }
+
+      "have the expected address message" in {
+        document.getElementsByClass(Selectors.body).text shouldBe RemoveWarehouseConfirmMessages.address
+      }
+
+      "have the expected radio button yes" in {
+        document.getElementsByClass(Selectors.radios).get(0).text shouldBe RemoveWarehouseConfirmMessages.yes
+      }
+
+      "have the expected radio button no" in {
+        document.getElementsByClass(Selectors.radios).get(1).text shouldBe RemoveWarehouseConfirmMessages.no
+      }
+
+    }
+
+    "the form is not prepopulated and has no error" - {
+      val formWithErrors = form.apply().bind(
+        Map("select-continue" -> "")
+      )
+      val html =
+        view(formWithErrors,NormalMode, "33 Rhes Priordy East London E73 2RP", "1")(FakeRequest(), testMessages)
+      val document = doc(html)
+
+      "have a page title containing error" in {
+        document.getElementsByClass(Selectors.heading).text shouldBe RemoveWarehouseConfirmMessages.title
+      }
+
+      "contains a message that links to field with error" in {
+        val errorSummary = document
+          .getElementsByClass(Selectors.errorSummaryList)
+          .first()
+        errorSummary.text() shouldBe RemoveWarehouseConfirmMessages.errorMessage
+      }
+    }
+  }

@@ -46,7 +46,7 @@ class RemoveWarehouseConfirmController @Inject()(
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
-  val logger: Logger = Logger(this.getClass())
+  val logger: Logger = Logger(this.getClass)
 
   def onPageLoad(mode: Mode, index: String): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
