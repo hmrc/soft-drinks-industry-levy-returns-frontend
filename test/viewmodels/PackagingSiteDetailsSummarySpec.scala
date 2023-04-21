@@ -21,7 +21,7 @@ import models.backend.{Site, UkAddress}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import views.helpers.returnDetails.PackagingSiteDetailsSummary
 
-class packagingSiteDetailsSummarySpec extends SpecBase {
+class PackagingSiteDetailsSummarySpec extends SpecBase {
 
   val addressWith3AddressLines = Site(
       UkAddress(List("The house", "The Road", "ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg"), "NW88 8II"),
