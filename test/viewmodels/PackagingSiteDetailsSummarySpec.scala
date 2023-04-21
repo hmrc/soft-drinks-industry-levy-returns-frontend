@@ -116,7 +116,7 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
     }
   }
 
-  "address formatting within Row2" -k {
+  "address formatting within Row2" - {
 
     "should place a break after a trading name if a trading name is used" in {
       val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map(("90831480921", addressWith3AddressLines)))
