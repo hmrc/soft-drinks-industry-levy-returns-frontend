@@ -15,6 +15,8 @@
  *@
 
 @import views.html.helpers._
+@import views.helpers.returnDetails._
+@import models.backend.Site
 
 @this(
         layout: templates.Layout,
@@ -22,12 +24,12 @@
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukSummaryList: GovukSummaryList,
-        saveAndContinueButton: saveAndContinueButton,
+        saveAndContinueButton: saveAndContinueButton
 )
 
-@(form: Form[_], mode: Mode, siteList: SummaryList)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, siteList: Map[String, Site])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("packagingSiteDetails.title.heading", siteList.rows.size))) {
+@layout(pageTitle = title(form, messages("packagingSiteDetails.title.heading", siteList.size))) {
 
     @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -35,10 +37,10 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.title.heading", siteList.rows.size)</h1>
+        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.title.heading", siteList.size)</h1>
         <p class="govuk-body-m">@messages("packagingSiteDetails.info")</p>
 
-        @govukSummaryList(siteList)
+        @govukSummaryList(PackagingSiteDetailsSummary.summaryList(siteList))
 
         <h2 class="govuk-heading-m">@messages("packagingSiteDetails.addAnotherPackingSite")</h2>
 

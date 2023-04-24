@@ -18,17 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.SmallProducerDetailsFormProvider
-import viewmodels.checkAnswers.SmallProducerDetailsSummary
-import views.html.SmallProducerDetailsView
 import models.{Mode, SmallProducer}
 import navigation.Navigator
 import pages.SmallProducerDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.govuk.summarylist._
+import views.html.SmallProducerDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,24 +53,15 @@ class SmallProducerDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val smallProducersSummaryList: List[SummaryListRow] = SmallProducerDetailsSummary.row2(smallProducerList)
-      val list: SummaryList = SummaryListViewModel(
-        rows = smallProducersSummaryList
-      )
-
-      Ok(view(preparedForm, mode, list))
+      Ok(view(preparedForm, mode, smallProducerList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val spList = request.userAnswers.smallProducerList
-      val smallProducersSummaryList: List[SummaryListRow] = SmallProducerDetailsSummary.row2(spList)
-      val list: SummaryList = SummaryListViewModel(
-        rows = smallProducersSummaryList
-      )
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, list))),
+          Future.successful(BadRequest(view(formWithErrors, mode, spList))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SmallProducerDetailsPage, value))

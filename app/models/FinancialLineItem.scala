@@ -25,7 +25,7 @@ import java.time.{LocalDate => Date}
 sealed trait FinancialLineItem {
   def date: Date
   def amount: BigDecimal
-  def description(implicit messages: Messages): String = getClass.toString
+  def description(implicit messages: Messages): String
 }
 
 sealed trait Interest

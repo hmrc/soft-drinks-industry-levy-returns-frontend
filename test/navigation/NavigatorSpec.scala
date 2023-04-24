@@ -67,7 +67,48 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val result = navigate(false)
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
+          }
+          "Remove Packaging details confirmation if" - {
+            "Yes is selected go to Packing details page" in {
+              val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode, UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> true)))
+              result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+            }
+            "No is selected go to Packing details page" in {
+              val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode, UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> false)))
+              result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+            }
+          }
 
+          "Secondary warehouse details page" - {
+
+            "Should navigate to enter warehouse name when yes is selected" in {
+              navigator.nextPage(SecondaryWarehouseDetailsPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("secondaryWarehouseDetails" -> true))
+              ) mustBe  routes.IndexController.onPageLoad()
+            }
+            "Should navigate to check your answers controller when no is selected" in {
+              navigator.nextPage(SecondaryWarehouseDetailsPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("secondaryWarehouseDetails" -> false))
+              ) mustBe  routes.CheckYourAnswersController.onPageLoad()
+            }
+          }
+
+          "Remove a warehouse confirmation page" - {
+
+            "Should navigate to secondary warehouse details controller when yes is selected" in {
+              navigator.nextPage(RemoveWarehouseConfirmPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("removeWarehouse" -> true))
+              ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+            }
+            "Should navigate to secondary warehouse details controller when no is selected" in {
+              navigator.nextPage(RemoveWarehouseConfirmPage,
+                NormalMode,
+                UserAnswers(id, Json.obj("removeWarehouse" -> false))
+              ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+            }
           }
 
           "How many own brands packaged at own sites" - {
@@ -259,7 +300,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
           "Claim credits for lost or damaged " - {
 
             def navigate(value: Boolean, userAnswers: Boolean => UserAnswers,
-                         sdilReturn: Option[SdilReturn] = None,
+                         sdilReturn: Option[SdilReturn],
                          subscription: Option[RetrievedSubscription] = Some(aSubscription)) = {
                 navigator.nextPage(ClaimCreditsForLostDamagedPage,
                 NormalMode, userAnswers(value), sdilReturn, subscription)
@@ -855,6 +896,22 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             CheckMode,
             UserAnswers(id, Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+        }
+      }
+
+      "Remove a warehouse confirmation page" - {
+
+        "Should navigate to secondary warehouse details controller when yes is selected" in {
+          navigator.nextPage(RemoveWarehouseConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeWarehouse" -> true))
+          ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+        }
+        "Should navigate to secondary warehouse details controller when no is selected" in {
+          navigator.nextPage(RemoveWarehouseConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeWarehouse" -> false))
+          ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         }
       }
 

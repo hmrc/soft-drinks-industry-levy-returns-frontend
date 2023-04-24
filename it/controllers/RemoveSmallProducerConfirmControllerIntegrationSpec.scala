@@ -66,7 +66,6 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
               .withFollowRedirects(false)
               .post(Json.obj("value" -> true))
 
-
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/small-producer-details")

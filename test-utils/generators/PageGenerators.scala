@@ -20,6 +20,13 @@ import org.scalacheck.Arbitrary
 import pages._
 
 trait PageGenerators {
+
+
+  implicit lazy val arbitraryRemoveWarehousePage: Arbitrary[RemoveWarehouseConfirmPage.type] =
+    Arbitrary(RemoveWarehouseConfirmPage)
+
+  implicit lazy val arbitraryRemovePackagingDetailsConfirmationPage: Arbitrary[RemovePackagingDetailsConfirmationPage.type] =
+    Arbitrary(RemovePackagingDetailsConfirmationPage)
   implicit lazy val arbitraryPackagingSiteDetailsPage: Arbitrary[PackagingSiteDetailsPage.type] =
     Arbitrary(PackagingSiteDetailsPage)
 

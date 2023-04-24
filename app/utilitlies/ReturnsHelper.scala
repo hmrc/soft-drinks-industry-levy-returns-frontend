@@ -40,7 +40,7 @@ object ReturnsHelper {
         "claimCreditsForExports" -> false,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
         "claimCreditsForLostDamaged" -> false,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0)
       ))
 
   def emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))

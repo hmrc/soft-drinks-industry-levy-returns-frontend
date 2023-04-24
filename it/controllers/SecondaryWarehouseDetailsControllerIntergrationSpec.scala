@@ -1,9 +1,11 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import models.{Address, Warehouse}
 import org.scalatest.TryValues
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
+import play.mvc.Http.HeaderNames
 
 class SecondaryWarehouseDetailsControllerIntergrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
   "SecondaryWarehouseDetailsController" should {

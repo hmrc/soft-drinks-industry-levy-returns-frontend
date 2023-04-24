@@ -17,15 +17,13 @@
 package controllers
 
 import base.SpecBase
-import connectors.SoftDrinksIndustryLevyConnector
 import forms.HowManyCreditsForLostDamagedFormProvider
-import models.{HowManyCreditsForLostDamaged, NormalMode, UserAnswers}
+import models.{LitresInBands, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{BrandsPackagedAtOwnSitesPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyAsAContractPackerPage, HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage, HowManyCreditsForExportPage, HowManyCreditsForLostDamagedPage, OwnBrandsPage, PackagedContractPackerPage, SmallProducerDetailsPage}
+import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -91,7 +89,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(HowManyCreditsForLostDamaged(value1, value2)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(value1, value2)), NormalMode)(request, messages(application)).toString
       }
     }
 

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.AddASmallProducerFormProvider
-import models.{BlankMode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{BlankMode, NormalMode, ReturnPeriod, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -457,7 +457,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        val res = result.value.map( res => res.get)
+        result.value.map( res => res.get)
       }
     }
 

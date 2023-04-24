@@ -16,17 +16,17 @@
 
 package pages
 
-import models.HowManyCreditsForExport
+import models.LitresInBands
 import pages.behaviours.PageBehaviours
 
 class HowManyCreditsForExportPageSpec extends PageBehaviours {
 
   "HowManyCreditsForExportPage" - {
 
-    beRetrievable[HowManyCreditsForExport](HowManyCreditsForExportPage)
+    beRetrievable[LitresInBands](HowManyCreditsForExportPage)
 
-    beSettable[HowManyCreditsForExport](HowManyCreditsForExportPage)
+    beSettable[LitresInBands](HowManyCreditsForExportPage)
 
-    beRemovable[HowManyCreditsForExport](HowManyCreditsForExportPage)
+    beRemovable[LitresInBands](HowManyCreditsForExportPage)
   }
 }

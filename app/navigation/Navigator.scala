@@ -31,6 +31,9 @@ class Navigator @Inject()() {
   val logger: Logger = Logger(this.getClass())
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
+    case SecondaryWarehouseDetailsPage => userAnswers => _ => _ => _ => secondaryWarehouseDetailsPageNavigation(userAnswers)
+    case RemoveWarehouseConfirmPage => userAnswers => _ => _ => _ => removeWarehouseConfirmPageNavigation (userAnswers)
+    case RemovePackagingDetailsConfirmationPage => _ => _ => _ => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case HowManyCreditsForLostDamagedPage => _ => sdilReturnOpt => subscriptionOpt => _ =>
@@ -60,6 +63,7 @@ class Navigator @Inject()() {
     case ExemptionsForSmallProducersPage => userAnswers => checkExemptionForSmallProducersPageNavigation(userAnswers)
     case SmallProducerDetailsPage => userAnswers => checkSmallProducerDetailsPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case RemoveWarehouseConfirmPage =>  _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad()
@@ -92,11 +96,12 @@ class Navigator @Inject()() {
 
   private def ownBrandPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = OwnBrandsPage).contains(true)) {
-     routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
+      routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
     } else {
       routes.PackagedContractPackerController.onPageLoad(NormalMode)
     }
   }
+
 
   private def packagedContractPackerPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = PackagedContractPackerPage).contains(true)) {
@@ -146,13 +151,21 @@ class Navigator @Inject()() {
 
   }
 
- private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
-   if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
-     routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
-   } else {
-     routes.SmallProducerDetailsController.onPageLoad(NormalMode)
-   }
- }
+  private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
+      routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    } else {
+      routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def removeWarehouseConfirmPageNavigation(userAnswers: UserAnswers):Call = {
+    if (userAnswers.get(page = RemoveWarehouseConfirmPage).contains(true)) {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    } else {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    }
+  }
 
   private def claimCreditsForExportPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
@@ -265,13 +278,12 @@ class Navigator @Inject()() {
     }
   }
 
-  private def packAtBusinessAddressPageNavigation(userAnswers: UserAnswers) = {
-    if (userAnswers.get(page = PackAtBusinessAddressPage).contains(true)) {
-      routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+  private def secondaryWarehouseDetailsPageNavigation(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = SecondaryWarehouseDetailsPage).contains(true)) {
+      routes.IndexController.onPageLoad()
     } else {
-      routes.BroughtIntoUKController.onPageLoad(NormalMode)
+      routes.CheckYourAnswersController.onPageLoad()
     }
   }
-
 
 }

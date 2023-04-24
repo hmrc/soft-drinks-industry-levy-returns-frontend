@@ -16,17 +16,17 @@
 
 package pages
 
-import models.HowManyBroughtIntoUk
+import models.LitresInBands
 import pages.behaviours.PageBehaviours
 
 class HowManyBroughtIntoUkPageSpec extends PageBehaviours {
 
   "HowManyBroughtIntoUkPage" - {
 
-    beRetrievable[HowManyBroughtIntoUk](HowManyBroughtIntoUkPage)
+    beRetrievable[LitresInBands](HowManyBroughtIntoUkPage)
 
-    beSettable[HowManyBroughtIntoUk](HowManyBroughtIntoUkPage)
+    beSettable[LitresInBands](HowManyBroughtIntoUkPage)
 
-    beRemovable[HowManyBroughtIntoUk](HowManyBroughtIntoUkPage)
+    beRemovable[LitresInBands](HowManyBroughtIntoUkPage)
   }
 }

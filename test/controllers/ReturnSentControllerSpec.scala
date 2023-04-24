@@ -68,7 +68,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show own brands row with answer no, when answered" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -90,7 +90,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 1000 , "highBand"-> 1000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -119,7 +119,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show Contract packed at your own site with answer no, when answered" in {
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -141,7 +141,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 1000 , "highBand"-> 2000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -159,18 +159,18 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£180.00")
+        page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£480.00")
+        page.getElementsByTag("dd").text() must include("£0.00")
       }
     }
 
     "must show Exemptions For Small Producers row with answer no, when answered" in {
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -183,13 +183,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
-        page.getElementsByTag("dt").text() must include(Messages("exemptionsForSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
       }
     }
 
     "must show brought into uk with answer no, when answered" in {
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -211,7 +211,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -240,7 +240,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show brought into the UK from small producers row when present and answer is no" in {
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -263,7 +263,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         "broughtIntoUkFromSmallProducers" -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -281,18 +281,18 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£180")
+        page.getElementsByTag("dd").text() must include("0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£480")
+        page.getElementsByTag("dd").text() must include("0.00")
       }
     }
 
     "must show claim credits for exports row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -306,7 +306,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
-        page.getElementsByTag("dt").text() must include(Messages("claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
       }
     }
 
@@ -315,7 +315,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -328,7 +328,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
-        page.getElementsByTag("dt").text() must include(Messages("claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
@@ -344,7 +344,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show show lost or damaged row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -367,7 +367,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         "claimCreditsForLostDamaged" -> true,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -401,7 +401,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       )
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola), Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola), Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -413,12 +413,12 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.RegisteredSites"))
+        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
       }
     }
 
     "must show correct message to user when nothing is owed " in {
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -430,7 +430,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.noPayNeeded.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("checkYourAnswers.noPayNeeded.title"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£0.00")
       }
@@ -439,7 +439,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show correct message to user when user is owed funding" in {
       val amounts = Amounts(0, 0, -6600)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -452,7 +452,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.creditedPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("checkYourAnswers.creditedPay.title"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include(" -£6,600.00")
       }
@@ -461,7 +461,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show correct message to user when user owes funds" in {
       val amounts = Amounts(0, 0, 6600)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -473,7 +473,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£6,600.00")
       }
@@ -482,7 +482,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show correct total for quarter " in {
       val amounts = Amounts(660, 0, 660)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -494,7 +494,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£660.00")
       }
@@ -503,7 +503,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show correct balance brought forward" in {
       val amounts = Amounts(660, 0, 660)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -515,7 +515,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£0.00")
         page.getElementsByTag("dd").text() must include("£660.00")
@@ -525,7 +525,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show correct total when non nil return" in {
       val amounts = Amounts(660, 0, 660)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -537,7 +537,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amountDue" ).text must include(Messages("checkYourAnswers.amountToPay.title"))
+        page.getElementById("amount-to-pay-title" ).text must include(Messages("amountToPay"))
         page.getElementsByTag("dt").text() must include(Messages("total.checkYourAnswersLabel"))
         page.getElementsByTag("dd").text() must include("£660.00")
       }
@@ -547,7 +547,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val amounts = Amounts(660, 0, 660)
       when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
 
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, true)
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty)
       val subscription = aSubscription.copy(activity = RetrievedActivity(true, true, false,false,false))
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod), Some(subscription)).overrides(
         bind[SDILSessionCache].toInstance(mockSessionCache),

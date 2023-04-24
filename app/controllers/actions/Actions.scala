@@ -21,7 +21,7 @@ import play.api.mvc.{ActionBuilder, AnyContent}
 import models.requests.IdentifierRequest
 
 class Actions @Inject()(
-                         identify: IdentifierAction,
+                         identify: IdentifierAction
                        ) {
     def auth : ActionBuilder[IdentifierRequest, AnyContent] = identify
 }

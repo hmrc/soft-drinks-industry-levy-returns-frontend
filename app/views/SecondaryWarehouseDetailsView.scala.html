@@ -21,54 +21,13 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     hmrcListWithActions: HmrcListWithActions,
+    govukSummaryList: GovukSummaryList,
     govukTable : GovukTable
 )
 
-@(form: Form[_], mode: Mode, ukWarehouseList: List[Warehouse])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, warehouseList: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@htmlContent(warehouse:Warehouse) = {
-     <p class="govuk-body govuk-!-margin-0">@if(warehouse.tradingName != ""){
-         @messages(s"${warehouse.tradingName}")<br>}else{}
-         @if(warehouse.address.line1 != ""){
-         @messages(s"${warehouse.address.line1}"),
-         }else{}
-         @if(warehouse.address.line2 != ""){
-         @messages(s"${warehouse.address.line2}"),
-         }else{}
-         @if(warehouse.address.line3 != ""){
-         @messages(s"${warehouse.address.line3}"),
-         }else{}
-         @if(warehouse.address.line4 != ""){
-         @messages(s"${warehouse.address.line4}"),
-         }else{}
-         @messages(s"${warehouse.address.postcode}")
-     </p>
-}
-
-@summary = {
-@ukWarehouseList.map{ warehouse =>
-    @hmrcListWithActions(
-            ListWithActions(
-                items = Seq(
-                    ListWithActionsItem(
-                    name = HtmlContent(htmlContent(warehouse)),
-                    actions = Seq(
-                                ListWithActionsAction(
-                                    content = Text(messages("site.edit")),
-                                    visuallyHiddenText = Some(messages("smallProducerDetails.edit.hidden")),
-                                    href = "/soft-drinks-industry-levy-returns-frontend"
-                                ),
-                                ListWithActionsAction(
-                                content = Text(messages("site.remove")),
-                                visuallyHiddenText = Some(messages("smallProducerDetails.edit.hidden")),
-                                href = "/soft-drinks-industry-levy-returns-frontend"
-                    ))
-                ))
-            ))
-    }
-}
-
-@layout(pageTitle = title(form, messages("secondaryWarehouseDetails.title"))) {
+@layout(pageTitle = title(form, messages("secondaryWarehouseDetails.heading1", warehouseList.rows.size))) {
 
     @formHelper(action = routes.SecondaryWarehouseDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -76,9 +35,9 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.heading1", ukWarehouseList.length)</h1>
+        <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.heading1", warehouseList.rows.size)</h1>
 
-        @summary
+        @govukSummaryList(warehouseList)
 
         <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.title")</h1>
 

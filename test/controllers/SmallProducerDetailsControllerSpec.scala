@@ -30,8 +30,6 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.checkAnswers.SmallProducerDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.SmallProducerDetailsView
 
@@ -56,17 +54,10 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         val result = route(application, request).value
 
-        val smallProducersSummaryList: List[SummaryListRow] =
-          SmallProducerDetailsSummary.row2(List())(messages(application))
-
-        val list: SummaryList = SummaryListViewModel(
-          rows = smallProducersSummaryList
-        )
-
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, List())(request, messages(application)).toString
       }
     }
 
@@ -79,15 +70,9 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         val request = FakeRequest(GET, smallProducerDetailsRoute)
         val view = application.injector.instanceOf[SmallProducerDetailsView]
         val result = route(application, request).value
-        val smallProducersSummaryList: List[SummaryListRow] =
-          SmallProducerDetailsSummary.row2(List())(messages(application))
-
-        val list: SummaryList = SummaryListViewModel(
-          rows = smallProducersSummaryList
-        )
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, List())(request, messages(application)).toString
       }
     }
 
@@ -158,15 +143,10 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
         val result = route(application, request).value
-        val smallProducersSummaryList: List[SummaryListRow] =
-          SmallProducerDetailsSummary.row2(List())(messages(application))
-        val list: SummaryList = SummaryListViewModel(
-          rows = smallProducersSummaryList
-        )
-
+        val smallProducersSummaryList = List()
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, smallProducersSummaryList)(request, messages(application)).toString
       }
     }
 
@@ -205,14 +185,14 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List(superCola))
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
-      val expectedSummaryList = SummaryListViewModel(SmallProducerDetailsSummary.row2(List(superCola))(messages(application)))
+      val producerList = List(superCola)
 
       running(application) {
         val request = FakeRequest(GET, smallProducerDetailsRoute)
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual expectedView(form, NormalMode, expectedSummaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual expectedView(form, NormalMode, producerList)(request, messages(application)).toString
       }
     }
 
@@ -222,14 +202,14 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       val application = applicationBuilder(userAnswers = Some(actualUserAnswers)).build()
 
       val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
-      val expectedSummaryList = SummaryListViewModel(SmallProducerDetailsSummary.row2(List(superCola, sparkyJuice))(messages(application)))
+      val producerList = List(superCola, sparkyJuice)
 
       running(application) {
         val request = FakeRequest(GET, smallProducerDetailsRoute)
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual expectedView(form, NormalMode, expectedSummaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual expectedView(form, NormalMode, producerList)(request, messages(application)).toString
       }
     }
 

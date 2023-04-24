@@ -128,4 +128,12 @@ GET        /change-packaging-site-details                       controllers.Pack
 POST       /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
 
 GET        /submit-return/nil-return/:nilReturn                 controllers.ReturnsController.onPageLoad(nilReturn: Boolean)
-GET        /return-sent                                        controllers.ReturnSentController.onPageLoad()
+GET        /return-sent                                         controllers.ReturnSentController.onPageLoad()
+
+
+GET        /remove-warehouse-details/:index                     controllers.RemoveWarehouseConfirmController.onPageLoad(mode: Mode = NormalMode, index: String)
+POST       /remove-warehouse-details/:index                     controllers.RemoveWarehouseConfirmController.onSubmit(mode: Mode = NormalMode, index: String)
+
+GET        /remove-packaging-site-details/:ref                   controllers.RemovePackagingDetailsConfirmationController.onPageLoad(mode: Mode = NormalMode, ref: String)
+POST       /remove-packaging-site-details/:ref                   controllers.RemovePackagingDetailsConfirmationController.onSubmit(mode: Mode = NormalMode, ref: String)
+

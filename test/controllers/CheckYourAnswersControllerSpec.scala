@@ -213,8 +213,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("ownBrandsPackagedAtYourOwnSite.lowband.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("ownBrandsPackagedAtYourOwnSite.highband.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("ownBrandsPackagedAtYourOwnSite.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("ownBrandsPackagedAtYourOwnSite.highband.litres.hidden"))
       }
     }
 
@@ -301,8 +301,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.lowband.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.highband.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.highband.litres.hidden"))
       }
     }
 
@@ -368,8 +368,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.lowband.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.highband.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.highband.litres.hidden"))
       }
     }
 
@@ -428,8 +428,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.lowband.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.highband.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.highband.litres.hidden"))
       }
     }
 
@@ -488,8 +488,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.lowband.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.highband.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.highband.litres.hidden"))
       }
     }
 
@@ -538,18 +538,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
-        page.getElementById("change-lowband-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
+        page.getElementById("change-lowband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         page.getElementsByTag("dd").text() must include("-£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
-        page.getElementById("change-highband-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
+        page.getElementById("change-highband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("-£4,800.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.lowband.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.highband.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.highband.litres.hidden"))
       }
     }
 
@@ -598,18 +598,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
-        page.getElementById("change-lowband-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
+        page.getElementById("change-lowband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         page.getElementsByTag("dd").text() must include("-£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
-        page.getElementById("change-highband-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
+        page.getElementById("change-highband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("-£4,800.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.lowband.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.highband.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.highband.litres.hidden"))
       }
     }
 
@@ -1056,7 +1056,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("registered-sites").text mustEqual Messages("registeredUkSites")
+        page.getElementById("registeredUkSites").text mustEqual Messages("registeredUkSites")
         page.getElementsByTag("dt").text() must include(Messages("packagingSites"))
       }
     }
@@ -1124,7 +1124,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -1187,7 +1187,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       )
     }
 
-    "must not include brought into uk from small producers in teh calculation and should display cost as 0 for those" in {
+    "must not include brought into uk from small producers in the calculation and should display cost as 0 for those" in {
       when(mockSdilConnector.balance(any(), any())(any())).thenReturn(Future.successful(BigDecimal(0)))
       when(mockConfig.balanceAllEnabled).thenReturn(false)
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
