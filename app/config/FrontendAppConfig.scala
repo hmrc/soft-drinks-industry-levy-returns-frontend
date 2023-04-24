@@ -63,4 +63,5 @@ class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
   val lowerBandCostPerLitre: BigDecimal = BigDecimal(configuration.getString("lowerBandCostPerLitre"))
   val higherBandCostPerLitre: BigDecimal = BigDecimal(configuration.getString("higherBandCostPerLitre"))
   val balanceAllEnabled: Boolean = configuration.getBoolean("balanceAll.enabled")
+  val softDrinksIndustryLevyFrontendLink :String  = s"${configuration.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
 }
