@@ -150,7 +150,6 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
       val returnToDashboardSection = document.getElementById("goToDashboard")
       val link = returnToDashboardSection.getElementsByClass(Selectors.link)
       link.text() mustEqual Messages("returnSent.help.link")
-      println(s"config link: {config.softDrinksIndustryLevyFrontendLink}")
       link.get(0).attr("href") mustEqual config.softDrinksIndustryLevyFrontendLink
     }
 
