@@ -45,8 +45,6 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     val button = "govuk-button"
   }
 
-
-
   def testSummaryLists(key: String, element: Element, userAnswers: UserAnswers, isCheckAnswers: Boolean) = {
     val summaryLists = element.getElementsByClass(Selectors.summaryList)
 

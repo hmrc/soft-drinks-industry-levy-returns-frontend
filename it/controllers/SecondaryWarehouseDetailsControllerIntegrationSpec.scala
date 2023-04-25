@@ -7,7 +7,7 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class SecondaryWarehouseDetailsControllerIntergrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
+class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
   "SecondaryWarehouseDetailsController" should {
     "Ask for if user wants to add more warehouses" in {
 
