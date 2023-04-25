@@ -77,7 +77,7 @@ class SDILSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
   def get(id: String): Future[Option[CacheMap]] = {
     collection.find(equal("id", id)).headOption().map { datedCacheMap =>
       datedCacheMap.map { value: DatedCacheMap =>
-        value.toCacheMap
+        CacheMap(value.id,value.data)
       }
     }
   }
