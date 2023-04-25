@@ -68,6 +68,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
           }
+
           "Remove Packaging details confirmation if" - {
             "Yes is selected go to Packing details page" in {
               val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode, UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> true)))
@@ -575,6 +576,45 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               }
             }
 
+          }
+
+          "packing site details page" - {
+
+            def navigate(userAnswers: UserAnswers,
+                         sdilReturn: Option[SdilReturn] = None,
+                         subscription: Option[RetrievedSubscription]) = {
+
+              navigator.nextPage(PackagingSiteDetailsPage, NormalMode, userAnswers, sdilReturn, subscription)
+            }
+
+            "should redirect to packing site name when yes is selected" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val userAnswers = UserAnswers(id, Json.obj("packagingSiteDetails" -> true))
+              val result = navigate(userAnswers, Some(sdilReturn), Some(modifiedSubscription))
+              result mustBe routes.IndexController.onPageLoad()
+            }
+
+            "should redirect to check your answers when no is selected and user is not a new importer" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val userAnswers = UserAnswers(id, Json.obj("packagingSiteDetails" -> false))
+              val result = navigate(userAnswers, Some(sdilReturn), Some(modifiedSubscription))
+              result mustBe routes.CheckYourAnswersController.onPageLoad()
+            }
+
+            "should redirect to warehouse name when current sdil is not an importer" - {
+              "but meets the large import conditions for being a new importer" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val userAnswers = UserAnswers(id, Json.obj("packagingSiteDetails" -> false))
+                val result = navigate(userAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+              }
+            }
           }
 
           "Small producer details" -{
