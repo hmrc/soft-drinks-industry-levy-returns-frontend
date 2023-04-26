@@ -38,7 +38,6 @@
 @head = {
 
     @hmrcHead(
-        nonce     = CSPNonce.get,
         headBlock = if(timeout) { Some(
             hmrcTimeoutDialog(TimeoutDialog(
                 timeout             = Some(appConfig.timeout),
@@ -94,7 +93,7 @@
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
     scriptsBlock       = Some(hmrcScripts(
-        nonce        = CSPNonce.get,
+        //nonce        = CSPNonce.get,
         scriptsBlock = Some(additionalScripts)
     ))
 )(content)
