@@ -23,6 +23,7 @@ import pages._
 import models._
 import models.retrieved.RetrievedSubscription
 import play.api.Logger
+import utilitlies.UserTypeCheck
 
 
 @Singleton
@@ -198,9 +199,7 @@ class Navigator @Inject()() {
 
     (sdilReturnOpt, subscriptionOpt) match {
       case (Some(sdilReturn), Some(subscription)) =>
-        val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
-        val isNewPacker = (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-        if (isNewImporter || isNewPacker) {
+        if (UserTypeCheck.isNewImporter(sdilReturn,subscription) || UserTypeCheck.isNewPacker(sdilReturn,subscription)) {
           routes.ReturnChangeRegistrationController.onPageLoad()
         } else {
           routes.CheckYourAnswersController.onPageLoad()
@@ -295,9 +294,8 @@ class Navigator @Inject()() {
     }else {
       (sdilReturnOpt, subscriptionOpt) match {
         case (Some(sdilReturn), Some(subscription)) =>
-          val isNewImporter = (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
-          if (isNewImporter) {
-            routes.ReturnChangeRegistrationController.onPageLoad()
+          if (UserTypeCheck.isNewImporter(sdilReturn,subscription)) {
+            routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
           } else {
             routes.CheckYourAnswersController.onPageLoad()
           }
