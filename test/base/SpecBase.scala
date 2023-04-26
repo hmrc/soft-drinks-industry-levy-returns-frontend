@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{Address, ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -90,6 +90,29 @@ trait SpecBase
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
   lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  lazy val vrn = "111111111"
+
+  val addressLine1 = "line 1"
+  val veryLongAddressLine1 = "liiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiine 1"
+  val foreignCharsLine1 = "1 Falsche Straße"
+  val addressLine2 = "line 2"
+  val addressLine3 = "line 3"
+  val addressLine4 = "line 4"
+  val postcode = "aa1 1aa"
+  val countryName = "United Kingdom"
+  val countryCode = "UK"
+
+  val phaseBannerHtml = "This is a new service – your <a id='beta-banner-feedback' href='/feedback'>feedback</a> will help us to improve it."
+  val phaseBannerHtmlCy = "Gwasanaeth newydd yw hwn – bydd eich <a id='beta-banner-feedback' href='/feedback'>adborth</a> yn ein helpu i’w wella."
+
+  val customerAddressMax: Address = Address(
+    Some(addressLine1),
+    Some(addressLine2),
+    Some(addressLine3),
+    Some(addressLine4),
+    Some(postcode),
+    Some(countryCode)
+  )
 
   val returnPeriod = ReturnPeriod(2022,1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))

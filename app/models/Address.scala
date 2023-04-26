@@ -16,26 +16,55 @@
 
 package models
 
-import models.backend.UkAddress
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{Writes, _}
+import play.api.libs.json.{Json, OFormat, Reads}
 
-case class Address(line1: String, line2: String, line3: String, line4: String, postcode: String) {
-  def nonEmptyLines: Seq[String] = Seq(line1, line2, line3, line4, postcode).filter(_.nonEmpty)
-}
+case class Address(line1: Option[String],
+                   line2: Option[String],
+                   line3: Option[String],
+                   line4: Option[String],
+                   postcode: Option[String],
+                   countryCode: Option[String])
 
 object Address {
-  def fromString(s: String): Address = {
-    def getLine(n: Int) = lines.init.lift(n).getOrElse("")
-    lazy val lines = s.split(",")
 
-    Address(getLine(0), getLine(1), getLine(2), getLine(3), lines.lastOption.getOrElse(""))
+  val customerAddressReads: Reads[Address] = for {
+    lines <- (__ \\ "lines").readNullable[Seq[String]]
+    postcode <- (__ \\ "postcode").readNullable[String]
+    countryCode <- (__ \\ "code").readNullable[String]
+  } yield {
+    lines match {
+      case Some(someSequence) => Address(
+        extractValue(someSequence, 0),
+        extractValue(someSequence, 1),
+        extractValue(someSequence, 2),
+        extractValue(someSequence, 3),
+        postcode, countryCode)
+      case None => Address(None, None, None, None, postcode, countryCode)
+    }
   }
 
-  def fromUkAddress(address: UkAddress): Address = {
-    def getLine(n: Int) = address.lines.lift(n).getOrElse("")
-
-    Address(getLine(0), getLine(1), getLine(2), getLine(3), address.postCode)
+  def extractValue(input: Seq[String], index: Int): Option[String] = {
+    if(input.size > index) Some(input(index)) else None
   }
 
-  implicit val address: OFormat[Address] = Json.format[Address]
+  implicit val format: Format[Address] = Json.format[Address]
+
+  private val line1Path = JsPath \ "line1"
+  private val line2Path =  JsPath \ "line2"
+  private val line3Path = JsPath \ "line3"
+  private val line4Path = JsPath \ "line4"
+  private val postCodePath = JsPath \ "postCode"
+  private val countryCodePath = JsPath \ "countryCode"
+
+  val auditWrites: Writes[Address] = (
+    line1Path.writeNullable[String] and
+      line2Path.writeNullable[String] and
+      line3Path.writeNullable[String] and
+      line4Path.writeNullable[String] and
+      postCodePath.writeNullable[String] and
+      countryCodePath.writeNullable[String]
+    )(unlift(Address.unapply))
+
 }

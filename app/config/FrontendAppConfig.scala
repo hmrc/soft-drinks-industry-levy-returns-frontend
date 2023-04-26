@@ -16,6 +16,7 @@
 
 package config
 
+
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
@@ -55,4 +56,6 @@ class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
   val higherBandCostPerLitre: BigDecimal = BigDecimal(configuration.getString("higherBandCostPerLitre"))
   val balanceAllEnabled: Boolean = configuration.getBoolean("balanceAll.enabled")
   val softDrinksIndustryLevyFrontendLink :String  = s"${configuration.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
+  val addressLookupServiceMock: String = "host/vat-through-software/account/test-only/address-lookup-stub"
+  val addressLookupService: String  = configuration.baseUrl("address-lookup-frontend")
 }
