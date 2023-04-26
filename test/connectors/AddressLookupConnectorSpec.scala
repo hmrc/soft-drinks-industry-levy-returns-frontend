@@ -20,13 +20,15 @@ import base.SpecBase
 import models.Address
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import connectors.httpParsers.ResponseHttpParser.HttpResult
+import models.core.ErrorModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnectorSpec extends SpecBase with MockitoSugar{
 
@@ -34,6 +36,8 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar{
   val mockHttp = mock[HttpClient]
   val TestAddressLookupConnector = new AddressLookupConnector(mockHttp,frontendAppConfig)
   val addressLookupConnector = new AddressLookupConnector(http =mockHttp, frontendAppConfig)
+  implicit val hc = HeaderCarrier()
+  implicit val ec = ExecutionContext
 
   "AddressLookupConnector" - {
 
@@ -49,13 +53,13 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar{
       "called for a Right with CustomerDetails" - {
 
         "return a CustomerAddressModel" in {
-          //when(TestAddressLookupConnector.getAddress(vrn)(any(),any())).thenReturn(Future.successful(Right(customerAddressMax)))
-          val res = TestAddressLookupConnector.getAddress(vrn)(any(),any())
+          when(mockHttp.GET[HttpResult[Address]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Right(customerAddressMax)))
+          val res = TestAddressLookupConnector.getAddress(vrn)
           whenReady(
             res
           ){
             response =>
-              response mustEqual(customerAddressMax)
+              response mustEqual Right(customerAddressMax)
           }
         }
       }
@@ -63,7 +67,14 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar{
       "given an error should" - {
 
         "return an Left with an ErrorModel" in {
-
+          when(mockHttp.GET[HttpResult[Address]](any(), any(), any())(any(), any(), any())).thenReturn(Future.failed(new RuntimeException))
+          val res = TestAddressLookupConnector.getAddress(vrn)
+          whenReady(
+            res
+          ){
+            response =>
+              response mustEqual new RuntimeException
+          }
         }
       }
     }
