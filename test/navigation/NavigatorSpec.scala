@@ -612,9 +612,27 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
                 val userAnswers = UserAnswers(id, Json.obj("packagingSiteDetails" -> false))
                 val result = navigate(userAnswers, Some(sdilReturn), Some(modifiedSubscription))
-                result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
+                result mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
               }
             }
+
+            "should redirect to journey recovery when no subscription is found" in {
+                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
+                val userAnswers = UserAnswers(id, Json.obj("packagingSiteDetails" -> false))
+                val result = navigate(userAnswers, Some(sdilReturn), None)
+                result mustBe routes.JourneyRecoveryController.onPageLoad()
+            }
+
+            "should redirect to journey recovery when no sdil return is found" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+              val userAnswers = UserAnswers(id, Json.obj("packagingSiteDetails" -> false))
+              val result = navigate(userAnswers, None,Some(modifiedSubscription))
+              result mustBe routes.JourneyRecoveryController.onPageLoad()
+            }
+
           }
 
           "Small producer details" -{
