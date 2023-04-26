@@ -128,7 +128,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/return-change-registration")
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/ask-secondary-warehouses-in-return")
           }
         }
       }
