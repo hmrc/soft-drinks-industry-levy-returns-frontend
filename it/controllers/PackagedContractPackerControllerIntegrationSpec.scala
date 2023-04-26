@@ -47,7 +47,6 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
           whenReady(result1) { res =>
             res.status mustBe 200
           }
-
         }
       }
 

@@ -218,6 +218,7 @@ smallProducerDetails.remove.hidden = Remove small producer
 
 
 returnChangeRegistration.title = You changed your soft drinks business activity
+returnChangeRegistration.heading = You changed your soft drinks business activity
 returnChangeRegistration.subtext1 = In this return, you told us that you have packaged liable drinks in the UK.
 returnChangeRegistration.subtext2 = This is different to your registered business activity, so we will update your registration.
 returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.

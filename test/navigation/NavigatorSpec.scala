@@ -22,9 +22,6 @@ import helpers.LoggerHelper
 import pages._
 import models._
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import org.mockito.Mockito.verify
-import org.mockito.MockitoSugar.mock
-import play.api.Logger
 import play.api.libs.json.Json
 
 class NavigatorSpec extends SpecBase with LoggerHelper {
