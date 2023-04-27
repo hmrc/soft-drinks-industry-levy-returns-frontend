@@ -17,29 +17,22 @@
 package connectors
 
 import base.SpecBase
-import models.Address
-import play.api.http.Status
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient, HttpException, HttpResponse}
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import mocks.MockHttp
-import models.core.ErrorModel
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.Address
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.http.Status
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHttp {
 
   val errorModel: HttpResponse = HttpResponse(Status.BAD_REQUEST, "Error Message")
   val TestAddressLookupConnector = new AddressLookupConnector(mockHttp,frontendAppConfig)
   val addressLookupConnector = new AddressLookupConnector(http =mockHttp, frontendAppConfig)
-  implicit val hc = HeaderCarrier()
-  implicit val ec = ExecutionContext
-
-
 
   "AddressLookupConnector" - {
 
