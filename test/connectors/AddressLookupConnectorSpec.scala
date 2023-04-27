@@ -23,7 +23,7 @@ import models.Address
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -33,6 +33,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
   val errorModel: HttpResponse = HttpResponse(Status.BAD_REQUEST, "Error Message")
   val TestAddressLookupConnector = new AddressLookupConnector(mockHttp,frontendAppConfig)
   val addressLookupConnector = new AddressLookupConnector(http =mockHttp, frontendAppConfig)
+  implicit val hc = HeaderCarrier()
 
   "AddressLookupConnector" - {
 
@@ -45,7 +46,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
 
     "for getAddress method" - {
 
-      def getAddressResult: Future[HttpResult[Address]] = TestAddressLookupConnector.getAddress(vrn)
+      def getAddressResult: Future[HttpResult[Address]] = TestAddressLookupConnector.getAddress(vrn)(implicitly,implicitly)
 
       "called for a Right with CustomerDetails" - {
 
