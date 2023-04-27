@@ -29,7 +29,7 @@ import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubControllerComponents
@@ -105,6 +105,13 @@ trait SpecBase
   val phaseBannerHtml = "This is a new service – your <a id='beta-banner-feedback' href='/feedback'>feedback</a> will help us to improve it."
   val phaseBannerHtmlCy = "Gwasanaeth newydd yw hwn – bydd eich <a id='beta-banner-feedback' href='/feedback'>adborth</a> yn ein helpu i’w wella."
 
+  val customerAddressJsonMin: JsObject = Json.obj()
+  val customerAddressJsonError: JsObject = Json.obj(
+    "address" -> Json.obj(
+      "lines" -> 4
+    )
+  )
+  val customerAddressMin: Address = Address(None, None, None, None, None, None)
   val customerAddressMax: Address = Address(
     Some(addressLine1),
     Some(addressLine2),
