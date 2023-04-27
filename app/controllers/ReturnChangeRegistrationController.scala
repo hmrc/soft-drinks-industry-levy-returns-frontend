@@ -17,9 +17,9 @@
 package controllers
 
 import controllers.actions._
-import models.NormalMode
+import models.{NormalMode, SdilReturn}
 import navigation.Navigator
-import pages.PackagedContractPackerPage
+import pages.{PackagedContractPackerPage, ReturnChangeRegistrationPage}
 
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -45,6 +45,6 @@ class ReturnChangeRegistrationController @Inject()(
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Redirect(navigator.nextPage(PackagedContractPackerPage, NormalMode, request.userAnswers))
+      Redirect(navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, request.userAnswers,Some(SdilReturn.apply(request.userAnswers)),Some(request.subscription) ))
   }
 }

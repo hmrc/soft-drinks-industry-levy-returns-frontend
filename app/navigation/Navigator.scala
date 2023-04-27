@@ -33,6 +33,7 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
     case PackagingSiteDetailsPage => userAnswers => sdilReturnOpt => subscriptionOpt => _ => packagingSiteDetailsPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
+    case ReturnChangeRegistrationPage => _ => sdilReturnOpt => subscriptionOpt => _ => returnChangeRegistrationPageNavigation(sdilReturnOpt, subscriptionOpt)
     case SecondaryWarehouseDetailsPage => userAnswers => _ => _ => _ => secondaryWarehouseDetailsPageNavigation(userAnswers)
     case RemoveWarehouseConfirmPage => userAnswers => _ => _ => _ => removeWarehouseConfirmPageNavigation (userAnswers)
     case RemovePackagingDetailsConfirmationPage => _ => _ => _ => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
@@ -283,6 +284,24 @@ class Navigator @Inject()() {
       routes.IndexController.onPageLoad()
     } else {
       routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def returnChangeRegistrationPageNavigation(sdilReturnOpt: Option[SdilReturn],
+                                                     subscriptionOpt: Option[RetrievedSubscription]) = {
+    (sdilReturnOpt, subscriptionOpt) match {
+      case (Some(sdilReturn), Some(subscription)) =>
+        if (UserTypeCheck.isNewPacker(sdilReturn,subscription)) {
+          routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+        } else {
+          routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
+        }
+      case (_, Some(subscription)) =>
+        logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
+        routes.JourneyRecoveryController.onPageLoad()
+      case _ =>
+        logger.warn("SDIL return or subscription not provided for current unknown user")
+        routes.JourneyRecoveryController.onPageLoad()
     }
   }
 
