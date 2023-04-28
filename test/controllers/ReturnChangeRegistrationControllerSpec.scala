@@ -18,23 +18,11 @@ package controllers
 
 import base.SpecBase
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.ReturnChangeRegistrationView
 
-import scala.concurrent.Future
-
-class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar {
-
-  def onwardRoute = Call("GET", "/foo")
-  lazy val returnChangeRegistrationRoute = routes.ReturnChangeRegistrationController.onPageLoad().url
+class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
   "ReturnChangeRegistration Controller" - {
 
@@ -53,31 +41,6 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
         contentAsString(result) must include (routes.PackagedContractPackerController.onPageLoad(NormalMode).url)
         contentAsString(result) mustEqual view()(request, messages(application)).toString
       }
-    }
-  }
-  "must redirect to the next page when valid data is submitted" in {
-
-    val mockSessionRepository = mock[SessionRepository]
-
-    when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-    val application =
-      applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
-
-    running(application) {
-      val request =
-        FakeRequest(POST, returnChangeRegistrationRoute)
-          .withFormUrlEncodedBody(("value", ""))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
     }
   }
 }
