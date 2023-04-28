@@ -110,16 +110,6 @@ trait ITCoreTestData extends TryValues {
     .set(BroughtIntoUkFromSmallProducersPage, false).success.value
     .set(ClaimCreditsForExportsPage, false)
 
-  def newPackerPartialNewImporterAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, false).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
-    .set(BroughtIntoUKPage, false).success.value
-    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-    .set(ClaimCreditsForExportsPage, false)
-
   def checkYourAnswersFullAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
