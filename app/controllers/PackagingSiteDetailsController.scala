@@ -19,7 +19,7 @@ package controllers
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.PackagingSiteDetailsFormProvider
-import models.{Mode, SdilReturn}
+import models.Mode
 import models.backend.Site
 import navigation.Navigator
 import pages.PackagingSiteDetailsPage
@@ -72,7 +72,7 @@ class PackagingSiteDetailsController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, updatedAnswers,Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)))
+          } yield Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, updatedAnswers))
       )
   }
 }
