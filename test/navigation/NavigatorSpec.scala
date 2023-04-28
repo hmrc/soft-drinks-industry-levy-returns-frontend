@@ -575,6 +575,55 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
           }
 
+          "change registration page" - {
+
+            def navigate(userAnswers: UserAnswers,
+                         sdilReturn: Option[SdilReturn] = None,
+                         subscription: Option[RetrievedSubscription]) = {
+
+              navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, userAnswers, sdilReturn, subscription)
+            }
+
+            "should redirect to Ask Secondary Warehouse page when user clicks change registration" - {
+              "when meets the large import conditions for being a new importer" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
+              val result = navigate(userAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
+              }
+            }
+
+            "should redirect to Pack At Business Address page when user clicks change registration" - {
+              "when meets the pack conditions and import conditions for being a new packer and new importer" in {
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List(SmallProducer("", "", (1L, 1L))), (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
+                val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
+                result mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+              }
+            }
+
+            "should redirect to journey recovery when no subscription is found" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
+              val result = navigate(userAnswers, Some(sdilReturn), None)
+              result mustBe routes.JourneyRecoveryController.onPageLoad()
+            }
+
+            "should redirect to journey recovery when no sdil return is found" in {
+              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
+              val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+              val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
+              val result = navigate(userAnswers, None,Some(modifiedSubscription))
+              result mustBe routes.JourneyRecoveryController.onPageLoad()
+            }
+
+          }
+
           "packing site details page" - {
 
             def navigate(userAnswers: UserAnswers,
