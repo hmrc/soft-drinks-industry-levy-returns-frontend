@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package repositories
+package controllers
 
-import play.api.libs.json.{JsValue, Json, OFormat}
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+import com.google.inject.{Inject, Singleton}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import java.time.Instant
+@Singleton
+class AddressLookupController @Inject()(val controllerComponents: MessagesControllerComponents) extends FrontendBaseController with I18nSupport {
 
-case class DatedCacheMap(
-                          id: String,
-                          data: Map[String, JsValue],
-                          lastUpdated: Instant = Instant.now()
-                        )
+  def callback(): Action[AnyContent] = Action { _ =>
+    Ok("callback from address")
+  }
 
-object DatedCacheMap extends MongoJavatimeFormats {
-
-  implicit val formats: OFormat[DatedCacheMap]   = Json.format[DatedCacheMap]
-
-  def apply(cacheMap: CacheMap): DatedCacheMap = DatedCacheMap(cacheMap.id, cacheMap.data)
 }
-
-

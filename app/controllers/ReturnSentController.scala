@@ -85,7 +85,7 @@ class ReturnSentController @Inject()(
     total match {
       case total if total > 0 => "amountToPay"
       case total if total < 0 => "creditedPay"
-      case total if total == 0 => "noPayNeeded"
+      case _ => "noPayNeeded"
     }
   }
 

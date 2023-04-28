@@ -81,7 +81,8 @@ trait TestConfiguration
     "play.filters.csrf.header.bypassHeaders.X-Requested-With" -> "*",
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "json.encryption.key" -> "fqpLDZ4sumDsekHkeEBlCA==",
-    "json.encryption.previousKeys" -> "[]"
+    "json.encryption.previousKeys" -> "[]",
+    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes"
   )
 
   override implicit lazy val app: Application = appBuilder().build()
