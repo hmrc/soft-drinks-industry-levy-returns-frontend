@@ -103,7 +103,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/check-your-answers")
           }
         }
       }
@@ -111,7 +111,8 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
       "user selected no with at least one packaging site on the list AND user is also a new Importer" in {
         given
           .commonPrecondition
-        val userAnswers = newPackerPartialAnswers.success.value.copy(packagingSiteList =
+        val userAnswers = newPackerPartialNewImporterAnswers.success.value.copy(
+          packagingSiteList =
           Map("6541651568" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
             Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
         setAnswers(userAnswers)
@@ -127,7 +128,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend")
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/ask-secondary-warehouses-in-return")
           }
         }
       }
