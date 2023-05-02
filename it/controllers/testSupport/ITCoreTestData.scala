@@ -1,6 +1,6 @@
 package controllers.testSupport
 
-import models.{AddASmallProducer, LitresInBands, UserAnswers, Warehouse}
+import models.{AddASmallProducer, LitresInBands, UserAnswers}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
@@ -108,7 +108,7 @@ trait ITCoreTestData extends TryValues {
     .set(ExemptionsForSmallProducersPage, false).success.value
     .set(BroughtIntoUKPage, false).success.value
     .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-    .set(ClaimCreditsForExportsPage, false)
+    .set(ClaimCreditsForExportsPage, false).success.value
 
   def newPackerPartialNewImporterAnswers = emptyUserAnswers
     .set(OwnBrandsPage, false).success.value
@@ -118,7 +118,16 @@ trait ITCoreTestData extends TryValues {
     .set(BroughtIntoUKPage, false).success.value
     .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
     .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-    .set(ClaimCreditsForExportsPage, false)
+    .set(ClaimCreditsForExportsPage, false).success.value
+
+  def newImporterAnswers = emptyUserAnswers
+    .set(OwnBrandsPage, false).success.value
+    .set(PackagedContractPackerPage, false).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, false).success.value
 
   def checkYourAnswersFullAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true).success.value
