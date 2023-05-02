@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{Address, ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{Address, ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers, Warehouse}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -92,6 +92,7 @@ trait SpecBase
   lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
   lazy val vrn = "111111111"
 
+  val organisation = "soft drinks ltd"
   val addressLine1 = "line 1"
   val veryLongAddressLine1 = "liiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiine 1"
   val foreignCharsLine1 = "1 Falsche Straße"
@@ -111,8 +112,9 @@ trait SpecBase
       "lines" -> 4
     )
   )
-  val customerAddressMin: Address = Address(None, None, None, None, None, None)
+  val customerAddressMin: Address = Address(None, None, None, None, None, None, None)
   val customerAddressMax: Address = Address(
+    Some(organisation),
     Some(addressLine1),
     Some(addressLine2),
     Some(addressLine3),
@@ -121,6 +123,7 @@ trait SpecBase
     Some(countryCode)
   )
 
+  val warehouseMap = Map("1"-> Warehouse(Some("super cola"),UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
   val returnPeriod = ReturnPeriod(2022,1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val genericSmallProducerAlias = "Generic Producer LTD"

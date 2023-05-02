@@ -18,8 +18,13 @@ package services
 
 import base.SpecBase
 import connectors.AddressLookupConnector
+import models.{Address, UserAnswers, Warehouse}
+import models.Address.extractValue
+import models.backend.UkAddress
 import org.mockito.MockitoSugar.{mock, when}
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.ExecutionContext
@@ -29,10 +34,10 @@ class AddressLookupServiceSpec extends SpecBase {
   implicit val hc = HeaderCarrier()
 
 
-
+ val mockSessionRepo = mock[SessionRepository]
   val mockSdilConnector = mock[AddressLookupConnector]
 
-  val service = new AddressLookupService(mockSdilConnector)
+  val service = new AddressLookupService(mockSessionRepo,mockSdilConnector)
 
   "getAddress" - {
     "return a address" in {
@@ -43,6 +48,20 @@ class AddressLookupServiceSpec extends SpecBase {
       whenReady(res) {result =>
         result mustBe Right(customerAddressMax)
       }
+    }
+  }
+
+  "addAddressUserAnswers" - {
+    "add to the cache the address of a warehouse when a user returns from address lookup frontend" in {
+      val addressLookupState = Warehousedetails
+      val warehouseMap = Map("1"-> Warehouse(Some("super cola"),UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
+      val newWarehouse = Map("12" -> Warehouse(Some("super fanta"),UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
+      val updatedUserAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap)
+      setAnswers(updatedUserAnswers)
+
+      service.addAddressUserAnswers(addressLookupState = addressLookupState,
+                                    address = customerAddressMax,
+                                    userAnswers = emptyUserAnswers.warehouseList(warehouseMap))
     }
   }
 

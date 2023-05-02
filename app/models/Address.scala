@@ -20,28 +20,31 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{Writes, _}
 import play.api.libs.json.{Json, OFormat, Reads}
 
-case class Address(line1: Option[String],
-                   line2: Option[String],
-                   line3: Option[String],
-                   line4: Option[String],
-                   postcode: Option[String],
-                   countryCode: Option[String])
+case class Address( organisation: Option[String],
+                    line1: Option[String],
+                    line2: Option[String],
+                    line3: Option[String],
+                    line4: Option[String],
+                    postcode: Option[String],
+                    countryCode: Option[String])
 
 object Address {
 
   val customerAddressReads: Reads[Address] = for {
+    organisation <- (__ \\ "organisation").readNullable[String]
     lines <- (__ \\ "lines").readNullable[Seq[String]]
     postcode <- (__ \\ "postcode").readNullable[String]
     countryCode <- (__ \\ "code").readNullable[String]
   } yield {
     lines match {
       case Some(someSequence) => Address(
+        organisation,
         extractValue(someSequence, 0),
         extractValue(someSequence, 1),
         extractValue(someSequence, 2),
         extractValue(someSequence, 3),
         postcode, countryCode)
-      case None => Address(None, None, None, None, postcode, countryCode)
+      case None => Address(organisation,None, None, None, None, postcode, countryCode)
     }
   }
 
@@ -51,6 +54,7 @@ object Address {
 
   implicit val format: Format[Address] = Json.format[Address]
 
+  private val organisation = JsPath \ "organisation"
   private val line1Path = JsPath \ "line1"
   private val line2Path =  JsPath \ "line2"
   private val line3Path = JsPath \ "line3"
@@ -59,7 +63,8 @@ object Address {
   private val countryCodePath = JsPath \ "countryCode"
 
   val auditWrites: Writes[Address] = (
-    line1Path.writeNullable[String] and
+    organisation.writeNullable[String] and
+      line1Path.writeNullable[String] and
       line2Path.writeNullable[String] and
       line3Path.writeNullable[String] and
       line4Path.writeNullable[String] and
