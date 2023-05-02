@@ -23,7 +23,7 @@ If you need to setup SSH, see [the github guide to setting up SSH](https://help.
 
 Run the code from source using
 
-`sbt run`
+`./run.sh`
 
 Run other services required for running this service via the service manager. (*You need to be on the VPN*)
 `sm2 --start SDIL_ALL`
