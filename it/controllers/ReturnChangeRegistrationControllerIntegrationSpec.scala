@@ -2,9 +2,7 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.jsoup.Jsoup
-import pages.PackagedContractPackerPage
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames

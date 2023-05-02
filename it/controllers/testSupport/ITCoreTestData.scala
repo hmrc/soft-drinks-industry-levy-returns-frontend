@@ -1,6 +1,6 @@
 package controllers.testSupport
 
-import models.{AddASmallProducer, LitresInBands, UserAnswers, Warehouse}
+import models.{AddASmallProducer, LitresInBands, UserAnswers}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
