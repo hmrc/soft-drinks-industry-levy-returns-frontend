@@ -19,13 +19,13 @@ package controllers
 import controllers.actions._
 import models.{NormalMode, SdilReturn}
 import navigation.Navigator
-import pages.{PackagedContractPackerPage, ReturnChangeRegistrationPage}
-
-import javax.inject.Inject
+import pages.ReturnChangeRegistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ReturnChangeRegistrationView
+
+import javax.inject.Inject
 
 
 class ReturnChangeRegistrationController @Inject()(

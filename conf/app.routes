@@ -6,8 +6,6 @@ GET         /                                            controllers.IndexContro
 
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
-
 GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)

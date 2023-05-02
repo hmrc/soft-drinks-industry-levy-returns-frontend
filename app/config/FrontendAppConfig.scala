@@ -17,7 +17,6 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -26,18 +25,18 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
 
   val appName: String = configuration.getString("appName")
-  val host: String    = configuration.getString("host")
+  val host: String    = configuration.getConfString("soft-drinks-industry-levy-returns-frontend.host", throw new Exception("missing config soft-drinks-industry-levy-returns-frontend.host"))
 
-  private val contactHost = configuration.getString("contact-frontend.host")
-  private val contactFormServiceIdentifier = "soft-drinks-industry-levy-returns-frontend"
+  private val contactHost: String = configuration.getConfString("contact-frontend.host", throw new Exception("missing config contact-frontend.host"))
+  private val contactFormServiceIdentifier: String = "soft-drinks-industry-levy-returns-frontend"
 
   def feedbackUrl(implicit request: RequestHeader): String = {
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
   }
 
-  val basGatewayBaseUrl = configuration.baseUrl("bas-gateway")
-  val sdilFrontendBaseUrl = configuration.baseUrl("soft-drinks-industry-levy-frontend")
-  val sdilBaseUrl = configuration.baseUrl("soft-drinks-industry-levy")
+  val basGatewayBaseUrl: String = configuration.baseUrl("bas-gateway")
+  val sdilFrontendBaseUrl: String = configuration.baseUrl("soft-drinks-industry-levy-frontend")
+  val sdilBaseUrl: String = configuration.baseUrl("soft-drinks-industry-levy")
 
 
   val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
@@ -46,14 +45,6 @@ class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
 
   private val exitSurveyBaseUrl: String = configuration.baseUrl("feedback-frontend")
   val exitSurveyUrl: String = s"$exitSurveyBaseUrl/feedback/soft-drinks-industry-levy-returns-frontend"
-
-  val languageTranslationEnabled: Boolean =
-    configuration.getBoolean("features.welsh-translation")
-
-  def languageMap: Map[String, Lang] = Map(
-    "en" -> Lang("en"),
-    "cy" -> Lang("cy")
-  )
 
   val timeout: Int   = configuration.getInt("timeout-dialog.timeout")
   val countdown: Int = configuration.getInt("timeout-dialog.countdown")

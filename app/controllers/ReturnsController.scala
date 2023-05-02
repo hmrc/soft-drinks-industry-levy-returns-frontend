@@ -54,7 +54,6 @@ class ReturnsController @Inject()(
       val userAnswers = request.userAnswers
       val returnPeriod = extractReturnPeriod(request)
 
-
       for {
         session <- sessionCache.fetchEntry[Amounts](sdilEnrolment,SDILSessionKeys.AMOUNTS)
         pendingReturns <- returnService.getPendingReturns(subscription.utr)
