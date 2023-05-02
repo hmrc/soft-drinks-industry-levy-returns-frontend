@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
 
   val appName: String = configuration.getString("appName")
-  val host: String    = configuration.getString("host")
+  val host: String    = configuration.getString("soft-drinks-industry-levy-returns-frontend.host")
 
   private val contactHost = configuration.getString("contact-frontend.host")
   private val contactFormServiceIdentifier = "soft-drinks-industry-levy-returns-frontend"
@@ -46,14 +46,6 @@ class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
 
   private val exitSurveyBaseUrl: String = configuration.baseUrl("feedback-frontend")
   val exitSurveyUrl: String = s"$exitSurveyBaseUrl/feedback/soft-drinks-industry-levy-returns-frontend"
-
-  val languageTranslationEnabled: Boolean =
-    configuration.getBoolean("features.welsh-translation")
-
-  def languageMap: Map[String, Lang] = Map(
-    "en" -> Lang("en"),
-    "cy" -> Lang("cy")
-  )
 
   val timeout: Int   = configuration.getInt("timeout-dialog.timeout")
   val countdown: Int = configuration.getInt("timeout-dialog.countdown")
