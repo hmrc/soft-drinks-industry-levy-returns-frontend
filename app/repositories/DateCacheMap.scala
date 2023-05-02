@@ -16,10 +16,10 @@
 
 package repositories
 
-import play.api.libs.json.{Format, JsValue, Json, OFormat}
+import play.api.libs.json.{JsValue, Json, OFormat}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.Instant
 
 case class DatedCacheMap(
                           id: String,
