@@ -28,6 +28,7 @@ class AddressFrontendStubController @Inject()
 (val controllerComponents: MessagesControllerComponents) extends FrontendBaseController with I18nSupport {
 
   lazy val address = Json.obj(
+    ("organisation", JsString("Some Trading Name")),
     ("lines", Json.toJson(List(
       "10 Other Place",
       "Some District",
