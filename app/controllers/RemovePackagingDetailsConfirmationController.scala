@@ -18,9 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.RemovePackagingDetailsConfirmationFormProvider
-
-import javax.inject.Inject
-import models.{Mode, NormalMode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.RemovePackagingDetailsConfirmationPage
 import play.api.Logger
@@ -32,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.AddressFormattingHelper
 import views.html.RemovePackagingDetailsConfirmationView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RemovePackagingDetailsConfirmationController @Inject()(

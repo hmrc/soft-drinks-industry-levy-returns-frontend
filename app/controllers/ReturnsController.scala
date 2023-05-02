@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{Address, Amounts, Warehouse}
+import models.Amounts
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -73,18 +73,5 @@ class ReturnsController @Inject()(
             Redirect(routes.JourneyRecoveryController.onPageLoad())
         }
       }
-  }
-
-
-  private def financialStatus(total: BigDecimal): String = {
-    if(total == 0) {
-      "noPayNeeded"
-    } else {
-      if(total > 0) {
-        "amountToPay"
-      } else {
-        "creditedPay"
-      }
-    }
   }
 }
