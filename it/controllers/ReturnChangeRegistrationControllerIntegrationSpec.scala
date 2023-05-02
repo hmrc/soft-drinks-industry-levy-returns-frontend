@@ -33,8 +33,8 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
     }
   }
   "POST" should {
-    "take user to next destination successfully if user answers empty" in {
-      setAnswers(emptyUserAnswers)
+    "take user to next destination successfully if user " in {
+      setAnswers(newPackerPartialAnswers)
       given
         .commonPrecondition
 
@@ -49,12 +49,12 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
         whenReady(result) { res =>
           res.status mustBe SEE_OTHER
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers")
+          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/pack-at-business-address-in-return")
         }
       }
     }
-    s"take user to next destination successfully if $PackagedContractPackerPage is true" in {
-      setAnswers(emptyUserAnswers.set(PackagedContractPackerPage, true).get)
+    s"take user to next destination successfully if new packer is true" in {
+      setAnswers(newPackerPartialAnswers)
       given
         .commonPrecondition
 
@@ -69,12 +69,12 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
         whenReady(result) { res =>
           res.status mustBe SEE_OTHER
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-packaged-as-contract-packer")
+          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/pack-at-business-address-in-return")
         }
       }
     }
-    s"take user to next destination successfully if $PackagedContractPackerPage is false" in {
-      setAnswers(emptyUserAnswers.set(PackagedContractPackerPage, false).get)
+    s"take user to next destination successfully if new packer is false and new importer is true" in {
+      setAnswers(newImporterAnswers)
       given
         .commonPrecondition
 
@@ -83,13 +83,13 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .withFollowRedirects(false)
-          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+          .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
             "Csrf-Token" -> "nocheck")
           .post("")
 
         whenReady(result) { res =>
           res.status mustBe SEE_OTHER
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers")
+          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/ask-secondary-warehouses-in-return")
         }
       }
     }

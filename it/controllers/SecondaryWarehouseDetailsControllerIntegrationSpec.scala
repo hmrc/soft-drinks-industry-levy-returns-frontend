@@ -11,7 +11,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
   "SecondaryWarehouseDetailsController" should {
     "Ask for if user wants to add more warehouses" in {
 
-      setAnswers(newPackerPartialAnswers.success.value)
+      setAnswers(newPackerPartialAnswers)
       given
         .commonPrecondition
 
