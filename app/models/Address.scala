@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Writes, _}
-import play.api.libs.json.{Json, OFormat, Reads}
+import play.api.libs.json.{Json, Reads}
 
 case class Address( organisation: Option[String],
                     line1: Option[String],

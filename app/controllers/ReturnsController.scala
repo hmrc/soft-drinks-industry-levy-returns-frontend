@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import models.Amounts
 import play.api.Logger
@@ -34,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnsController @Inject()(
                                    override val messagesApi: MessagesApi,
-                                   config:FrontendAppConfig,
                                    identify: IdentifierAction,
                                    getData: DataRetrievalAction,
                                    returnService: ReturnService,

@@ -16,8 +16,6 @@
 
 package utilitlies
 
-import java.util.UUID
-
 trait AddressHelper {
 
   def generateId:String= {
