@@ -24,20 +24,19 @@ import models.backend.UkAddress
 import org.mockito.MockitoSugar.{mock, when}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utilitlies.AddressHelper
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.ExecutionContext
 
-class AddressLookupServiceSpec extends SpecBase {
-
-  implicit val hc = HeaderCarrier()
-
-
- val mockSessionRepo = mock[SessionRepository]
+class AddressLookupServiceSpec extends SpecBase  {
+  val fixedUUID:String = "12"
   val mockSdilConnector = mock[AddressLookupConnector]
-
-  val service = new AddressLookupService(mockSessionRepo,mockSdilConnector)
+  implicit val hc = HeaderCarrier()
+  val service = new AddressLookupService(mockSdilConnector){
+    override def generateId: String = fixedUUID
+  }
 
   "getAddress" - {
     "return a address" in {
@@ -45,7 +44,7 @@ class AddressLookupServiceSpec extends SpecBase {
 
       val res = service.getAddress("123456789")
 
-      whenReady(res) {result =>
+      whenReady(res) { result =>
         result mustBe Right(customerAddressMax)
       }
     }
@@ -54,15 +53,37 @@ class AddressLookupServiceSpec extends SpecBase {
   "addAddressUserAnswers" - {
     "add to the cache the address of a warehouse when a user returns from address lookup frontend" in {
       val addressLookupState = Warehousedetails
-      val warehouseMap = Map("1"-> Warehouse(Some("super cola"),UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
-      val newWarehouse = Map("12" -> Warehouse(Some("super fanta"),UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
-      val updatedUserAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap)
-      setAnswers(updatedUserAnswers)
+      val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
+      val AddedWarehouse = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
+        fixedUUID -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode)))
 
-      service.addAddressUserAnswers(addressLookupState = addressLookupState,
-                                    address = customerAddressMax,
-                                    userAnswers = emptyUserAnswers.warehouseList(warehouseMap))
+      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+        address = customerAddressMax,
+        userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap))
+
+       res.warehouseList mustBe AddedWarehouse
+    }
+
+    "add to the cache the address of a warehouse when a user returns from address lookup frontend with missing address lines" in {
+      val addressLookupState = Warehousedetails
+      val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
+      val AddedWarehouseMissingLines = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
+        "12" -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2), postcode)))
+      val customerAddressMissingLines: Address = Address(
+        Some(organisation),
+        Some(addressLine1),
+        Some(addressLine2),
+        None,
+        None,
+        Some(postcode),
+        Some(countryCode)
+      )
+
+      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+        address = customerAddressMissingLines,
+        userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap))
+
+      res.warehouseList mustBe AddedWarehouseMissingLines
     }
   }
-
 }

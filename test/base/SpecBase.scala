@@ -123,7 +123,6 @@ trait SpecBase
     Some(countryCode)
   )
 
-  val warehouseMap = Map("1"-> Warehouse(Some("super cola"),UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
   val returnPeriod = ReturnPeriod(2022,1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val genericSmallProducerAlias = "Generic Producer LTD"
