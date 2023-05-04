@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.httpParsers.AddressLookupHttpParser._
 import connectors.httpParsers.ResponseHttpParser.HttpResult
-import models.Address
+import models.{AlfResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.mongo.play.json.Codecs.logger
 
@@ -31,8 +31,8 @@ class AddressLookupConnector @Inject()(val http: HttpClient,
                                        implicit val config: FrontendAppConfig) {
   private[connectors] def getAddressUrl(id: String) = s"${config.addressLookupService}/api/confirmed?id=$id"
 
-  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[Address]] ={
+  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] ={
     logger.debug(s"[AddressLookupConnector][getAddress]: Calling getAddress with URL - ${getAddressUrl(id)}")
-    http.GET[HttpResult[Address]](getAddressUrl(id))(AddressLookupReads,hc,ec)
+    http.GET[HttpResult[AlfResponse]](getAddressUrl(id))(AddressLookupReads,hc,ec)
   }
 }

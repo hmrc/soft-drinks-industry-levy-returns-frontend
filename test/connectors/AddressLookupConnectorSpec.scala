@@ -19,7 +19,7 @@ package connectors
 import base.SpecBase
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import mocks.MockHttp
-import models.Address
+import models.AlfResponse
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -46,7 +46,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
 
     "for getAddress method" - {
 
-      def getAddressResult: Future[HttpResult[Address]] = TestAddressLookupConnector.getAddress(vrn)(implicitly,implicitly)
+      def getAddressResult: Future[HttpResult[AlfResponse]] = TestAddressLookupConnector.getAddress(vrn)(implicitly,implicitly)
 
       "called for a Right with CustomerDetails" - {
 

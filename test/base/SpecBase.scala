@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{Address, ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{AlfResponse, ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -112,16 +112,20 @@ trait SpecBase
       "lines" -> 4
     )
   )
-  val customerAddressMin: Address = Address(None, None, None, None, None, None, None)
-  val customerAddressMax: Address = Address(
+  val customerAddressMin: AlfResponse = AlfResponse(None, List(), None, None)
+  val customerAddressMax: AlfResponse = AlfResponse(
     Some(organisation),
-    Some(addressLine1),
-    Some(addressLine2),
-    Some(addressLine3),
-    Some(addressLine4),
+    List(addressLine1, addressLine2, addressLine3, addressLine4),
     Some(postcode),
     Some(countryCode)
   )
+
+  val customerAddressMaxJson = Json.toJson(AlfResponse(
+    Some(organisation),
+    List(addressLine1, addressLine2, addressLine3, addressLine4),
+    Some(postcode),
+    Some(countryCode)
+  ))
 
   val returnPeriod = ReturnPeriod(2022,1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))

@@ -19,7 +19,7 @@ package services
 import connectors.AddressLookupConnector
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import models.backend.{Site, UkAddress}
-import models.{Address, UserAnswers, Warehouse}
+import models.{AlfResponse, UserAnswers, Warehouse}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.AddressHelper
@@ -34,13 +34,9 @@ class AddressLookupService @Inject()(
 
   val logger: Logger = Logger(this.getClass())
 
-  private def addressChecker(address: Address): UkAddress = {
+  private def addressChecker(address: AlfResponse): UkAddress = {
 
-    val ukAddress = UkAddress(List(
-      address.line1,
-      address.line2,
-      address.line3,
-      address.line4).flatten,
+    val ukAddress = UkAddress(address.lines,
       address.postcode.getOrElse(""))
 
     if (ukAddress.lines.isEmpty && ukAddress.postCode == "" && address.organisation.isEmpty) {
@@ -51,9 +47,9 @@ class AddressLookupService @Inject()(
 
   }
 
-  def getAddress(id:String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[Address]] = addressLookupConnector.getAddress(id)
+  def getAddress(id:String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = addressLookupConnector.getAddress(id)
 
-  def addAddressUserAnswers(addressLookupState: AddressLookupState, address: Address, userAnswers: UserAnswers): UserAnswers = {
+  def addAddressUserAnswers(addressLookupState: AddressLookupState, address: AlfResponse, userAnswers: UserAnswers): UserAnswers = {
 
     val convertedAddress = addressChecker(address)
 

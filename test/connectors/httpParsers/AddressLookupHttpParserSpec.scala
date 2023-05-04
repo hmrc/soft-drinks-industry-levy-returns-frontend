@@ -32,7 +32,7 @@ class AddressLookupHttpParserSpec extends SpecBase{
 
       "return a AddressLookupModel" in {
         AddressLookupReads.read("", "",
-          HttpResponse(Status.OK, customerAddressJsonMin, Map.empty[String, Seq[String]])) mustBe Right(customerAddressMin)
+          HttpResponse(Status.OK, customerAddressMaxJson, Map.empty[String, Seq[String]])) mustBe Right(customerAddressMax)
       }
     }
 

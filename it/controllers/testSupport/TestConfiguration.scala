@@ -72,6 +72,8 @@ trait TestConfiguration
       interval = Span(50, Millis))
 
   lazy val config = Map(
+    s"microservice.services.address-lookup-frontend.host" -> s"$wiremockHost",
+    s"microservice.services.address-lookup-frontend.port" -> s"$wiremockPort",
     s"microservice.services.auth.host" -> s"$wiremockHost",
     s"microservice.services.auth.port" -> s"$wiremockPort",
     s"microservice.services.bas-gateway.host" -> s"$wiremockHost",

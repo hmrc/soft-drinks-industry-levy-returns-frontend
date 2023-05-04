@@ -17,7 +17,7 @@
 package connectors.httpParsers
 
 import connectors.httpParsers.ResponseHttpParser.HttpResult
-import models.Address
+import models.AlfResponse
 import models.core.ErrorModel
 import play.api.http.Status
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -26,16 +26,15 @@ import uk.gov.hmrc.mongo.play.json.Codecs.logger
 
 object AddressLookupHttpParser {
 
-  implicit object AddressLookupReads extends HttpReads[HttpResult[Address]] {
+  implicit object AddressLookupReads extends HttpReads[HttpResult[AlfResponse]] {
 
-    override def read(method: String, url: String, response: HttpResponse): HttpResult[Address] = {
+    override def read(method: String, url: String, response: HttpResponse): HttpResult[AlfResponse] = {
 
       response.status match {
         case Status.OK => {
-          logger.debug("[AddressLookupHttpParser][read]: Status OK")
-          response.json.validate[Address](Address.customerAddressReads).fold(
+          response.json.validate[AlfResponse](AlfResponse.format).fold(
             invalid => {
-              logger.warn(s"[AddressLookupHttpParser][read]: Invalid Json - $invalid")
+              logger.warn(s"[AddressLookupHttpParser][read]: Invalid Json - ${invalid.map(res => res._1)}")
               Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from Address Lookup"))
             },
             valid => Right(valid)
