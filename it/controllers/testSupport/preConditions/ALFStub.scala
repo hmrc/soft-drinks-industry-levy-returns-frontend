@@ -12,6 +12,10 @@ case class ALFStub()(implicit builder: PreconditionBuilder) {
     countryCode = Some("UK")
   )
 
+  val BadAddress = (
+    "Failed Address"
+  )
+
   def getAddress(id : String) ={
     stubFor(
       get(
@@ -21,4 +25,25 @@ case class ALFStub()(implicit builder: PreconditionBuilder) {
         ok(Json.toJson(aAddress).toString())))
     builder
   }
+
+  def getBadAddress(id : String) ={
+    stubFor(
+      get(
+        urlPathMatching(s"/api/confirmed")
+      ).withQueryParam("id",equalTo(id))
+        .willReturn(
+          ok(Json.toJson(BadAddress).toString())))
+    builder
+  }
+
+  def getBadResponse(id : String) ={
+    stubFor(
+      get(
+        urlPathMatching(s"/api/confirmed")
+      ).withQueryParam("id",equalTo(id))
+        .willReturn(
+          notFound()))
+    builder
+  }
+
 }

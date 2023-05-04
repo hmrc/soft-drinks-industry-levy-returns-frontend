@@ -103,13 +103,11 @@ trait SpecBase
   val countryName = "United Kingdom"
   val countryCode = "UK"
 
-  val customerAddressJsonMin: JsObject = Json.obj()
   val customerAddressJsonError: JsObject = Json.obj(
     "address" -> Json.obj(
       "lines" -> 4
     )
   )
-  val customerAddressMin: AlfResponse = AlfResponse(None, List(), None, None)
   val customerAddressMax: AlfResponse = AlfResponse(
     Some(organisation),
     List(addressLine1, addressLine2, addressLine3, addressLine4),

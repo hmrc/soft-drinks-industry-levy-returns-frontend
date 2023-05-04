@@ -21,7 +21,6 @@ import connectors.httpParsers.AddressLookupHttpParser._
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import models.{AlfResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.mongo.play.json.Codecs.logger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

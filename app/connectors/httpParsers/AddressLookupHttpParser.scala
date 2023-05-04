@@ -21,7 +21,7 @@ import models.AlfResponse
 import models.core.ErrorModel
 import play.api.http.Status
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import uk.gov.hmrc.mongo.play.json.Codecs.logger
+import play.api.Logger
 
 
 object AddressLookupHttpParser {
@@ -34,14 +34,14 @@ object AddressLookupHttpParser {
         case Status.OK => {
           response.json.validate[AlfResponse](AlfResponse.format).fold(
             invalid => {
-              logger.warn(s"[AddressLookupHttpParser][read]: Invalid Json - ${invalid.map(res => res._1)}")
+              Logger(s"[AddressLookupHttpParser][read]: Invalid Json - ${invalid.map(res => res._1)}")
               Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from Address Lookup"))
             },
             valid => Right(valid)
           )
         }
         case status =>
-          logger.warn(s"[AddressLookupHttpParser][read]: Unexpected Response, Status $status returned")
+          Logger(s"[AddressLookupHttpParser][read]: Unexpected Response, Status $status returned")
           Left(ErrorModel(status,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
       }
     }
