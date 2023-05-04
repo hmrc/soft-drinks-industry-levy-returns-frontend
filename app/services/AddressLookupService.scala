@@ -16,11 +16,17 @@
 
 package services
 
+import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import connectors.httpParsers.ResponseHttpParser.HttpResult
+import controllers.routes
+import models.alf.AlfResponse
+import models.alf.init.{JourneyConfig, JourneyOptions}
 import models.backend.{Site, UkAddress}
-import models.{AlfResponse, UserAnswers, Warehouse}
+import models.{UserAnswers, Warehouse}
 import play.api.Logger
+import play.api.i18n.Messages
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.AddressHelper
 
@@ -29,13 +35,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddressLookupService @Inject()(
-                                      addressLookupConnector: AddressLookupConnector
-                                    ) extends AddressHelper{
+                                      addressLookupConnector: AddressLookupConnector,
+                                      frontendAppConfig: FrontendAppConfig
+                                    ) extends AddressHelper {
 
-  val logger: Logger = Logger(this.getClass())
+  val logger: Logger = Logger(this.getClass)
 
   private def addressChecker(address: AlfResponse): UkAddress = {
-
     val ukAddress = UkAddress(address.lines,
       address.postcode.getOrElse(""))
 
@@ -44,18 +50,45 @@ class AddressLookupService @Inject()(
     } else {
       ukAddress
     }
-
   }
 
-  def getAddress(id:String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = addressLookupConnector.getAddress(id)
+  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = addressLookupConnector.getAddress(id)
 
   def addAddressUserAnswers(addressLookupState: AddressLookupState, address: AlfResponse, userAnswers: UserAnswers): UserAnswers = {
 
     val convertedAddress = addressChecker(address)
 
     addressLookupState match {
-      case Packingdetails => userAnswers.copy(packagingSiteList = userAnswers.packagingSiteList ++ Map(generateId -> Site(convertedAddress,None,address.organisation,None)))
-      case Warehousedetails => userAnswers.copy(warehouseList = userAnswers.warehouseList ++ Map(generateId -> Warehouse(address.organisation,convertedAddress)))
+      case PackingDetails =>
+        userAnswers.copy(packagingSiteList = userAnswers.packagingSiteList ++ Map(generateId -> Site(convertedAddress, None, address.organisation, None)))
+      case WarehouseDetails =>
+        userAnswers.copy(warehouseList = userAnswers.warehouseList ++ Map(generateId -> Warehouse(address.organisation, convertedAddress)))
+    }
+  }
+
+  def initJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[String]] = {
+    addressLookupConnector.initJourney(journeyConfig)
+  }
+
+  def createJourneyConfig(state: AddressLookupState)(implicit requestHeader: RequestHeader): JourneyConfig = {
+
+    JourneyConfig (
+      version = 2,
+      options = JourneyOptions(
+        continueUrl = returnContinueUrl(state),
+        homeNavHref = None,
+        signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
+        accessibilityFooterUrl = None,
+        phaseFeedbackLink = Some(frontendAppConfig.feedbackUrl(requestHeader)),
+        deskProServiceName = None,
+        showPhaseBanner = Some(frontendAppConfig.AddressLookupConfig.alphaPhase),
+      )
+    )
+  }
+
+  def returnContinueUrl(state: AddressLookupState): String = {
+    state match {
+      case _ => routes.IndexController.onPageLoad().url
     }
   }
 }

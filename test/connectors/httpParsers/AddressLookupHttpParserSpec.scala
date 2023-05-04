@@ -17,7 +17,7 @@
 package connectors.httpParsers
 
 import base.SpecBase
-import connectors.httpParsers.AddressLookupHttpParser.AddressLookupReads
+import connectors.httpParsers.AddressLookupHttpParser.AddressLookupGetAddressReads
 import models.core.ErrorModel
 import play.api.http.Status
 import uk.gov.hmrc.http.HttpResponse
@@ -31,7 +31,7 @@ class AddressLookupHttpParserSpec extends SpecBase{
     "the http response status is OK with valid Json" - {
 
       "return a AddressLookupModel" in {
-        AddressLookupReads.read("", "",
+        AddressLookupGetAddressReads.read("", "",
           HttpResponse(Status.OK, customerAddressMaxJson, Map.empty[String, Seq[String]])) mustBe Right(customerAddressMax)
       }
     }
@@ -39,7 +39,7 @@ class AddressLookupHttpParserSpec extends SpecBase{
     "the http response status is OK with invalid Json" - {
 
       "return an ErrorModel" in {
-        AddressLookupReads.read("", "",
+        AddressLookupGetAddressReads.read("", "",
           HttpResponse(Status.OK, customerAddressJsonError, Map.empty[String, Seq[String]])) mustBe
           Left(ErrorModel(Status.INTERNAL_SERVER_ERROR,"Invalid Json returned from Address Lookup"))
       }
@@ -48,7 +48,7 @@ class AddressLookupHttpParserSpec extends SpecBase{
     "the http response status is BAD_REQUEST" - {
 
       "return an ErrorModel" in {
-        AddressLookupReads.read("", "",
+        AddressLookupGetAddressReads.read("", "",
           HttpResponse(Status.BAD_REQUEST, "")) mustBe
           Left(ErrorModel(Status.BAD_REQUEST,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
       }
@@ -57,7 +57,7 @@ class AddressLookupHttpParserSpec extends SpecBase{
     "the http response status unexpected" - {
 
       "return an ErrorModel" in {
-        AddressLookupReads.read("", "",
+        AddressLookupGetAddressReads.read("", "",
           HttpResponse(Status.SEE_OTHER, "")) mustBe
           Left(ErrorModel(Status.SEE_OTHER,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
       }

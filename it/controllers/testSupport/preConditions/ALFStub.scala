@@ -1,7 +1,7 @@
 package controllers.testSupport.preConditions
 
-import models.AlfResponse
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.alf.AlfResponse
 import play.api.libs.json.Json
 
 case class ALFStub()(implicit builder: PreconditionBuilder) {

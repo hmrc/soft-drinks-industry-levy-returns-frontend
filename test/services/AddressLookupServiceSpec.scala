@@ -18,7 +18,8 @@ package services
 
 import base.SpecBase
 import connectors.AddressLookupConnector
-import models.{AlfResponse, Warehouse}
+import models.Warehouse
+import models.alf.AlfResponse
 import models.backend.{Site, UkAddress}
 import org.mockito.MockitoSugar.{mock, when}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -48,7 +49,7 @@ class AddressLookupServiceSpec extends SpecBase  {
 
   "addAddressUserAnswers" - {
     "add to the cache the address of a warehouse when a user returns from address lookup frontend" in {
-      val addressLookupState = Warehousedetails
+      val addressLookupState = WarehouseDetails
       val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
       val addedWarehouse = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
         fixedUUID -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode)))
@@ -61,7 +62,7 @@ class AddressLookupServiceSpec extends SpecBase  {
     }
 
     "add to the cache the address of a warehouse when a user returns from address lookup frontend with missing address lines" in {
-      val addressLookupState = Warehousedetails
+      val addressLookupState = WarehouseDetails
       val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
       val addedWarehouseMissingLines = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),"12" -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2), postcode)))
       val customerAddressMissingLines: AlfResponse = AlfResponse (
@@ -79,7 +80,7 @@ class AddressLookupServiceSpec extends SpecBase  {
     }
 
     "add to the cache the address of a warehouse when a user returns from address lookup frontend with full address lines" in {
-      val addressLookupState = Warehousedetails
+      val addressLookupState = WarehouseDetails
       val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
@@ -98,7 +99,7 @@ class AddressLookupServiceSpec extends SpecBase  {
     }
 
     "add to the cache the address of a packing site when a user returns from address lookup frontend with missing address lines" in {
-      val addressLookupState = Packingdetails
+      val addressLookupState = PackingDetails
       val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None))
       val addedPackingSiteMissingLines = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),"12" -> Site(UkAddress(List(addressLine1, addressLine2), postcode),None, Some(organisation),None))
       val customerAddressMissingLines: AlfResponse = AlfResponse(
@@ -116,7 +117,7 @@ class AddressLookupServiceSpec extends SpecBase  {
     }
 
     "add to the cache the address of a packing site when a user returns from address lookup frontend with full address lines" in {
-      val addressLookupState = Packingdetails
+      val addressLookupState = PackingDetails
       val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None))
       val addedPackingSite = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),"12" -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode),None, Some(organisation),None))
       val customerAddressMissingLines: AlfResponse = AlfResponse(
@@ -134,7 +135,7 @@ class AddressLookupServiceSpec extends SpecBase  {
     }
 
     "don't add to userAnswers when no details are added in alf and throw exception" in {
-      val addressLookupState = Warehousedetails
+      val addressLookupState = WarehouseDetails
       val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
       val customerAddressMissingLinesAndName: AlfResponse = AlfResponse(
         None,

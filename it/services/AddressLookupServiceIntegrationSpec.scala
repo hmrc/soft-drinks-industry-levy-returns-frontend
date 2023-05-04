@@ -1,7 +1,7 @@
 package services
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
-import models.AlfResponse
+import models.alf.AlfResponse
 import models.core.ErrorModel
 import org.scalatest.TryValues
 import play.api.http.Status

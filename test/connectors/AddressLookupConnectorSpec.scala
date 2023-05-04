@@ -19,7 +19,7 @@ package connectors
 import base.SpecBase
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import mocks.MockHttp
-import models.AlfResponse
+import models.alf.AlfResponse
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
