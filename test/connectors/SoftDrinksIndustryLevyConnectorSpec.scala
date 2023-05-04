@@ -106,6 +106,21 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
       }
 
+      "return none if no small producer status" in {
+        val sdilNumber: String = "XKSDIL000000022"
+        val period = ReturnPeriod(year = 2022, quarter = 3)
+        when(mockHttp.GET[Option[Boolean]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+        val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
+
+        whenReady(
+          res
+        ) {
+          response =>
+            response mustEqual None
+        }
+
+      }
+
       "return a oldest pending return period successfully" in {
 
         val returnPeriod = ReturnPeriod(year = 2022, quarter = 3)
