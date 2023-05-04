@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import controllers.routes
 import models.alf.AlfResponse
-import models.alf.init.{JourneyConfig, JourneyOptions}
+import models.alf.init._
 import models.backend.{Site, UkAddress}
 import models.{UserAnswers, Warehouse}
 import play.api.Logger
@@ -30,10 +30,9 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.AddressHelper
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
 class AddressLookupService @Inject()(
                                       addressLookupConnector: AddressLookupConnector,
                                       frontendAppConfig: FrontendAppConfig
@@ -70,9 +69,18 @@ class AddressLookupService @Inject()(
     addressLookupConnector.initJourney(journeyConfig)
   }
 
-  def createJourneyConfig(state: AddressLookupState)(implicit requestHeader: RequestHeader): JourneyConfig = {
+  def initJourneyAndReturnOnRampUrl(state: AddressLookupState)
+                                   (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
+    val journeyConfig: JourneyConfig = createJourneyConfig(state)
 
-    JourneyConfig (
+    initJourney(journeyConfig).map {
+      case Right(onRampUrl) => onRampUrl
+      case Left(error) => throw new Exception(s"Failed to init ALF ${error.message} with status ${error.status} for ${hc.requestId}")
+    }
+  }
+
+  def createJourneyConfig(state: AddressLookupState)(implicit requestHeader: RequestHeader, messages: Messages): JourneyConfig = {
+    JourneyConfig(
       version = 2,
       options = JourneyOptions(
         continueUrl = returnContinueUrl(state),
@@ -81,12 +89,56 @@ class AddressLookupService @Inject()(
         accessibilityFooterUrl = None,
         phaseFeedbackLink = Some(frontendAppConfig.feedbackUrl(requestHeader)),
         deskProServiceName = None,
-        showPhaseBanner = Some(frontendAppConfig.AddressLookupConfig.alphaPhase),
-      )
+        showPhaseBanner = Some(false),
+        alphaPhase = Some(frontendAppConfig.AddressLookupConfig.alphaPhase),
+        includeHMRCBranding = Some(true),
+        ukMode = Some(true),
+        selectPageConfig = Some(SelectPageConfig(
+          proposalListLimit = Some(30),
+          showSearchAgainLink = Some(true)
+        )),
+        showBackButtons = Some(true),
+        disableTranslations = Some(true),
+        allowedCountryCodes = None,
+        confirmPageConfig = Some(ConfirmPageConfig(
+          showSearchAgainLink = Some(true),
+          showSubHeadingAndInfo = Some(true),
+          showChangeLink = Some(true),
+          showConfirmChangeText = Some(true)
+        )),
+        timeoutConfig = Some(TimeoutConfig(
+          timeoutAmount = frontendAppConfig.timeout,
+          timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
+          timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
+        )),
+        serviceHref = Some(routes.IndexController.onPageLoad().url),
+        pageHeadingStyle = Some("govuk-heading-m")
+      ),
+      labels = returnJourneyLabels(state),
+      requestedVersion = None
     )
   }
 
-  def returnContinueUrl(state: AddressLookupState): String = {
+ private def returnJourneyLabels(state: AddressLookupState)(implicit messages: Messages): Option[JourneyLabels] = {
+    state match {
+      case _ => Some(
+        JourneyLabels(
+          en = Some(LanguageLabels(
+            appLevelLabels = Some(AppLevelLabels(
+            navTitle = Some(messages("service.name")),
+            phaseBannerHtml = None
+          )),
+          selectPageLabels = None,
+          lookupPageLabels = None,
+          editPageLabels = None,
+          confirmPageLabels = None,
+          countryPickerLabels = None
+        ))
+      ))
+    }
+  }
+
+  private def returnContinueUrl(state: AddressLookupState): String = {
     state match {
       case _ => routes.IndexController.onPageLoad().url
     }

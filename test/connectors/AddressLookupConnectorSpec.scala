@@ -23,6 +23,7 @@ import models.alf.AlfResponse
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import sttp.model.HeaderNames
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,7 +46,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
       }
     }
 
-    "for getAddress method" - {
+    "getAddress method" - {
 
       def getAddressResult: Future[HttpResult[AlfResponse]] = testAddressLookupConnector.getAddress(id)(implicitly,implicitly)
 
@@ -62,5 +63,21 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
         }
       }
     }
+
+    "initJourney" - {
+      s"should return url if ${Status.ACCEPTED} returned and ${HeaderNames.Location} exists" in {
+
+      }
+      s"return Left if ${Status.ACCEPTED} but no header exists" in {
+
+      }
+      s"return Left if status is ${Status.BAD_REQUEST}" in {
+
+      }
+      "return Left if status not accepted statuses from API" in {
+
+      }
+    }
+
   }
 }

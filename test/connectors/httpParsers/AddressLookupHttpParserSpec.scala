@@ -20,13 +20,14 @@ import base.SpecBase
 import connectors.httpParsers.AddressLookupHttpParser.AddressLookupGetAddressReads
 import models.core.ErrorModel
 import play.api.http.Status
+import sttp.model.HeaderNames
 import uk.gov.hmrc.http.HttpResponse
 
 class AddressLookupHttpParserSpec extends SpecBase{
 
   val errorModel: ErrorModel = ErrorModel(Status.BAD_REQUEST, "Error Message")
 
-  "The AddressLookupHttpParser" - {
+  "The AddressLookupGetAddressReads" - {
 
     "the http response status is OK with valid Json" - {
 
@@ -61,6 +62,20 @@ class AddressLookupHttpParserSpec extends SpecBase{
           HttpResponse(Status.SEE_OTHER, "")) mustBe
           Left(ErrorModel(Status.SEE_OTHER,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
       }
+    }
+  }
+  "The AddressLookupInitJourneyReads" - {
+    s"should return url if ${Status.ACCEPTED} returned and ${HeaderNames.Location} exists" in {
+
+    }
+    s"return Left if ${Status.ACCEPTED} but no header exists" in {
+
+    }
+    s"return Left if status is ${Status.BAD_REQUEST}" in {
+
+    }
+    "return Left if status not accepted statuses from API" in {
+
     }
   }
 }

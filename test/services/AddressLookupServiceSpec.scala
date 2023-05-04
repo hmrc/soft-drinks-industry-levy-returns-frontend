@@ -18,20 +18,25 @@ package services
 
 import base.SpecBase
 import connectors.AddressLookupConnector
+import controllers.routes
 import models.Warehouse
 import models.alf.AlfResponse
+import models.alf.init.{AppLevelLabels, ConfirmPageConfig, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, SelectPageConfig, TimeoutConfig}
 import models.backend.{Site, UkAddress}
+import models.core.ErrorModel
+import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, when}
+import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class AddressLookupServiceSpec extends SpecBase  {
-  val fixedUUID:String = "12"
+class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAwaitTimeout  {
+  val fixedUUID: String = "12"
   val mockSdilConnector = mock[AddressLookupConnector]
   implicit val hc = HeaderCarrier()
-  val service = new AddressLookupService(mockSdilConnector){
+  val service = new AddressLookupService(mockSdilConnector, frontendAppConfig){
     override def generateId: String = fixedUUID
   }
 
@@ -154,6 +159,144 @@ class AddressLookupServiceSpec extends SpecBase  {
 
       result mustEqual errorMessage
 
+    }
+  }
+  "initJourney" - {
+    "should return response from connector" in {
+      val journeyConfig = JourneyConfig(1,JourneyOptions(""),None,None)
+      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(journeyConfig))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Right("foo")))
+
+      whenReady(service.initJourney(journeyConfig)) {
+        res => res mustBe Right("foo")
+      }
+    }
+  }
+
+  "initJourneyAndReturnOnRampUrl" - {
+    "should return Successful future when connector returns Right for example state" in {
+      val expectectJourneyConfigToBePassedToConnector = JourneyConfig(
+        version = 2,
+        options = JourneyOptions(
+          continueUrl = routes.IndexController.onPageLoad().url,
+          homeNavHref = None,
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
+          accessibilityFooterUrl = None,
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-returns-frontend&backUrl=http%3A%2F%2Flocalhost%3A8703bar"),
+          deskProServiceName = None,
+          showPhaseBanner = Some(false),
+          alphaPhase = Some(frontendAppConfig.AddressLookupConfig.alphaPhase),
+          includeHMRCBranding = Some(true),
+          ukMode = Some(true),
+          selectPageConfig = Some(SelectPageConfig(
+            proposalListLimit = Some(30),
+            showSearchAgainLink = Some(true)
+          )),
+          showBackButtons = Some(true),
+          disableTranslations = Some(true),
+          allowedCountryCodes = None,
+          confirmPageConfig = Some(ConfirmPageConfig(
+            showSearchAgainLink = Some(true),
+            showSubHeadingAndInfo = Some(true),
+            showChangeLink = Some(true),
+            showConfirmChangeText = Some(true)
+          )),
+          timeoutConfig = Some(TimeoutConfig(
+            timeoutAmount = frontendAppConfig.timeout,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
+            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
+          )),
+          serviceHref = Some(routes.IndexController.onPageLoad().url),
+          pageHeadingStyle = Some("govuk-heading-m")
+        ),
+        labels = Some(
+          JourneyLabels(
+            en = Some(LanguageLabels(
+              appLevelLabels = Some(AppLevelLabels(
+                navTitle = Some("soft-drinks-industry-levy-returns-frontend"),
+                phaseBannerHtml = None
+              )),
+              selectPageLabels = None,
+              lookupPageLabels = None,
+              editPageLabels = None,
+              confirmPageLabels = None,
+              countryPickerLabels = None
+            ))
+          )),
+        requestedVersion = None
+      )
+
+      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(expectectJourneyConfigToBePassedToConnector))(ArgumentMatchers.any(),ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Right("foo")))
+      whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))) {
+        res => res mustBe "foo"
+      }
+    }
+
+    "should return Exception if connector returns left" in {
+      when(mockSdilConnector.initJourney(ArgumentMatchers.any())(ArgumentMatchers.any(),ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Left(ErrorModel(1, "foo"))))
+      val res = intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))))
+      res.getMessage mustBe "Failed to init ALF foo with status 1 for None"
+    }
+  }
+
+  "createJourneyConfig" - {
+    s"should return a journey config for an example journey" in {
+      val request = FakeRequest("foo","bar")
+      val res = service.createJourneyConfig(PackingDetails)(request, implicitly)
+      val expected =  JourneyConfig(
+        version = 2,
+        options = JourneyOptions(
+          continueUrl = routes.IndexController.onPageLoad().url,
+          homeNavHref = None,
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
+          accessibilityFooterUrl = None,
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-returns-frontend&backUrl=http%3A%2F%2Flocalhost%3A8703${request.uri}"),
+          deskProServiceName = None,
+          showPhaseBanner = Some(false),
+          alphaPhase = Some(frontendAppConfig.AddressLookupConfig.alphaPhase),
+          includeHMRCBranding = Some(true),
+          ukMode = Some(true),
+          selectPageConfig = Some(SelectPageConfig(
+            proposalListLimit = Some(30),
+            showSearchAgainLink = Some(true)
+          )),
+          showBackButtons = Some(true),
+          disableTranslations = Some(true),
+          allowedCountryCodes = None,
+          confirmPageConfig = Some(ConfirmPageConfig(
+            showSearchAgainLink = Some(true),
+            showSubHeadingAndInfo = Some(true),
+            showChangeLink = Some(true),
+            showConfirmChangeText = Some(true)
+          )),
+          timeoutConfig = Some(TimeoutConfig(
+            timeoutAmount = frontendAppConfig.timeout,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
+            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
+          )),
+          serviceHref = Some(routes.IndexController.onPageLoad().url),
+          pageHeadingStyle = Some("govuk-heading-m")
+        ),
+          labels = Some(
+            JourneyLabels(
+              en = Some(LanguageLabels(
+                appLevelLabels = Some(AppLevelLabels(
+                  navTitle = Some("soft-drinks-industry-levy-returns-frontend"),
+                  phaseBannerHtml = None
+                )),
+                selectPageLabels = None,
+                lookupPageLabels = None,
+                editPageLabels = None,
+                confirmPageLabels = None,
+                countryPickerLabels = None
+              ))
+            )),
+        requestedVersion = None
+      )
+
+      res mustBe expected
     }
   }
 }

@@ -48,7 +48,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       given.alf.getBadResponse(id)
       val res = service.getAddress(id)
       whenReady(res) { result =>
-        result mustBe Left(ErrorModel(404,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
+        result mustBe Left(ErrorModel(404, "Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
       }
 
     }
