@@ -91,6 +91,7 @@ trait SpecBase
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
   lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
   lazy val vrn = "111111111"
+  lazy val id = "111111111"
 
   val organisation = "soft drinks ltd"
   val addressLine1 = "line 1"

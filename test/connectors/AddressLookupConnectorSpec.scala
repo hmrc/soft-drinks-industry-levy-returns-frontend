@@ -39,27 +39,24 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
 
     "format the getAddressUrl correctly for" - {
       "calling getCustomerDetailsUrl" in {
-        val testUrl = TestAddressLookupConnector.getAddressUrl(vrn)
-        testUrl mustEqual s"${frontendAppConfig.addressLookupService}/api/confirmed?id=$vrn"
+        val testUrl = TestAddressLookupConnector.getAddressUrl(id)
+        testUrl mustEqual s"${frontendAppConfig.addressLookupService}/api/confirmed?id=$id"
       }
     }
 
     "for getAddress method" - {
 
-      def getAddressResult: Future[HttpResult[AlfResponse]] = TestAddressLookupConnector.getAddress(vrn)(implicitly,implicitly)
+      def getAddressResult: Future[HttpResult[AlfResponse]] = TestAddressLookupConnector.getAddress(id)(implicitly,implicitly)
 
-      "called for a Right with CustomerDetails" - {
-
-        "return a CustomerAddressModel" in {
-          setupMockHttpGet(TestAddressLookupConnector.getAddressUrl(vrn))(Right(customerAddressMax))
+        "return a AlfResponse Model" in {
+          setupMockHttpGet(TestAddressLookupConnector.getAddressUrl(id))(Right(customerAddressMax))
           await(getAddressResult) mustBe Right(customerAddressMax)
         }
-      }
 
       "given an error should" - {
 
         "return an Left with an ErrorModel" in {
-          setupMockHttpGet(TestAddressLookupConnector.getAddressUrl(vrn))(Left(errorModel))
+          setupMockHttpGet(TestAddressLookupConnector.getAddressUrl(id))(Left(errorModel))
           await(getAddressResult) mustBe Left(errorModel)
         }
       }
