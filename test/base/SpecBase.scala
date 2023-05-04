@@ -85,7 +85,7 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience {
 
-  val application = applicationBuilder(userAnswers = None).build()
+  lazy val application = applicationBuilder(userAnswers = None).build()
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
