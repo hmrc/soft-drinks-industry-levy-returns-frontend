@@ -33,6 +33,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
   val errorModel: HttpResponse = HttpResponse(Status.BAD_REQUEST, "Error Message")
   val TestAddressLookupConnector = new AddressLookupConnector(mockHttp,frontendAppConfig)
   val addressLookupConnector = new AddressLookupConnector(http =mockHttp, frontendAppConfig)
+  lazy val id = "111111111"
   implicit val hc = HeaderCarrier()
 
   "AddressLookupConnector" - {
