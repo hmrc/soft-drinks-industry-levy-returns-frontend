@@ -100,7 +100,7 @@ class AddressLookupServiceSpec extends SpecBase  {
     "add to the cache the address of a packing site when a user returns from address lookup frontend with missing address lines" in {
       val addressLookupState = Packingdetails
       val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None))
-      val AddedPackingSiteMissingLines = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),"12" -> Site(UkAddress(List(addressLine1, addressLine2), postcode),None, Some(organisation),None))
+      val addedPackingSiteMissingLines = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),"12" -> Site(UkAddress(List(addressLine1, addressLine2), postcode),None, Some(organisation),None))
       val customerAddressMissingLines: AlfResponse = AlfResponse(
         Some(organisation),
         List(addressLine1, addressLine2),
@@ -112,13 +112,13 @@ class AddressLookupServiceSpec extends SpecBase  {
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(packagingSiteList = packingMap))
 
-      res.packagingSiteList mustBe AddedPackingSiteMissingLines
+      res.packagingSiteList mustBe addedPackingSiteMissingLines
     }
 
     "add to the cache the address of a packing site when a user returns from address lookup frontend with full address lines" in {
       val addressLookupState = Packingdetails
       val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None))
-      val AddedPackingSite = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),"12" -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode),None, Some(organisation),None))
+      val addedPackingSite = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),"12" -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode),None, Some(organisation),None))
       val customerAddressMissingLines: AlfResponse = AlfResponse(
         Some(organisation),
         List(addressLine1, addressLine2, addressLine3, addressLine4),
@@ -130,7 +130,7 @@ class AddressLookupServiceSpec extends SpecBase  {
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(packagingSiteList = packingMap))
 
-      res.packagingSiteList mustBe AddedPackingSite
+      res.packagingSiteList mustBe addedPackingSite
     }
 
     "don't add to userAnswers when no details are added in alf and throw exception" in {
