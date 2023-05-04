@@ -103,9 +103,6 @@ trait SpecBase
   val countryName = "United Kingdom"
   val countryCode = "UK"
 
-  val phaseBannerHtml = "This is a new service – your <a id='beta-banner-feedback' href='/feedback'>feedback</a> will help us to improve it."
-  val phaseBannerHtmlCy = "Gwasanaeth newydd yw hwn – bydd eich <a id='beta-banner-feedback' href='/feedback'>adborth</a> yn ein helpu i’w wella."
-
   val customerAddressJsonMin: JsObject = Json.obj()
   val customerAddressJsonError: JsObject = Json.obj(
     "address" -> Json.obj(
