@@ -18,13 +18,15 @@ package connectors
 
 import base.SpecBase
 import models.retrieved.RetrievedSubscription
-import models.{FinancialLineItem, ReturnPeriod}
+import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import repositories.SDILSessionCache
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.http.Status.OK
+import play.api.libs.json.{JsValue, Json}
+import repositories.{CacheMap, SDILSessionCache}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -58,9 +60,35 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         }
       }
 
-      "when there is no subscription in cache" in {
-        //TODO
+    "when there is no subscription in cache" in {
+      val identifierType: String = "sdil"
+      val sdilNumber: String = "XKSDIL000000022"
+      when(mockSDILSessionCache.fetchEntry[RetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
+      when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
+      when(mockSDILSessionCache.save[RetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(CacheMap("test", Map("SUBSCRIPTION" -> Json.toJson(aSubscription)))))
+      val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustEqual Some(aSubscription)
+      }
+    }
+
+      "when there is no subscription in cache and no subscription in the database" in {
+        val identifierType: String = "sdil"
+        val sdilNumber: String = "XKSDIL000000022"
+        when(mockSDILSessionCache.fetchEntry[RetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
+        when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+        val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
+
+        whenReady(
+          res
+        ) {
+          response =>
+            response mustEqual None
+        }
       }
 
       "return a small producer status successfully" in {
@@ -131,6 +159,33 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
           response mustEqual returnPeriods
       }
     }
+
+    "post return succesfully" in {
+      val period = ReturnPeriod(year = 2022, quarter = 3)
+      val sdilReturn: SdilReturn =  SdilReturn(
+        ownBrand = (1L, 1L ),
+        packLarge = (1L, 1L ),
+        packSmall =  List(),
+        importLarge =  (1L, 1L ),
+        importSmall =  (1L, 1L ),
+        export =  (1L, 1L ),
+        wastage =  (1L, 1L ),
+        submittedOn =  None
+      )
+
+      when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.successful(HttpResponse(OK, "")))
+
+      val res = softDrinksIndustryLevyConnector.returns_update(utr,period,sdilReturn )
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustEqual Some(OK)
+      }
+    }
+
   }
 
 }

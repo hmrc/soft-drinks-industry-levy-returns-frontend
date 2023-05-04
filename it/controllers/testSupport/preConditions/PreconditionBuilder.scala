@@ -5,6 +5,7 @@ class PreconditionBuilder extends PreconditionHelpers {
 
   def user = UserStub()
   def sdilBackend = SdilBackendStub()
+  def alf = ALFStub()
 
 }
 
