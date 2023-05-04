@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package models.backend
+package connectors.httpParsers
 
-import java.time.LocalDate
-import play.api.libs.json.{Format, Json}
+import models.core.ErrorModel
 
-case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate]
-               )
-
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
+object ResponseHttpParser {
+  type HttpResult[T] = Either[ErrorModel, T]
 }

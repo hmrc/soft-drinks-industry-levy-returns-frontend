@@ -136,4 +136,3 @@ POST       /remove-warehouse-details/:index                     controllers.Remo
 
 GET        /remove-packaging-site-details/:ref                   controllers.RemovePackagingDetailsConfirmationController.onPageLoad(mode: Mode = NormalMode, ref: String)
 POST       /remove-packaging-site-details/:ref                   controllers.RemovePackagingDetailsConfirmationController.onSubmit(mode: Mode = NormalMode, ref: String)
-

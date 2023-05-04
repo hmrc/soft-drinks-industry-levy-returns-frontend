@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{AlfResponse, ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -29,7 +29,7 @@ import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubControllerComponents
@@ -85,11 +85,41 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience {
 
-  val application = applicationBuilder(userAnswers = None).build()
+  lazy val application = applicationBuilder(userAnswers = None).build()
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
   lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+  val organisation = "soft drinks ltd"
+  val addressLine1 = "line 1"
+  val veryLongAddressLine1 = "liiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiine 1"
+  val foreignCharsLine1 = "1 Falsche Straße"
+  val addressLine2 = "line 2"
+  val addressLine3 = "line 3"
+  val addressLine4 = "line 4"
+  val postcode = "aa1 1aa"
+  val countryName = "United Kingdom"
+  val countryCode = "UK"
+
+  val customerAddressJsonError: JsObject = Json.obj(
+    "address" -> Json.obj(
+      "lines" -> 4
+    )
+  )
+  val customerAddressMax: AlfResponse = AlfResponse(
+    Some(organisation),
+    List(addressLine1, addressLine2, addressLine3, addressLine4),
+    Some(postcode),
+    Some(countryCode)
+  )
+
+  val customerAddressMaxJson = Json.toJson(AlfResponse(
+    Some(organisation),
+    List(addressLine1, addressLine2, addressLine3, addressLine4),
+    Some(postcode),
+    Some(countryCode)
+  ))
 
   val returnPeriod = ReturnPeriod(2022,1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))

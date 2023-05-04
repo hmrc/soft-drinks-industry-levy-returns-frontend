@@ -53,8 +53,7 @@ class CheckYourAnswersController @Inject()(
   val logger: Logger = Logger(this.getClass())
 
   def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
-      Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
+     Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
   }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
