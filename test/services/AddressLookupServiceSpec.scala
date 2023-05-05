@@ -176,7 +176,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
   "initJourneyAndReturnOnRampUrl" - {
     "should return Successful future when connector returns Right for example state" in {
       val expectectJourneyConfigToBePassedToConnector = JourneyConfig(
-        version = 2,
+        version = frontendAppConfig.AddressLookupConfig.version,
         options = JourneyOptions(
           continueUrl = routes.IndexController.onPageLoad().url,
           homeNavHref = None,

@@ -20,9 +20,9 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
 
   "getAddress" should {
 
-    "should find the address in alf from the id given from alf" in {
+    "find the address in alf from the id given from alf" in {
 
-      val aAddress = AlfResponse(
+      val addressFromAlf = AlfResponse(
         organisation = Some("soft drinks ltd"),
         List("line 1", "line 2", "line 3", "line 4"),
         postcode = Some("aa1 1aa"),
@@ -33,12 +33,12 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       given.alf.getAddress(id)
       val res = service.getAddress(id)
       whenReady(res) { result =>
-        result mustBe Right(aAddress)
+        result mustBe Right(addressFromAlf)
       }
 
     }
 
-    "should return internal server error if json doesn't match AlfResponse" in {
+    "return internal server error if json doesn't match AlfResponse" in {
 
       val id = "001"
       given.alf.getBadAddress(id)
@@ -46,10 +46,9 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       whenReady(res) { result =>
         result mustBe Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from Address Lookup"))
       }
-
     }
 
-    "should return downstream error if a response other than 200 is received" in {
+    "return downstream error if a response other than 200 is received" in {
 
       val id = "001"
       given.alf.getBadResponse(id)
@@ -63,7 +62,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
   "initJourney" should {
     val journeyConfig = JourneyConfig(1, JourneyOptions(""), None, None)
 
-    "should return successful response with successful response from ALF" in {
+    "return successful response with successful response from ALF" in {
       given.alf.getSuccessResponseFromALFInit(Json.toJson(journeyConfig), locationHeaderReturned ="foo")
 
       whenReady(service.initJourney(journeyConfig)) { result =>
@@ -71,7 +70,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       }
     }
 
-    "should return error when error response returned from ALF" in {
+    "return error when error response returned from ALF" in {
       given.alf.getFailResponseFromALFInit(Json.toJson(journeyConfig), Status.INTERNAL_SERVER_ERROR)
 
       whenReady(service.initJourney(journeyConfig)) { result =>

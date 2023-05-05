@@ -81,7 +81,7 @@ class AddressLookupService @Inject()(
 
   def createJourneyConfig(state: AddressLookupState)(implicit requestHeader: RequestHeader, messages: Messages): JourneyConfig = {
     JourneyConfig(
-      version = 2,
+      version = frontendAppConfig.AddressLookupConfig.version,
       options = JourneyOptions(
         continueUrl = returnContinueUrl(state),
         homeNavHref = None,
@@ -94,7 +94,7 @@ class AddressLookupService @Inject()(
         includeHMRCBranding = Some(true),
         ukMode = Some(true),
         selectPageConfig = Some(SelectPageConfig(
-          proposalListLimit = Some(30),
+          proposalListLimit = Some(frontendAppConfig.AddressLookupConfig.selectPageConfigProposalLimit),
           showSearchAgainLink = Some(true)
         )),
         showBackButtons = Some(true),

@@ -68,6 +68,8 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
       .underlying
 
     val alphaPhase: Boolean = addressLookupInitConfig.getBoolean("alphaPhase")
+    val version: Int = addressLookupInitConfig.getInt("version")
+    val selectPageConfigProposalLimit: Int = addressLookupInitConfig.getInt("select-page-config.proposalListLimit")
   }
 
 }
