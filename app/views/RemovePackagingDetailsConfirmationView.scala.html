@@ -27,7 +27,7 @@
 @layout(pageTitle = title(form, messages("removePackagingDetailsConfirmation.title"))) {
 
 
-    @formHelper(action = routes.RemovePackagingDetailsConfirmationController.onSubmit(ref = addressRef), 'autoComplete -> "off") {
+    @formHelper(action = routes.RemovePackagingDetailsConfirmationController.onSubmit(ref = addressRef), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

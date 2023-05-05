@@ -70,7 +70,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("firstQuarter")} 2022"
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -88,7 +88,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2021"
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -107,7 +107,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("thirdQuarter")} 2020"
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -126,7 +126,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("fourthQuarter")} 2019"
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -144,7 +144,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       val result = running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         route(application, request).value
       }
 
@@ -163,7 +163,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -191,7 +191,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -232,7 +232,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -255,7 +255,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -280,7 +280,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       ).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -316,7 +316,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -347,7 +347,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -383,7 +383,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -407,7 +407,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -443,7 +443,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -467,7 +467,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -503,7 +503,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -527,7 +527,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -563,7 +563,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -587,7 +587,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -644,7 +644,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -692,7 +692,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -739,7 +739,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -769,7 +769,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -815,7 +815,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -867,7 +867,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -919,7 +919,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -971,7 +971,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -1024,7 +1024,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -1051,7 +1051,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -1070,7 +1070,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -1106,7 +1106,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       val result = running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         route(application, request).value
       }
 
@@ -1124,7 +1124,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -1141,7 +1141,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       val result = running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         route(application, request).value
       }
 
@@ -1160,7 +1160,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       val result = running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         route(application, request).value
       }
 
@@ -1178,7 +1178,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       val result = running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         route(application, request).value
       }
 
@@ -1215,7 +1215,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         bind[SDILSessionCache].toInstance(mockSDILSessionCache),
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK

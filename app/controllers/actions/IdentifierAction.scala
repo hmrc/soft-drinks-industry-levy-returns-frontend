@@ -49,7 +49,7 @@ class AuthenticatedIdentifierAction @Inject()(
       val maybeSdil = getSdilEnrolment(enrolments)
       (maybeSdil, maybeUtr) match {
         case (None, None) =>
-          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
         case (Some(sdil), _) =>
           sdilConnector.retrieveSubscription(sdil.value, "sdil").flatMap {
             case Some(sub) => sdilConnector.oldestPendingReturnPeriod(sub.utr).flatMap { optReturnPeriod =>
@@ -57,7 +57,7 @@ class AuthenticatedIdentifierAction @Inject()(
             }
             case None =>
               //ToDo redirect to current sdilFrontend
-              Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+              Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
           }
         case (None, Some(utr)) => sdilConnector.retrieveSubscription(utr, "utr").flatMap {
           case Some(sub) => sdilConnector.oldestPendingReturnPeriod(sub.utr).flatMap { optReturnPeriod =>
@@ -65,7 +65,7 @@ class AuthenticatedIdentifierAction @Inject()(
           }
           case None =>
             //ToDo redirect to current sdilFrontend
-            Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+            Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
         }
       }
     } recover {

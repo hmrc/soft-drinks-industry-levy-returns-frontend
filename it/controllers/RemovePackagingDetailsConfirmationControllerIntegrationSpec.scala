@@ -22,7 +22,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Specif
       given
         .commonPrecondition
 
-      WsTestClient.withClient { client ⇒
+      WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/remove-packaging-site-details/$ref")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))

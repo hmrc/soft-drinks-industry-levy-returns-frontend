@@ -23,15 +23,15 @@ import play.api.LoggerLike
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 trait LoggerHelper {
-  def withCaptureOfLoggingFrom(
-                                logger: LoggerLike
-                              )(body: (=> List[ILoggingEvent]) => Unit) {
+  protected def withCaptureOfLoggingFrom(
+                                          logger: LoggerLike
+                                        )(body: (=> List[ILoggingEvent]) => Unit): Unit = {
     withCaptureOfLoggingFrom(logger.logger.asInstanceOf[LogbackLogger])(body)
   }
 
   def withCaptureOfLoggingFrom(
                                 logger: LogbackLogger
-                              )(body: (=> List[ILoggingEvent]) => Unit) {
+                              )(body: (=> List[ILoggingEvent]) => Unit): Unit = {
     val appender = new ListAppender[ILoggingEvent]()
     appender.setContext(logger.getLoggerContext)
     appender.start()

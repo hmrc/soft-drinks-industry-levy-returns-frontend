@@ -135,7 +135,8 @@ class AddASmallProducerController @Inject()(
                 )
               case Left(NotASmallProducer) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
+                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")),
+                    mode, Some(sdilReference)))
                 )
               case Right(_) =>
                 updateSmallProducerList(formData, userAnswers, sdilReference).map(updatedAnswersFinal =>

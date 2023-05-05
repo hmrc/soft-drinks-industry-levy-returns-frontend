@@ -55,7 +55,7 @@ lazy val root = (project in file("."))
         ))
     ),
     // scalacOptions += "-deprecation",
-    scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "off"),
+    scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "off", "-unchecked", "-deprecation"),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),
