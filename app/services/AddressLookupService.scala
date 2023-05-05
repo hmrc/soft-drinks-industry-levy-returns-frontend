@@ -16,26 +16,31 @@
 
 package services
 
+import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import connectors.httpParsers.ResponseHttpParser.HttpResult
+import controllers.routes
+import models.alf.AlfResponse
+import models.alf.init._
 import models.backend.{Site, UkAddress}
-import models.{AlfResponse, UserAnswers, Warehouse}
+import models.{UserAnswers, Warehouse}
 import play.api.Logger
+import play.api.i18n.Messages
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.AddressHelper
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
 class AddressLookupService @Inject()(
-                                      addressLookupConnector: AddressLookupConnector
-                                    ) extends AddressHelper{
+                                      addressLookupConnector: AddressLookupConnector,
+                                      frontendAppConfig: FrontendAppConfig
+                                    ) extends AddressHelper {
 
-  val logger: Logger = Logger(this.getClass())
+  val logger: Logger = Logger(this.getClass)
 
   private def addressChecker(address: AlfResponse): UkAddress = {
-
     val ukAddress = UkAddress(address.lines,
       address.postcode.getOrElse(""))
 
@@ -44,18 +49,98 @@ class AddressLookupService @Inject()(
     } else {
       ukAddress
     }
-
   }
 
-  def getAddress(id:String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = addressLookupConnector.getAddress(id)
+  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = addressLookupConnector.getAddress(id)
 
   def addAddressUserAnswers(addressLookupState: AddressLookupState, address: AlfResponse, userAnswers: UserAnswers): UserAnswers = {
 
     val convertedAddress = addressChecker(address)
 
     addressLookupState match {
-      case Packingdetails => userAnswers.copy(packagingSiteList = userAnswers.packagingSiteList ++ Map(generateId -> Site(convertedAddress,None,address.organisation,None)))
-      case Warehousedetails => userAnswers.copy(warehouseList = userAnswers.warehouseList ++ Map(generateId -> Warehouse(address.organisation,convertedAddress)))
+      case PackingDetails =>
+        userAnswers.copy(packagingSiteList = userAnswers.packagingSiteList ++ Map(generateId -> Site(convertedAddress, None, address.organisation, None)))
+      case WarehouseDetails =>
+        userAnswers.copy(warehouseList = userAnswers.warehouseList ++ Map(generateId -> Warehouse(address.organisation, convertedAddress)))
+    }
+  }
+
+  def initJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[String]] = {
+    addressLookupConnector.initJourney(journeyConfig)
+  }
+
+  def initJourneyAndReturnOnRampUrl(state: AddressLookupState)
+                                   (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
+    val journeyConfig: JourneyConfig = createJourneyConfig(state)
+
+    initJourney(journeyConfig).map {
+      case Right(onRampUrl) => onRampUrl
+      case Left(error) => throw new Exception(s"Failed to init ALF ${error.message} with status ${error.status} for ${hc.requestId}")
+    }
+  }
+
+  def createJourneyConfig(state: AddressLookupState)(implicit requestHeader: RequestHeader, messages: Messages): JourneyConfig = {
+    JourneyConfig(
+      version = frontendAppConfig.AddressLookupConfig.version,
+      options = JourneyOptions(
+        continueUrl = returnContinueUrl(state),
+        homeNavHref = None,
+        signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
+        accessibilityFooterUrl = None,
+        phaseFeedbackLink = Some(frontendAppConfig.feedbackUrl(requestHeader)),
+        deskProServiceName = None,
+        showPhaseBanner = Some(false),
+        alphaPhase = Some(frontendAppConfig.AddressLookupConfig.alphaPhase),
+        includeHMRCBranding = Some(true),
+        ukMode = Some(true),
+        selectPageConfig = Some(SelectPageConfig(
+          proposalListLimit = Some(frontendAppConfig.AddressLookupConfig.selectPageConfigProposalLimit),
+          showSearchAgainLink = Some(true)
+        )),
+        showBackButtons = Some(true),
+        disableTranslations = Some(true),
+        allowedCountryCodes = None,
+        confirmPageConfig = Some(ConfirmPageConfig(
+          showSearchAgainLink = Some(true),
+          showSubHeadingAndInfo = Some(true),
+          showChangeLink = Some(true),
+          showConfirmChangeText = Some(true)
+        )),
+        timeoutConfig = Some(TimeoutConfig(
+          timeoutAmount = frontendAppConfig.timeout,
+          timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
+          timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
+        )),
+        serviceHref = Some(routes.IndexController.onPageLoad().url),
+        pageHeadingStyle = Some("govuk-heading-m")
+      ),
+      labels = returnJourneyLabels(state),
+      requestedVersion = None
+    )
+  }
+
+ private def returnJourneyLabels(state: AddressLookupState)(implicit messages: Messages): Option[JourneyLabels] = {
+    state match {
+      case _ => Some(
+        JourneyLabels(
+          en = Some(LanguageLabels(
+            appLevelLabels = Some(AppLevelLabels(
+            navTitle = Some(messages("service.name")),
+            phaseBannerHtml = None
+          )),
+          selectPageLabels = None,
+          lookupPageLabels = None,
+          editPageLabels = None,
+          confirmPageLabels = None,
+          countryPickerLabels = None
+        ))
+      ))
+    }
+  }
+
+  private def returnContinueUrl(state: AddressLookupState): String = {
+    state match {
+      case _ => routes.IndexController.onPageLoad().url
     }
   }
 }

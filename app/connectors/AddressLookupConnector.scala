@@ -19,7 +19,8 @@ package connectors
 import config.FrontendAppConfig
 import connectors.httpParsers.AddressLookupHttpParser._
 import connectors.httpParsers.ResponseHttpParser.HttpResult
-import models.{AlfResponse}
+import models.alf.AlfResponse
+import models.alf.init.JourneyConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.{Inject, Singleton}
@@ -29,8 +30,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddressLookupConnector @Inject()(val http: HttpClient,
                                        implicit val config: FrontendAppConfig) {
   private[connectors] def getAddressUrl(id: String) = s"${config.addressLookupService}/api/confirmed?id=$id"
+  private[connectors] val initJourneyUrl = s"${config.addressLookupService}/api/init"
 
   def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] ={
-    http.GET[HttpResult[AlfResponse]](getAddressUrl(id))(AddressLookupReads,hc,ec)
+    http.GET[HttpResult[AlfResponse]](getAddressUrl(id))(AddressLookupGetAddressReads, hc, ec)
+  }
+
+  def initJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[String]] = {
+    http.POST[JourneyConfig, HttpResult[String]](initJourneyUrl, journeyConfig)(JourneyConfig.format, AddressLookupInitJourneyReads, hc, ec)
   }
 }

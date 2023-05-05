@@ -18,9 +18,10 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.alf.AlfResponse
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{AlfResponse, ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

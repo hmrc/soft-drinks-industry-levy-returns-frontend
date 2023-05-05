@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.alf
 
 import play.api.libs.json.Json
 

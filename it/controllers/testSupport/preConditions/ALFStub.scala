@@ -1,8 +1,10 @@
 package controllers.testSupport.preConditions
 
-import models.AlfResponse
 import com.github.tomakehurst.wiremock.client.WireMock._
-import play.api.libs.json.Json
+import models.alf.AlfResponse
+import play.api.http.Status
+import play.api.libs.json.{JsValue, Json}
+import play.mvc.Http.HeaderNames
 
 case class ALFStub()(implicit builder: PreconditionBuilder) {
   val aAddress = AlfResponse(
@@ -44,6 +46,26 @@ case class ALFStub()(implicit builder: PreconditionBuilder) {
         .willReturn(
           notFound()))
     builder
+  }
+
+  def getSuccessResponseFromALFInit(bodyPosted: JsValue, locationHeaderReturned: String) = {
+    stubFor(
+      post(
+        urlPathMatching("/api/init")
+      ).withRequestBody(equalToJson(bodyPosted.toString()))
+        .willReturn(
+        status(Status.ACCEPTED)
+          .withHeader(HeaderNames.LOCATION, locationHeaderReturned)
+      ))
+  }
+  def getFailResponseFromALFInit(bodyPosted: JsValue, statusReturned: Int) = {
+    stubFor(
+      post(
+        urlPathMatching("/api/init")
+      ).withRequestBody(equalToJson(bodyPosted.toString()))
+        .willReturn(
+          status(statusReturned)
+        ))
   }
 
 }

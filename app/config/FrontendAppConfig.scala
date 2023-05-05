@@ -18,43 +18,58 @@ package config
 
 
 import com.google.inject.{Inject, Singleton}
+import com.typesafe.config.Config
+import play.api.Configuration
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
+class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
-  val appName: String = configuration.getString("appName")
-  val host: String    = configuration.getConfString("soft-drinks-industry-levy-returns-frontend.host", throw new Exception("missing config soft-drinks-industry-levy-returns-frontend.host"))
+  val appName: String = servicesConfig.getString("appName")
+  val host: String    = servicesConfig.getConfString("soft-drinks-industry-levy-returns-frontend.host", throw new Exception("missing config soft-drinks-industry-levy-returns-frontend.host"))
 
-  private val contactHost: String = configuration.getConfString("contact-frontend.host", throw new Exception("missing config contact-frontend.host"))
+  private val contactHost: String = servicesConfig.getConfString("contact-frontend.host", throw new Exception("missing config contact-frontend.host"))
   private val contactFormServiceIdentifier: String = "soft-drinks-industry-levy-returns-frontend"
 
   def feedbackUrl(implicit request: RequestHeader): String = {
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
   }
 
-  val basGatewayBaseUrl: String = configuration.baseUrl("bas-gateway")
-  val sdilFrontendBaseUrl: String = configuration.baseUrl("soft-drinks-industry-levy-frontend")
-  val sdilBaseUrl: String = configuration.baseUrl("soft-drinks-industry-levy")
+  val basGatewayBaseUrl: String = servicesConfig.baseUrl("bas-gateway")
+  val sdilFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")
+  val sdilBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy")
 
 
   val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
   val loginContinueUrl: String = s"$sdilFrontendBaseUrl/soft-drinks-industry-levy"
   val signOutUrl: String       = s"$basGatewayBaseUrl/bas-gateway/sign-out-without-state"
 
-  private val exitSurveyBaseUrl: String = configuration.baseUrl("feedback-frontend")
+  private val exitSurveyBaseUrl: String = servicesConfig.baseUrl("feedback-frontend")
   val exitSurveyUrl: String = s"$exitSurveyBaseUrl/feedback/soft-drinks-industry-levy-returns-frontend"
 
-  val timeout: Int   = configuration.getInt("timeout-dialog.timeout")
-  val countdown: Int = configuration.getInt("timeout-dialog.countdown")
+  val timeout: Int   = servicesConfig.getInt("timeout-dialog.timeout")
+  val countdown: Int = servicesConfig.getInt("timeout-dialog.countdown")
 
-  val cacheTtl: Int = configuration.getInt("mongodb.timeToLiveInSeconds")
+  val cacheTtl: Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
 
-  val lowerBandCostPerLitre: BigDecimal = BigDecimal(configuration.getString("lowerBandCostPerLitre"))
-  val higherBandCostPerLitre: BigDecimal = BigDecimal(configuration.getString("higherBandCostPerLitre"))
-  val balanceAllEnabled: Boolean = configuration.getBoolean("balanceAll.enabled")
-  val softDrinksIndustryLevyFrontendLink :String  = s"${configuration.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
-  val addressLookupService: String  = configuration.baseUrl("address-lookup-frontend")
+  val lowerBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitre"))
+  val higherBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))
+  val balanceAllEnabled: Boolean = servicesConfig.getBoolean("balanceAll.enabled")
+  val softDrinksIndustryLevyFrontendLink :String  = s"${servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
+  val addressLookupService: String  = servicesConfig.baseUrl("address-lookup-frontend")
+
+  object AddressLookupConfig {
+
+    private val addressLookupInitConfig: Config = configuration
+      .getOptional[Configuration](s"address-lookup-frontend-init-config")
+      .getOrElse(throw new IllegalArgumentException(s"Configuration for address-lookup-frontend-init-config not found"))
+      .underlying
+
+    val alphaPhase: Boolean = addressLookupInitConfig.getBoolean("alphaPhase")
+    val version: Int = addressLookupInitConfig.getInt("version")
+    val selectPageConfigProposalLimit: Int = addressLookupInitConfig.getInt("select-page-config.proposalListLimit")
+  }
+
 }

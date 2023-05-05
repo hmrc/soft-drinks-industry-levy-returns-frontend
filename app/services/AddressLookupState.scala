@@ -18,8 +18,7 @@ package services
 
 sealed trait AddressLookupState
 
-case object Packingdetails extends AddressLookupState
+case object PackingDetails extends AddressLookupState
 
-
-case object Warehousedetails extends AddressLookupState
+case object WarehouseDetails extends AddressLookupState
 
