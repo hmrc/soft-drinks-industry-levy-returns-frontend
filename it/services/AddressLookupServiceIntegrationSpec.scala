@@ -2,9 +2,11 @@ package services
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.alf.AlfResponse
+import models.alf.init.{JourneyConfig, JourneyOptions}
 import models.core.ErrorModel
 import org.scalatest.TryValues
 import play.api.http.Status
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -12,7 +14,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class AddressLookupServiceIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues  {
   implicit val hc = HeaderCarrier()
 
-  "AddressLookupService" should {
+  "getAddress" should {
+
     "should find the address in alf from the id given from alf" in {
 
       val aAddress = AlfResponse(
@@ -52,7 +55,25 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       }
 
     }
+  }
+  "initJourney" should {
+    val journeyConfig = JourneyConfig(1, JourneyOptions(""), None, None)
 
+    "should return successful response with successful response from ALF" in {
+      given.alf.getSuccessResponseFromALFInit(Json.toJson(journeyConfig), locationHeaderReturned ="foo")
+
+      whenReady(service.initJourney(journeyConfig)) { result =>
+        result mustBe Right("foo")
+      }
+    }
+
+    "should return error when error response returned from ALF" in {
+      given.alf.getFailResponseFromALFInit(Json.toJson(journeyConfig), Status.INTERNAL_SERVER_ERROR)
+
+      whenReady(service.initJourney(journeyConfig)) { result =>
+        result mustBe Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected error occurred when init journey from ALF"))
+      }
+    }
   }
 
 }

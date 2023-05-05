@@ -16,10 +16,10 @@
 
 package models.alf
 
-import models.alf.init.{ConfirmPageConfig, JourneyConfig, JourneyOptions, SelectPageConfig, TimeoutConfig}
+import models.alf.init._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 
 class JourneyConfigSpec extends AnyFreeSpec with Matchers {
 
@@ -60,7 +60,8 @@ class JourneyConfigSpec extends AnyFreeSpec with Matchers {
         labels = None,
         requestedVersion = Some(1)
       )
-      val res: JsValue = Json.parse("""{"version":1,"options":{"continueUrl":"url","homeNavHref":"home","signOutHref":"sign","accessibilityFooterUrl":"footer","phaseFeedbackLink":"feedback","deskProServiceName":"deskpro","showPhaseBanner":true,"alphaPhase":true,"showBackButtons":true,"disableTranslations":true,"includeHMRCBranding":true,"ukMode":true,"allowedCountryCodes":[""],"selectPageConfig":{"proposalListLimit":1,"showSearchAgainLink":true},"confirmPageConfig":{"showSearchAgainLink":true,"showSubHeadingAndInfo":true,"showChangeLink":true,"showConfirmChangeText":true},"timeoutConfig":{"timeoutAmount":1,"timeoutUrl":"foo","timeoutKeepAliveUrl":"bar"},"serviceHref":"href","pageHeadingStyle":"heading"},"requestedVersion":1}""")
+      val res: JsValue =
+        Json.parse("""{"version":1,"options":{"continueUrl":"url","homeNavHref":"home","signOutHref":"sign","accessibilityFooterUrl":"footer","phaseFeedbackLink":"feedback","deskProServiceName":"deskpro","showPhaseBanner":true,"alphaPhase":true,"showBackButtons":true,"disableTranslations":true,"includeHMRCBranding":true,"ukMode":true,"allowedCountryCodes":[""],"selectPageConfig":{"proposalListLimit":1,"showSearchAgainLink":true},"confirmPageConfig":{"showSearchAgainLink":true,"showSubHeadingAndInfo":true,"showChangeLink":true,"showConfirmChangeText":true},"timeoutConfig":{"timeoutAmount":1,"timeoutUrl":"foo","timeoutKeepAliveUrl":"bar"},"serviceHref":"href","pageHeadingStyle":"heading"},"requestedVersion":1}""")
       Json.toJson(model) mustBe res
 
     }

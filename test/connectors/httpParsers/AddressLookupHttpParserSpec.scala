@@ -17,10 +17,10 @@
 package connectors.httpParsers
 
 import base.SpecBase
-import connectors.httpParsers.AddressLookupHttpParser.AddressLookupGetAddressReads
+import connectors.httpParsers.AddressLookupHttpParser.{AddressLookupGetAddressReads, AddressLookupInitJourneyReads}
 import models.core.ErrorModel
 import play.api.http.Status
-import sttp.model.HeaderNames
+import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.http.HttpResponse
 
 class AddressLookupHttpParserSpec extends SpecBase{
@@ -65,17 +65,24 @@ class AddressLookupHttpParserSpec extends SpecBase{
     }
   }
   "The AddressLookupInitJourneyReads" - {
-    s"should return url if ${Status.ACCEPTED} returned and ${HeaderNames.Location} exists" in {
-
+    s"should return url if ${Status.ACCEPTED} returned and ${HeaderNames.LOCATION} exists" in {
+      AddressLookupInitJourneyReads.read("", "",
+        HttpResponse(Status.ACCEPTED, "", Map(HeaderNames.LOCATION -> Seq("foo")))) mustBe Right("foo")
     }
     s"return Left if ${Status.ACCEPTED} but no header exists" in {
-
+      AddressLookupInitJourneyReads.read("", "",
+        HttpResponse(Status.ACCEPTED, "", Map.empty)) mustBe
+        Left(ErrorModel(Status.ACCEPTED, s"No ${HeaderNames.LOCATION} key in response from init response from ALF"))
     }
     s"return Left if status is ${Status.BAD_REQUEST}" in {
-
+      AddressLookupInitJourneyReads.read("", "",
+        HttpResponse(Status.BAD_REQUEST, "foo", Map.empty)) mustBe
+        Left(ErrorModel(Status.BAD_REQUEST, "foo returned from ALF"))
     }
     "return Left if status not accepted statuses from API" in {
-
+      AddressLookupInitJourneyReads.read("", "",
+        HttpResponse(Status.INTERNAL_SERVER_ERROR, "foo", Map.empty)) mustBe
+        Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected error occurred when init journey from ALF"))
     }
   }
 }

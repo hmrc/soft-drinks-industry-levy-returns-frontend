@@ -163,7 +163,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
   }
   "initJourney" - {
     "should return response from connector" in {
-      val journeyConfig = JourneyConfig(1,JourneyOptions(""),None,None)
+      val journeyConfig = JourneyConfig(1, JourneyOptions(""), None, None)
       when(mockSdilConnector.initJourney(ArgumentMatchers.eq(journeyConfig))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(Right("foo")))
 
