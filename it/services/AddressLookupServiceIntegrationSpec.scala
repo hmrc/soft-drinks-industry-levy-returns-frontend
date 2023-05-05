@@ -6,13 +6,17 @@ import models.alf.init.{JourneyConfig, JourneyOptions}
 import models.core.ErrorModel
 import org.scalatest.TryValues
 import play.api.http.Status
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.Json
+import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class AddressLookupServiceIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues  {
+class AddressLookupServiceIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues with FutureAwaits with DefaultAwaitTimeout {
   implicit val hc = HeaderCarrier()
+  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit lazy val messages = messagesApi.preferred(Seq(Lang("en")))
 
   "getAddress" should {
 
@@ -75,5 +79,23 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       }
     }
   }
+  "initJourneyAndReturnOnRampUrl" should {
 
+    "return ramp on url when success" in {
+      val req = FakeRequest()
+      val journeyConfig = service.createJourneyConfig(PackingDetails)(req, messages)
+      given.alf.getSuccessResponseFromALFInit(Json.toJson(journeyConfig), locationHeaderReturned = "foo")
+
+      whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)) { result =>
+        result mustBe "foo"
+      }
+    }
+    "throw exception when fail" in {
+      val req = FakeRequest()
+      val journeyConfig = service.createJourneyConfig(PackingDetails)(req, messages)
+      given.alf.getFailResponseFromALFInit(Json.toJson(journeyConfig), Status.INTERNAL_SERVER_ERROR)
+
+      intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)))
+    }
+  }
 }
