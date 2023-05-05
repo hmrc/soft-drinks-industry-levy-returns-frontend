@@ -163,13 +163,13 @@ class AddASmallProducerController @Inject()(
                             (implicit hc: HeaderCarrier): Future[Either[SDILReferenceErrors, Unit]] = {
 
     if (currentSDILRef == addASmallProducerSDILRef) {
-      Future.successful(Right())
+      Future.successful(Right(()))
     } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
       Future.successful(Left(AlreadyExists))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
         case Some(false) => Left(NotASmallProducer)
-        case _ => Right()
+        case _ => Right(())
       }
     }
   }
