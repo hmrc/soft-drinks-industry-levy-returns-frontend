@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package models.backend
+package models.alf
 
-import java.time.LocalDate
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.Json
 
-case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate]
-               )
+case class AlfResponse( organisation: Option[String],
+                   lines: List[String],
+                   postcode: Option[String],
+                   countryCode: Option[String])
 
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
+object AlfResponse {
+  implicit val format = Json.format[AlfResponse]
 }

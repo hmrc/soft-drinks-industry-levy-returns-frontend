@@ -428,7 +428,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
           "How many credits for lost or damaged " - {
 
             def navigate(userAnswers: UserAnswers,
-                         sdilReturn: Option[SdilReturn] = None,
+                         sdilReturn: Option[SdilReturn],
                          subscription: Option[RetrievedSubscription]) = {
 
               navigator.nextPage(HowManyCreditsForLostDamagedPage, NormalMode, userAnswers, sdilReturn, subscription)
@@ -578,7 +578,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
           "change registration page" - {
 
             def navigate(userAnswers: UserAnswers,
-                         sdilReturn: Option[SdilReturn] = None,
+                         sdilReturn: Option[SdilReturn],
                          subscription: Option[RetrievedSubscription]) = {
 
               navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, userAnswers, sdilReturn, subscription)
@@ -606,7 +606,6 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "should redirect to journey recovery when no subscription is found" in {
-              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
               val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
               val result = navigate(userAnswers, Some(sdilReturn), None)
@@ -615,7 +614,6 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to journey recovery when no sdil return is found" in {
               val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
-              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
               val result = navigate(userAnswers, None,Some(modifiedSubscription))
@@ -627,7 +625,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
           "packing site details page" - {
 
             def navigate(userAnswers: UserAnswers,
-                         sdilReturn: Option[SdilReturn] = None,
+                         sdilReturn: Option[SdilReturn],
                          subscription: Option[RetrievedSubscription]) = {
 
               navigator.nextPage(PackagingSiteDetailsPage, NormalMode, userAnswers, sdilReturn, subscription)
@@ -663,7 +661,6 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "should redirect to journey recovery when no subscription is found" in {
-                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
                 val userAnswers = UserAnswers(id, Json.obj("packagingSiteDetails" -> false))
                 val result = navigate(userAnswers, Some(sdilReturn), None)
@@ -672,7 +669,6 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to journey recovery when no sdil return is found" in {
               val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
-              val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val userAnswers = UserAnswers(id, Json.obj("packagingSiteDetails" -> false))
               val result = navigate(userAnswers, None,Some(modifiedSubscription))

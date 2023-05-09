@@ -14,6 +14,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
 import repositories.{SDILSessionCacheRepository, SessionRepository}
+import services.AddressLookupService
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.health.HealthController
@@ -71,6 +72,8 @@ trait TestConfiguration
       interval = Span(50, Millis))
 
   lazy val config = Map(
+    s"microservice.services.address-lookup-frontend.host" -> s"$wiremockHost",
+    s"microservice.services.address-lookup-frontend.port" -> s"$wiremockPort",
     s"microservice.services.auth.host" -> s"$wiremockHost",
     s"microservice.services.auth.port" -> s"$wiremockPort",
     s"microservice.services.bas-gateway.host" -> s"$wiremockHost",
@@ -101,6 +104,7 @@ trait TestConfiguration
   }
 
   app.injector.instanceOf[HealthController]
+  val service = app.injector.instanceOf[AddressLookupService]
 
   val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))
 

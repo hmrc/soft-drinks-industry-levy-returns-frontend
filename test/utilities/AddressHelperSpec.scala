@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package models.backend
+package utilities
 
-import java.time.LocalDate
-import play.api.libs.json.{Format, Json}
+import base.SpecBase
+import utilitlies.AddressHelper
 
-case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate]
-               )
+class AddressHelperSpec extends SpecBase with AddressHelper {
 
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
+    "Address Helper" - {
+      "generate a unique id" in {
+
+        val result:Map[String,String] = Map((generateId , "testAddress"), (generateId , "testAddress"), (generateId , "testAddress") , (generateId,"testAddress"))
+
+        result.size mustBe 4
+        result.head._1.length mustBe 36
+      }
+    }
 }
