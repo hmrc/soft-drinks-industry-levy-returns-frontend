@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.BroughtIntoUKFormProvider
+import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
@@ -33,15 +34,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BroughtIntoUKController @Inject()(
                                         override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
+                                        val sessionRepository: SessionRepository,
+                                        val navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: BroughtIntoUKFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: BroughtIntoUKView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                        view: BroughtIntoUKView,
+                                        val errorHandler: ErrorHandler
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   val form = formProvider()
   val logger: Logger = Logger(this.getClass())
@@ -74,9 +76,7 @@ class BroughtIntoUKController @Inject()(
             } else {
               Future.fromTry(updatedAnswers.remove(HowManyBroughtIntoUkPage)).flatMap {
                 updatedAnswers =>
-                  sessionRepository.set(updatedAnswers).map {
-                    _ => Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers))
-                  }
+                  updateDatabaseAndRedirect(updatedAnswers, BroughtIntoUKPage, mode)
               }
             }
           }

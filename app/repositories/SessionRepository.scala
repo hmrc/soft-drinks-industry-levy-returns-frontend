@@ -17,6 +17,7 @@
 package repositories
 
 import config.FrontendAppConfig
+import errors.{ReturnsErrors, SessionDatabaseInsertError}
 import models.UserAnswers
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
@@ -71,7 +72,7 @@ class SessionRepository @Inject()(
           .headOption()
     }
 
-  def set(answers: UserAnswers): Future[Boolean] = {
+  def set(answers: UserAnswers): Future[Either[ReturnsErrors ,Boolean]] = {
 
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
 
@@ -82,7 +83,10 @@ class SessionRepository @Inject()(
         options     = ReplaceOptions().upsert(true)
       )
       .toFuture()
-      .map(_ => true)
+      .map(_ => Right(true))
+      .recover{
+        case _ => Left(SessionDatabaseInsertError)
+      }
   }
 
   def clear(id: String): Future[Boolean] =
