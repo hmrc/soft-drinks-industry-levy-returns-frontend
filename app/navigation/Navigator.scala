@@ -55,7 +55,7 @@ class Navigator @Inject()() {
     case BrandsPackagedAtOwnSitesPage => _ => _ => _ => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
     case PackagedContractPackerPage => userAnswers => _ => _ => _ => packagedContractPackerPageNavigation(userAnswers)
     case OwnBrandsPage => userAnswers => _ => _ => _ => ownBrandPageNavigation(userAnswers)
-    case _ => _ => _ => _ => _ => routes.IndexController.onPageLoad
+    case _ => _ => _ => _ => _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {

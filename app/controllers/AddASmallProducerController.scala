@@ -135,7 +135,8 @@ class AddASmallProducerController @Inject()(
                 )
               case Left(NotASmallProducer) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
+                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")),
+                    mode, Some(sdilReference)))
                 )
               case Right(_) =>
                 updateSmallProducerList(formData, userAnswers, sdilReference).map(updatedAnswersFinal =>
@@ -162,13 +163,13 @@ class AddASmallProducerController @Inject()(
                             (implicit hc: HeaderCarrier): Future[Either[SDILReferenceErrors, Unit]] = {
 
     if (currentSDILRef == addASmallProducerSDILRef) {
-      Future.successful(Right())
+      Future.successful(Right(()))
     } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
       Future.successful(Left(AlreadyExists))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
         case Some(false) => Left(NotASmallProducer)
-        case _ => Right()
+        case _ => Right(())
       }
     }
   }

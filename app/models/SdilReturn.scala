@@ -32,7 +32,7 @@ case class SdilReturn(
                        packSmall: List[SmallProducer],
                        importLarge: (Long, Long),
                        importSmall: (Long, Long),
-                       export: (Long, Long),
+                       `export`: (Long, Long),
                        wastage: (Long, Long),
                        submittedOn: Option[LocalDateTime] = None
                      ) {
