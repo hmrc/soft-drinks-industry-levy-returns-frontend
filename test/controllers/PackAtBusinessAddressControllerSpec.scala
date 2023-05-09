@@ -18,36 +18,47 @@ package controllers
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
+import errors.SessionDatabaseInsertError
 import forms.PackAtBusinessAddressFormProvider
+import helpers.LoggerHelper
+import models.backend.UkAddress
+import models.retrieved.RetrievedSubscription
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import play.api.i18n.Messages
+import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
+import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
+import play.api.libs.json.Writes
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import queries.Settable
 import repositories.SessionRepository
+import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
-import org.jsoup.Jsoup
-import play.api.mvc.Call
 
 import scala.concurrent.Future
+import scala.util.{Failure, Try}
 
-class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
+class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
   val formProvider = new PackAtBusinessAddressFormProvider()
-  val form = formProvider()
-  val mockSessionRepository = mock[SessionRepository]
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-  var usersRetrievedSubscription = aSubscription
-  val businessName = usersRetrievedSubscription.orgName
-  val businessAddress = usersRetrievedSubscription.address
+  val form: Form[Boolean] = formProvider()
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  var usersRetrievedSubscription: RetrievedSubscription = aSubscription
+  val businessName: String = usersRetrievedSubscription.orgName
+  val businessAddress: UkAddress = usersRetrievedSubscription.address
 
 
-  lazy val packAtBusinessAddressRoute = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+  lazy val packAtBusinessAddressRoute: String = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
   "PackAtBusinessAddress Controller" - {
 
@@ -98,7 +109,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -176,12 +187,12 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page removing litreage data from user answers, when valid data is submitted" in {
+    "must redirect to the next page removing litre data from user answers, when valid data is submitted" in {
 
       def onwardRoute = Call("GET", "/foo")
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -198,5 +209,74 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
+
+    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+
+      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packAtBusinessAddressRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
+      }
+    }
+
+    "should log an error message when internal server error is returned when getting user answers is not resolved" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+
+      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to resolve user answers while on packAtBusinessAddress"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val app =
+        applicationBuilder(Some(completedUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on packAtBusinessAddress"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
   }
 }

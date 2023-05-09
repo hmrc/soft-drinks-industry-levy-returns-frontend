@@ -22,11 +22,10 @@ import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
-import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.BroughtIntoUKView
 
 import javax.inject.Inject
@@ -36,17 +35,17 @@ class BroughtIntoUKController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         val sessionRepository: SessionRepository,
                                         val navigator: Navigator,
+                                        val errorHandler: ErrorHandler,
+                                        val genericLogger: GenericLogger,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: BroughtIntoUKFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: BroughtIntoUKView,
-                                        val errorHandler: ErrorHandler
+                                        view: BroughtIntoUKView
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
-  val logger: Logger = Logger(this.getClass())
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -66,20 +65,12 @@ class BroughtIntoUKController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          (for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(BroughtIntoUKPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield updatedAnswers).flatMap { updatedAnswers =>
-            if (value) {
-              Future.successful(Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers)))
-            } else {
-              Future.fromTry(updatedAnswers.remove(HowManyBroughtIntoUkPage)).flatMap {
-                updatedAnswers =>
-                  updateDatabaseAndRedirect(updatedAnswers, BroughtIntoUKPage, mode)
-              }
-            }
-          }
+        value => {
+          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(
+            BroughtIntoUKPage, HowManyBroughtIntoUkPage, value)
+
+          updateDatabaseAndRedirect(updatedUserAnswers, BroughtIntoUKPage, mode)
+        }
       )
   }
 }

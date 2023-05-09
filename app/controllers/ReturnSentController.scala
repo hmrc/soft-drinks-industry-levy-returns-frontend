@@ -19,7 +19,6 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import models.{Amounts, NormalMode}
-import navigation.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,7 +37,6 @@ class ReturnSentController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
-                                      navigator: Navigator,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: ReturnSentView,
                                       sessionCache: SDILSessionCache
@@ -51,7 +49,7 @@ class ReturnSentController @Inject()(
   val line3: String = "Berkshire"
   val line4: String = "United Kingdom"
   val postcode: String = "CT44 0DF"
-  val logger: Logger = Logger(this.getClass())
+  val logger: Logger = Logger(this.getClass)
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -66,7 +64,7 @@ class ReturnSentController @Inject()(
       } yield {
         session match {
           case Some(amounts) =>
-            if(userAnswers.submitted){
+            if (userAnswers.submitted) {
               Ok(view(returnPeriod,
                 userAnswers,
                 amounts,
@@ -74,7 +72,9 @@ class ReturnSentController @Inject()(
                 CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
                 financialStatus = financialStatus(amounts.total)
               )(implicitly, implicitly, config))
-            }else Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
+            } else {
+              Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
+            }
           case _ => Logger("Session Cache returned a None")
             Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
         }

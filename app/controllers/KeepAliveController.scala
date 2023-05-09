@@ -17,24 +17,35 @@
 package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import handlers.ErrorHandler
+import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class KeepAliveController @Inject()(
                                      val controllerComponents: MessagesControllerComponents,
+                                     val errorHandler: ErrorHandler,
                                      identify: IdentifierAction,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction,
-                                     sessionRepository: SessionRepository
+                                     sessionRepository: SessionRepository,
+                                     val genericLogger: GenericLogger,
                                    )(implicit ec: ExecutionContext) extends FrontendBaseController {
-def keepAlive: Action[AnyContent] = (identify andThen getData andThen requireData).async {
-  implicit request =>
-    sessionRepository.keepAlive(request.userAnswers.id).map(_ => Ok)
-}
 
-    Future.successful(Ok)
+  def keepAlive: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      sessionRepository.keepAlive(request.userAnswers.id).map {
+        case Right(_) => Ok
+        case Left(_) =>
+          genericLogger.logger.error("Failed to keep the session alive due to error from mongo session repository's keepAlive")
+          InternalServerError(errorHandler.internalServerErrorTemplate)
+      }
+  }
+
+  Future.successful(Ok)
 }

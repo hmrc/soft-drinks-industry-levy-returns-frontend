@@ -17,40 +17,49 @@
 package controllers
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.SecondaryWarehouseDetailsFormProvider
+import helpers.LoggerHelper
 import models.backend.UkAddress
 import models.{NormalMode, UserAnswers, Warehouse}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.SecondaryWarehouseDetailsPage
+import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.Json
-import play.api.mvc.Call
+import play.api.libs.json.{Json, Writes}
+import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import queries.Settable
 import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import utilitlies.GenericLogger
 import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.SecondaryWarehouseDetailsView
 
 import scala.concurrent.Future
+import scala.util.{Failure, Try}
 
-class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency {
+class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
   def doc(result: String): Document = Jsoup.parse(result)
 
   val formProvider = new SecondaryWarehouseDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val secondaryWarehouseDetailsRoute = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+  lazy val secondaryWarehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
 
-  val twoWarehouses: Map[String,Warehouse] = Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
+  val twoWarehouses: Map[String,Warehouse] = Map("1"-> Warehouse(Some("ABC Ltd"),
+    UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
     "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
 
   val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,Json.obj(), List.empty,Map.empty,twoWarehouses)
@@ -62,7 +71,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarehouses)).build()
 
       running(application) {
-        implicit val request = FakeRequest(GET, secondaryWarehouseDetailsRoute)
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, secondaryWarehouseDetailsRoute)
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
@@ -132,7 +141,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -180,10 +189,78 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           rows = warehouseSummaryList
         )
 
-
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, summaryList)(request, messages(application)).toString
       }
     }
+
+    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+
+      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, secondaryWarehouseDetailsRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
+      }
+    }
+
+    "should log an error message when internal server error is returned when getting user answers is not resolved" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+
+      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, secondaryWarehouseDetailsRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to resolve user answers while on secondaryWarehouseDetails"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val app =
+        applicationBuilder(Some(completedUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, secondaryWarehouseDetailsRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on secondaryWarehouseDetails"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
   }
 }

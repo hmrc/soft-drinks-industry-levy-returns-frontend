@@ -18,15 +18,15 @@ package controllers
 
 import controllers.actions._
 import forms.RemovePackagingDetailsConfirmationFormProvider
+import handlers.ErrorHandler
 import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.RemovePackagingDetailsConfirmationPage
-import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import viewmodels.AddressFormattingHelper
 import views.html.RemovePackagingDetailsConfirmationView
 
@@ -35,18 +35,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RemovePackagingDetailsConfirmationController @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,
+                                         val sessionRepository: SessionRepository,
+                                         val navigator: Navigator,
+                                         val errorHandler: ErrorHandler,
+                                         val genericLogger: GenericLogger,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: RemovePackagingDetailsConfirmationFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: RemovePackagingDetailsConfirmationView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
-  val logger = Logger(this.getClass)
+  private val form = formProvider()
 
   private def getPackagingSiteAddressBaseOnRef(ref: String, userAnswers: UserAnswers): Option[Html] = {
     userAnswers.packagingSiteList
@@ -58,7 +59,8 @@ class RemovePackagingDetailsConfirmationController @Inject()(
     implicit request =>
       getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
         case None =>
-          logger.warn(s"user has potentially hit page and ref does not exist for packaging site $ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
+          genericLogger.logger.warn(s"user has potentially hit page and ref does not exist for packaging site" +
+            s"$ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
           Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode))
         case Some(packagingSiteDetails) => Ok(view(form, mode, ref, packagingSiteDetails))
       }
@@ -76,18 +78,18 @@ class RemovePackagingDetailsConfirmationController @Inject()(
 
       getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
         case None =>
-          logger.warn(s"user has potentially submit page and ref does not exist for packaging site $ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
+          genericLogger.logger.warn(s"user has potentially submit page and ref does not exist for packaging site" +
+            s"$ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
           Future.successful(Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode)))
         case Some(packagingSiteDetails) =>
           form.bindFromRequest().fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode, ref, packagingSiteDetails))),
-            value =>
-              for {
-                updatedAnswersAfterUserAnswer <- Future.successful(removePackagingDetailsFromUserAnswers(value, request.userAnswers, ref))
-                _ <- sessionRepository.set(updatedAnswersAfterUserAnswer)
-              } yield Redirect(navigator.nextPage(RemovePackagingDetailsConfirmationPage, mode, updatedAnswersAfterUserAnswer))
-          )
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, ref, packagingSiteDetails))),
+
+            value => {
+              val updatedAnswersAfterUserAnswer = removePackagingDetailsFromUserAnswers(value, request.userAnswers, ref)
+              setAndRedirect(updatedAnswersAfterUserAnswer, RemovePackagingDetailsConfirmationPage, mode)
+            }
+         )
       }
   }
 }

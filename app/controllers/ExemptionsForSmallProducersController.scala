@@ -18,14 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.ExemptionsForSmallProducersFormProvider
+import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
-import pages.{AddASmallProducerPage, ExemptionsForSmallProducersPage}
-import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import pages.ExemptionsForSmallProducersPage
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.ExemptionsForSmallProducersView
 
 import javax.inject.Inject
@@ -33,18 +33,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ExemptionsForSmallProducersController @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,
+                                         val sessionRepository: SessionRepository,
+                                         val navigator: Navigator,
+                                         val errorHandler: ErrorHandler,
+                                         val genericLogger: GenericLogger,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: ExemptionsForSmallProducersFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ExemptionsForSmallProducersView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
-  val logger: Logger = Logger(this.getClass())
+private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -64,22 +65,12 @@ class ExemptionsForSmallProducersController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          (for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptionsForSmallProducersPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield updatedAnswers).flatMap { updatedAnswers =>
-            if (value) {
-              Future.successful(Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers)))
-            } else {
-              Future.fromTry(updatedAnswers.remove(AddASmallProducerPage)).flatMap {
-                updatedAnswers =>
-                  sessionRepository.set(updatedAnswers).map {
-                    _ => Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswers))
-                  }
-              }
-            }
-          }
+        value => {
+          val updatedUserAnswers = request.userAnswers.set(
+            ExemptionsForSmallProducersPage, value)
+
+          updateDatabaseAndRedirect(updatedUserAnswers, ExemptionsForSmallProducersPage, mode)
+        }
       )
   }
 

@@ -18,32 +18,34 @@ package controllers
 
 import controllers.actions._
 import forms.AskSecondaryWarehouseInReturnFormProvider
-
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import handlers.ErrorHandler
+import models.Mode
 import navigation.Navigator
 import pages.AskSecondaryWarehouseInReturnPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.AskSecondaryWarehouseInReturnView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AskSecondaryWarehouseInReturnController @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,
+                                         val sessionRepository: SessionRepository,
+                                         val navigator: Navigator,
+                                         val errorHandler: ErrorHandler,
+                                         val genericLogger: GenericLogger,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: AskSecondaryWarehouseInReturnFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: AskSecondaryWarehouseInReturnView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
@@ -56,18 +58,16 @@ class AskSecondaryWarehouseInReturnController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(answers.set(AskSecondaryWarehouseInReturnPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AskSecondaryWarehouseInReturnPage, mode, updatedAnswers))
+        value => {
+          val updatedUserAnswers = request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value)
+          updateDatabaseAndRedirect(updatedUserAnswers, AskSecondaryWarehouseInReturnPage, mode)
+        }
       )
   }
 }

@@ -25,7 +25,6 @@ import repositories.{SDILSessionCache, SDILSessionKeys}
 import services.ReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.ReturnsHelper.extractReturnPeriod
-import views.html.ReturnSentView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,12 +37,11 @@ class ReturnsController @Inject()(
                                    returnService: ReturnService,
                                    requireData: DataRequiredAction,
                                    val controllerComponents: MessagesControllerComponents,
-                                   view: ReturnSentView,
                                    sessionCache: SDILSessionCache
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
-  val logger: Logger = Logger(this.getClass())
+  val logger: Logger = Logger(this.getClass)
 
   def onPageLoad(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

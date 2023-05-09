@@ -82,7 +82,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))

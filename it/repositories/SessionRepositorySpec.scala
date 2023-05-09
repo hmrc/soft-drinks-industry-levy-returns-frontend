@@ -48,7 +48,7 @@ class SessionRepositorySpec
       val setResult     = repository.set(userAnswers).futureValue
       val updatedRecord = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
-      setResult mustEqual true
+      setResult mustEqual Right(true)
       updatedRecord mustEqual expectedResult
     }
   }
@@ -108,7 +108,7 @@ class SessionRepositorySpec
 
         val expectedUpdatedAnswers = userAnswers copy (lastUpdated = instant)
 
-        result mustEqual true
+        result mustEqual Right(true)
         val updatedAnswers = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
         updatedAnswers mustEqual expectedUpdatedAnswers
       }
@@ -118,7 +118,7 @@ class SessionRepositorySpec
 
       "must return true" in {
 
-        repository.keepAlive("id that does not exist").futureValue mustEqual true
+        repository.keepAlive("id that does not exist").futureValue mustEqual Right(true)
       }
     }
   }

@@ -16,37 +16,36 @@
 
 package controllers
 
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.ClaimCreditsForLostDamagedFormProvider
-import models.{Mode, SdilReturn}
+import handlers.ErrorHandler
+import models.Mode
 import navigation.Navigator
 import pages.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
-import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.ClaimCreditsForLostDamagedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ClaimCreditsForLostDamagedController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         sdilConnector: SoftDrinksIndustryLevyConnector,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: ClaimCreditsForLostDamagedFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: ClaimCreditsForLostDamagedView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                      override val messagesApi: MessagesApi,
+                                                      val sessionRepository: SessionRepository,
+                                                      val navigator: Navigator,
+                                                      val errorHandler: ErrorHandler,
+                                                      val genericLogger: GenericLogger,
+                                                      identify: IdentifierAction,
+                                                      getData: DataRetrievalAction,
+                                                      requireData: DataRequiredAction,
+                                                      formProvider: ClaimCreditsForLostDamagedFormProvider,
+                                                      val controllerComponents: MessagesControllerComponents,
+                                                      view: ClaimCreditsForLostDamagedView
+                                                    )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
-  val logger: Logger = Logger(this.getClass())
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -66,28 +65,11 @@ class ClaimCreditsForLostDamagedController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          (for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ClaimCreditsForLostDamagedPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield updatedAnswers).flatMap { updatedAnswers =>
-            val sdilReturn = SdilReturn.apply(updatedAnswers)
-            if (value) {
-              Future.successful(Redirect(navigator.nextPage(
-                ClaimCreditsForLostDamagedPage, mode, updatedAnswers,
-                Some(sdilReturn), Some(request.subscription))))
-            } else {
-              Future.fromTry(updatedAnswers.remove(HowManyCreditsForLostDamagedPage)).flatMap {
-                updatedAnswers =>
-                  sessionRepository.set(updatedAnswers).map {
-                    _ =>
-                      Redirect(navigator.nextPage(
-                        ClaimCreditsForLostDamagedPage, mode, updatedAnswers,
-                        Some(sdilReturn), Some(request.subscription)))
-                  }
-              }
-            }
-          }
+        value => {
+          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(
+            ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, value)
+          updateDatabaseAndRedirect(updatedUserAnswers, ClaimCreditsForLostDamagedPage, mode, withSdilReturn = true, Some(request.subscription))
+        }
       )
   }
 }

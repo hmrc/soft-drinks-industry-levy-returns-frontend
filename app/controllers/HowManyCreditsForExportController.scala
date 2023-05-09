@@ -18,32 +18,34 @@ package controllers
 
 import controllers.actions._
 import forms.HowManyCreditsForExportFormProvider
-
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.HowManyCreditsForExportPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.HowManyCreditsForExportView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HowManyCreditsForExportController @Inject()(
                                       override val messagesApi: MessagesApi,
-                                      sessionRepository: SessionRepository,
-                                      navigator: Navigator,
+                                      val sessionRepository: SessionRepository,
+                                      val navigator: Navigator,
+                                      val errorHandler: ErrorHandler,
+                                      val genericLogger: GenericLogger,
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       formProvider: HowManyCreditsForExportFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: HowManyCreditsForExportView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -63,11 +65,12 @@ class HowManyCreditsForExportController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HowManyCreditsForExportPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HowManyCreditsForExportPage, mode, updatedAnswers))
+        value => {
+          val updatedUserAnswers = request.userAnswers.set(
+            HowManyCreditsForExportPage, value)
+
+          updateDatabaseAndRedirect(updatedUserAnswers, HowManyCreditsForExportPage, mode)
+        }
       )
   }
 }

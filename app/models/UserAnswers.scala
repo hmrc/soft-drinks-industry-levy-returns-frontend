@@ -24,36 +24,21 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
-final case class UserAnswers(
-                              id: String,
-                              data: JsObject = Json.obj(),
-                              smallProducerList: List[SmallProducer] = List.empty,
-                              packagingSiteList: Map[String, Site] = Map.empty,
-                              warehouseList: Map[String, Warehouse] = Map.empty,
-                              submitted:Boolean = true,
-                              lastUpdated: Instant = Instant.now
-                            ) {
+case class UserAnswers(
+                        id: String,
+                        data: JsObject = Json.obj(),
+                        smallProducerList: List[SmallProducer] = List.empty,
+                        packagingSiteList: Map[String, Site] = Map.empty,
+                        warehouseList: Map[String, Warehouse] = Map.empty,
+                        submitted:Boolean = true,
+                        lastUpdated: Instant = Instant.now
+                      ) {
 
-  def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
+    def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
-  def setList[A](producer: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
-    val updatedData = data.setObject(path = (JsPath \ s"producerList"), Json.toJson(value)) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(errors) =>
-        Failure(JsResultException(errors))
-    }
-
-    updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy (data = d)
-        producer.cleanup(Some(value), updatedAnswers)
-    }
-  }
-
-  def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
-
+    def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
+    println(Console.YELLOW + "getting to set 2222222222222222222222222 " + Console.WHITE)
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
@@ -62,26 +47,52 @@ final case class UserAnswers(
     }
 
     updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy (data = d)
-        page.cleanup(Some(value), updatedAnswers)
-    }
+    d =>
+    val updatedAnswers = copy(data = d)
+    page.cleanup(Some(value), updatedAnswers)
+  }
   }
 
-  def remove[A](page: Settable[A]): Try[UserAnswers] = {
+    def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)
+                               (implicit writes: Writes[Boolean]): Try[UserAnswers] = {
+    println(Console.YELLOW + "getting to setAndRemoveLitres 1111111111111111" + Console.WHITE)
+    set(page, value).map { updatedAnswers =>
+    if (value) {
+      updatedAnswers
+    } else {
+      removeLitres(litresPage, updatedAnswers.data)
+    }
+    }
+    }
+
+    def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(_) =>
-        Success(data)
-    }
+    case JsSuccess(jsValue, _) =>
+    Success(jsValue)
+    case JsError(_) =>
+    Success(data)
+  }
 
     updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy (data = d)
-        page.cleanup(None, updatedAnswers)
-    }
+    d =>
+    val updatedAnswers = copy(data = d)
+    page.cleanup(None, updatedAnswers)
+  }
+  }
+
+    private def removeLitres(page: Settable[LitresInBands], updatedData: JsObject): UserAnswers = {
+
+    val dataWithNoLitres = updatedData.removeObject(page.path) match {
+    case JsSuccess(jsValue, _) =>
+    jsValue
+    case JsError(_) =>
+    updatedData
+  }
+
+    val updatedAnswers = copy(data = dataWithNoLitres)
+    page.cleanup(None, updatedAnswers).get
+
   }
 }
 

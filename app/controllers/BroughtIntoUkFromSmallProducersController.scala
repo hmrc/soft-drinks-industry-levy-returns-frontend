@@ -18,35 +18,34 @@ package controllers
 
 import controllers.actions._
 import forms.BroughtIntoUkFromSmallProducersFormProvider
-
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.{BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoTheUKFromSmallProducersPage}
-import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.BroughtIntoUkFromSmallProducersView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class BroughtIntoUkFromSmallProducersController @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,
+                                         val sessionRepository: SessionRepository,
+                                         val navigator: Navigator,
+                                         val errorHandler: ErrorHandler,
+                                         val genericLogger: GenericLogger,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: BroughtIntoUkFromSmallProducersFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: BroughtIntoUkFromSmallProducersView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
-  val logger: Logger = Logger(this.getClass())
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -65,23 +64,12 @@ class BroughtIntoUkFromSmallProducersController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(BroughtIntoUkFromSmallProducersPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (value) {
-              Redirect(navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, updatedAnswers))
-            } else {
-              val answersWithLitresRemoved =
-                updatedAnswers.remove(HowManyBroughtIntoTheUKFromSmallProducersPage) match {
-                  case Success(updatedAnswers) => updatedAnswers
-                  case Failure(exception) => logger.error(s"Failed to remove value \n ${exception.getMessage}"); updatedAnswers
-                }
-              sessionRepository.set(answersWithLitresRemoved)
-              Redirect(navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, answersWithLitresRemoved))
-            }
-          }
+        value => {
+          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(
+            BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoTheUKFromSmallProducersPage, value)
+
+          updateDatabaseAndRedirect(updatedUserAnswers, BroughtIntoUkFromSmallProducersPage, mode)
+        }
       )
   }
 }

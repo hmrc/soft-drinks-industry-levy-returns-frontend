@@ -6,6 +6,7 @@ import pages._
 import play.api.libs.json.Json
 
 import scala.concurrent.duration.DurationInt
+import scala.util.Failure
 
 trait ITCoreTestData extends TryValues {
   val lowBand = 1000L
@@ -16,6 +17,8 @@ trait ITCoreTestData extends TryValues {
 
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+
+  def failedUserAnswers = Failure(new Exception(""))
 
   def ownBrandPageAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true)
@@ -142,4 +145,9 @@ trait ITCoreTestData extends TryValues {
     .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
     .set(ClaimCreditsForLostDamagedPage, true).success.value
     .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+
+def claimCreditsForLostDamagedPageWithLitresFullAnswers = newPackerPartialAnswers
+  .set(ClaimCreditsForExportsPage, true).success.value
+  .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+
 }

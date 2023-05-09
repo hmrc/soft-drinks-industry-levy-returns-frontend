@@ -18,31 +18,33 @@ package controllers
 
 import controllers.actions._
 import forms.PackagedContractPackerFormProvider
+import handlers.ErrorHandler
 import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.PackagedContractPackerView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PackagedContractPackerController @Inject()(
-                                                 override val messagesApi: MessagesApi,
-                                                 sessionRepository: SessionRepository,
-                                                 navigator: Navigator,
-                                                 identify: IdentifierAction,
-                                                 getData: DataRetrievalAction,
-                                                 formProvider: PackagedContractPackerFormProvider,
-                                                 val controllerComponents: MessagesControllerComponents,
-                                                 view: PackagedContractPackerView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                  override val messagesApi: MessagesApi,
+                                                  val sessionRepository: SessionRepository,
+                                                  val navigator: Navigator,
+                                                  val errorHandler: ErrorHandler,
+                                                  val genericLogger: GenericLogger,
+                                                  identify: IdentifierAction,
+                                                  getData: DataRetrievalAction,
+                                                  formProvider: PackagedContractPackerFormProvider,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  view: PackagedContractPackerView
+                                                )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
-
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
@@ -62,22 +64,11 @@ class PackagedContractPackerController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          (for {
-            updatedAnswers <- Future.fromTry(answers.set(PackagedContractPackerPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield updatedAnswers).flatMap { updatedAnswers =>
-            if (value) {
-              Future.successful(Redirect(navigator.nextPage(PackagedContractPackerPage, mode, updatedAnswers)))
-            } else {
-              Future.fromTry(updatedAnswers.remove(HowManyAsAContractPackerPage)).flatMap {
-                updatedAnswers =>
-                  sessionRepository.set(updatedAnswers).map {
-                    _ => Redirect(navigator.nextPage(PackagedContractPackerPage, mode, updatedAnswers))
-                  }
-              }
-            }
-          }
+        value => {
+          val updatedUserAnswers = answers.setAndRemoveLitresIfReq(
+            PackagedContractPackerPage, HowManyAsAContractPackerPage, value)
+          updateDatabaseAndRedirect(updatedUserAnswers, PackagedContractPackerPage, mode)
+        }
       )
   }
 }

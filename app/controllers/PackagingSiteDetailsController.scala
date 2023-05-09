@@ -16,17 +16,17 @@
 
 package controllers
 
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.PackagingSiteDetailsFormProvider
+import handlers.ErrorHandler
 import models.{Mode, SdilReturn}
 import models.backend.Site
 import navigation.Navigator
 import pages.PackagingSiteDetailsPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.PackagingSiteDetailsView
 
 import javax.inject.Inject
@@ -34,18 +34,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PackagingSiteDetailsController @Inject()(
                                                 override val messagesApi: MessagesApi,
-                                                sessionRepository: SessionRepository,
-                                                sdilConnector: SoftDrinksIndustryLevyConnector,
-                                                navigator: Navigator,
+                                                val sessionRepository: SessionRepository,
+                                                val navigator: Navigator,
+                                                val errorHandler: ErrorHandler,
+                                                val genericLogger: GenericLogger,
                                                 identify: IdentifierAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
                                                 formProvider: PackagingSiteDetailsFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 view: PackagingSiteDetailsView
-                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                              )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -67,12 +68,12 @@ class PackagingSiteDetailsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+        value => {
+          val updatedUserAnswers = request.userAnswers.set(
+            PackagingSiteDetailsPage, value)
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, updatedAnswers,Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)))
+          updateDatabaseAndRedirect(updatedUserAnswers, PackagingSiteDetailsPage, mode,  withSdilReturn = true, Some(request.subscription))
+        }
       )
   }
 }

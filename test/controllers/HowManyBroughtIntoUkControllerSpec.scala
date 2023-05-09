@@ -17,39 +17,47 @@
 package controllers
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.HowManyBoughtIntoUkFormProvider
-import models.{NormalMode, LitresInBands, UserAnswers}
+import helpers.LoggerHelper
+import models.{LitresInBands, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.HowManyBroughtIntoUkPage
+import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import queries.Settable
 import repositories.SessionRepository
+import utilitlies.GenericLogger
 import views.html.HowManyBoughtIntoUkView
 
 import scala.concurrent.Future
+import scala.util.{Failure, Try}
 
-class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
+class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with LoggerHelper{
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new HowManyBoughtIntoUkFormProvider()
-  val form = formProvider()
+  val form: Form[LitresInBands] = formProvider()
 
   val value1max: Long = 100000000000000L
-  val value1 = value1max - 1
+  val value1: Long = value1max - 1
 
   val value2max: Long = 100000000000000L
-  val value2 = value2max - 1
+  val value2: Long = value2max - 1
 
-  lazy val howManyBoughtIntoUkRoute = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
+  lazy val howManyBoughtIntoUkRoute: String = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
 
-  val userAnswers = UserAnswers(
+  val userAnswers: UserAnswers = UserAnswers(
     sdilNumber,
     Json.obj(
       HowManyBroughtIntoUkPage.toString -> Json.obj(
@@ -97,7 +105,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -166,6 +174,75 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+
+      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, howManyBoughtIntoUkRoute)
+            .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
+      }
+    }
+
+    "should log an error message when internal server error is returned when getting user answers is not resolved" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+
+      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, howManyBoughtIntoUkRoute).withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to resolve user answers while on HowManyBroughtIntoUk"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val app =
+        applicationBuilder(Some(completedUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, howManyBoughtIntoUkRoute)
+            .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on HowManyBroughtIntoUk"
+          }.getOrElse(fail("No logging captured"))
+        }
       }
     }
 
