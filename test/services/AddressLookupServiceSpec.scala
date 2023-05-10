@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.AddressLookupConnector
 import controllers.routes
 import models.Warehouse
-import models.alf.AlfResponse
+import models.alf.{AlfAddress, AlfResponse}
 import models.alf.init.{AppLevelLabels, ConfirmPageConfig, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, SelectPageConfig, TimeoutConfig}
 import models.backend.{Site, UkAddress}
 import models.core.ErrorModel
@@ -67,7 +67,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         sdilId -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId))))
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
-        address = customerAddressMax,
+        address = customerAddressMax.address,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         sdilId = sdilId,
         alfId = alfId)
@@ -84,7 +84,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         Warehouse(Some("soft drinks ltd"), UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))))
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
-        address = customerAddressMax,
+        address = customerAddressMax.address,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         sdilId = sdilId,
         alfId = alfId)
@@ -99,7 +99,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
       val addedWarehouseMissingLines = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
         sdilId -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2), postcode, alfId = Some(alfId))))
-      val customerAddressMissingLines: AlfResponse = AlfResponse (
+      val customerAddressMissingLines: AlfAddress =
+        AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2),
         Some(postcode),
@@ -122,8 +123,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
-        address = AlfResponse(
-                                Some(organisation),
+        address = AlfAddress(Some(organisation),
                                 List(addressLine1, addressLine2, addressLine3, addressLine4),
                                 Some(postcode),
                                 Some(countryCode)
@@ -145,7 +145,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None))
       val addedPackingSiteMissingLines = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),
         sdilId -> Site(UkAddress(List(addressLine1, addressLine2), postcode, alfId = Some(alfId)), None, Some(organisation),None))
-      val customerAddressMissingLines: AlfResponse = AlfResponse(
+      val customerAddressMissingLines: AlfAddress = AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2),
         Some(postcode),
@@ -169,7 +169,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addedPackingSite = Map(sdilId ->
         Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)),None, Some(organisation),None))
 
-      val customerAddressMissingLines: AlfResponse = AlfResponse(
+      val customerAddressMissingLines: AlfAddress = AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2, addressLine3, addressLine4),
         Some(postcode),
@@ -192,7 +192,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addedPackingSite = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),
         sdilId -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)),None, Some(organisation),None))
 
-      val customerAddressMissingLines: AlfResponse = AlfResponse(
+      val customerAddressMissingLines: AlfAddress = AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2, addressLine3, addressLine4),
         Some(postcode),
@@ -210,7 +210,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
     "don't add to userAnswers when no details are added in alf and throw exception" in {
       val addressLookupState = WarehouseDetails
       val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
-      val customerAddressMissingLinesAndName: AlfResponse = AlfResponse(
+      val customerAddressMissingLinesAndName: AlfAddress = AlfAddress(
         None,
         List(),
         None,

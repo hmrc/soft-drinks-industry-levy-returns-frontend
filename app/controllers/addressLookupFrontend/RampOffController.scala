@@ -38,7 +38,7 @@ class RampOffController @Inject()(           identify: IdentifierAction,
   implicit request =>
     for {
       alfResponse         <- addressLookupService.getAddress(alfId)
-      updatedUserAnswers = addressLookupService.addAddressUserAnswers(WarehouseDetails, alfResponse, request.userAnswers, sdilId, alfId)
+      updatedUserAnswers = addressLookupService.addAddressUserAnswers(WarehouseDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
       _                   <- sessionRepository.set(updatedUserAnswers)
     } yield {
       Redirect(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode))

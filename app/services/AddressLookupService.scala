@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import controllers.routes
-import models.alf.AlfResponse
+import models.alf.{AlfAddress, AlfResponse}
 import models.alf.init._
 import models.backend.{Site, UkAddress}
 import models.{UserAnswers, Warehouse}
@@ -39,7 +39,7 @@ class AddressLookupService @Inject()(
 
   val logger: Logger = Logger(this.getClass)
 
-  private def addressChecker(address: AlfResponse, alfId: String): UkAddress = {
+  private def addressChecker(address: AlfAddress, alfId: String): UkAddress = {
     val ukAddress: UkAddress = UkAddress(address.lines, address.postcode.getOrElse(""), alfId = Some(alfId))
 
     if (ukAddress.lines.isEmpty && ukAddress.postCode == "" && address.organisation.isEmpty) {
@@ -57,7 +57,7 @@ class AddressLookupService @Inject()(
   }
 
   def addAddressUserAnswers(addressLookupState: AddressLookupState,
-                            address: AlfResponse,
+                            address: AlfAddress,
                             userAnswers: UserAnswers,
                             sdilId: String,
                             alfId: String): UserAnswers = {

@@ -18,10 +18,16 @@ package models.alf
 
 import play.api.libs.json.Json
 
-case class AlfResponse( organisation: Option[String],
-                   lines: List[String],
-                   postcode: Option[String],
-                   countryCode: Option[String])
+case class AlfResponse(address: AlfAddress)
+
+case class AlfAddress(organisation: Option[String],
+                      lines: List[String],
+                      postcode: Option[String],
+                      countryCode: Option[String])
+
+object AlfAddress {
+  implicit val format = Json.format[AlfAddress]
+}
 
 object AlfResponse {
   implicit val format = Json.format[AlfResponse]

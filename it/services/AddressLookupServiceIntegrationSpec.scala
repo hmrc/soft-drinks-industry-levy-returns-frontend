@@ -1,7 +1,7 @@
 package services
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
-import models.alf.AlfResponse
+import models.alf.{AlfAddress, AlfResponse}
 import models.alf.init.{JourneyConfig, JourneyOptions}
 import models.core.ErrorModel
 import org.scalatest.TryValues
@@ -22,12 +22,12 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
 
     "find the address in alf from the id given from alf" in {
 
-      val addressFromAlf = AlfResponse(
+      val addressFromAlf = AlfResponse(AlfAddress(
         organisation = Some("soft drinks ltd"),
         List("line 1", "line 2", "line 3", "line 4"),
         postcode = Some("aa1 1aa"),
         countryCode = Some("UK")
-      )
+      ))
 
       val id = "001"
       given.alf.getAddress(id)
