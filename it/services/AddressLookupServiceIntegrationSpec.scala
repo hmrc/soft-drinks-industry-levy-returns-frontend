@@ -33,30 +33,25 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       given.alf.getAddress(id)
       val res = service.getAddress(id)
       whenReady(res) { result =>
-        result mustBe Right(addressFromAlf)
+        result mustBe addressFromAlf
       }
 
     }
 
-    "return internal server error if json doesn't match AlfResponse" in {
+    "return exception if json doesn't match AlfResponse" in {
 
       val id = "001"
       given.alf.getBadAddress(id)
       val res = service.getAddress(id)
-      whenReady(res) { result =>
-        result mustBe Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from Address Lookup"))
-      }
+      intercept[Exception](await(res))
     }
 
-    "return downstream error if a response other than 200 is received" in {
+    "return exception if a response other than 200 is received" in {
 
       val id = "001"
       given.alf.getBadResponse(id)
       val res = service.getAddress(id)
-      whenReady(res) { result =>
-        result mustBe Left(ErrorModel(404, "Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
-      }
-
+      intercept[Exception](await(res))
     }
   }
   "initJourney" should {
