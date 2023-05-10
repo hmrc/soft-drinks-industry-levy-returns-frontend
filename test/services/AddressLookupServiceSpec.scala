@@ -39,7 +39,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
   val service = new AddressLookupService(mockSdilConnector, frontendAppConfig)
 
   "getAddress" - {
-    "return a address when Connector returns Right" in {
+    "return an address when Connector returns success" in {
       when(mockSdilConnector.getAddress("123456789")(hc,implicitly)).thenReturn(Future.successful(Right(customerAddressMax)))
 
       val res = service.getAddress("123456789")
@@ -48,7 +48,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         result mustBe customerAddressMax
       }
     }
-    "return a exception when Connector returns Left" in {
+    "return an exception when Connector returns error" in {
       when(mockSdilConnector.getAddress("123456789")(hc,implicitly)).thenReturn(Future.successful(Left(ErrorModel(1, "foo"))))
 
       val res = intercept[Exception](await(service.getAddress("123456789")))
