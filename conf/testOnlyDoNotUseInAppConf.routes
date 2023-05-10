@@ -18,3 +18,6 @@ POST  /soft-drinks-industry-levy-returns-frontend/test-only/api/init   controlle
 GET  /soft-drinks-industry-levy-returns-frontend/test-only/rampOn   controllers.test.AddressFrontendStubController.rampOn()
 
 GET  /soft-drinks-industry-levy-returns-frontend/test-only/api/confirmed   controllers.test.AddressFrontendStubController.addresses(id: String)
+
++nocsrf
+DELETE /soft-drinks-industry-levy-returns-frontend/test-only/user-answers/:sdilRef    controllers.test.TestingController.resetUserAnswers(sdilRef: String)
