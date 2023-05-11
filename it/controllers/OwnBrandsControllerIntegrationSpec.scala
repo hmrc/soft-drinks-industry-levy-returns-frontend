@@ -1,12 +1,12 @@
 package controllers
 
-import controllers.testSupport.{Specifications, TestConfiguration}
-import play.api.libs.json.Json
+import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfiguration {
+class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData {
   "OwnBrandsController" should {
 
     "Ask if user is reporting liable drinks they have packaged as a third party or contract packer at UK sites user operates" in {
@@ -27,29 +27,76 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
       }
     }
 
-    "Post the Own brand packaged at own sites " in {
+    "Post the Own brand packaged at own sites " when {
+      "user selected yes" in {
 
-      given
-        .commonPrecondition
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands" -> true,
+            "packagedContractPacker" -> true,
+            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> false,
+            "broughtIntoUK" -> false,
+            "broughtIntoUkFromSmallProducers" -> false,
+            "claimCreditsForExports"->false,
+            "secondaryWarehouseDetails" -> false
+          ))
 
-      WsTestClient.withClient { client =>
-        val result =
-          client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
-            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
-            .withFollowRedirects(false)
-            .post(Json.obj("value" -> true))
+        given
+          .commonPrecondition
+
+        WsTestClient.withClient { client =>
+          val result =
+            client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+                "Csrf-Token" -> "nocheck")
+              .withFollowRedirects(false)
+              .post(Json.obj("value" -> true))
 
 
-        whenReady(result) { res =>
-          res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-own-brands-packaged-at-own-sites")
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-own-brands-packaged-at-own-sites")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
+          }
         }
-
       }
 
+      "user selected no" in {
+
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands" -> false,
+            "packagedContractPacker" -> true,
+            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> false,
+            "broughtIntoUK" -> false,
+            "broughtIntoUkFromSmallProducers" -> false,
+            "claimCreditsForExports"->false,
+            "secondaryWarehouseDetails" -> false
+          ))
+
+        given
+          .commonPrecondition
+
+        WsTestClient.withClient { client =>
+          val result =
+            client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+                "Csrf-Token" -> "nocheck")
+              .withFollowRedirects(false)
+              .post(Json.obj("value" -> false))
+
+
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
+          }
+        }
+      }
     }
   }
-
 }

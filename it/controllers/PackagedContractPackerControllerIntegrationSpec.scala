@@ -2,7 +2,7 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -55,6 +55,14 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
     "Post the packaged as contract packer" when {
 
       "user selected yes" in {
+
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands" -> true,
+            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+            "packagedContractPacker" -> true
+          ))
+
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setAnswers(userAnswers)
         given
@@ -73,11 +81,19 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-packaged-as-contract-packer")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
         }
       }
 
-      "user selected No`" in {
+      "user selected No" in {
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands" -> true,
+            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+            "packagedContractPacker" -> false
+          ))
+
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setAnswers(userAnswers)
         given
@@ -96,6 +112,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
         }
       }
