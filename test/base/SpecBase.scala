@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.alf.AlfResponse
+import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
@@ -109,18 +109,20 @@ trait SpecBase
     )
   )
   val customerAddressMax: AlfResponse = AlfResponse(
-    Some(organisation),
-    List(addressLine1, addressLine2, addressLine3, addressLine4),
-    Some(postcode),
-    Some(countryCode)
-  )
-
-  val customerAddressMaxJson = Json.toJson(AlfResponse(
+    AlfAddress(
     Some(organisation),
     List(addressLine1, addressLine2, addressLine3, addressLine4),
     Some(postcode),
     Some(countryCode)
   ))
+
+  val customerAddressMaxJson = Json.toJson(AlfResponse(
+    AlfAddress(
+    Some(organisation),
+    List(addressLine1, addressLine2, addressLine3, addressLine4),
+    Some(postcode),
+    Some(countryCode)
+  )))
 
   val returnPeriod = ReturnPeriod(2022,1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))

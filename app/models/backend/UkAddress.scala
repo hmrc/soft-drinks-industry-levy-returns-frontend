@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package utilities
+package models.backend
 
-import base.SpecBase
-import utilitlies.AddressHelper
+import play.api.libs.json.{Format, Json}
 
-class AddressHelperSpec extends SpecBase with AddressHelper {
 
-    "Address Helper" - {
-      "generate a unique id" in {
+case class UkAddress(lines: List[String],
+                     postCode: String,
+                     alfId: Option[String] = None)
 
-        val result:Map[String,String] = Map((generateId , "testAddress"), (generateId , "testAddress"), (generateId , "testAddress") , (generateId,"testAddress"))
-
-        result.size mustBe 4
-        result.head._1.length mustBe 36
-      }
-    }
+object UkAddress {
+  implicit val ukAddressFormat: Format[UkAddress] = Json.format[UkAddress]
 }

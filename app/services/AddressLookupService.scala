@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import controllers.routes
-import models.alf.AlfResponse
+import models.alf.{AlfAddress, AlfResponse}
 import models.alf.init._
 import models.backend.{Site, UkAddress}
 import models.{UserAnswers, Warehouse}
@@ -28,7 +28,6 @@ import play.api.Logger
 import play.api.i18n.Messages
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
-import utilitlies.AddressHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,13 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddressLookupService @Inject()(
                                       addressLookupConnector: AddressLookupConnector,
                                       frontendAppConfig: FrontendAppConfig
-                                    ) extends AddressHelper {
+                                    ) {
 
   val logger: Logger = Logger(this.getClass)
 
-  private def addressChecker(address: AlfResponse): UkAddress = {
-    val ukAddress = UkAddress(address.lines,
-      address.postcode.getOrElse(""))
+  private def addressChecker(address: AlfAddress, alfId: String): UkAddress = {
+    val ukAddress: UkAddress = UkAddress(address.lines, address.postcode.getOrElse(""), alfId = Some(alfId))
 
     if (ukAddress.lines.isEmpty && ukAddress.postCode == "" && address.organisation.isEmpty) {
       throw new RuntimeException("Not Found (Alf has returned an empty address and organisation name)")
@@ -51,17 +49,28 @@ class AddressLookupService @Inject()(
     }
   }
 
-  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = addressLookupConnector.getAddress(id)
+  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AlfResponse] = {
+    addressLookupConnector.getAddress(id).map {
+      case Right(addressResponse) => addressResponse
+      case Left(error) => throw new Exception(s"Error returned from ALF for $id ${error.status} ${error.message} for ${hc.requestId}")
+    }
+  }
 
-  def addAddressUserAnswers(addressLookupState: AddressLookupState, address: AlfResponse, userAnswers: UserAnswers): UserAnswers = {
+  def addAddressUserAnswers(addressLookupState: AddressLookupState,
+                            address: AlfAddress,
+                            userAnswers: UserAnswers,
+                            sdilId: String,
+                            alfId: String): UserAnswers = {
 
-    val convertedAddress = addressChecker(address)
+    val convertedAddress: UkAddress = addressChecker(address, alfId)
 
     addressLookupState match {
       case PackingDetails =>
-        userAnswers.copy(packagingSiteList = userAnswers.packagingSiteList ++ Map(generateId -> Site(convertedAddress, None, address.organisation, None)))
+        userAnswers.copy(packagingSiteList =
+          userAnswers.packagingSiteList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Site(convertedAddress, None, address.organisation, None)))
       case WarehouseDetails =>
-        userAnswers.copy(warehouseList = userAnswers.warehouseList ++ Map(generateId -> Warehouse(address.organisation, convertedAddress)))
+        userAnswers.copy(warehouseList =
+          userAnswers.warehouseList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Warehouse(address.organisation, convertedAddress)))
     }
   }
 
