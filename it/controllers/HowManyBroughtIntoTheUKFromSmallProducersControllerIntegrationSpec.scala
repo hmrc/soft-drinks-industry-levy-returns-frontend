@@ -5,7 +5,7 @@ import org.scalatest.TryValues
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
-class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
+class HowManyBroughtIntoTheUKFromSmallProducersControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
   "HowManyBroughtIntoTheUKFromSmallProducersController" should {
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       setAnswers(broughtIntoUkFullAnswers.success.value)
