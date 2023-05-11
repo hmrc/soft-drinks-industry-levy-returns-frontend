@@ -19,7 +19,6 @@ package controllers.test
 import akka.actor.TypedActor.dispatcher
 import base.SpecBase
 import config.FrontendAppConfig
-import controllers.testSupport.{ITCoreTestData, TestConfiguration}
 import models.UserAnswers
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
@@ -31,7 +30,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
 
-class TestingControllerSpec extends SpecBase with MockitoSugar with TestConfiguration with ITCoreTestData with Matchers
+class TestingControllerSpec extends SpecBase with MockitoSugar with Matchers
   with DefaultPlayMongoRepositorySupport[UserAnswers]
   {
     private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
@@ -42,18 +41,17 @@ class TestingControllerSpec extends SpecBase with MockitoSugar with TestConfigur
     private val mockAppConfig = mock[FrontendAppConfig]
     when(mockAppConfig.cacheTtl) thenReturn 1
 
-    protected override val repository = new SessionRepository(
+    protected val repository = new SessionRepository(
       mongoComponent = mongoComponent,
       appConfig = mockAppConfig,
       clock = stubClock
     )
 
-    protected val testingController = new TestingController(sessionRepository = repository, controllerComponents = ???)
+    protected val testingController = new TestingController(sessionRepository = repository, controllerComponents = mcc)
 
     ".resetUserAnswers" - {
 
       "must remove a record" in {
-
         insert(userAnswers).futureValue
 
         val result = testingController.resetUserAnswers(userAnswers.id)
