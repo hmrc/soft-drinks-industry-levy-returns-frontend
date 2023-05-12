@@ -92,6 +92,8 @@ trait ITCoreTestData extends TryValues {
   def smallProducerDetaisPartialAnswers = addASmallProducerFullAnswers.success.value
     .set(AddASmallProducerPage, AddASmallProducer(producerName, refNumber, lowBand, highBand))
 
+  def smallProducerDetaisNoProducerAnswers = addASmallProducerPartialAnswers.success.value
+
   def smallProducerDetaisFullAnswers = addASmallProducerPartialAnswers.success.value
     .set(SmallProducerDetailsPage, true)
 

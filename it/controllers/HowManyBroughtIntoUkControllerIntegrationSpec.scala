@@ -2,7 +2,7 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -31,6 +31,18 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
     }
 
     "Post the how many brought into UK " in {
+
+      val expectedResult:Some[JsObject] = Some(
+        Json.obj(
+          "ownBrands" -> true,
+          "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+          "packagedContractPacker" -> true,
+          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+          "exemptionsForSmallProducers" -> false,
+          "broughtIntoUK" -> true,
+          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000)
+        ))
+
       val userAnswers = howManyBroughtIntoUkFullAnswers.success.value
       setAnswers(userAnswers)
 
@@ -45,12 +57,13 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
             .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj("lowBand" -> "1000", "highBand" -> "10000"))
+            .post(Json.obj("lowBand" -> "1000", "highBand" -> "1000"))
 
 
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/brought-into-uk-from-small-producers")
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
         }
 
       }

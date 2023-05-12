@@ -2,7 +2,7 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -32,6 +32,17 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
     "Post the exemption for small producer " when {
 
       "user selected yes " in {
+
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands" -> true,
+            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+            "packagedContractPacker" -> true,
+            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> true
+          ))
+
+
         given
           .commonPrecondition
 
@@ -51,12 +62,23 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/add-small-producer")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
 
         }
       }
 
       "user selected no " in {
+
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands" -> true,
+            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+            "packagedContractPacker" -> true,
+            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> false
+          ))
+
         given
           .commonPrecondition
 
@@ -76,6 +98,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/brought-into-uk")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
 
         }
