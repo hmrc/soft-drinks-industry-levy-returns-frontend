@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class TestingController @Inject() (
                                     sessionRepository: SessionRepository,
-                                    val controllerComponents: MessagesControllerComponents,
+                                    val controllerComponents: MessagesControllerComponents
                                   ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def resetUserAnswers(sdilRef: String): Action[AnyContent] = Action.async { implicit request =>
