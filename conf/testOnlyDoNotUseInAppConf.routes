@@ -20,4 +20,4 @@ GET  /soft-drinks-industry-levy-returns-frontend/test-only/rampOn   controllers.
 GET  /soft-drinks-industry-levy-returns-frontend/test-only/api/confirmed   controllers.test.AddressFrontendStubController.addresses(id: String)
 
 +nocsrf
-DELETE /soft-drinks-industry-levy-returns-frontend/test-only/user-answers/:sdilRef    controllers.test.TestingController.resetUserAnswers(sdilRef: String)
+GET /soft-drinks-industry-levy-returns-frontend/test-only/user-answers/:sdilRef    controllers.test.TestingController.resetUserAnswers(sdilRef: String)

@@ -1,20 +1,40 @@
 package controllers.test
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
-import org.scalatest.TryValues
+import models.UserAnswers
+import play.api.http.Status.NO_CONTENT
+import play.api.libs.json.Json
+import play.api.test.WsTestClient
 
-class TestingControllerIntegrationSpec extends Specifications
-  with TestConfiguration with ITCoreTestData with TryValues  {
+import java.time.Instant
 
-//  "TestingController" should {
-//
-//    "remove a given user by SDIL Ref, from user-answers collection" in {
-//      val userAnswers = addASmallProducerPartialAnswers.success.value
-//      setAnswers(userAnswers)
-//
-//
-//
-//    }
-//  }
+class TestingControllerIntegrationSpec extends
+  Specifications with TestConfiguration with ITCoreTestData {
+
+  private val userAnswers = UserAnswers("id", Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
+  private val userAnswers2 = UserAnswers("id2", Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
+
+  ".resetUserAnswers" should {
+
+    "must remove a record" in {
+      setAnswers(userAnswers)
+      setAnswers(userAnswers2)
+
+      getAnswers(userAnswers.id).get.id mustBe userAnswers.id
+      getAnswers(userAnswers2.id).get.id mustBe userAnswers2.id
+
+      WsTestClient.withClient { client =>
+        val result = client.url(s"$baseUrl/test-only/user-answers/${userAnswers.id}")
+          .withFollowRedirects(false)
+          .get()
+
+        whenReady(result) { res =>
+          res.status mustBe NO_CONTENT
+          getAnswers(userAnswers.id) mustBe None
+          getAnswers(userAnswers2.id).get.id mustBe userAnswers2.id
+        }
+      }
+    }
+  }
 
 }
