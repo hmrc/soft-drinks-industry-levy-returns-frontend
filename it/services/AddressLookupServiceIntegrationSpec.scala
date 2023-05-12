@@ -77,7 +77,8 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
 
     "return ramp on url when success" in {
       val req = FakeRequest()
-      val journeyConfig = service.createJourneyConfig(PackingDetails)(req, messages)
+      val sdilId: String = "bar"
+      val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId)(req, messages)
       given.alf.getSuccessResponseFromALFInit(Json.toJson(journeyConfig), locationHeaderReturned = "foo")
 
       whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)) { result =>
@@ -86,7 +87,8 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     }
     "throw exception when fail" in {
       val req = FakeRequest()
-      val journeyConfig = service.createJourneyConfig(PackingDetails)(req, messages)
+      val sdilId: String = "bar"
+      val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId)(req, messages)
       given.alf.getFailResponseFromALFInit(Json.toJson(journeyConfig), Status.INTERNAL_SERVER_ERROR)
 
       intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)))

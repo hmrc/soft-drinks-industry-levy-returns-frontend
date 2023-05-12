@@ -27,7 +27,7 @@ class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
   "page" - {
     "should render correctly" in {
       val renderedView = Jsoup.parse(view()(FakeRequest(),implicitly).body)
-      renderedView.title() mustBe "You changed your soft drinks business activity - soft-drinks-industry-levy-returns-frontend - GOV.UK"
+      renderedView.title() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
       renderedView.getElementsByTag("h1").text() mustBe "You changed your soft drinks business activity"
       renderedView.getElementsByTag("h1").attr("class") mustBe "govuk-heading-m"
 

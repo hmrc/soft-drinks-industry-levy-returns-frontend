@@ -24,6 +24,7 @@ import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{AddressLookupService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
@@ -42,7 +43,8 @@ class SecondaryWarehouseDetailsController @Inject()(
                                          requireData: DataRequiredAction,
                                          formProvider: SecondaryWarehouseDetailsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: SecondaryWarehouseDetailsView
+                                         view: SecondaryWarehouseDetailsView,
+                                         addressLookupService: AddressLookupService
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -74,7 +76,12 @@ class SecondaryWarehouseDetailsController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(SecondaryWarehouseDetailsPage, mode, updatedAnswers))
+            onwardUrl              <- if(value){
+              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)
+            } else {
+              Future.successful(routes.CheckYourAnswersController.onPageLoad().url)
+            }
+          } yield Redirect(onwardUrl)
       )
   }
 }

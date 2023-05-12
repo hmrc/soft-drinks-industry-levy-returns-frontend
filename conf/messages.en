@@ -1,6 +1,4 @@
-service.name = soft-drinks-industry-levy-returns-frontend
-
-test.test = Test
+service.name = Soft Drinks Industry Levy
 
 site.back = Back
 site.edit = Edit
@@ -384,3 +382,14 @@ removePackagingDetailsConfirmation.title = Are you sure you want to remove this 
 removePackagingDetailsConfirmation.heading = Are you sure you want to remove this packaging site?
 removePackagingDetailsConfirmation.error.required = Select yes if you want to remove this packaging site
 removePackagingDetailsConfirmation.change.hidden = Confirm remove this packaging site
+
+addressLookupFrontend.warehouseDetails.lookupPageLabels.title = Find UK warehouse address
+addressLookupFrontend.warehouseDetails.lookupPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.warehouseDetails.editPageLabels.title = Enter the UK warehouse address
+addressLookupFrontend.warehouseDetails.editPageLabels.line1Label = Address line 1
+addressLookupFrontend.warehouseDetails.editPageLabels.line2Label = Address line 2
+addressLookupFrontend.warehouseDetails.editPageLabels.line3Label = Address line 3 (optional)
+addressLookupFrontend.warehouseDetails.editPageLabels.townLabel = Address line 4 (optional)
+addressLookupFrontend.warehouseDetails.editPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.warehouseDetails.editPageLabels.organisationLabel = Trading name (optional)
+
