@@ -126,9 +126,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
       }
     }
 
-    "user selected no with at no warehouse in the list" in {
-
-
+    "user selected no" in {
       val expectedResultInDB: Some[JsObject] = Some(
         Json.obj(
           "secondaryWarehouseDetails" -> false
@@ -137,7 +135,6 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
       setAnswers(emptyUserAnswers)
       given
         .commonPrecondition
-
 
       WsTestClient.withClient { client =>
         val result =
@@ -148,15 +145,12 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
             .withFollowRedirects(false)
             .post(Json.obj("value" -> "false"))
 
-
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/check-your-answers")
           getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
         }
-
       }
-
     }
 
   }

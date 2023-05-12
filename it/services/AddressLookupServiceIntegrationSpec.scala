@@ -77,13 +77,24 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
   }
   "initJourneyAndReturnOnRampUrl" should {
 
-    "return ramp on url when success" in {
+    s"return ramp on url when success for $PackingDetails" in {
       val req = FakeRequest()
       val sdilId: String = "bar"
       val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId)(req, messages)
       given.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
 
       whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)) { result =>
+        result mustBe "foo"
+        ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfig) mustBe true
+      }
+    }
+    s"return ramp on url when success for $WarehouseDetails" in {
+      val req = FakeRequest()
+      val sdilId: String = "bar"
+      val journeyConfig = service.createJourneyConfig(WarehouseDetails, sdilId)(req, messages)
+      given.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
+
+      whenReady(service.initJourneyAndReturnOnRampUrl(WarehouseDetails)(implicitly,implicitly, messages, req)) { result =>
         result mustBe "foo"
         ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfig) mustBe true
       }

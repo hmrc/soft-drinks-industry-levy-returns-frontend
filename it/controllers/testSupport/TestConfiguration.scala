@@ -1,7 +1,7 @@
 package controllers.testSupport
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
+import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllRequests, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
 import models.UserAnswers
