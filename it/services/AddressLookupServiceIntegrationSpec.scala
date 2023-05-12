@@ -1,13 +1,13 @@
 package services
 
+import controllers.testSupport.helpers.ALFTestHelper
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
-import models.alf.{AlfAddress, AlfResponse}
 import models.alf.init.{JourneyConfig, JourneyOptions}
+import models.alf.{AlfAddress, AlfResponse}
 import models.core.ErrorModel
 import org.scalatest.TryValues
 import play.api.http.Status
 import play.api.i18n.{Lang, MessagesApi}
-import play.api.libs.json.Json
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -58,18 +58,20 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     val journeyConfig = JourneyConfig(1, JourneyOptions(""), None, None)
 
     "return successful response with successful response from ALF" in {
-      given.alf.getSuccessResponseFromALFInit(Json.toJson(journeyConfig), locationHeaderReturned ="foo")
+      given.alf.getSuccessResponseFromALFInit(locationHeaderReturned ="foo")
 
       whenReady(service.initJourney(journeyConfig)) { result =>
         result mustBe Right("foo")
+        ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfig) mustBe true
       }
     }
 
     "return error when error response returned from ALF" in {
-      given.alf.getFailResponseFromALFInit(Json.toJson(journeyConfig), Status.INTERNAL_SERVER_ERROR)
+      given.alf.getFailResponseFromALFInit( Status.INTERNAL_SERVER_ERROR)
 
       whenReady(service.initJourney(journeyConfig)) { result =>
         result mustBe Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected error occurred when init journey from ALF"))
+        ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfig) mustBe true
       }
     }
   }
@@ -79,19 +81,21 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       val req = FakeRequest()
       val sdilId: String = "bar"
       val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId)(req, messages)
-      given.alf.getSuccessResponseFromALFInit(Json.toJson(journeyConfig), locationHeaderReturned = "foo")
+      given.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
 
       whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)) { result =>
         result mustBe "foo"
+        ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfig) mustBe true
       }
     }
     "throw exception when fail" in {
       val req = FakeRequest()
       val sdilId: String = "bar"
       val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId)(req, messages)
-      given.alf.getFailResponseFromALFInit(Json.toJson(journeyConfig), Status.INTERNAL_SERVER_ERROR)
+      given.alf.getFailResponseFromALFInit(Status.INTERNAL_SERVER_ERROR)
 
       intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)))
+      ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfig) mustBe true
     }
   }
 }
