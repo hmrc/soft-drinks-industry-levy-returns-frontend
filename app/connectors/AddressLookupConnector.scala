@@ -29,14 +29,28 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AddressLookupConnector @Inject()(val http: HttpClient,
                                        implicit val config: FrontendAppConfig) {
-  private[connectors] def getAddressUrl(id: String) = s"${config.addressLookupService}/api/confirmed?id=$id"
-  private[connectors] val initJourneyUrl = s"${config.addressLookupService}/api/init"
+  private[connectors] def getAddressUrl(id: String, addressLookupFrontendTestEnabled: Boolean): String = {
+    if(addressLookupFrontendTestEnabled) {
+      s"${config.host}${controllers.test.routes.AddressFrontendStubController.addresses(id).url}"
+    } else {
+      s"${config.addressLookupService}/api/confirmed?id=$id"
+    }
+  }
+  private[connectors] def initJourneyUrl(addressLookupFrontendTestEnabled: Boolean): String = {
+    if(addressLookupFrontendTestEnabled) {
+      s"${config.host}${controllers.test.routes.AddressFrontendStubController.rampOn().url}"
+    } else {
+      s"${config.addressLookupService}/api/init"
+    }
+
+  }
 
   def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] ={
-    http.GET[HttpResult[AlfResponse]](getAddressUrl(id))(AddressLookupGetAddressReads, hc, ec)
+    http.GET[HttpResult[AlfResponse]](getAddressUrl(id, config.addressLookUpFrontendTestEnabled))(AddressLookupGetAddressReads, hc, ec)
   }
 
   def initJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[String]] = {
-    http.POST[JourneyConfig, HttpResult[String]](initJourneyUrl, journeyConfig)(JourneyConfig.format, AddressLookupInitJourneyReads, hc, ec)
+    http.POST[JourneyConfig, HttpResult[String]](initJourneyUrl(config.addressLookUpFrontendTestEnabled),
+      journeyConfig)(JourneyConfig.format, AddressLookupInitJourneyReads, hc, ec)
   }
 }
