@@ -27,5 +27,4 @@ class AddressLookupController @Inject()(val controllerComponents: MessagesContro
   def callback(): Action[AnyContent] = Action { _ =>
     Ok("callback from address")
   }
-
 }

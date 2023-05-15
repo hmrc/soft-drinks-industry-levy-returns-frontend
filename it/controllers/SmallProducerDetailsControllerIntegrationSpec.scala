@@ -31,7 +31,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
     "Post the exemption for small producer " when {
       "user selected yes " in {
 
-        val expectedResult:Some[JsObject] = Some(
+        val expectedResult: Some[JsObject] = Some(
           Json.obj(
             "ownBrands" -> true,
             "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),

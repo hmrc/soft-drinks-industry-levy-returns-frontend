@@ -26,6 +26,7 @@ import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{AddressLookupService, WarehouseDetails}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.AskSecondaryWarehouseInReturnView
 
@@ -40,7 +41,8 @@ class AskSecondaryWarehouseInReturnController @Inject()(
                                          requireData: DataRequiredAction,
                                          formProvider: AskSecondaryWarehouseInReturnFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: AskSecondaryWarehouseInReturnView
+                                         view: AskSecondaryWarehouseInReturnView,
+                                         addressLookupService: AddressLookupService
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -62,12 +64,19 @@ class AskSecondaryWarehouseInReturnController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(answers.set(AskSecondaryWarehouseInReturnPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AskSecondaryWarehouseInReturnPage, mode, updatedAnswers))
+            onwardUrl              <- if(value){
+            sessionRepository.set(updatedAnswers).flatMap(_ =>
+              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
+            } else {
+              sessionRepository.set(updatedAnswers.copy(warehouseList = Map.empty)).flatMap(_ =>
+                Future.successful(routes.CheckYourAnswersController.onPageLoad().url))
+            }
+          } yield {
+            Redirect(onwardUrl)
+          }
       )
   }
 }
