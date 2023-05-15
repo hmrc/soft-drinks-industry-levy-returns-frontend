@@ -58,7 +58,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
       }
       "when feature switch is enabled" in {
         testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true) mustBe
-          s"${frontendAppConfig.host}${controllers.test.routes.AddressFrontendStubController.rampOn().url}"
+          s"${frontendAppConfig.host}${controllers.test.routes.AddressFrontendStubController.initialise().url}"
       }
     }
 

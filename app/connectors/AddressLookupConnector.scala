@@ -38,7 +38,7 @@ class AddressLookupConnector @Inject()(val http: HttpClient,
   }
   private[connectors] def initJourneyUrl(addressLookupFrontendTestEnabled: Boolean): String = {
     if(addressLookupFrontendTestEnabled) {
-      s"${config.host}${controllers.test.routes.AddressFrontendStubController.rampOn().url}"
+      s"${config.host}${controllers.test.routes.AddressFrontendStubController.initialise().url}"
     } else {
       s"${config.addressLookupService}/api/init"
     }

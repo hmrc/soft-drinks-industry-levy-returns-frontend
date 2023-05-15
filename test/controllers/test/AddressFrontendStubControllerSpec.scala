@@ -17,6 +17,7 @@
 package controllers.test
 
 import base.SpecBase
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -25,21 +26,13 @@ class AddressFrontendStubControllerSpec extends SpecBase {
   val controller = new AddressFrontendStubController(mcc)
 
   "initialise" - {
-    "should return Accepted with the correct location header" in {
-      val res = controller.initalise().apply(FakeRequest())
+    "should return Accepted with the correct location header using the body posted" in {
+      val res = controller.initialise().apply(FakeRequest("","").withBody(
+        Json.obj("options"  -> Json.obj("continueUrl" -> "foobar"))))
       status(res) mustEqual 202
-      headers(res).get(LOCATION) mustEqual Some("/soft-drinks-industry-levy-returns-frontend/test-only/rampOn")
+      headers(res).get(LOCATION) mustEqual Some("foobar?id=foobarwizzbang")
     }
   }
-
-  "rampOn" - {
-    "should redirect to the callback url" in {
-      val res = controller.rampOn().apply(FakeRequest())
-      status(res) mustEqual 303
-      redirectLocation(res) mustEqual Some("/soft-drinks-industry-levy-returns-frontend/address-lookup/callback")
-    }
-  }
-
 
   "addresses" - {
     "should return 200 and addresses" in {
@@ -53,7 +46,6 @@ class AddressFrontendStubControllerSpec extends SpecBase {
 
       status(res) mustEqual 200
       contentAsString(res) mustEqual addressConfirmed
-
     }
   }
 

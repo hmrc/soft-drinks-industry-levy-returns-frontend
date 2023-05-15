@@ -17,9 +17,8 @@
 package controllers.test
 
 import com.google.inject.{Inject, Singleton}
-import controllers._
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
@@ -27,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 class AddressFrontendStubController @Inject()
 (val controllerComponents: MessagesControllerComponents) extends FrontendBaseController with I18nSupport {
 
+  val exampleId: String = "foobarwizzbang"
   lazy val address = Json.obj(
     ("organisation", JsString("Some Trading Name")),
     ("lines", Json.toJson(List(
@@ -48,12 +48,9 @@ class AddressFrontendStubController @Inject()
     )
   )
 
-  def initalise(): Action[AnyContent] = Action { _ =>
-    Accepted.withHeaders(LOCATION -> test.routes.AddressFrontendStubController.rampOn().url)
-  }
-
-  def rampOn(): Action[AnyContent] = Action {
-    _ => Redirect(routes.AddressLookupController.callback())
+  def initialise(): Action[JsValue] = Action(parse.json) { request =>
+    val continueUrl: String = (request.body.as[JsObject] \ "options" \ "continueUrl").get.as[String]
+    Accepted.withHeaders(LOCATION -> s"$continueUrl?id=$exampleId")
   }
 
   def addresses(id: String): Action[AnyContent] = Action { _ =>
