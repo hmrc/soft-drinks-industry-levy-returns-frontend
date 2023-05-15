@@ -40,10 +40,10 @@ class AddressFrontendStubControllerIntegrationSpec extends Specifications
           .get()
 
         val addressConfirmed =
-          "[{\"auditRef\":\"bed4bd24-72da-42a7-9338-f43431b7ed72\"," +
+          "{\"auditRef\":\"bed4bd24-72da-42a7-9338-f43431b7ed72\"," +
             "\"id\":\"GB990091234524\",\"address\":{\"organisation\":\"Some Trading Name\",\"lines\":[\"10 Other Place\"," +
             "\"Some District\",\"Anytown\"],\"postcode\":\"ZZ1 1ZZ\"," +
-            "\"country\":{\"code\":\"GB\",\"name\":\"United Kingdom\"}}}]"
+            "\"country\":{\"code\":\"GB\",\"name\":\"United Kingdom\"}}}"
         whenReady(result1) { res =>
           res.status mustBe 200
           res.body mustEqual addressConfirmed

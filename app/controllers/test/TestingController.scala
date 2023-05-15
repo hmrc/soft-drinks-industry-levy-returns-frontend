@@ -30,8 +30,8 @@ class TestingController @Inject() (
                                     val controllerComponents: MessagesControllerComponents
                                   ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def resetUserAnswers(sdilRef: String): Action[AnyContent] = Action.async { implicit request =>
-    sessionRepository.clear(sdilRef).map(_=>NoContent)
+  def resetUserAnswers(sdilRef: String): Action[AnyContent] = Action.async { _ =>
+    sessionRepository.clear(sdilRef).map(_=> NoContent)
   }
 
 }

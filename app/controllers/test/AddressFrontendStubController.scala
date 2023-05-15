@@ -40,13 +40,12 @@ class AddressFrontendStubController @Inject()
       ("name", JsString("United Kingdom"))
     ))
   )
-  lazy val addressResponse = Json.arr(
+  lazy val addressResponse =
     Json.obj(
       ("auditRef", JsString("bed4bd24-72da-42a7-9338-f43431b7ed72")),
       ("id", JsString("GB990091234524")),
       ("address", address)
     )
-  )
 
   def initialise(): Action[JsValue] = Action(parse.json) { request =>
     val continueUrl: String = (request.body.as[JsObject] \ "options" \ "continueUrl").get.as[String]
