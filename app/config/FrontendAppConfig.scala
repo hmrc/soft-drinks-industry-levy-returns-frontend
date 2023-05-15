@@ -70,6 +70,13 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     val alphaPhase: Boolean = addressLookupInitConfig.getBoolean("alphaPhase")
     val version: Int = addressLookupInitConfig.getInt("version")
     val selectPageConfigProposalLimit: Int = addressLookupInitConfig.getInt("select-page-config.proposalListLimit")
+
+    object WarehouseDetails {
+
+      def offRampUrl(sdilId: String): String = {
+        s"$host${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+      }
+    }
   }
 
 }

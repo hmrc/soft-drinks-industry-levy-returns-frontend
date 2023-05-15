@@ -1,7 +1,7 @@
 package controllers.testSupport
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
+import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllRequests, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
 import models.UserAnswers
@@ -17,7 +17,6 @@ import repositories.{SDILSessionCacheRepository, SessionRepository}
 import services.AddressLookupService
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
-import uk.gov.hmrc.play.health.HealthController
 
 import java.time.{Clock, ZoneOffset}
 import scala.concurrent.Await
@@ -66,6 +65,7 @@ trait TestConfiguration
 
   val authCookie: String = createSessionCookieAsString(authData).substring(5)
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)
+
   abstract override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(
       timeout = Span(4, Seconds),
@@ -103,7 +103,6 @@ trait TestConfiguration
       )
   }
 
-  app.injector.instanceOf[HealthController]
   val service = app.injector.instanceOf[AddressLookupService]
 
   val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))

@@ -11,6 +11,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
 
     "Ask if user is reporting liable drinks they have packaged as a third party or contract packer at UK sites user operates" in {
 
+      setAnswers(emptyUserAnswers)
       given
         .commonPrecondition
 
@@ -29,17 +30,10 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
 
     "Post the Own brand packaged at own sites " when {
       "user selected yes" in {
-
+        setAnswers(emptyUserAnswers)
         val expectedResult:Some[JsObject] = Some(
           Json.obj(
-            "ownBrands" -> true,
-            "packagedContractPacker" -> true,
-            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-            "exemptionsForSmallProducers" -> false,
-            "broughtIntoUK" -> false,
-            "broughtIntoUkFromSmallProducers" -> false,
-            "claimCreditsForExports"->false,
-            "secondaryWarehouseDetails" -> false
+            "ownBrands" -> true
           ))
 
         given
@@ -65,16 +59,10 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
 
       "user selected no" in {
 
-        val expectedResult:Some[JsObject] = Some(
+        setAnswers(emptyUserAnswers)
+        val expectedResult: Some[JsObject] = Some(
           Json.obj(
-            "ownBrands" -> false,
-            "packagedContractPacker" -> true,
-            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-            "exemptionsForSmallProducers" -> false,
-            "broughtIntoUK" -> false,
-            "broughtIntoUkFromSmallProducers" -> false,
-            "claimCreditsForExports"->false,
-            "secondaryWarehouseDetails" -> false
+            "ownBrands" -> false
           ))
 
         given

@@ -25,12 +25,10 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
         whenReady(result1) { res =>
           res.status mustBe 200
         }
-
       }
     }
 
     "Post the exemption for small producer " when {
-
       "user selected yes " in {
 
         val expectedResult:Some[JsObject] = Some(
@@ -58,7 +56,6 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
                 "Csrf-Token" -> "nocheck")
               .withFollowRedirects(false)
               .post(Json.obj("value" -> "true"))
-
 
           whenReady(result) { res =>
             res.status mustBe 303

@@ -28,6 +28,7 @@ import play.api.Logger
 import play.api.i18n.Messages
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
+import utilitlies.AddressHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddressLookupService @Inject()(
                                       addressLookupConnector: AddressLookupConnector,
                                       frontendAppConfig: FrontendAppConfig
-                                    ) {
+                                    ) extends AddressHelper {
 
   val logger: Logger = Logger(this.getClass)
 
@@ -78,21 +79,20 @@ class AddressLookupService @Inject()(
     addressLookupConnector.initJourney(journeyConfig)
   }
 
-  def initJourneyAndReturnOnRampUrl(state: AddressLookupState)
+  def initJourneyAndReturnOnRampUrl(state: AddressLookupState, sdilId: String = generateId)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
-    val journeyConfig: JourneyConfig = createJourneyConfig(state)
-
+    val journeyConfig: JourneyConfig = createJourneyConfig(state, sdilId)
     initJourney(journeyConfig).map {
       case Right(onRampUrl) => onRampUrl
       case Left(error) => throw new Exception(s"Failed to init ALF ${error.message} with status ${error.status} for ${hc.requestId}")
     }
   }
 
-  def createJourneyConfig(state: AddressLookupState)(implicit requestHeader: RequestHeader, messages: Messages): JourneyConfig = {
+  def createJourneyConfig(state: AddressLookupState, sdilId: String)(implicit requestHeader: RequestHeader, messages: Messages): JourneyConfig = {
     JourneyConfig(
       version = frontendAppConfig.AddressLookupConfig.version,
       options = JourneyOptions(
-        continueUrl = returnContinueUrl(state),
+        continueUrl = returnContinueUrl(state, sdilId),
         homeNavHref = None,
         signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
         accessibilityFooterUrl = None,
@@ -130,7 +130,7 @@ class AddressLookupService @Inject()(
 
  private def returnJourneyLabels(state: AddressLookupState)(implicit messages: Messages): Option[JourneyLabels] = {
     state match {
-      case _ => Some(
+      case PackingDetails => Some(
         JourneyLabels(
           en = Some(LanguageLabels(
             appLevelLabels = Some(AppLevelLabels(
@@ -144,11 +144,40 @@ class AddressLookupService @Inject()(
           countryPickerLabels = None
         ))
       ))
+      case WarehouseDetails => Some(
+        JourneyLabels(
+          en = Some(LanguageLabels(
+            appLevelLabels = Some(AppLevelLabels(
+              navTitle = Some(messages("service.name")),
+              phaseBannerHtml = None
+            )),
+            selectPageLabels = None,
+            lookupPageLabels = Some(
+              LookupPageLabels(
+                title = Some(messages("addressLookupFrontend.warehouseDetails.lookupPageLabels.title")),
+                heading = Some(messages("addressLookupFrontend.warehouseDetails.lookupPageLabels.title")),
+                postcodeLabel = Some(messages("addressLookupFrontend.warehouseDetails.lookupPageLabels.postcodeLabel")))),
+            editPageLabels = Some(
+              EditPageLabels(
+                title = Some(messages("addressLookupFrontend.warehouseDetails.editPageLabels.title")),
+                heading = Some(messages("addressLookupFrontend.warehouseDetails.editPageLabels.title")),
+                line1Label = Some(messages("addressLookupFrontend.warehouseDetails.editPageLabels.line1Label")),
+                line2Label = Some(messages("addressLookupFrontend.warehouseDetails.editPageLabels.line2Label")),
+                line3Label = Some(messages("addressLookupFrontend.warehouseDetails.editPageLabels.line3Label")),
+                townLabel = Some(messages("addressLookupFrontend.warehouseDetails.editPageLabels.townLabel")),
+                postcodeLabel= Some(messages("addressLookupFrontend.warehouseDetails.editPageLabels.postcodeLabel")),
+                organisationLabel = Some(messages("addressLookupFrontend.warehouseDetails.editPageLabels.organisationLabel")))
+            ),
+            confirmPageLabels = None,
+            countryPickerLabels = None
+          ))
+        ))
     }
   }
 
-  private def returnContinueUrl(state: AddressLookupState): String = {
+  private def returnContinueUrl(state: AddressLookupState, sdilId: String): String = {
     state match {
+      case WarehouseDetails => frontendAppConfig.AddressLookupConfig.WarehouseDetails.offRampUrl(sdilId)
       case _ => routes.IndexController.onPageLoad().url
     }
   }

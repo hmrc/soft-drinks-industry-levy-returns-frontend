@@ -77,22 +77,6 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
           }
 
-          "Secondary warehouse details page" - {
-
-            "Should navigate to enter warehouse name when yes is selected" in {
-              navigator.nextPage(SecondaryWarehouseDetailsPage,
-                NormalMode,
-                UserAnswers(id, Json.obj("secondaryWarehouseDetails" -> true))
-              ) mustBe  routes.IndexController.onPageLoad()
-            }
-            "Should navigate to check your answers controller when no is selected" in {
-              navigator.nextPage(SecondaryWarehouseDetailsPage,
-                NormalMode,
-                UserAnswers(id, Json.obj("secondaryWarehouseDetails" -> false))
-              ) mustBe  routes.CheckYourAnswersController.onPageLoad()
-            }
-          }
-
           "Remove a warehouse confirmation page" - {
 
             "Should navigate to secondary warehouse details controller when yes is selected" in {

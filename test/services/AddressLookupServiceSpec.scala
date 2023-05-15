@@ -20,8 +20,8 @@ import base.SpecBase
 import connectors.AddressLookupConnector
 import controllers.routes
 import models.Warehouse
-import models.alf.{AlfAddress, AlfResponse}
-import models.alf.init.{AppLevelLabels, ConfirmPageConfig, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, SelectPageConfig, TimeoutConfig}
+import models.alf.AlfAddress
+import models.alf.init._
 import models.backend.{Site, UkAddress}
 import models.core.ErrorModel
 import org.mockito.ArgumentMatchers
@@ -29,8 +29,8 @@ import org.mockito.MockitoSugar.{mock, when}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAwaitTimeout  {
 
@@ -244,8 +244,9 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
   }
 
   "initJourneyAndReturnOnRampUrl" - {
-    "should return Successful future when connector returns Right for example state" in {
-      val expectectJourneyConfigToBePassedToConnector = JourneyConfig(
+    s"should return Successful future when connector returns success for $PackingDetails" in {
+      val sdilId = "Foobar"
+      val expectedJourneyConfigToBePassedToConnector = JourneyConfig(
         version = frontendAppConfig.AddressLookupConfig.version,
         options = JourneyOptions(
           continueUrl = routes.IndexController.onPageLoad().url,
@@ -259,7 +260,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           includeHMRCBranding = Some(true),
           ukMode = Some(true),
           selectPageConfig = Some(SelectPageConfig(
-            proposalListLimit = Some(30),
+            proposalListLimit = Some(10),
             showSearchAgainLink = Some(true)
           )),
           showBackButtons = Some(true),
@@ -283,7 +284,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           JourneyLabels(
             en = Some(LanguageLabels(
               appLevelLabels = Some(AppLevelLabels(
-                navTitle = Some("soft-drinks-industry-levy-returns-frontend"),
+                navTitle = Some("Soft Drinks Industry Levy"),
                 phaseBannerHtml = None
               )),
               selectPageLabels = None,
@@ -296,9 +297,82 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         requestedVersion = None
       )
 
-      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(expectectJourneyConfigToBePassedToConnector))(ArgumentMatchers.any(),ArgumentMatchers.any()))
+      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(ArgumentMatchers.any(),ArgumentMatchers.any()))
         .thenReturn(Future.successful(Right("foo")))
-      whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))) {
+      whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails, sdilId)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))) {
+        res => res mustBe "foo"
+      }
+    }
+    s"should return Successful future when connector returns success for $WarehouseDetails" in {
+      val sdilId = "Foobar"
+      val expectedJourneyConfigToBePassedToConnector = JourneyConfig(
+        version = 2,
+        options = JourneyOptions(
+          continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/secondary-warehouses/$sdilId",
+          homeNavHref = None,
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
+          accessibilityFooterUrl = None,
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-returns-frontend&backUrl=http%3A%2F%2Flocalhost%3A8703bar"),
+          deskProServiceName = None,
+          showPhaseBanner = Some(false),
+          alphaPhase = Some(frontendAppConfig.AddressLookupConfig.alphaPhase),
+          includeHMRCBranding = Some(true),
+          ukMode = Some(true),
+          selectPageConfig = Some(SelectPageConfig(
+            proposalListLimit = Some(10),
+            showSearchAgainLink = Some(true)
+          )),
+          showBackButtons = Some(true),
+          disableTranslations = Some(true),
+          allowedCountryCodes = None,
+          confirmPageConfig = Some(ConfirmPageConfig(
+            showSearchAgainLink = Some(true),
+            showSubHeadingAndInfo = Some(true),
+            showChangeLink = Some(true),
+            showConfirmChangeText = Some(true)
+          )),
+          timeoutConfig = Some(TimeoutConfig(
+            timeoutAmount = frontendAppConfig.timeout,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
+            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
+          )),
+          serviceHref = Some(routes.IndexController.onPageLoad().url),
+          pageHeadingStyle = Some("govuk-heading-m")
+        ),
+        labels = Some(
+          JourneyLabels(
+            en = Some(LanguageLabels(
+              appLevelLabels = Some(AppLevelLabels(
+                navTitle = Some("Soft Drinks Industry Levy"),
+                phaseBannerHtml = None
+              )),
+              selectPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK warehouse address"),
+                  heading = Some("Find UK warehouse address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK warehouse address"),
+                  heading = Some("Enter the UK warehouse address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel= Some("Postcode"),
+                  organisationLabel = Some("Trading name (optional)"))
+              ),
+              confirmPageLabels = None,
+              countryPickerLabels = None
+            ))
+          )),
+        requestedVersion = None
+      )
+
+      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(ArgumentMatchers.any(),ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Right("foo")))
+      whenReady(service.initJourneyAndReturnOnRampUrl(WarehouseDetails, sdilId)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))) {
         res => res mustBe "foo"
       }
     }
@@ -312,9 +386,82 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
   }
 
   "createJourneyConfig" - {
-    s"should return a journey config for an example journey" in {
+    s"should return a journey config for $WarehouseDetails" in {
       val request = FakeRequest("foo","bar")
-      val res = service.createJourneyConfig(PackingDetails)(request, implicitly)
+      val exampleSdilIdWeGenerate: String = "wizz"
+      val res = service.createJourneyConfig(WarehouseDetails, exampleSdilIdWeGenerate)(request, implicitly)
+      val expected =  JourneyConfig(
+        version = 2,
+        options = JourneyOptions(
+          continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/secondary-warehouses/$exampleSdilIdWeGenerate",
+          homeNavHref = None,
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
+          accessibilityFooterUrl = None,
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-returns-frontend&backUrl=http%3A%2F%2Flocalhost%3A8703${request.uri}"),
+          deskProServiceName = None,
+          showPhaseBanner = Some(false),
+          alphaPhase = Some(frontendAppConfig.AddressLookupConfig.alphaPhase),
+          includeHMRCBranding = Some(true),
+          ukMode = Some(true),
+          selectPageConfig = Some(SelectPageConfig(
+            proposalListLimit = Some(10),
+            showSearchAgainLink = Some(true)
+          )),
+          showBackButtons = Some(true),
+          disableTranslations = Some(true),
+          allowedCountryCodes = None,
+          confirmPageConfig = Some(ConfirmPageConfig(
+            showSearchAgainLink = Some(true),
+            showSubHeadingAndInfo = Some(true),
+            showChangeLink = Some(true),
+            showConfirmChangeText = Some(true)
+          )),
+          timeoutConfig = Some(TimeoutConfig(
+            timeoutAmount = frontendAppConfig.timeout,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
+            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
+          )),
+          serviceHref = Some(routes.IndexController.onPageLoad().url),
+          pageHeadingStyle = Some("govuk-heading-m")
+        ),
+        labels = Some(
+          JourneyLabels(
+            en = Some(LanguageLabels(
+              appLevelLabels = Some(AppLevelLabels(
+                navTitle = Some("Soft Drinks Industry Levy"),
+                phaseBannerHtml = None
+              )),
+              selectPageLabels = None,
+              lookupPageLabels = Some(
+                  LookupPageLabels(
+                    title = Some("Find UK warehouse address"),
+                    heading = Some("Find UK warehouse address"),
+                    postcodeLabel = Some("Postcode"))),
+                editPageLabels = Some(
+                  EditPageLabels(
+                    title = Some("Enter the UK warehouse address"),
+                    heading = Some("Enter the UK warehouse address"),
+                    line1Label = Some("Address line 1"),
+                    line2Label = Some("Address line 2"),
+                    line3Label = Some("Address line 3 (optional)"),
+                    townLabel = Some("Address line 4 (optional)"),
+                    postcodeLabel= Some("Postcode"),
+                    organisationLabel = Some("Trading name (optional)"))
+                ),
+              confirmPageLabels = None,
+              countryPickerLabels = None
+            ))
+          )),
+        requestedVersion = None
+      )
+
+      res mustBe expected
+    }
+
+    s"should return a journey config for $PackingDetails" in {
+      val request = FakeRequest("foo","bar")
+      val exampleSdilIdWeGenerate: String = "wizz"
+      val res = service.createJourneyConfig(PackingDetails, exampleSdilIdWeGenerate)(request, implicitly)
       val expected =  JourneyConfig(
         version = 2,
         options = JourneyOptions(
@@ -329,7 +476,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           includeHMRCBranding = Some(true),
           ukMode = Some(true),
           selectPageConfig = Some(SelectPageConfig(
-            proposalListLimit = Some(30),
+            proposalListLimit = Some(10),
             showSearchAgainLink = Some(true)
           )),
           showBackButtons = Some(true),
@@ -353,7 +500,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             JourneyLabels(
               en = Some(LanguageLabels(
                 appLevelLabels = Some(AppLevelLabels(
-                  navTitle = Some("soft-drinks-industry-levy-returns-frontend"),
+                  navTitle = Some("Soft Drinks Industry Levy"),
                   phaseBannerHtml = None
                 )),
                 selectPageLabels = None,

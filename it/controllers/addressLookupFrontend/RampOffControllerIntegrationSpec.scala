@@ -98,7 +98,6 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
             updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
             updatedUserAnswers.warehouseList mustBe emptyUserAnswers.warehouseList
-
           }
         }
       }
