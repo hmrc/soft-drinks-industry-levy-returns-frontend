@@ -242,14 +242,13 @@ addASmallProducer.error.referenceNumber.notASmallProducer = Small producer refer
 addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
 
 secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
-secondaryWarehouseDetails.heading1 = You added {0} UK warehouses
+secondaryWarehouseDetails.heading = You added {0} UK warehouses
 secondaryWarehouseDetails.checkYourAnswersLabel = secondaryWarehouseDetails
 secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel = Warehouses
 secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
 secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
 secondaryWarehouseDetails.remove.hidden = remove UK warehouse
-
 
 firstQuarter = January to March
 secondQuarter = April to June
