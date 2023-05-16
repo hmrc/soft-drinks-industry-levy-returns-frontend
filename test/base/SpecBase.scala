@@ -199,6 +199,7 @@ trait SpecBase
   )
 
   lazy val emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+  lazy val submittedAnswers = UserAnswers(sdilNumber, Json.obj(), submitted = true)
   lazy val completedUserAnswers = UserAnswers(sdilNumber, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
     true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
     "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj(

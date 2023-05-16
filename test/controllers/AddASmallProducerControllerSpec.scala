@@ -52,6 +52,17 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
   "AddASmallProducer Controller onPageLoad" - {
 
+    "must redirect to returns sent page" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, addASmallProducerRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
     "must return OK with correct page title and header" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

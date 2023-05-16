@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.BrandsPackagedAtOwnSitesFormProvider
-import models.{NormalMode, LitresInBands, UserAnswers}
+import models.{LitresInBands, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -60,6 +60,17 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
   )
 
   "BrandsPackagedAtOwnSites Controller" - {
+
+    "must redirect to returns sent page" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, brandsPackagedAtOwnSitesRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
 

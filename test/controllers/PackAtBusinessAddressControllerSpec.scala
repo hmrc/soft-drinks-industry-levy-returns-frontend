@@ -51,6 +51,17 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
   "PackAtBusinessAddress Controller" - {
 
+    "must redirect to returns sent page" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, packAtBusinessAddressRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
     "must return OK and the User Company name and address for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

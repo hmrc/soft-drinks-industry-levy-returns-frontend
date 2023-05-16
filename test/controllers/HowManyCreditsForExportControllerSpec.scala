@@ -61,6 +61,18 @@ class HowManyCreditsForExportControllerSpec extends SpecBase with MockitoSugar {
 
   "HowManyCreditsForExport Controller" - {
 
+    "must redirect to returns sent page" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, howManyCreditsForExportRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
+
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
