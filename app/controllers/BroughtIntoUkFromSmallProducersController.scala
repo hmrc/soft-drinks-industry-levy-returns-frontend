@@ -37,6 +37,7 @@ class BroughtIntoUkFromSmallProducersController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         checkSub: CheckingSubmissionAction,
                                          formProvider: BroughtIntoUkFromSmallProducersFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: BroughtIntoUkFromSmallProducersView
@@ -44,7 +45,7 @@ class BroughtIntoUkFromSmallProducersController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
 
       request.userAnswers.submitted match {

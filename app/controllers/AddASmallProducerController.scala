@@ -43,28 +43,25 @@ class AddASmallProducerController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
+                                      checkSub: CheckingSubmissionAction,
                                       formProvider: AddASmallProducerFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: AddASmallProducerView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request: DataRequest[AnyContent] =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+    implicit request =>
 
       val userAnswers = request.userAnswers
 
-        userAnswers.submitted match {
-          case true => Redirect(routes.ReturnSentController.onPageLoad())
-          case false =>
-            val form: Form[AddASmallProducer] = formProvider(userAnswers)
-            mode match {
-              case BlankMode =>
-                Ok(view(form, NormalMode))
-              case _ =>
-                Ok(view(form, mode))
-            }
-        }
+      val form: Form[AddASmallProducer] = formProvider(userAnswers)
+      mode match {
+        case BlankMode =>
+          Ok(view(form, NormalMode))
+        case _ =>
+          Ok(view(form, mode))
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

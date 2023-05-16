@@ -33,18 +33,15 @@ class ReturnChangeRegistrationController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       checkSub: CheckingSubmissionAction,
                                        navigator: Navigator,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: ReturnChangeRegistrationView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
-
-      request.userAnswers.submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false =>  Ok(view())
-      }
+      Ok(view())
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {

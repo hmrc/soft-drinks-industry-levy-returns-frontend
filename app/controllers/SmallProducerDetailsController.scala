@@ -37,6 +37,7 @@ class SmallProducerDetailsController @Inject()(
                                                 identify: IdentifierAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
+                                                checkSub: CheckingSubmissionAction,
                                                 formProvider: SmallProducerDetailsFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 view: SmallProducerDetailsView
@@ -44,18 +45,16 @@ class SmallProducerDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
 
-      request.userAnswers.submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false =>   val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
+      val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
           val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
             case None => form
             case Some(value) => form.fill(value)
           }
-          Ok(view(preparedForm, mode, smallProducerList))
-      }
+
+      Ok(view(preparedForm, mode, smallProducerList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

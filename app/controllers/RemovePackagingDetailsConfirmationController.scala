@@ -40,6 +40,7 @@ class RemovePackagingDetailsConfirmationController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         checkSub: CheckingSubmissionAction,
                                          formProvider: RemovePackagingDetailsConfirmationFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: RemovePackagingDetailsConfirmationView
@@ -54,19 +55,17 @@ class RemovePackagingDetailsConfirmationController @Inject()(
       .map(packagingSite => AddressFormattingHelper.addressFormatting(packagingSite.address, packagingSite.tradingName))
   }
 
-  def onPageLoad(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
 
-      request.userAnswers.submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false =>  getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
-          case None =>
-            logger.warn(s"user has potentially hit page and ref does not exist for packaging site $ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
-            Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode))
-          case Some(packagingSiteDetails) => Ok(view(form, mode, ref, packagingSiteDetails))
-        }
+      getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
+        case None =>
+          logger.warn(s"user has potentially hit page and ref does not exist for packaging site $ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
+          Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode))
+        case Some(packagingSiteDetails) => Ok(view(form, mode, ref, packagingSiteDetails))
       }
   }
+
 
   def onSubmit(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

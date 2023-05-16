@@ -38,6 +38,7 @@ class HowManyCreditsForExportController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
+                                      checkSub: CheckingSubmissionAction,
                                       formProvider: HowManyCreditsForExportFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: HowManyCreditsForExportView
@@ -45,7 +46,7 @@ class HowManyCreditsForExportController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
 
       request.userAnswers.submitted match {

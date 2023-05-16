@@ -38,6 +38,7 @@ class BrandsPackagedAtOwnSitesController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
+                                      checkSub: CheckingSubmissionAction,
                                       formProvider: BrandsPackagedAtOwnSitesFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: BrandsPackagedAtOwnSitesView
@@ -45,18 +46,15 @@ class BrandsPackagedAtOwnSitesController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
 
-      request.userAnswers.submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false =>   val preparedForm = request.userAnswers.get(BrandsPackagedAtOwnSitesPage) match {
+  val preparedForm = request.userAnswers.get(BrandsPackagedAtOwnSitesPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
 
           Ok(view(preparedForm, mode))
-      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

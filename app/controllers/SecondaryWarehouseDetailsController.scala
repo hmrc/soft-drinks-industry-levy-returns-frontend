@@ -19,7 +19,6 @@ package controllers
 import controllers.actions._
 import forms.SecondaryWarehouseDetailsFormProvider
 import models.Mode
-import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,10 +36,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class SecondaryWarehouseDetailsController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
-                                         navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         checkSub: CheckingSubmissionAction,
                                          formProvider: SecondaryWarehouseDetailsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: SecondaryWarehouseDetailsView,
@@ -49,7 +48,7 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
@@ -61,10 +60,8 @@ class SecondaryWarehouseDetailsController @Inject()(
         rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
       )
 
-      request.userAnswers.submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false => Ok(view(preparedForm, mode, siteList))
-      }
+    Ok(view(preparedForm, mode, siteList))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

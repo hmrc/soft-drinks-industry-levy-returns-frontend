@@ -38,6 +38,7 @@ class ExemptionsForSmallProducersController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         checkSub: CheckingSubmissionAction,
                                          formProvider: ExemptionsForSmallProducersFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ExemptionsForSmallProducersView
@@ -46,18 +47,13 @@ class ExemptionsForSmallProducersController @Inject()(
   val form = formProvider()
   val logger: Logger = Logger(this.getClass())
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
-
-      request.userAnswers.submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false =>    val preparedForm = request.userAnswers.get(ExemptionsForSmallProducersPage) match {
+      val preparedForm = request.userAnswers.get(ExemptionsForSmallProducersPage) match {
           case None => form
           case Some(value) => form.fill(value)
-        }
-
-          Ok(view(preparedForm, mode))
       }
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

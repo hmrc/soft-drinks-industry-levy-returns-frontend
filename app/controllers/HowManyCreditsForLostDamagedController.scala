@@ -37,6 +37,7 @@ class HowManyCreditsForLostDamagedController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
+                                      checkSub: CheckingSubmissionAction,
                                       formProvider: HowManyCreditsForLostDamagedFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: HowManyCreditsForLostDamagedView
@@ -44,7 +45,7 @@ class HowManyCreditsForLostDamagedController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
     implicit request =>
 
       request.userAnswers.submitted match {
