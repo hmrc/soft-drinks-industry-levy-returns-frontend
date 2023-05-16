@@ -47,13 +47,17 @@ class PackAtBusinessAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val businessName = request.subscription.orgName
-      val businessAddress = request.subscription.address
-      lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+
+      request.userAnswers.submitted match {
+        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case false =>   val businessName = request.subscription.orgName
+          val businessAddress = request.subscription.address
+          lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, businessName, businessAddress, mode))
       }
-      Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

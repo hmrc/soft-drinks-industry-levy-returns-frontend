@@ -40,7 +40,11 @@ class ReturnChangeRegistrationController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view())
+
+      request.userAnswers.submitted match {
+        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case false =>  Ok(view())
+      }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {

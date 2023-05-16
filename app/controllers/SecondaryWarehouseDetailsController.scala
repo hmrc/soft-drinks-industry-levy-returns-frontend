@@ -61,7 +61,10 @@ class SecondaryWarehouseDetailsController @Inject()(
         rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
       )
 
-      Ok(view(preparedForm, mode, siteList))
+      request.userAnswers.submitted match {
+        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case false => Ok(view(preparedForm, mode, siteList))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

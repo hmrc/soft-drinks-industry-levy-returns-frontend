@@ -47,16 +47,17 @@ class AskSecondaryWarehouseInReturnController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(AskSecondaryWarehouseInReturnPage)) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      request.userAnswers.submitted match {
+        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case false =>    val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+          Ok(view(preparedForm, mode))
       }
-
-      Ok(view(preparedForm, mode))
-  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>

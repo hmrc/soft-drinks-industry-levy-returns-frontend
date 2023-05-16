@@ -47,13 +47,15 @@ class SmallProducerDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
-      val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      request.userAnswers.submitted match {
+        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case false =>   val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
+          val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode, smallProducerList))
       }
-
-      Ok(view(preparedForm, mode, smallProducerList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

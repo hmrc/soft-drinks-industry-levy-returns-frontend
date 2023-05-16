@@ -26,7 +26,7 @@ import models.{Amounts, UserAnswers}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import repositories.SDILSessionCache
+import repositories.{SDILSessionCache, SessionRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.ReturnsHelper.{extractReturnPeriod, extractTotal, listItemsWithTotal}
@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
+                                            sessionRepository: SessionRepository,
                                             config: FrontendAppConfig,
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
@@ -53,11 +54,17 @@ class CheckYourAnswersController @Inject()(
   val logger: Logger = Logger(this.getClass())
 
   def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request =>
+     sessionRepository.set(request.userAnswers.copy(submitted = true))
      Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
   }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request => constructPage(request)
+    implicit request =>
+      request.userAnswers.submitted match {
+        case true => Future.successful(Redirect(routes.ReturnSentController.onPageLoad()))
+        case false => constructPage(request)
+      }
   }
 
   def noActivityToReport: Action[AnyContent] = (identify andThen getData andThen requireData).async {

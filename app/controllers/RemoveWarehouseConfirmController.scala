@@ -50,13 +50,17 @@ class RemoveWarehouseConfirmController @Inject()(
   def onPageLoad(mode: Mode, index: String): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request =>
-        request.userAnswers.warehouseList.get(index) match {
-           case Some(warehouse) =>
-             val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
-             Ok(view(form, mode, formattedAddress, index))
-           case _ => logger.warn(s"Warehouse index $index doesn't exist ${request.userAnswers.id} warehouse list length: ${request.userAnswers.warehouseList.size}")
-            Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
-         }
+
+        request.userAnswers.submitted match {
+          case true => Redirect(routes.ReturnSentController.onPageLoad())
+          case false =>   request.userAnswers.warehouseList.get(index) match {
+            case Some(warehouse) =>
+              val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
+              Ok(view(form, mode, formattedAddress, index))
+            case _ => logger.warn(s"Warehouse index $index doesn't exist ${request.userAnswers.id} warehouse list length: ${request.userAnswers.warehouseList.size}")
+              Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
+          }
+        }
     }
 
   def onSubmit(mode: Mode, ref: String): Action[AnyContent] =

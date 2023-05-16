@@ -56,11 +56,15 @@ class RemovePackagingDetailsConfirmationController @Inject()(
 
   def onPageLoad(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
-        case None =>
-          logger.warn(s"user has potentially hit page and ref does not exist for packaging site $ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
-          Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode))
-        case Some(packagingSiteDetails) => Ok(view(form, mode, ref, packagingSiteDetails))
+
+      request.userAnswers.submitted match {
+        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case false =>  getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
+          case None =>
+            logger.warn(s"user has potentially hit page and ref does not exist for packaging site $ref ${request.userAnswers.id} amount currently: ${request.userAnswers.packagingSiteList.size}")
+            Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode))
+          case Some(packagingSiteDetails) => Ok(view(form, mode, ref, packagingSiteDetails))
+        }
       }
   }
 

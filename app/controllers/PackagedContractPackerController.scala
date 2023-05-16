@@ -36,6 +36,7 @@ class PackagedContractPackerController @Inject()(
                                                  navigator: Navigator,
                                                  identify: IdentifierAction,
                                                  getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
                                                  formProvider: PackagedContractPackerFormProvider,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view: PackagedContractPackerView
@@ -44,27 +45,29 @@ class PackagedContractPackerController @Inject()(
   val form = formProvider()
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(PackagedContractPackerPage)) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      request.userAnswers.submitted match {
+        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case false =>   val preparedForm = request.userAnswers.get(PackagedContractPackerPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
-      Ok(view(preparedForm, mode))
+          Ok(view(preparedForm, mode))
+      }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           (for {
-            updatedAnswers <- Future.fromTry(answers.set(PackagedContractPackerPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagedContractPackerPage, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield updatedAnswers).flatMap { updatedAnswers =>
             if (value) {

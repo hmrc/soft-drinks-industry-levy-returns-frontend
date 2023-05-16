@@ -51,14 +51,20 @@ class AddASmallProducerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
+
       val userAnswers = request.userAnswers
-      val form: Form[AddASmallProducer] = formProvider(userAnswers)
-      mode match {
-        case BlankMode =>
-          Ok(view(form, NormalMode))
-        case _ =>
-          Ok(view(form, mode))
-      }
+
+        userAnswers.submitted match {
+          case true => Redirect(routes.ReturnSentController.onPageLoad())
+          case false =>
+            val form: Form[AddASmallProducer] = formProvider(userAnswers)
+            mode match {
+              case BlankMode =>
+                Ok(view(form, NormalMode))
+              case _ =>
+                Ok(view(form, mode))
+            }
+        }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
