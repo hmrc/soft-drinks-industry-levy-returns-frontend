@@ -52,22 +52,22 @@ class AskSecondaryWarehouseInReturnController @Inject()(
 
       request.userAnswers.submitted match {
         case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false =>    val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
+        case false => val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
           Ok(view(preparedForm, mode))
       }
+  }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(AskSecondaryWarehouseInReturnPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value))
             onwardUrl              <- if(value){
             sessionRepository.set(updatedAnswers).flatMap(_ =>
               addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
