@@ -18,12 +18,13 @@ package controllers
 
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
-import models.Mode
-import navigation.Navigator
+import models.{Mode, NormalMode}
+import models.backend.Site
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{AddressLookupService, PackingDetails}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PackAtBusinessAddressView
 
@@ -34,13 +35,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class PackAtBusinessAddressController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
-                                         navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: PackAtBusinessAddressFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: PackAtBusinessAddressView
+                                         view: PackAtBusinessAddressView,
+                                         addressLookupService: AddressLookupService
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -68,8 +69,23 @@ class PackAtBusinessAddressController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PackAtBusinessAddressPage, mode, updatedAnswers))
+            onwardUrl              <- if(value){
+              sessionRepository.set(updatedAnswers).flatMap(_ =>
+                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+            } else {
+              sessionRepository.set(updatedAnswers.copy(packagingSiteList = Map("1" ->
+                Site(
+                  address = businessAddress,
+                  ref = None,
+                  tradingName = Some(businessName),
+                  closureDate = None,
+                )
+              ))).flatMap(_ =>
+                Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
+            }
+          } yield {
+            Redirect(onwardUrl)
+          }
       )
   }
 }
