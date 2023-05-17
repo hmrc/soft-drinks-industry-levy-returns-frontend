@@ -74,10 +74,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, routes.CheckYourAnswersController.onPageLoad().url)
-            .withFormUrlEncodedBody(("value", "true"))
-
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(nilReturn = true).url)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
