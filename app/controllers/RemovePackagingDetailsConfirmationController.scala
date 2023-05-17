@@ -67,7 +67,7 @@ class RemovePackagingDetailsConfirmationController @Inject()(
   }
 
 
-  def onSubmit(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       def removePackagingDetailsFromUserAnswers(userSelection: Boolean, userAnswers: UserAnswers, refOfSite: String): UserAnswers = {
         if (userSelection) {

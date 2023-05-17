@@ -57,7 +57,7 @@ class BrandsPackagedAtOwnSitesController @Inject()(
           Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>

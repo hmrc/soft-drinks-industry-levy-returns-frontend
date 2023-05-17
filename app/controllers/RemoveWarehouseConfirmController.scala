@@ -63,7 +63,7 @@ class RemoveWarehouseConfirmController @Inject()(
     }
 
   def onSubmit(mode: Mode, ref: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
       implicit request =>
         val warehouseList: Map[String, Warehouse] = request.userAnswers.warehouseList
         val warehouseToRemove: Warehouse = warehouseList(ref)

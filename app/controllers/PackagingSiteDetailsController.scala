@@ -62,7 +62,7 @@ class PackagingSiteDetailsController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
 

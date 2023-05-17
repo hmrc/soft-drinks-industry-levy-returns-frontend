@@ -59,7 +59,7 @@ class BroughtIntoUKController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
 
       form.bindFromRequest().fold(

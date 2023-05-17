@@ -58,7 +58,7 @@ class PackAtBusinessAddressController @Inject()(
       Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address

@@ -9,7 +9,7 @@ class ReturnSentControllerIntegrationSpec extends Specifications with TestConfig
 
   "ReturnSentController" should {
 
-    "Show the user there submitted information after successfully submitting their return" in {
+    "Show the user their submitted information after successfully submitting their return" in {
       val userAnswers = checkYourAnswersFullAnswers
       setAnswers(userAnswers.copy(submitted = true))
       given

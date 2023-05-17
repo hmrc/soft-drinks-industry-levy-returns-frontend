@@ -44,7 +44,7 @@ class ReturnChangeRegistrationController @Inject()(
       Ok(view())
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
       Redirect(navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, request.userAnswers,Some(SdilReturn.apply(request.userAnswers)),Some(request.subscription) ))
   }

@@ -64,7 +64,7 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val siteList: SummaryList = SummaryListViewModel(
         rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)

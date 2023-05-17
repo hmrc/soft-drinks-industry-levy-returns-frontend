@@ -57,7 +57,7 @@ class SmallProducerDetailsController @Inject()(
       Ok(view(preparedForm, mode, smallProducerList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val spList = request.userAnswers.smallProducerList
       form.bindFromRequest().fold(

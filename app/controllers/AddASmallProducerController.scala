@@ -64,7 +64,7 @@ class AddASmallProducerController @Inject()(
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val userAnswers = request.userAnswers
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
