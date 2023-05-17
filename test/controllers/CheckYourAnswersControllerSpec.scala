@@ -70,6 +70,21 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must redirect to returns sent page if return is already submitted when hitting the submit" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.CheckYourAnswersController.onPageLoad().url)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
+
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
 
       val application = applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))).overrides(

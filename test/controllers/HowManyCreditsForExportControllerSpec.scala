@@ -90,6 +90,21 @@ class HowManyCreditsForExportControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to returns sent page if return is already submitted when hitting the submit" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, howManyCreditsForExportRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
