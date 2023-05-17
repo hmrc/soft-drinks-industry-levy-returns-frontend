@@ -38,7 +38,7 @@ class ClaimCreditsForExportsController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         checkSub: CheckingSubmissionAction,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: ClaimCreditsForExportsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ClaimCreditsForExportsView
@@ -47,7 +47,7 @@ class ClaimCreditsForExportsController @Inject()(
   val form = formProvider()
   val logger: Logger = Logger(this.getClass())
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
     val preparedForm = request.userAnswers.get(ClaimCreditsForExportsPage) match {

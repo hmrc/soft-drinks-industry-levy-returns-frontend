@@ -43,14 +43,14 @@ class AddASmallProducerController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
-                                      checkSub: CheckingSubmissionAction,
+                                      checkReturnSubmission: CheckingSubmissionAction,
                                       formProvider: AddASmallProducerFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: AddASmallProducerView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
       val userAnswers = request.userAnswers

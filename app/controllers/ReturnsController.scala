@@ -21,7 +21,7 @@ import models.Amounts
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.{SDILSessionCache, SDILSessionKeys}
+import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
 import services.ReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.ReturnsHelper.extractReturnPeriod
@@ -33,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnsController @Inject()(
                                    override val messagesApi: MessagesApi,
+                                   sessionRepository: SessionRepository,
                                    identify: IdentifierAction,
                                    getData: DataRetrievalAction,
                                    returnService: ReturnService,
@@ -60,6 +61,7 @@ class ReturnsController @Inject()(
           case Some(amounts) =>
             if (pendingReturns.contains(returnPeriod)) {
               returnService.returnsUpdate(subscription, returnPeriod, userAnswers, nilReturn)
+              sessionRepository.set(request.userAnswers.copy(submitted = true))
             } else {
               logger.error(s"Pending returns for $sdilEnrolment don't contain the return for year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
               Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))

@@ -37,7 +37,7 @@ class HowManyAsAContractPackerController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
-                                      checkSub: CheckingSubmissionAction,
+                                      checkReturnSubmission: CheckingSubmissionAction,
                                       formProvider: HowManyAsAContractPackerFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: HowManyAsAContractPackerView
@@ -45,7 +45,7 @@ class HowManyAsAContractPackerController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(HowManyAsAContractPackerPage) match {

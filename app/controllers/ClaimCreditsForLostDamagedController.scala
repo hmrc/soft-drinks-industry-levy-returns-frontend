@@ -16,7 +16,6 @@
 
 package controllers
 
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.ClaimCreditsForLostDamagedFormProvider
 import models.{Mode, SdilReturn}
@@ -39,7 +38,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         checkSub: CheckingSubmissionAction,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: ClaimCreditsForLostDamagedFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ClaimCreditsForLostDamagedView
@@ -48,7 +47,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
   val form = formProvider()
   val logger: Logger = Logger(this.getClass())
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
       val preparedForm = request.userAnswers.get(ClaimCreditsForLostDamagedPage) match {
         case None => form

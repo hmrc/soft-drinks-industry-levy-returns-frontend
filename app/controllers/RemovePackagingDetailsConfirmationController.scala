@@ -40,7 +40,7 @@ class RemovePackagingDetailsConfirmationController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         checkSub: CheckingSubmissionAction,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: RemovePackagingDetailsConfirmationFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: RemovePackagingDetailsConfirmationView
@@ -55,7 +55,7 @@ class RemovePackagingDetailsConfirmationController @Inject()(
       .map(packagingSite => AddressFormattingHelper.addressFormatting(packagingSite.address, packagingSite.tradingName))
   }
 
-  def onPageLoad(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
       getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {

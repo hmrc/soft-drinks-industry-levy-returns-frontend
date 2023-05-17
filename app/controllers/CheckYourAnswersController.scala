@@ -20,7 +20,7 @@ import cats.implicits.catsSyntaxApplicativeId
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckingSubmissionAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
 import models.{Amounts, UserAnswers}
 import play.api.Logger
@@ -42,6 +42,7 @@ class CheckYourAnswersController @Inject()(
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
+                                            checkReturnSubmission: CheckingSubmissionAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             checkYourAnswersView: CheckYourAnswersView,
                                             sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -53,18 +54,13 @@ class CheckYourAnswersController @Inject()(
   val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
   val logger: Logger = Logger(this.getClass())
 
-  def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
-     sessionRepository.set(request.userAnswers.copy(submitted = true))
+  def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
      Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
   }
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      request.userAnswers.submitted match {
-        case true => Future.successful(Redirect(routes.ReturnSentController.onPageLoad()))
-        case false => constructPage(request)
-      }
+       constructPage(request)
   }
 
   def noActivityToReport: Action[AnyContent] = (identify andThen getData andThen requireData).async {

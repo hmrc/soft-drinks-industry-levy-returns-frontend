@@ -45,7 +45,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
   "packagingSiteDetails Controller" - {
 
-    "must redirect to returns sent page" in {
+    "must redirect to returns sent page if return is already submitted" in {
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
@@ -53,6 +53,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
       }
     }
 

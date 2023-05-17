@@ -39,7 +39,7 @@ class AskSecondaryWarehouseInReturnController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         checkSub: CheckingSubmissionAction,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: AskSecondaryWarehouseInReturnFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: AskSecondaryWarehouseInReturnView,
@@ -48,7 +48,7 @@ class AskSecondaryWarehouseInReturnController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
     val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {

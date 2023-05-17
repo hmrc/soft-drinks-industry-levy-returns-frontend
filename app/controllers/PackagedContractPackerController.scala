@@ -37,7 +37,7 @@ class PackagedContractPackerController @Inject()(
                                                  identify: IdentifierAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
-                                                 checkSub: CheckingSubmissionAction,
+                                                 checkReturnSubmission: CheckingSubmissionAction,
                                                  formProvider: PackagedContractPackerFormProvider,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view: PackagedContractPackerView
@@ -46,7 +46,7 @@ class PackagedContractPackerController @Inject()(
   val form = formProvider()
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(PackagedContractPackerPage) match {

@@ -39,7 +39,7 @@ class RemoveWarehouseConfirmController @Inject()(
                                                   identify: IdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  checkSub: CheckingSubmissionAction,
+                                                  checkReturnSubmission: CheckingSubmissionAction,
                                                   formProvider: RemoveWarehouseConfirmFormProvider,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: RemoveWarehouseConfirmView
@@ -49,7 +49,7 @@ class RemoveWarehouseConfirmController @Inject()(
   val logger: Logger = Logger(this.getClass)
 
   def onPageLoad(mode: Mode, index: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData andThen checkSub) {
+    (identify andThen getData andThen requireData andThen checkReturnSubmission) {
       implicit request =>
 
         request.userAnswers.warehouseList.get(index) match {

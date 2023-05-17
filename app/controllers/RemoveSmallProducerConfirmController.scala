@@ -39,7 +39,7 @@ class RemoveSmallProducerConfirmController @Inject()(
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
-                                                     checkSub: CheckingSubmissionAction,
+                                                     checkReturnSubmission: CheckingSubmissionAction,
                                                      formProvider: RemoveSmallProducerConfirmFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      view: RemoveSmallProducerConfirmView
@@ -47,7 +47,7 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(RemoveSmallProducerConfirmPage) match {

@@ -38,7 +38,7 @@ class HowManyCreditsForExportController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
-                                      checkSub: CheckingSubmissionAction,
+                                      checkReturnSubmission: CheckingSubmissionAction,
                                       formProvider: HowManyCreditsForExportFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: HowManyCreditsForExportView
@@ -46,18 +46,16 @@ class HowManyCreditsForExportController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-      request.userAnswers.submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false =>      val preparedForm = request.userAnswers.get(HowManyCreditsForExportPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
+    val preparedForm = request.userAnswers.get(HowManyCreditsForExportPage) match {
+      case None => form
+      case Some(value) => form.fill(value)
+    }
 
-          Ok(view(preparedForm, mode))
-      }
+    Ok(view(preparedForm, mode))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

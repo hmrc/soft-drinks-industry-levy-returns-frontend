@@ -61,7 +61,7 @@ class HowManyAsAContractPackerControllerSpec extends SpecBase with MockitoSugar 
 
   "HowManyAsAContractPacker Controller" - {
 
-    "must redirect to returns sent page" in {
+    "must redirect to returns sent page if return is already submitted" in {
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
@@ -69,6 +69,7 @@ class HowManyAsAContractPackerControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
       }
     }
 

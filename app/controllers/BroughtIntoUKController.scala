@@ -38,7 +38,7 @@ class BroughtIntoUKController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        checkSub: CheckingSubmissionAction,
+                                        checkReturnSubmission: CheckingSubmissionAction,
                                         formProvider: BroughtIntoUKFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: BroughtIntoUKView
@@ -47,7 +47,7 @@ class BroughtIntoUKController @Inject()(
   val form = formProvider()
   val logger: Logger = Logger(this.getClass())
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
     val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {

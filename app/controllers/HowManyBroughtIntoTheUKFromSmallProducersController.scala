@@ -37,7 +37,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
-                                      checkSub: CheckingSubmissionAction,
+                                      checkReturnSubmission: CheckingSubmissionAction,
                                       formProvider: HowManyBroughtIntoTheUKFromSmallProducersFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: HowManyBroughtIntoTheUKFromSmallProducersView
@@ -45,18 +45,15 @@ class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkSub) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-      request.userAnswers.submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
-        case false =>      val preparedForm = request.userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage) match {
+      val preparedForm = request.userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage) match {
           case None => form
           case Some(value) => form.fill(value)
-        }
-
-          Ok(view(preparedForm, mode))
       }
+
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
