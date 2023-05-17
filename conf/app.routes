@@ -136,4 +136,5 @@ GET        /remove-packaging-site-details/:ref                   controllers.Rem
 POST       /remove-packaging-site-details/:ref                   controllers.RemovePackagingDetailsConfirmationController.onSubmit(mode: Mode = NormalMode, ref: String)
 
 
-GET /off-ramp/secondary-warehouses/:sdilId                       controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String)
+GET       /off-ramp/secondary-warehouses/:sdilId                       controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String)
+GET       /off-ramp/packing-site-details/:sdilId                       controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String)

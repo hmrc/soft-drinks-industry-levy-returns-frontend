@@ -20,7 +20,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.NormalMode
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{AddressLookupService, WarehouseDetails}
+import services.{AddressLookupService, PackingDetails, WarehouseDetails}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -43,5 +43,16 @@ class RampOffController @Inject()(           identify: IdentifierAction,
     } yield {
       Redirect(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode))
     }
+  }
+
+  def packingSiteDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      for {
+        alfResponse         <- addressLookupService.getAddress(alfId)
+        updatedUserAnswers = addressLookupService.addAddressUserAnswers(PackingDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
+        _                   <- sessionRepository.set(updatedUserAnswers)
+      } yield {
+        Redirect(controllers.routes.PackagingSiteDetailsController.onPageLoad(NormalMode))
+      }
   }
 }
