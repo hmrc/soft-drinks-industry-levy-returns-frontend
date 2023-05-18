@@ -9,6 +9,25 @@ class ReturnSentControllerIntegrationSpec extends Specifications with TestConfig
 
   "ReturnSentController" should {
 
+    "setup amounts" in {
+
+      setAnswers(checkYourAnswersFullAnswers)
+
+      given.commonPrecondition
+      given.sdilBackend.balance("XKSDIL000000022", false)
+
+      WsTestClient.withClient { client =>
+        val result1 = client.url(s"$baseUrl/check-your-answers")
+          .withFollowRedirects(false)
+          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+          .get()
+
+        whenReady(result1) { res =>
+          res.status mustBe 200
+        }
+      }
+    }
+
     "Show the user their submitted information after successfully submitting their return" in {
       setAnswers(checkYourAnswersFullAnswers.copy(submitted = true))
       given
@@ -42,7 +61,6 @@ class ReturnSentControllerIntegrationSpec extends Specifications with TestConfig
         whenReady(result1) { res =>
           res.status mustBe 303
         }
-
       }
     }
   }
