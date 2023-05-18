@@ -82,7 +82,7 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
 
     object PackingDetails {
       def offRampUrl(sdilId: String): String = {
-        s"$host${controllers.addressLookupFrontend.routes.RampOffController.packingDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$host${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
 
