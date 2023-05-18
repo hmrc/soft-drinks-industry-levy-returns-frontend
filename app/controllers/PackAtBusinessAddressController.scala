@@ -78,7 +78,7 @@ class PackAtBusinessAddressController @Inject()(
                   address = businessAddress,
                   ref = None,
                   tradingName = Some(businessName),
-                  closureDate = None,
+                  closureDate = None
                 )
               ))).flatMap(_ =>
                 Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
