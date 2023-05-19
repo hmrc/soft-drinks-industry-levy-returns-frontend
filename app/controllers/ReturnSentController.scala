@@ -75,11 +75,9 @@ class ReturnSentController @Inject()(
                 financialStatus = financialStatus(amounts.total)
               )(implicitly, implicitly, config))
             }else {
-              println(s"amounts -> $amounts")
               Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
             }
           case _ => Logger("Session Cache returned a None")
-            println(s"no amounts Enrolment -> $sdilEnrolment, KeysAmounts -> ${SDILSessionKeys.AMOUNTS}")
             Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
         }
       }
