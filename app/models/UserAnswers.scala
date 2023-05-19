@@ -126,29 +126,4 @@ object UserAnswers {
    def format(implicit encryption: Encryption): OFormat[UserAnswers] = OFormat(reads, writes)
 }
 
-//  val reads: Reads[UserAnswers] = {
-//    (
-//      (__ \ "_id").read[String] and
-//        (__ \ "data").read[JsObject] and
-//        (__ \ "smallProducerList").read[List[SmallProducer]] and
-//        (__ \ "packagingSiteList").read[Map[String, Site]] and
-//        (__ \ "warehouseList").read[Map[String, Warehouse]] and
-//        (__ \ "submitted").read[Boolean] and
-//        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-//      ) (UserAnswers.apply _)
-//  }
-//
-//  val writes: OWrites[UserAnswers] = {
-//    (
-//      (__ \ "_id").write[String] and
-//        (__ \ "data").write[JsObject] and
-//        (__ \ "smallProducerList").write[List[SmallProducer]] and
-//        (__ \ "packagingSiteList").write[Map[String, Site]] and
-//        (__ \ "warehouseList").write[Map[String, Warehouse]] and
-//        (__ \ "submitted").write[Boolean] and
-//        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-//      ) (unlift(UserAnswers.unapply))
-//  }
-//
-//  val format: OFormat[UserAnswers] = OFormat(reads, writes)
 }
