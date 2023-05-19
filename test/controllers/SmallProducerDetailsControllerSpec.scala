@@ -45,6 +45,34 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
   lazy val smallProducerDetailsRoute = routes.SmallProducerDetailsController.onPageLoad(NormalMode).url
 
   "SmallProducerDetails Controller" - {
+
+    "must redirect to returns sent page if return is already submitted" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET,  smallProducerDetailsRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
+
+    "must redirect to returns sent page if return is already submitted when hitting the submit" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, smallProducerDetailsRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
+
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

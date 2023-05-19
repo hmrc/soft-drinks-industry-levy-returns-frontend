@@ -16,6 +16,7 @@ trait ITCoreTestData extends TryValues {
 
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+  def submittedAnswers = UserAnswers(sdilNumber, Json.obj(), submitted = true)
 
   def ownBrandPageAnswers = emptyUserAnswers
     .set(OwnBrandsPage, true)
@@ -132,6 +133,20 @@ trait ITCoreTestData extends TryValues {
     .set(ClaimCreditsForExportsPage, false).success.value
 
   def checkYourAnswersFullAnswers = emptyUserAnswers
+    .set(OwnBrandsPage, true).success.value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
+    .set(PackagedContractPackerPage, true).success.value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, true).success.value
+    .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
+    .set(ClaimCreditsForLostDamagedPage, true).success.value
+    .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+
+  def returnSentAnswersFullAnswers = submittedAnswers
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value

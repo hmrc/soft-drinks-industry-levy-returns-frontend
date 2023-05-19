@@ -74,7 +74,9 @@ class ReturnSentController @Inject()(
                 CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
                 financialStatus = financialStatus(amounts.total)
               )(implicitly, implicitly, config))
-            }else Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
+            }else {
+              Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
+            }
           case _ => Logger("Session Cache returned a None")
             Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
         }

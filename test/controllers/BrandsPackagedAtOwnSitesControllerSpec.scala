@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.BrandsPackagedAtOwnSitesFormProvider
-import models.{NormalMode, LitresInBands, UserAnswers}
+import models.{LitresInBands, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -60,6 +60,33 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
   )
 
   "BrandsPackagedAtOwnSites Controller" - {
+
+    "must redirect to returns sent page if return is already submitted" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, brandsPackagedAtOwnSitesRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
+
+    "must redirect to returns sent page if return is already submitted when hitting the submit" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, brandsPackagedAtOwnSitesRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
 

@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.AskSecondaryWarehouseInReturnFormProvider
 
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,6 +39,7 @@ class AskSecondaryWarehouseInReturnController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: AskSecondaryWarehouseInReturnFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: AskSecondaryWarehouseInReturnView,
@@ -47,26 +48,25 @@ class AskSecondaryWarehouseInReturnController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(AskSecondaryWarehouseInReturnPage)) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+    }
+    Ok(view(preparedForm, mode))
 
-      Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(answers.set(AskSecondaryWarehouseInReturnPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value))
             onwardUrl              <- if(value){
             sessionRepository.set(updatedAnswers).flatMap(_ =>
               addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))

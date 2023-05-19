@@ -39,6 +39,7 @@ class RemoveSmallProducerConfirmController @Inject()(
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
+                                                     checkReturnSubmission: CheckingSubmissionAction,
                                                      formProvider: RemoveSmallProducerConfirmFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      view: RemoveSmallProducerConfirmView
@@ -46,8 +47,9 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
+
       val preparedForm = request.userAnswers.get(RemoveSmallProducerConfirmPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -62,9 +64,10 @@ class RemoveSmallProducerConfirmController @Inject()(
         val smallProducerName = smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
         Ok(view(preparedForm, mode, sdil, smallProducerName))
       }
+
   }
 
-  def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
       form.bindFromRequest().fold(

@@ -38,6 +38,7 @@ class PackAtBusinessAddressController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: PackAtBusinessAddressFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: PackAtBusinessAddressView
@@ -45,18 +46,19 @@ class PackAtBusinessAddressController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
+
       val businessName = request.subscription.orgName
-      val businessAddress = request.subscription.address
-      lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+          val businessAddress = request.subscription.address
+          lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
       Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address

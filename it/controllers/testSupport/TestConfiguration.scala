@@ -1,7 +1,7 @@
 package controllers.testSupport
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllRequests, resetAllScenarios}
+import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
 import models.UserAnswers
@@ -13,7 +13,7 @@ import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
-import repositories.{SDILSessionCacheRepository, SessionRepository}
+import repositories.{CacheMap, SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import services.AddressLookupService
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
@@ -60,6 +60,7 @@ trait TestConfiguration
 
   lazy val mongo: SessionRepository = app.injector.instanceOf[SessionRepository]
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
+  lazy val sdilSessionCache: SDILSessionCache = app.injector.instanceOf[SDILSessionCache]
   def setAnswers(userAnswers: UserAnswers)(implicit timeout: Duration): Unit  = Await.result(mongo.set(userAnswers), timeout)
   def getAnswers(id: String)(implicit timeout: Duration): Option[UserAnswers] = Await.result(mongo.get(id), timeout)
 
