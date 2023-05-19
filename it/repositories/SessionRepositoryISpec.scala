@@ -51,7 +51,7 @@ class SessionRepositoryISpec
       val timeBeforeTest = Instant.now()
       val setResult     = await(repository.set(userAnswersBefore))
       val updatedRecord = await(repository.get(userAnswersBefore.id)).get
-      val timeAfterTest = Instant.now()
+      lazy val timeAfterTest = Instant.now()
 
       setResult mustEqual true
       assert(updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
@@ -109,7 +109,7 @@ class SessionRepositoryISpec
 
         val timeBeforeTest = Instant.now()
         val updatedRecord = await(repository.get(userAnswersBefore.id)).get
-        val timeAfterTest = Instant.now()
+        lazy val timeAfterTest = Instant.now()
 
         assert(updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
         assert(updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeAfterTest)
@@ -160,7 +160,7 @@ class SessionRepositoryISpec
         await(repository.set(userAnswersBefore))
         val timeBeforeTest = Instant.now()
         val result = await(repository.keepAlive(userAnswersBefore.id))
-        val timeAfterTest = Instant.now()
+        lazy val timeAfterTest = Instant.now()
         result mustEqual true
         val updatedRecord = await(repository.collection.find(BsonDocument()).headOption()).get
 
