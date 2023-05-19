@@ -54,10 +54,8 @@ class SessionRepositoryISpec
       val timeAfterTest = Instant.now()
 
       setResult mustEqual true
-      assert(
-        (updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
-        && updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeBeforeTest
-      )
+      assert(updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
+      assert(updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeAfterTest)
       updatedRecord.id mustBe userAnswersBefore.id
       updatedRecord.submitted mustBe userAnswersBefore.submitted
       updatedRecord.data mustBe userAnswersBefore.data
@@ -112,10 +110,10 @@ class SessionRepositoryISpec
         val timeBeforeTest = Instant.now()
         val updatedRecord = await(repository.get(userAnswersBefore.id)).get
         val timeAfterTest = Instant.now()
-        assert(
-          (updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
-            && updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeBeforeTest
-        )
+
+        assert(updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
+        assert(updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeAfterTest)
+
         updatedRecord.id mustBe userAnswersBefore.id
         updatedRecord.submitted mustBe userAnswersBefore.submitted
         updatedRecord.data mustBe userAnswersBefore.data
@@ -166,10 +164,9 @@ class SessionRepositoryISpec
         result mustEqual true
         val updatedRecord = await(repository.collection.find(BsonDocument()).headOption()).get
 
-        assert(
-          (updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
-            && updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeBeforeTest
-        )
+        assert(updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
+        assert(updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeAfterTest)
+
         updatedRecord.id mustBe userAnswersBefore.id
         updatedRecord.submitted mustBe userAnswersBefore.submitted
         updatedRecord.data mustBe userAnswersBefore.data
