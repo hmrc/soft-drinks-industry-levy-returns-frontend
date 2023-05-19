@@ -1,43 +1,36 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import models.Amounts
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import org.scalatest.TryValues
+import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
+import repositories.{CacheMap, SDILSessionCache, SDILSessionKeys}
+import utilitlies.CacheHelper
+
+import scala.concurrent.Future
+
 
 class ReturnSentControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
 
   "ReturnSentController" should {
 
-    "setup amounts" in {
-
-      setAnswers(checkYourAnswersFullAnswers)
-
-      given.commonPrecondition
-      given.sdilBackend.balance("XKSDIL000000022", false)
-
-      WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/check-your-answers")
-          .withFollowRedirects(false)
-          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-          .get()
-
-        whenReady(result1) { res =>
-          res.status mustBe 200
-        }
-      }
-    }
-
     "Show the user their submitted information after successfully submitting their return" in {
       setAnswers(checkYourAnswersFullAnswers.copy(submitted = true))
-      given
-        .commonPrecondition
+      given.commonPrecondition
+      val mockSessionCache = mock[SDILSessionCache]
 
       WsTestClient.withClient { client =>
+        sdilSessionCacheRepo.upsert(CacheMap("XKSDIL000000022",Map("AMOUNTS"-> Json.toJson(Amounts(1000, 100, 1100)))))
         val result1 = client.url(s"$baseUrl/return-sent")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
+
 
         whenReady(result1) { res =>
           res.status mustBe 200
