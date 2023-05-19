@@ -54,8 +54,9 @@ class SessionRepositoryISpec
       lazy val timeAfterTest = Instant.now()
 
       setResult mustEqual true
-      assert(updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
-      assert(updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeAfterTest)
+      assert(updatedRecord.lastUpdated.toEpochMilli > timeBeforeTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeBeforeTest.toEpochMilli)
+      assert(updatedRecord.lastUpdated.toEpochMilli < timeAfterTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeAfterTest.toEpochMilli)
+
       updatedRecord.id mustBe userAnswersBefore.id
       updatedRecord.submitted mustBe userAnswersBefore.submitted
       updatedRecord.data mustBe userAnswersBefore.data
@@ -111,8 +112,8 @@ class SessionRepositoryISpec
         val updatedRecord = await(repository.get(userAnswersBefore.id)).get
         lazy val timeAfterTest = Instant.now()
 
-        assert(updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
-        assert(updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeAfterTest)
+        assert(updatedRecord.lastUpdated.toEpochMilli > timeBeforeTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeBeforeTest.toEpochMilli)
+        assert(updatedRecord.lastUpdated.toEpochMilli < timeAfterTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeAfterTest.toEpochMilli)
 
         updatedRecord.id mustBe userAnswersBefore.id
         updatedRecord.submitted mustBe userAnswersBefore.submitted
@@ -164,8 +165,8 @@ class SessionRepositoryISpec
         result mustEqual true
         val updatedRecord = await(repository.collection.find(BsonDocument()).headOption()).get
 
-        assert(updatedRecord.lastUpdated.isAfter(timeBeforeTest) || updatedRecord.lastUpdated == timeBeforeTest)
-        assert(updatedRecord.lastUpdated.isBefore(timeAfterTest) || updatedRecord.lastUpdated == timeAfterTest)
+        assert(updatedRecord.lastUpdated.toEpochMilli > timeBeforeTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeBeforeTest.toEpochMilli)
+        assert(updatedRecord.lastUpdated.toEpochMilli < timeAfterTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeAfterTest.toEpochMilli)
 
         updatedRecord.id mustBe userAnswersBefore.id
         updatedRecord.submitted mustBe userAnswersBefore.submitted
