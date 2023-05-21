@@ -18,13 +18,31 @@ package models
 
 import models.backend.Site
 import play.api.libs.json._
+import repositories.DatedCacheMap
 import services.Encryption
 import uk.gov.hmrc.crypto.EncryptedValue
 
 import java.time.Instant
 
 object ModelEncryption {
-  def encrypt(userAnswers: UserAnswers)(implicit encryption: Encryption):
+  def encryptDatedCacheMap(datedCacheMap: DatedCacheMap)(implicit encryption: Encryption): (String, Map[String, EncryptedValue], Instant) = {
+    (
+      datedCacheMap.id,
+      datedCacheMap.data.map(item => item._1 -> encryption.crypto.encrypt(item._2.toString(), datedCacheMap.id)),
+      datedCacheMap.lastUpdated
+    )
+  }
+  def decryptDatedCacheMap(id: String,
+                           data: Map[String, EncryptedValue],
+                           lastUpdated: Instant)(implicit encryption: Encryption): DatedCacheMap = {
+    DatedCacheMap(
+      id = id,
+      data = data.map(item => item._1 -> Json.parse(encryption.crypto.decrypt(item._2, id))),
+      lastUpdated = lastUpdated
+    )
+  }
+
+  def encryptUserAnswers(userAnswers: UserAnswers)(implicit encryption: Encryption):
   (String, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Instant) = {
     ( userAnswers.id,
       encryption.crypto.encrypt(userAnswers.data.toString(), userAnswers.id),
@@ -35,13 +53,13 @@ object ModelEncryption {
     )
   }
 
-  def decrypt(id: String,
-               data: EncryptedValue,
-               smallProducerList: EncryptedValue,
-               packagingSiteList: Map[String, EncryptedValue],
-               warehouseList: Map[String, EncryptedValue],
-               submitted: Boolean,
-               lastUpdated: Instant)(implicit encryption: Encryption): UserAnswers = {
+  def decryptUserAnswers(id: String,
+                         data: EncryptedValue,
+                         smallProducerList: EncryptedValue,
+                         packagingSiteList: Map[String, EncryptedValue],
+                         warehouseList: Map[String, EncryptedValue],
+                         submitted: Boolean,
+                         lastUpdated: Instant)(implicit encryption: Encryption): UserAnswers = {
     UserAnswers(
       id = id,
       data = Json.parse(encryption.crypto.decrypt(data, id)).as[JsObject],

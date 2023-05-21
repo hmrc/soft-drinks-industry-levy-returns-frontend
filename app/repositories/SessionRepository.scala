@@ -20,11 +20,9 @@ import config.FrontendAppConfig
 import models.UserAnswers
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
-import play.api.libs.json.Format
 import services.Encryption
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
@@ -51,7 +49,6 @@ class SessionRepository @Inject()(
     )
   ) {
 
-  implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
   private def byId(id: String): Bson = Filters.equal("_id", id)
 
