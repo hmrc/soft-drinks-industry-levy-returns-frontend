@@ -17,8 +17,12 @@
 package models
 
 import models.backend.Site
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import queries.{Gettable, Settable}
+import services.Encryption
+import uk.gov.hmrc.crypto.EncryptedValue
+import uk.gov.hmrc.crypto.json.CryptoFormats
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
@@ -87,35 +91,39 @@ final case class UserAnswers(
 
 object UserAnswers {
 
-  val reads: Reads[UserAnswers] = {
+  object MongoFormats {
+  implicit val cryptEncryptedValueFormats: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
 
-    import play.api.libs.functional.syntax._
-
+  def reads()(implicit encryption: Encryption): Reads[UserAnswers] = {
     (
       (__ \ "_id").read[String] and
-        (__ \ "data").read[JsObject] and
-        (__ \ "smallProducerList").read[List[SmallProducer]] and
-        (__ \ "packagingSiteList").read[Map[String, Site]] and
-        (__ \ "warehouseList").read[Map[String, Warehouse]] and
+        (__ \ "data").read[EncryptedValue] and
+        (__ \ "smallProducerList").read[EncryptedValue] and
+        (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
+        (__ \ "warehouseList").read[Map[String, EncryptedValue]] and
         (__ \ "submitted").read[Boolean] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-      ) (UserAnswers.apply _)
+      )(ModelEncryption.decrypt _)
   }
 
-  val writes: OWrites[UserAnswers] = {
-
-    import play.api.libs.functional.syntax._
-
-    (
-      (__ \ "_id").write[String] and
-        (__ \ "data").write[JsObject] and
-        (__ \ "smallProducerList").write[List[SmallProducer]] and
-        (__ \ "packagingSiteList").write[Map[String, Site]] and
-        (__ \ "warehouseList").write[Map[String, Warehouse]] and
-        (__ \ "submitted").write[Boolean] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-      ) (unlift(UserAnswers.unapply))
+  def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
+    override def writes(userAnswers: UserAnswers): JsObject = {
+      val encryptedValue: (String, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Instant) = {
+        ModelEncryption.encrypt(userAnswers)
+      }
+      Json.obj(
+        "id" -> encryptedValue._1,
+        "data" -> encryptedValue._2,
+        "smallProducerList" -> encryptedValue._3,
+        "packagingSiteList" -> encryptedValue._4,
+        "warehouseList" -> encryptedValue._5,
+        "submitted" -> encryptedValue._6,
+        "lastUpdated" -> encryptedValue._7
+      )
+    }
   }
 
-  implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)
+   def format(implicit encryption: Encryption): OFormat[UserAnswers] = OFormat(reads, writes)
+}
+
 }
