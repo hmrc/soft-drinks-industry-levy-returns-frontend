@@ -21,10 +21,11 @@ import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes, ReplaceOptions}
+import services.Encryption
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import java.time.{LocalDateTime, ZoneId}
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,11 +33,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SDILSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
                                            appConfig: FrontendAppConfig
-                                         )(implicit ec: ExecutionContext) extends
+                                         )(implicit ec: ExecutionContext, encryption: Encryption) extends
     PlayMongoRepository[DatedCacheMap](
       mongoComponent = mongoComponent,
       collectionName = "sdil-session-cache",
-      domainFormat = DatedCacheMap.formats,
+      domainFormat = DatedCacheMap.MongoFormats.formats,
       indexes = Seq(
         IndexModel(
           ascending("lastUpdated"),
@@ -86,7 +87,7 @@ class SDILSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
     collection
       .updateOne(
         equal("id", id),
-        set("lastUpdated", LocalDateTime.now(ZoneId.of("UTC")))
+        set("lastUpdated", Instant.now())
       )
       .toFuture()
       .map { result =>

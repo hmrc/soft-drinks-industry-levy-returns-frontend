@@ -42,6 +42,7 @@ class RemovePackagingDetailsConfirmationController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: RemovePackagingDetailsConfirmationFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: RemovePackagingDetailsConfirmationView
@@ -55,8 +56,9 @@ class RemovePackagingDetailsConfirmationController @Inject()(
       .map(packagingSite => AddressFormattingHelper.addressFormatting(packagingSite.address, packagingSite.tradingName))
   }
 
-  def onPageLoad(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
+
       getPackagingSiteAddressBaseOnRef(ref, request.userAnswers) match {
         case None =>
           genericLogger.logger.warn(s"user has potentially hit page and ref does not exist for packaging site" +
@@ -66,7 +68,8 @@ class RemovePackagingDetailsConfirmationController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+
+  def onSubmit(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       def removePackagingDetailsFromUserAnswers(userSelection: Boolean, userAnswers: UserAnswers, refOfSite: String): UserAnswers = {
         if (userSelection) {

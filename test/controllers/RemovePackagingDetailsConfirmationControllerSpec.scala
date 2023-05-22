@@ -107,6 +107,36 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
         }
       }
     }
+
+    "must redirect to returns sent page if return is already submitted" in {
+      val ref: String = "foo"
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(ref).url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
+
+    "must redirect to returns sent page if return is already submitted when hitting the submit" in {
+      val ref: String = "foo"
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onPageLoad(ref).url)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
+
     "must redirect to the main Packaging Details list page if user navigates to page without ref in user answers" in {
       val ref: String = "foo"
       val userAnswers = UserAnswers(sdilNumber, packagingSiteList = Map.empty)

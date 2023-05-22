@@ -13,11 +13,10 @@ import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
-import repositories.{SDILSessionCacheRepository, SessionRepository}
+import repositories.{CacheMap, SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import services.AddressLookupService
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
-import uk.gov.hmrc.play.health.HealthController
 
 import java.time.{Clock, ZoneOffset}
 import scala.concurrent.Await
@@ -61,11 +60,13 @@ trait TestConfiguration
 
   lazy val mongo: SessionRepository = app.injector.instanceOf[SessionRepository]
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
+  lazy val sdilSessionCache: SDILSessionCache = app.injector.instanceOf[SDILSessionCache]
   def setAnswers(userAnswers: UserAnswers)(implicit timeout: Duration): Unit  = Await.result(mongo.set(userAnswers), timeout)
   def getAnswers(id: String)(implicit timeout: Duration): Option[UserAnswers] = Await.result(mongo.get(id), timeout)
 
   val authCookie: String = createSessionCookieAsString(authData).substring(5)
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)
+
   abstract override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(
       timeout = Span(4, Seconds),
@@ -84,7 +85,8 @@ trait TestConfiguration
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "json.encryption.key" -> "fqpLDZ4sumDsekHkeEBlCA==",
     "json.encryption.previousKeys" -> "[]",
-    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes"
+    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
+    "addressLookupFrontendTest.enabled" -> "false"
   )
 
   override implicit lazy val app: Application = appBuilder().build()
@@ -103,7 +105,6 @@ trait TestConfiguration
       )
   }
 
-  app.injector.instanceOf[HealthController]
   val service = app.injector.instanceOf[AddressLookupService]
 
   val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))

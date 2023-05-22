@@ -41,6 +41,7 @@ class PackagingSiteDetailsController @Inject()(
                                                 identify: IdentifierAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
+                                                checkReturnSubmission: CheckingSubmissionAction,
                                                 formProvider: PackagingSiteDetailsFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 view: PackagingSiteDetailsView
@@ -48,20 +49,21 @@ class PackagingSiteDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
-      val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
+          val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
 
-      Ok(view(preparedForm, mode, siteList))
+          Ok(view(preparedForm, mode, siteList))
+
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
 

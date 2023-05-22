@@ -18,14 +18,24 @@ package controllers
 
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
+
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
+
+import models.{Mode, NormalMode}
+import models.backend.Site
+
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+
 import utilitlies.GenericLogger
+
+import services.{AddressLookupService, PackingDetails}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+
 import views.html.PackAtBusinessAddressView
 
 import javax.inject.Inject
@@ -41,6 +51,8 @@ class PackAtBusinessAddressController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         addressLookupService: AddressLookupService,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: PackAtBusinessAddressFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: PackAtBusinessAddressView
@@ -48,18 +60,19 @@ class PackAtBusinessAddressController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
+
       val businessName = request.subscription.orgName
-      val businessAddress = request.subscription.address
-      lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+          val businessAddress = request.subscription.address
+          lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
       Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address
@@ -68,12 +81,35 @@ class PackAtBusinessAddressController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
 
-        value => {
-          val updatedUserAnswers = request.userAnswers.set(
-            PackAtBusinessAddressPage, value)
 
-          updateDatabaseAndRedirect(updatedUserAnswers, PackAtBusinessAddressPage, mode)
-        }
+//        value => {
+//          val updatedUserAnswers = request.userAnswers.set(
+//            PackAtBusinessAddressPage, value)
+//
+//          updateDatabaseAndRedirect(updatedUserAnswers, PackAtBusinessAddressPage, mode)
+//        }
+
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
+            onwardUrl              <- if(value){
+              sessionRepository.set(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
+                Site(
+                  address = businessAddress,
+                  ref = None,
+                  tradingName = Some(businessName),
+                  closureDate = None
+                )
+              ))).flatMap(_ =>
+                Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
+            } else {
+              sessionRepository.set(updatedAnswers).flatMap(_ =>
+                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+            }
+          } yield {
+            Redirect(onwardUrl)
+          }
+
       )
   }
 }

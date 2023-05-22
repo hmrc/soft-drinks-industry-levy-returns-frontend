@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package repositories
+package models.backend
 
-import play.api.libs.json.{JsValue, Json, OFormat}
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+import play.api.libs.json.{Format, Json}
 
-import java.time.Instant
 
-case class DatedCacheMap(
-                          id: String,
-                          data: Map[String, JsValue],
-                          lastUpdated: Instant = Instant.now()
-                        )
+case class UkAddress(lines: List[String],
+                     postCode: String,
+                     alfId: Option[String] = None)
 
-object DatedCacheMap extends MongoJavatimeFormats {
-
-  implicit val formats: OFormat[DatedCacheMap]   = Json.format[DatedCacheMap]
-
-  def apply(cacheMap: CacheMap): DatedCacheMap = DatedCacheMap(cacheMap.id, cacheMap.data)
+object UkAddress {
+  implicit val ukAddressFormat: Format[UkAddress] = Json.format[UkAddress]
 }
-
-

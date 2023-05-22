@@ -34,7 +34,6 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Option[SdilReturn] => Option[RetrievedSubscription] => Option[Boolean] => Call = {
     case PackagingSiteDetailsPage => userAnswers => sdilReturnOpt => subscriptionOpt => _ => packagingSiteDetailsPageNavigation(userAnswers, sdilReturnOpt, subscriptionOpt)
     case ReturnChangeRegistrationPage => _ => sdilReturnOpt => subscriptionOpt => _ => returnChangeRegistrationPageNavigation(sdilReturnOpt, subscriptionOpt)
-    case SecondaryWarehouseDetailsPage => userAnswers => _ => _ => _ => secondaryWarehouseDetailsPageNavigation(userAnswers)
     case RemoveWarehouseConfirmPage => userAnswers => _ => _ => _ => removeWarehouseConfirmPageNavigation (userAnswers)
     case RemovePackagingDetailsConfirmationPage => _ => _ => _ => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
@@ -55,7 +54,7 @@ class Navigator @Inject()() {
     case BrandsPackagedAtOwnSitesPage => _ => _ => _ => _ => routes.PackagedContractPackerController.onPageLoad(NormalMode)
     case PackagedContractPackerPage => userAnswers => _ => _ => _ => packagedContractPackerPageNavigation(userAnswers)
     case OwnBrandsPage => userAnswers => _ => _ => _ => ownBrandPageNavigation(userAnswers)
-    case _ => _ => _ => _ => _ => routes.IndexController.onPageLoad
+    case _ => _ => _ => _ => _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
@@ -274,14 +273,6 @@ class Navigator @Inject()() {
   private def checkSmallProducerDetailsPageNavigation(userAnswers: UserAnswers) = {
     if (userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
       routes.AddASmallProducerController.onPageLoad(CheckMode)
-    } else {
-      routes.CheckYourAnswersController.onPageLoad()
-    }
-  }
-
-  private def secondaryWarehouseDetailsPageNavigation(userAnswers: UserAnswers) = {
-    if (userAnswers.get(page = SecondaryWarehouseDetailsPage).contains(true)) {
-      routes.IndexController.onPageLoad()
     } else {
       routes.CheckYourAnswersController.onPageLoad()
     }

@@ -44,6 +44,8 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
 
     "Post the new form data and navigate to small producer details page " in {
 
+      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = "Super Cola Ltd" , sdilRef = "XZSDIL000000234", litreage = (1000L,1000L))))
+
       given
         .commonPrecondition
 
@@ -57,11 +59,12 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
             .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> "1000", "highBand" -> "10000"))
+            .post(Json.obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> "1000", "highBand" -> "1000"))
 
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/small-producer-details")
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe expectedResult
         }
 
       }
@@ -80,13 +83,13 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
       given
         .commonPrecondition
 
-      WsTestClient.withClient { client ⇒
+      WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
 
-        whenReady(result1) { res ⇒
+        whenReady(result1) { res =>
           res.status mustBe 200
         }
 

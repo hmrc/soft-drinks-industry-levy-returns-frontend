@@ -17,6 +17,7 @@ trait ITCoreTestData extends TryValues {
 
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+  def submittedAnswers = UserAnswers(sdilNumber, Json.obj(), submitted = true)
 
   def failedUserAnswers = Failure(new Exception(""))
 
@@ -95,6 +96,8 @@ trait ITCoreTestData extends TryValues {
   def smallProducerDetaisPartialAnswers = addASmallProducerFullAnswers.success.value
     .set(AddASmallProducerPage, AddASmallProducer(producerName, refNumber, lowBand, highBand))
 
+  def smallProducerDetaisNoProducerAnswers = addASmallProducerPartialAnswers.success.value
+
   def smallProducerDetaisFullAnswers = addASmallProducerPartialAnswers.success.value
     .set(SmallProducerDetailsPage, true)
 
@@ -149,5 +152,19 @@ trait ITCoreTestData extends TryValues {
 def claimCreditsForLostDamagedPageWithLitresFullAnswers = newPackerPartialAnswers
   .set(ClaimCreditsForExportsPage, true).success.value
   .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+
+  def returnSentAnswersFullAnswers = submittedAnswers
+    .set(OwnBrandsPage, true).success.value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
+    .set(PackagedContractPackerPage, true).success.value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, true).success.value
+    .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
+    .set(ClaimCreditsForLostDamagedPage, true).success.value
+    .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
 
 }

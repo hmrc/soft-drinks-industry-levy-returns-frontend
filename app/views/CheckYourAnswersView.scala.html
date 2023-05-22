@@ -55,7 +55,7 @@
     <h2 class="govuk-heading-m" id="sendYourReturn">@messages("sendYourReturn")</h2>
     <p class="govuk-body govuk-!-margin-bottom-5" id="sendYourReturnConfirmation">@messages("sendYourReturnConfirmation")</p>
 
-    @formHelper(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
         @govukButton(ButtonViewModel(messages("confirmDetailsAndSendReturn")))
     }
     <p class = "govuk-body-m" id="printPage">

@@ -21,13 +21,14 @@ import utilitlies.AddressHelper
 
 class AddressHelperSpec extends SpecBase with AddressHelper {
 
-    "Address Helper" - {
-      "generate a unique id" in {
+  "Address Helper" - {
+    "generate a unique id" in {
 
-        val result:Map[String,String] = Map((generateId , "testAddress"), (generateId , "testAddress"), (generateId , "testAddress") , (generateId,"testAddress"))
+      val result:List[String] = List(generateId , generateId)
 
-        result.size mustBe 4
-        result.head._1.length mustBe 36
-      }
+      result.size mustBe 2
+      result.foreach(eachUUID => eachUUID.length mustBe 36)
+      result.distinct.size mustBe 2
     }
+  }
 }

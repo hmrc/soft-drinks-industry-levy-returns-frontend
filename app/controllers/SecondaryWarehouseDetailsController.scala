@@ -20,11 +20,11 @@ import controllers.actions._
 import forms.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.Mode
-import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{AddressLookupService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilitlies.GenericLogger
 import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
@@ -40,17 +40,14 @@ class SecondaryWarehouseDetailsController @Inject()(
                                          val navigator: Navigator,
                                          val errorHandler: ErrorHandler,
                                          val genericLogger: GenericLogger,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: SecondaryWarehouseDetailsFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
+                                         checkReturnSubmission: CheckingSubmissionAction,
+                                         addressLookupService: AddressLookupService,
                                          view: SecondaryWarehouseDetailsView
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
@@ -62,10 +59,11 @@ class SecondaryWarehouseDetailsController @Inject()(
         rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
       )
 
-      Ok(view(preparedForm, mode, siteList))
+    Ok(view(preparedForm, mode, siteList))
+
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val siteList: SummaryList = SummaryListViewModel(
         rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
@@ -74,12 +72,24 @@ class SecondaryWarehouseDetailsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
-        value => {
-          val updatedUserAnswers = request.userAnswers.set(
-            SecondaryWarehouseDetailsPage, value)
+//        value => {
+//          val updatedUserAnswers = request.userAnswers.set(
+//            SecondaryWarehouseDetailsPage, value)
+//
+//          updateDatabaseAndRedirect(updatedUserAnswers, SecondaryWarehouseDetailsPage, mode)
+//        }
 
-          updateDatabaseAndRedirect(updatedUserAnswers, SecondaryWarehouseDetailsPage, mode)
-        }
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
+            onwardUrl              <- if(value){
+              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)
+            } else {
+              Future.successful(routes.CheckYourAnswersController.onPageLoad().url)
+            }
+          } yield Redirect(onwardUrl)
+
       )
   }
 }

@@ -2,8 +2,12 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
+<<<<<<< HEAD
 import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
 import play.api.libs.json.Json
+=======
+import play.api.libs.json.{JsObject, Json}
+>>>>>>> origin/main
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -32,10 +36,20 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
 
     "Post the brought into UK " when {
 
+      val expectedResult:Some[JsObject] = Some(
+        Json.obj(
+          "ownBrands" -> true,
+          "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+          "packagedContractPacker" -> true,
+          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+          "exemptionsForSmallProducers" -> false,
+          "broughtIntoUK" ->  false,
+          "broughtIntoUkFromSmallProducers" -> false,
+          "claimCreditsForExports"->true
+        ))
+
       "user selected yes " in {
 
-        val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
-        setAnswers(userAnswers)
         given
           .commonPrecondition
 
@@ -52,17 +66,28 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-credits-for-exports")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
 
         }
       }
 
       "user selected no " in {
+
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands" -> true,
+            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+            "packagedContractPacker" -> true,
+            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> false,
+            "broughtIntoUK" ->  false,
+            "broughtIntoUkFromSmallProducers" -> false,
+            "claimCreditsForExports"->false
+          ))
+
         given
           .commonPrecondition
-
-        val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
-        setAnswers(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -77,6 +102,7 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/claim-credits-for-lost-damaged")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
 
         }

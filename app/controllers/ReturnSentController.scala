@@ -72,6 +72,7 @@ class ReturnSentController @Inject()(
                 CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
                 financialStatus = financialStatus(amounts.total)
               )(implicitly, implicitly, config))
+
             } else {
               Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
             }

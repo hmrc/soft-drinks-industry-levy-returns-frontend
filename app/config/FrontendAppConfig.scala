@@ -41,7 +41,6 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val sdilFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")
   val sdilBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy")
 
-
   val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
   val loginContinueUrl: String = s"$sdilFrontendBaseUrl/soft-drinks-industry-levy"
   val signOutUrl: String       = s"$basGatewayBaseUrl/bas-gateway/sign-out-without-state"
@@ -56,7 +55,10 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
 
   val lowerBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitre"))
   val higherBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))
+
   val balanceAllEnabled: Boolean = servicesConfig.getBoolean("balanceAll.enabled")
+  val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
+
   val softDrinksIndustryLevyFrontendLink :String  = s"${servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
   val addressLookupService: String  = servicesConfig.baseUrl("address-lookup-frontend")
 
@@ -70,6 +72,20 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     val alphaPhase: Boolean = addressLookupInitConfig.getBoolean("alphaPhase")
     val version: Int = addressLookupInitConfig.getInt("version")
     val selectPageConfigProposalLimit: Int = addressLookupInitConfig.getInt("select-page-config.proposalListLimit")
+
+    object WarehouseDetails {
+
+      def offRampUrl(sdilId: String): String = {
+        s"$host${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+      }
+    }
+
+    object PackingDetails {
+      def offRampUrl(sdilId: String): String = {
+        s"$host${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+      }
+    }
+
   }
 
 }

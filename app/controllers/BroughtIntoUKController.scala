@@ -40,6 +40,7 @@ class BroughtIntoUKController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        checkReturnSubmission: CheckingSubmissionAction,
                                         formProvider: BroughtIntoUKFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: BroughtIntoUKView
@@ -47,18 +48,19 @@ class BroughtIntoUKController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
+
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
 
       form.bindFromRequest().fold(

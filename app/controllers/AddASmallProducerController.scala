@@ -46,25 +46,28 @@ class AddASmallProducerController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
+                                      checkReturnSubmission: CheckingSubmissionAction,
                                       formProvider: AddASmallProducerFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: AddASmallProducerView
                                      )(implicit ec: ExecutionContext) extends ControllerHelper {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request: DataRequest[AnyContent] =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
+    implicit request =>
+
       val userAnswers = request.userAnswers
+
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
       mode match {
         case BlankMode =>
           Ok(view(form, NormalMode))
         case _ =>
           Ok(view(form, mode))
-      }
+    }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val userAnswers = request.userAnswers
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
@@ -173,13 +176,13 @@ class AddASmallProducerController @Inject()(
                              smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])
                             (implicit hc: HeaderCarrier): Future[Either[SDILReferenceErrors, Unit]] = {
     if (currentSDILRef == addASmallProducerSDILRef) {
-      Future.successful(Right())
+      Future.successful(Right(()))
     } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
       Future.successful(Left(AlreadyExists))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
         case Some(false) => Left(NotASmallProducer)
-        case _ => Right()
+        case _ => Right(())
       }
     }
   }

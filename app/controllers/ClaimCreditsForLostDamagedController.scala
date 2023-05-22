@@ -32,6 +32,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ClaimCreditsForLostDamagedController @Inject()(
+<<<<<<< HEAD
                                                       override val messagesApi: MessagesApi,
                                                       val sessionRepository: SessionRepository,
                                                       val navigator: Navigator,
@@ -40,25 +41,23 @@ class ClaimCreditsForLostDamagedController @Inject()(
                                                       identify: IdentifierAction,
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction,
+                                                      checkReturnSubmission: CheckingSubmissionAction,
                                                       formProvider: ClaimCreditsForLostDamagedFormProvider,
                                                       val controllerComponents: MessagesControllerComponents,
                                                       view: ClaimCreditsForLostDamagedView
                                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
-
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ClaimCreditsForLostDamagedPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
 
       form.bindFromRequest().fold(

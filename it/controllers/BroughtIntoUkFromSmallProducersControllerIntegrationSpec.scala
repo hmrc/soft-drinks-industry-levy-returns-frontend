@@ -2,7 +2,7 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -30,11 +30,18 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
     }
 
     "Post the brought into UK " when {
-
       "user selected yes " in {
 
-        val userAnswers = broughtIntoUkFullAnswers.success.value
-        setAnswers(userAnswers)
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj("ownBrands" -> true,
+            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+            "packagedContractPacker" -> true,
+            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> false,
+            "broughtIntoUK" ->  true,
+            "broughtIntoUkFromSmallProducers" -> true
+          ))
+
         given
           .commonPrecondition
 
@@ -51,17 +58,28 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-into-uk-small-producers")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustEqual expectedResult
           }
 
         }
       }
 
       "user selected no " in {
+
+        val expectedResult:Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands" -> true,
+            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+            "packagedContractPacker" -> true,
+            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> false,
+            "broughtIntoUK" ->  true,
+            "broughtIntoUkFromSmallProducers" -> false
+          ))
+
         given
           .commonPrecondition
 
-        val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
-        setAnswers(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -76,6 +94,7 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/claim-credits-for-exports")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustEqual expectedResult
           }
 
         }

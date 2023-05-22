@@ -25,6 +25,7 @@ import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{AddressLookupService, WarehouseDetails}
 import utilitlies.GenericLogger
 import views.html.AskSecondaryWarehouseInReturnView
 
@@ -40,34 +41,55 @@ class AskSecondaryWarehouseInReturnController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: AskSecondaryWarehouseInReturnFormProvider,
+                                         addressLookupService: AddressLookupService,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: AskSecondaryWarehouseInReturnView
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
+
+
+
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(AskSecondaryWarehouseInReturnPage)) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+    }
+    Ok(view(preparedForm, mode))
 
-      Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
+
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value => {
-          val updatedUserAnswers = request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value)
-          updateDatabaseAndRedirect(updatedUserAnswers, AskSecondaryWarehouseInReturnPage, mode)
-        }
+//        value => {
+//          val updatedUserAnswers = request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value)
+//          updateDatabaseAndRedirect(updatedUserAnswers, AskSecondaryWarehouseInReturnPage, mode)
+//        }
+
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value))
+            onwardUrl              <- if(value){
+            sessionRepository.set(updatedAnswers).flatMap(_ =>
+              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
+            } else {
+              sessionRepository.set(updatedAnswers.copy(warehouseList = Map.empty)).flatMap(_ =>
+                Future.successful(routes.CheckYourAnswersController.onPageLoad().url))
+            }
+          } yield {
+            Redirect(onwardUrl)
+          }
       )
   }
 }

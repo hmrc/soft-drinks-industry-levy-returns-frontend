@@ -20,13 +20,13 @@ import cats.implicits.catsSyntaxApplicativeId
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckingSubmissionAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
 import models.{Amounts, UserAnswers}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import repositories.SDILSessionCache
+import repositories.{SDILSessionCache, SessionRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.ReturnsHelper.{extractReturnPeriod, extractTotal, listItemsWithTotal}
@@ -37,10 +37,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
+                                            sessionRepository: SessionRepository,
                                             config: FrontendAppConfig,
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
+                                            checkReturnSubmission: CheckingSubmissionAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             checkYourAnswersView: CheckYourAnswersView,
                                             sdilConnector: SoftDrinksIndustryLevyConnector,
@@ -52,12 +54,13 @@ class CheckYourAnswersController @Inject()(
   val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
   val logger: Logger = Logger(this.getClass())
 
-  def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
      Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
   }
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request => constructPage(request)
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
+    implicit request =>
+       constructPage(request)
   }
 
   def noActivityToReport: Action[AnyContent] = (identify andThen getData andThen requireData).async {

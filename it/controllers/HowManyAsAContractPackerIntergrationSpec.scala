@@ -2,7 +2,7 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -31,6 +31,14 @@ class HowManyAsAContractPackerIntergrationSpec extends Specifications with TestC
 
     "Post the Own brand packaged at own sites " in {
 
+      val expectedResult:Some[JsObject] = Some(
+        Json.obj(
+          "ownBrands" -> true,
+          "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+          "packagedContractPacker" -> true,
+          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+        ))
+
       given
         .commonPrecondition
 
@@ -44,12 +52,13 @@ class HowManyAsAContractPackerIntergrationSpec extends Specifications with TestC
             .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj("lowBand" -> "1000", "highBand" -> "10000"))
+            .post(Json.obj("lowBand" -> "1000", "highBand" -> "1000"))
 
 
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers")
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
         }
 
       }

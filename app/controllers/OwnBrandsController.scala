@@ -54,7 +54,10 @@ class OwnBrandsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+        request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment)).submitted match {
+        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case false => Ok(view(preparedForm, mode))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {

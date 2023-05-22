@@ -3,7 +3,7 @@ package controllers
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.UserAnswers
 import org.scalatest.TryValues
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -33,6 +33,15 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
 
     "Post the brought into UK " when {
 
+      val expectedResult:Some[JsObject] = Some(
+        Json.obj("ownBrands" -> true,
+          "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
+          "packagedContractPacker" -> true,
+          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+          "exemptionsForSmallProducers" -> false,
+          "broughtIntoUK" ->  true
+        ))
+
       "user selected yes " in {
         given
           .commonPrecondition
@@ -53,6 +62,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-brought-into-uk")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
 
         }

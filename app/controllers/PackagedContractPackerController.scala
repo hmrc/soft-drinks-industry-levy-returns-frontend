@@ -18,8 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.PackagedContractPackerFormProvider
+
 import handlers.ErrorHandler
 import models.{Mode, UserAnswers}
+
+import models.Mode
+
 import navigation.Navigator
 import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
 import play.api.i18n.MessagesApi
@@ -32,34 +36,36 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PackagedContractPackerController @Inject()(
-                                                  override val messagesApi: MessagesApi,
-                                                  val sessionRepository: SessionRepository,
-                                                  val navigator: Navigator,
-                                                  val errorHandler: ErrorHandler,
-                                                  val genericLogger: GenericLogger,
-                                                  identify: IdentifierAction,
-                                                  getData: DataRetrievalAction,
-                                                  formProvider: PackagedContractPackerFormProvider,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  view: PackagedContractPackerView
-                                                )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                                 override val messagesApi: MessagesApi,
+                                                 sessionRepository: SessionRepository,
+                                                 navigator: Navigator,
+                                                 identify: IdentifierAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 checkReturnSubmission: CheckingSubmissionAction,
+                                                 formProvider: PackagedContractPackerFormProvider,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 view: PackagedContractPackerView
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+
+  val form = formProvider()
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(PackagedContractPackerPage)) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm = request.userAnswers.get(PackagedContractPackerPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
       Ok(view(preparedForm, mode))
+
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),

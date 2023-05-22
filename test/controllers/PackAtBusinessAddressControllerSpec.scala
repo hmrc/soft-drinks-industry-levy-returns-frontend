@@ -28,8 +28,12 @@ import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
+
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
+
+import org.mockito.Mockito.{times, verify, when}
+
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
 import play.api.data.Form
@@ -44,10 +48,19 @@ import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
 
+
+import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
+import play.api.mvc.Call
+import services.{AddressLookupService, PackingDetails}
+
+
 import scala.concurrent.Future
 import scala.util.{Failure, Try}
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
+
+  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -58,9 +71,37 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
   val businessAddress: UkAddress = usersRetrievedSubscription.address
 
 
+
   lazy val packAtBusinessAddressRoute: String = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
   "PackAtBusinessAddress Controller" - {
+
+    "must redirect to returns sent page if return is already submitted" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, packAtBusinessAddressRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
+
+    "must redirect to returns sent page if return is already submitted when hitting the submit" in {
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packAtBusinessAddressRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+      }
+    }
 
     "must return OK and the User Company name and address for a GET" in {
 
@@ -105,28 +146,40 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-
+    "must redirect to the next page when valid data is submitted (false)" in {
       val mockSessionRepository = mock[SessionRepository]
+      val mockAddressLookupService = mock[AddressLookupService]
+      val onwardUrlForALF = "foobarwizz"
+
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
+        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+        ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(onwardUrlForALF))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
           )
           .build()
 
       running(application) {
         val request =
           FakeRequest(POST, packAtBusinessAddressRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardUrlForALF
 
+        verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
+          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -187,9 +240,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-    "must redirect to the next page removing litre data from user answers, when valid data is submitted" in {
 
-      def onwardRoute = Call("GET", "/foo")
+    "must redirect to the next page removing litre data from user answers, when valid data is submitted (true)" in {
+
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
@@ -202,11 +255,11 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
           ).build()
 
       running(application) {
-        val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "false"))
+        val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
       }
     }
 

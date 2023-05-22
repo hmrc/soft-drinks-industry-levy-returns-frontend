@@ -1,6 +1,4 @@
-service.name = soft-drinks-industry-levy-returns-frontend
-
-test.test = Test
+service.name = Soft Drinks Industry Levy
 
 site.back = Back
 site.edit = Edit
@@ -244,14 +242,13 @@ addASmallProducer.error.referenceNumber.notASmallProducer = Small producer refer
 addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
 
 secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
-secondaryWarehouseDetails.heading1 = You added {0} UK warehouses
+secondaryWarehouseDetails.heading = You added {0} UK warehouses
 secondaryWarehouseDetails.checkYourAnswersLabel = secondaryWarehouseDetails
 secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel = Warehouses
 secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
 secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
 secondaryWarehouseDetails.remove.hidden = remove UK warehouse
-
 
 firstQuarter = January to March
 secondQuarter = April to June
@@ -384,3 +381,24 @@ removePackagingDetailsConfirmation.title = Are you sure you want to remove this 
 removePackagingDetailsConfirmation.heading = Are you sure you want to remove this packaging site?
 removePackagingDetailsConfirmation.error.required = Select yes if you want to remove this packaging site
 removePackagingDetailsConfirmation.change.hidden = Confirm remove this packaging site
+
+addressLookupFrontend.warehouseDetails.lookupPageLabels.title = Find UK warehouse address
+addressLookupFrontend.warehouseDetails.lookupPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.warehouseDetails.editPageLabels.title = Enter the UK warehouse address
+addressLookupFrontend.warehouseDetails.editPageLabels.line1Label = Address line 1
+addressLookupFrontend.warehouseDetails.editPageLabels.line2Label = Address line 2
+addressLookupFrontend.warehouseDetails.editPageLabels.line3Label = Address line 3 (optional)
+addressLookupFrontend.warehouseDetails.editPageLabels.townLabel = Address line 4 (optional)
+addressLookupFrontend.warehouseDetails.editPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.warehouseDetails.editPageLabels.organisationLabel = Trading name (optional)
+
+addressLookupFrontend.packingDetails.lookupPageLabels.title = Find UK packaging site address
+addressLookupFrontend.packingDetails.lookupPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.packingDetails.editPageLabels.title = Enter the UK packaging site address
+addressLookupFrontend.packingDetails.editPageLabels.line1Label = Address line 1
+addressLookupFrontend.packingDetails.editPageLabels.line2Label = Address line 2
+addressLookupFrontend.packingDetails.editPageLabels.line3Label = Address line 3 (optional)
+addressLookupFrontend.packingDetails.editPageLabels.townLabel = Address line 4 (optional)
+addressLookupFrontend.packingDetails.editPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.packingDetails.editPageLabels.organisationLabel = Packaging site name (optional)
+
