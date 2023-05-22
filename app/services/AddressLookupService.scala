@@ -130,6 +130,7 @@ class AddressLookupService @Inject()(
 
  private def returnJourneyLabels(state: AddressLookupState)(implicit messages: Messages): Option[JourneyLabels] = {
     state match {
+
       case PackingDetails => Some(
         JourneyLabels(
           en = Some(LanguageLabels(
@@ -138,12 +139,27 @@ class AddressLookupService @Inject()(
             phaseBannerHtml = None
           )),
           selectPageLabels = None,
-          lookupPageLabels = None,
-          editPageLabels = None,
+          lookupPageLabels = Some(
+            LookupPageLabels(
+              title = Some(messages("addressLookupFrontend.packingDetails.lookupPageLabels.title")),
+              heading = Some(messages("addressLookupFrontend.packingDetails.lookupPageLabels.title")),
+              postcodeLabel = Some(messages("addressLookupFrontend.packingDetails.lookupPageLabels.postcodeLabel")))),
+          editPageLabels = Some(
+            EditPageLabels(
+              title = Some(messages("addressLookupFrontend.packingDetails.editPageLabels.title")),
+              heading = Some(messages("addressLookupFrontend.packingDetails.editPageLabels.title")),
+              line1Label = Some(messages("addressLookupFrontend.packingDetails.editPageLabels.line1Label")),
+              line2Label = Some(messages("addressLookupFrontend.packingDetails.editPageLabels.line2Label")),
+              line3Label = Some(messages("addressLookupFrontend.packingDetails.editPageLabels.line3Label")),
+              townLabel = Some(messages("addressLookupFrontend.packingDetails.editPageLabels.townLabel")),
+              postcodeLabel= Some(messages("addressLookupFrontend.packingDetails.editPageLabels.postcodeLabel")),
+              organisationLabel = Some(messages("addressLookupFrontend.packingDetails.editPageLabels.organisationLabel")))
+            ),
           confirmPageLabels = None,
           countryPickerLabels = None
         ))
       ))
+
       case WarehouseDetails => Some(
         JourneyLabels(
           en = Some(LanguageLabels(
@@ -178,7 +194,7 @@ class AddressLookupService @Inject()(
   private def returnContinueUrl(state: AddressLookupState, sdilId: String): String = {
     state match {
       case WarehouseDetails => frontendAppConfig.AddressLookupConfig.WarehouseDetails.offRampUrl(sdilId)
-      case _ => routes.IndexController.onPageLoad().url
+      case PackingDetails => frontendAppConfig.AddressLookupConfig.PackingDetails.offRampUrl(sdilId) //routes.IndexController.onPageLoad().url
     }
   }
 }

@@ -249,7 +249,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val expectedJourneyConfigToBePassedToConnector = JourneyConfig(
         version = frontendAppConfig.AddressLookupConfig.version,
         options = JourneyOptions(
-          continueUrl = routes.IndexController.onPageLoad().url,
+          continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/packing-site-details/$sdilId",
           homeNavHref = None,
           signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = None,
@@ -288,8 +288,22 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
                 phaseBannerHtml = None
               )),
               selectPageLabels = None,
-              lookupPageLabels = None,
-              editPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK packaging site address"),
+                  heading = Some("Find UK packaging site address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK packaging site address"),
+                  heading = Some("Enter the UK packaging site address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel= Some("Postcode"),
+                  organisationLabel = Some("Packaging site name (optional)"))
+              ),
               confirmPageLabels = None,
               countryPickerLabels = None
             ))
@@ -465,7 +479,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val expected =  JourneyConfig(
         version = 2,
         options = JourneyOptions(
-          continueUrl = routes.IndexController.onPageLoad().url,
+          continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/packing-site-details/$exampleSdilIdWeGenerate",
           homeNavHref = None,
           signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = None,
@@ -496,20 +510,34 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           serviceHref = Some(routes.IndexController.onPageLoad().url),
           pageHeadingStyle = Some("govuk-heading-m")
         ),
-          labels = Some(
-            JourneyLabels(
-              en = Some(LanguageLabels(
-                appLevelLabels = Some(AppLevelLabels(
-                  navTitle = Some("Soft Drinks Industry Levy"),
-                  phaseBannerHtml = None
-                )),
-                selectPageLabels = None,
-                lookupPageLabels = None,
-                editPageLabels = None,
-                confirmPageLabels = None,
-                countryPickerLabels = None
-              ))
-            )),
+        labels = Some(
+          JourneyLabels(
+            en = Some(LanguageLabels(
+              appLevelLabels = Some(AppLevelLabels(
+                navTitle = Some("Soft Drinks Industry Levy"),
+                phaseBannerHtml = None
+              )),
+              selectPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK packaging site address"),
+                  heading = Some("Find UK packaging site address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK packaging site address"),
+                  heading = Some("Enter the UK packaging site address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel= Some("Postcode"),
+                  organisationLabel = Some("Packaging site name (optional)"))
+              ),
+              confirmPageLabels = None,
+              countryPickerLabels = None
+            ))
+          )),
         requestedVersion = None
       )
 

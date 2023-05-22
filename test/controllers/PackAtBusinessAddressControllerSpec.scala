@@ -23,7 +23,7 @@ import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import play.api.i18n.Messages
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
 import play.api.inject.bind
@@ -32,11 +32,15 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.PackAtBusinessAddressView
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import play.api.mvc.Call
+import services.{AddressLookupService, PackingDetails}
 
 import scala.concurrent.Future
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
+
+  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form = formProvider()
@@ -45,7 +49,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
   var usersRetrievedSubscription = aSubscription
   val businessName = usersRetrievedSubscription.orgName
   val businessAddress = usersRetrievedSubscription.address
-
 
   lazy val packAtBusinessAddressRoute = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
@@ -121,28 +124,39 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-
+    "must redirect to the next page when valid data is submitted (false)" in {
       val mockSessionRepository = mock[SessionRepository]
+      val mockAddressLookupService = mock[AddressLookupService]
+      val onwardUrlForALF = "foobarwizz"
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
+        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+        ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(onwardUrlForALF))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
           )
           .build()
 
       running(application) {
         val request =
           FakeRequest(POST, packAtBusinessAddressRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardUrlForALF
 
+        verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
+          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -203,9 +217,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page removing litreage data from user answers, when valid data is submitted" in {
+    "must redirect to the next page removing litreage data from user answers, when valid data is submitted (true)" in {
 
-      def onwardRoute = Call("GET", "/foo")
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -218,11 +231,11 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
           ).build()
 
       running(application) {
-        val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "false"))
+        val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
       }
     }
   }

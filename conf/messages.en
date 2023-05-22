@@ -392,3 +392,13 @@ addressLookupFrontend.warehouseDetails.editPageLabels.townLabel = Address line 4
 addressLookupFrontend.warehouseDetails.editPageLabels.postcodeLabel = Postcode
 addressLookupFrontend.warehouseDetails.editPageLabels.organisationLabel = Trading name (optional)
 
+addressLookupFrontend.packingDetails.lookupPageLabels.title = Find UK packaging site address
+addressLookupFrontend.packingDetails.lookupPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.packingDetails.editPageLabels.title = Enter the UK packaging site address
+addressLookupFrontend.packingDetails.editPageLabels.line1Label = Address line 1
+addressLookupFrontend.packingDetails.editPageLabels.line2Label = Address line 2
+addressLookupFrontend.packingDetails.editPageLabels.line3Label = Address line 3 (optional)
+addressLookupFrontend.packingDetails.editPageLabels.townLabel = Address line 4 (optional)
+addressLookupFrontend.packingDetails.editPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.packingDetails.editPageLabels.organisationLabel = Packaging site name (optional)
+
