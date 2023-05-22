@@ -60,11 +60,11 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
   ".upsert" - {
     "insert successfully when nothing exists in DB" in {
       val cacheMap = CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang")))
-      val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC)
+      val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
       await(repository.upsert(cacheMap))
       val updatedRecord = await(repository.collection.find[BsonDocument](BsonDocument()).toFuture()).head
 
-      lazy val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC)
+      val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
 
       val resultParsedToJson = Json.parse(updatedRecord.toJson).as[JsObject]
 
@@ -73,16 +73,16 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
         json.map(data => data._1 -> Json.parse(encryption.crypto.decrypt(data._2, cacheMap.id)))
       }
       val id = (resultParsedToJson \ "id").as[String]
-      val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime]
+      val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime].toEpochSecond(ZoneOffset.UTC)
       dataDecrypted mustBe cacheMap.data
       id mustBe cacheMap.id
 
-      assert(lastUpdated.isAfter(timeBeforeTest) || lastUpdated.isEqual(timeBeforeTest))
-      assert(lastUpdated.isBefore(timeAfterTest) || lastUpdated.isEqual(timeAfterTest))
+      assert(lastUpdated > timeBeforeTest || lastUpdated == timeBeforeTest)
+      assert(lastUpdated < timeAfterTest || lastUpdated == timeAfterTest)
     }
     "upsert a record that already exists successfully" in {
       val cacheMap = CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang")))
-      val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC)
+      val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
 
       await(repository.collection.countDocuments().head()) mustBe 0
       await(repository.upsert(cacheMap))
@@ -92,7 +92,7 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
       await(repository.upsert(updatedCacheMap))
       val updatedRecord = await(repository.collection.find[BsonDocument](BsonDocument()).toFuture()).head
 
-      lazy val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC)
+      val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
 
       val resultParsedToJson = Json.parse(updatedRecord.toJson).as[JsObject]
       val dataDecrypted = {
@@ -100,13 +100,13 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
         json.map(data => data._1 -> Json.parse(encryption.crypto.decrypt(data._2, cacheMap.id)))
       }
       val id = (resultParsedToJson \ "id").as[String]
-      val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime]
+      val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime].toEpochSecond(ZoneOffset.UTC)
 
       dataDecrypted mustBe updatedCacheMap.data
       id mustBe updatedCacheMap.id
 
-      assert(lastUpdated.isAfter( timeBeforeTest) || lastUpdated.isEqual(timeBeforeTest))
-      assert(lastUpdated.isBefore(timeAfterTest) || lastUpdated.isEqual(timeAfterTest))
+      assert(lastUpdated > timeBeforeTest || lastUpdated == timeBeforeTest)
+      assert(lastUpdated < timeAfterTest || lastUpdated == timeAfterTest)
     }
   }
 
@@ -136,18 +136,18 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
       val cacheMap = CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang")))
       await(repository.upsert(cacheMap))
       await(repository.collection.countDocuments().head()) mustBe 1
-      val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC)
+      val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
       val result = await(repository.updateLastUpdated(cacheMap.id))
       result mustBe true
 
-      lazy val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC)
+      lazy val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
       val updatedRecord = await(repository.collection.find[BsonDocument](BsonDocument()).toFuture()).head
 
       val resultParsedToJson = Json.parse(updatedRecord.toJson).as[JsObject]
-      val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime]
+      val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime].toEpochSecond(ZoneOffset.UTC)
 
-      assert(lastUpdated.isAfter(timeBeforeTest) || lastUpdated.isEqual(timeBeforeTest))
-      assert(lastUpdated.isBefore(timeAfterTest) || lastUpdated.isEqual(timeAfterTest))
+      assert(lastUpdated > timeBeforeTest || lastUpdated == timeBeforeTest)
+      assert(lastUpdated < timeAfterTest || lastUpdated == timeAfterTest)
     }
   }
 
