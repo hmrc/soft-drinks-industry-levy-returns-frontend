@@ -72,7 +72,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         sdilId = sdilId,
         alfId = alfId)
 
-       res.warehouseList mustBe addedWarehouse
+      res.warehouseList mustBe addedWarehouse
     }
     s"add to the cache the address of a $WarehouseDetails when a user returns from address lookup frontend where sdilId DOES exist" in {
       val addressLookupState = WarehouseDetails
@@ -101,11 +101,11 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         sdilId -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2), postcode, alfId = Some(alfId))))
       val customerAddressMissingLines: AlfAddress =
         AlfAddress(
-        Some(organisation),
-        List(addressLine1, addressLine2),
-        Some(postcode),
-        Some(countryCode)
-      )
+          Some(organisation),
+          List(addressLine1, addressLine2),
+          Some(postcode),
+          Some(countryCode)
+        )
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
         address = customerAddressMissingLines,
@@ -124,18 +124,18 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
         address = AlfAddress(Some(organisation),
-                                List(addressLine1, addressLine2, addressLine3, addressLine4),
-                                Some(postcode),
-                                Some(countryCode)
-                              ),
+          List(addressLine1, addressLine2, addressLine3, addressLine4),
+          Some(postcode),
+          Some(countryCode)
+        ),
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         alfId = alfId,
         sdilId = sdilId)
 
       res.warehouseList mustBe Map("1" -> Warehouse(Some("super cola"),
-                                          UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
-                                   sdilId -> Warehouse(Some(organisation),
-                                          UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId))))
+        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
+        sdilId -> Warehouse(Some(organisation),
+          UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId))))
     }
 
     s"add to the cache the address of a $PackingDetails when a user returns from address lookup frontend with missing address lines" in {
@@ -447,21 +447,21 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
               )),
               selectPageLabels = None,
               lookupPageLabels = Some(
-                  LookupPageLabels(
-                    title = Some("Find UK warehouse address"),
-                    heading = Some("Find UK warehouse address"),
-                    postcodeLabel = Some("Postcode"))),
-                editPageLabels = Some(
-                  EditPageLabels(
-                    title = Some("Enter the UK warehouse address"),
-                    heading = Some("Enter the UK warehouse address"),
-                    line1Label = Some("Address line 1"),
-                    line2Label = Some("Address line 2"),
-                    line3Label = Some("Address line 3 (optional)"),
-                    townLabel = Some("Address line 4 (optional)"),
-                    postcodeLabel= Some("Postcode"),
-                    organisationLabel = Some("Trading name (optional)"))
-                ),
+                LookupPageLabels(
+                  title = Some("Find UK warehouse address"),
+                  heading = Some("Find UK warehouse address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK warehouse address"),
+                  heading = Some("Enter the UK warehouse address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel= Some("Postcode"),
+                  organisationLabel = Some("Trading name (optional)"))
+              ),
               confirmPageLabels = None,
               countryPickerLabels = None
             ))
