@@ -140,7 +140,7 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
       val result = await(repository.updateLastUpdated(cacheMap.id))
       result mustBe true
 
-      lazy val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
+      val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
       val updatedRecord = await(repository.collection.find[BsonDocument](BsonDocument()).toFuture()).head
 
       val resultParsedToJson = Json.parse(updatedRecord.toJson).as[JsObject]
