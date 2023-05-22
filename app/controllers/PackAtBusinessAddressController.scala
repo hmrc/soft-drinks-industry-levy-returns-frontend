@@ -70,10 +70,7 @@ class PackAtBusinessAddressController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
             onwardUrl              <- if(value){
-              sessionRepository.set(updatedAnswers).flatMap(_ =>
-                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
-            } else {
-              sessionRepository.set(updatedAnswers.copy(packagingSiteList = Map("1" ->
+              sessionRepository.set(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
                 Site(
                   address = businessAddress,
                   ref = None,
@@ -82,6 +79,9 @@ class PackAtBusinessAddressController @Inject()(
                 )
               ))).flatMap(_ =>
                 Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
+            } else {
+              sessionRepository.set(updatedAnswers).flatMap(_ =>
+                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
             }
           } yield {
             Redirect(onwardUrl)

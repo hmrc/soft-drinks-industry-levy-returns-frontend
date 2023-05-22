@@ -33,7 +33,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
       }
     }
 
-    "user selected yes, user should be taken to ALF" in {
+    "user selected no, user should be taken to ALF" in {
       val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
         version = 2,
         options = JourneyOptions(
@@ -100,7 +100,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
       )
       val expectedResultInDB: Some[JsObject] = Some(
         Json.obj(
-          "packAtBusinessAddress" -> true
+          "packAtBusinessAddress" -> false
         ))
       val alfOnRampURL: String = "http://onramp.com"
 
@@ -116,7 +116,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
             .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj("value" -> "true"))
+            .post(Json.obj("value" -> "false"))
 
 
         whenReady(result) { res =>
@@ -129,10 +129,10 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
       }
     }
 
-    "user selected no" in {
+    "user selected yes" in {
       val expectedResultInDB: Some[JsObject] = Some(
         Json.obj(
-          "packAtBusinessAddress" -> false
+          "packAtBusinessAddress" -> true
         ))
 
       val expectedPackingSiteListDB = Some(Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)))
@@ -148,7 +148,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
             .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj("value" -> "false"))
+            .post(Json.obj("value" -> "true"))
 
         whenReady(result) { res =>
           res.status mustBe 303
