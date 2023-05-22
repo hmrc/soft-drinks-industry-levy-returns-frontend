@@ -22,7 +22,11 @@ import pages._
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
-import java.time.LocalDateTime
+import java.time.Instant
+import cats.implicits._
+import SdilReturn._
+import models.requests.DataRequest
+import pages._
 
 
 case class SdilReturn(
@@ -33,7 +37,7 @@ case class SdilReturn(
                        importSmall: (Long, Long),
                        `export`: (Long, Long),
                        wastage: (Long, Long),
-                       submittedOn: Option[LocalDateTime] = None
+                       submittedOn: Option[Instant] = None
                      ) {
 
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
