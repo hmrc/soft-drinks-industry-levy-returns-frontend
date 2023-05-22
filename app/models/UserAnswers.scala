@@ -23,7 +23,6 @@ import queries.{Gettable, Settable}
 import services.Encryption
 import uk.gov.hmrc.crypto.EncryptedValue
 import uk.gov.hmrc.crypto.json.CryptoFormats
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 import scala.util.{Failure, Success, Try}
@@ -92,7 +91,8 @@ final case class UserAnswers(
 object UserAnswers {
 
   object MongoFormats {
-  implicit val cryptEncryptedValueFormats: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
+    implicit val cryptEncryptedValueFormats: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
+    import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats.Implicits._
 
   def reads()(implicit encryption: Encryption): Reads[UserAnswers] = {
     (
@@ -102,14 +102,14 @@ object UserAnswers {
         (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
         (__ \ "warehouseList").read[Map[String, EncryptedValue]] and
         (__ \ "submitted").read[Boolean] and
-        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-      )(ModelEncryption.decrypt _)
+        (__ \ "lastUpdated").read[Instant]
+      )(ModelEncryption.decryptUserAnswers _)
   }
 
   def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
     override def writes(userAnswers: UserAnswers): JsObject = {
       val encryptedValue: (String, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Instant) = {
-        ModelEncryption.encrypt(userAnswers)
+        ModelEncryption.encryptUserAnswers(userAnswers)
       }
       Json.obj(
         "id" -> encryptedValue._1,
