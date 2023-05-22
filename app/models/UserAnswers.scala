@@ -38,7 +38,6 @@ case class UserAnswers(
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
     def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
-    println(Console.YELLOW + "getting to set 2222222222222222222222222 " + Console.WHITE)
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
@@ -55,7 +54,6 @@ case class UserAnswers(
 
     def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)
                                (implicit writes: Writes[Boolean]): Try[UserAnswers] = {
-    println(Console.YELLOW + "getting to setAndRemoveLitres 1111111111111111" + Console.WHITE)
     set(page, value).map { updatedAnswers =>
     if (value) {
       updatedAnswers

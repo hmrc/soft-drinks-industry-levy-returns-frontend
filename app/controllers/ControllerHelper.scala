@@ -43,7 +43,6 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
                                 subscription: Option[RetrievedSubscription] = None,
                                 smallProducerMissing: Option[Boolean] = None)
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
-    println(Console.YELLOW + "getting to update db & redirect 222222222222222222222 " + Console.WHITE)
     updatedAnswers match {
       case Failure(_) =>
 
@@ -62,7 +61,6 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
                      subscription: Option[RetrievedSubscription] = None,
                      smallProducerMissing: Option[Boolean] = None)
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
-    println(Console.YELLOW + "getting to set & redirect 2aaaaaaaaaaaaaa " + Console.WHITE)
     sessionRepository.set(updatedAnswers).map {
         case Right(_) =>
           Redirect(navigator.nextPage(page, mode, updatedAnswers, sdilReturn, subscription, smallProducerMissing))

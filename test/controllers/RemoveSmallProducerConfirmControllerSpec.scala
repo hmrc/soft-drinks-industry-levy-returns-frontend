@@ -230,7 +230,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId",Json.obj(),smallProducerList) {
+      val userAnswers: UserAnswers = new UserAnswers("sdilId", Json.obj(), smallProducerList) {
         override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
       }
 
@@ -261,7 +261,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
+      val userAnswers: UserAnswers = new UserAnswers("sdilId", Json.obj(), smallProducerList) {
         override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
       }
 
@@ -285,7 +285,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val app =
-        applicationBuilder(Some(completedUserAnswers))
+        applicationBuilder(Some(UserAnswers("sdilId", Json.obj(), smallProducerList)))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 

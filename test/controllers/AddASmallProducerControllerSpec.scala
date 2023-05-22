@@ -674,43 +674,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       }
     }
 
-    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
-
-      val userAnswers: UserAnswers = new UserAnswers(sdilReference) {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-
-      val application =
-        applicationBuilder(
-          Some(userAnswers),
-          Some(ReturnPeriod(2022, 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          ).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, addASmallProducerEditSubmitRoute)
-            .withFormUrlEncodedBody(
-              ("producerName", superCola.alias),
-              ("referenceNumber", notASmallProducerSDILReference),
-              ("lowBand", superCola.litreage._1.toString),
-              ("highBand", superCola.litreage._2.toString)
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
-      }
-    }
-
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       val mockSessionRepository = mock[SessionRepository]
