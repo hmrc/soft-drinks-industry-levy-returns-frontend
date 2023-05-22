@@ -184,7 +184,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
     "must return error if ALF on ramp call returns error" in {
       val mockSessionRepository = mock[SessionRepository]
       val mockAddressLookupService = mock[AddressLookupService]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
         ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any())(

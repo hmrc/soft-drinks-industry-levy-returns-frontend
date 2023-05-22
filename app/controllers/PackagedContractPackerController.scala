@@ -18,12 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.PackagedContractPackerFormProvider
-
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers}
-
 import models.Mode
-
 import navigation.Navigator
 import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
 import play.api.i18n.MessagesApi
@@ -36,19 +32,19 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PackagedContractPackerController @Inject()(
-                                                 override val messagesApi: MessagesApi,
-                                                 sessionRepository: SessionRepository,
-                                                 navigator: Navigator,
-                                                 identify: IdentifierAction,
-                                                 getData: DataRetrievalAction,
-                                                 requireData: DataRequiredAction,
-                                                 checkReturnSubmission: CheckingSubmissionAction,
-                                                 formProvider: PackagedContractPackerFormProvider,
-                                                 val controllerComponents: MessagesControllerComponents,
-                                                 view: PackagedContractPackerView
+                                               override val messagesApi: MessagesApi,
+                                               val sessionRepository: SessionRepository,
+                                               val navigator: Navigator,
+                                               val errorHandler: ErrorHandler,
+                                               val genericLogger: GenericLogger,
+                                               identify: IdentifierAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               checkReturnSubmission: CheckingSubmissionAction,
+                                               formProvider: PackagedContractPackerFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               view: PackagedContractPackerView
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
-
-  val form = formProvider()
 
   private val form = formProvider()
 
@@ -71,7 +67,7 @@ class PackagedContractPackerController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          val updatedUserAnswers = answers.setAndRemoveLitresIfReq(
+          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(
             PackagedContractPackerPage, HowManyAsAContractPackerPage, value)
           updateDatabaseAndRedirect(updatedUserAnswers, PackagedContractPackerPage, mode)
         }

@@ -28,12 +28,9 @@ import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
-
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
-
 import org.mockito.Mockito.{times, verify, when}
-
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
 import play.api.data.Form
@@ -47,20 +44,17 @@ import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
-
-
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import play.api.mvc.Call
 import services.{AddressLookupService, PackingDetails}
-
 
 import scala.concurrent.Future
 import scala.util.{Failure, Try}
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -69,7 +63,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
   var usersRetrievedSubscription: RetrievedSubscription = aSubscription
   val businessName: String = usersRetrievedSubscription.orgName
   val businessAddress: UkAddress = usersRetrievedSubscription.address
-
 
 
   lazy val packAtBusinessAddressRoute: String = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
@@ -179,7 +172,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 

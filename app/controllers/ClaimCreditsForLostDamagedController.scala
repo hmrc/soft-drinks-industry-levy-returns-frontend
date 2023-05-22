@@ -32,7 +32,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ClaimCreditsForLostDamagedController @Inject()(
-<<<<<<< HEAD
                                                       override val messagesApi: MessagesApi,
                                                       val sessionRepository: SessionRepository,
                                                       val navigator: Navigator,

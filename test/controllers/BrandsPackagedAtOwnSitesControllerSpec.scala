@@ -45,7 +45,7 @@ import scala.util.{Failure, Try}
 
 class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new BrandsPackagedAtOwnSitesFormProvider()
   val form = formProvider()

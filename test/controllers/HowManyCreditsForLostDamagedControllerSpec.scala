@@ -95,8 +95,6 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "must return OK and the correct view for a GET" in {
-
     "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
 
       val mockSessionRepository = mock[SessionRepository]

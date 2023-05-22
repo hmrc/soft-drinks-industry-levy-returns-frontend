@@ -20,6 +20,7 @@ import controllers.actions._
 import forms.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.Mode
+import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,8 +41,13 @@ class SecondaryWarehouseDetailsController @Inject()(
                                          val navigator: Navigator,
                                          val errorHandler: ErrorHandler,
                                          val genericLogger: GenericLogger,
+                                         identify: IdentifierAction,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: SecondaryWarehouseDetailsFormProvider,
                                          checkReturnSubmission: CheckingSubmissionAction,
                                          addressLookupService: AddressLookupService,
+                                         val controllerComponents: MessagesControllerComponents,
                                          view: SecondaryWarehouseDetailsView
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
