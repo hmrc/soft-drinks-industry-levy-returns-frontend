@@ -34,7 +34,31 @@ class KeepAliveController @Inject()(
                                      requireData: DataRequiredAction,
                                      sessionRepository: SessionRepository,
                                      val genericLogger: GenericLogger,
+
+class KeepAliveController @Inject()(
+                                     val controllerComponents: MessagesControllerComponents,
+                                     val errorHandler: ErrorHandler,
+                                     identify: IdentifierAction,
+                                     getData: DataRetrievalAction,
+                                     requireData: DataRequiredAction,
+                                     sessionRepository: SessionRepository,
+                                     val genericLogger: GenericLogger
                                    )(implicit ec: ExecutionContext) extends FrontendBaseController {
+
+  def keepAlive: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      sessionRepository.keepAlive(request.userAnswers.id).map {
+        case Right(_) => Ok
+        case Left(_) =>
+          genericLogger.logger.error("Failed to keep the session alive due to error from mongo session repository's keepAlive")
+          InternalServerError(errorHandler.internalServerErrorTemplate)
+      }
+  }
+
+  Future.successful(Ok)
+}
+
+)(implicit ec: ExecutionContext) extends FrontendBaseController {
 
   def keepAlive: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
