@@ -124,7 +124,7 @@ POST       /packaging-site-details                              controllers.Pack
 GET        /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn/                 controllers.ReturnsController.onPageLoad(year: Int, quarter: Int, nilReturn: Boolean)
+GET        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn                 controllers.ReturnsController.onPageLoad(year: Int, quarter: Int, nilReturn: Boolean)
 GET        /return-sent                                         controllers.ReturnSentController.onPageLoad
 
 

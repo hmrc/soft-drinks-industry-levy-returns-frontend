@@ -19,23 +19,30 @@ package controllers
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.PackagingSiteDetailsFormProvider
-import models.{NormalMode, UserAnswers}
+import models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import models.{NormalMode, SdilReturn, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackagingSiteDetailsPage
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.{AddressLookupService, PackingDetails}
 import viewmodels.govuk.SummaryListFluency
 import views.html.PackagingSiteDetailsView
 
 import scala.concurrent.Future
 
 class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency{
+
+  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PackagingSiteDetailsFormProvider()
   val form = formProvider()
@@ -119,7 +126,43 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when valid data is submitted (true with subscription)" in {
+      val mockSessionRepository = mock[SessionRepository]
+      val mockAddressLookupService = mock[AddressLookupService]
+      val onwardUrlForALF = "foobarwizz"
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
+        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+        ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(onwardUrlForALF))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packagingSiteDetailsRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardUrlForALF
+
+        verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
+          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
+      }
+    }
+
+    "must redirect to check your answers when user does not match new importer when the data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
@@ -138,11 +181,97 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       running(application) {
         val request =
           FakeRequest(POST, packagingSiteDetailsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must redirect to ask secondary warehouse when user does match new importer when the data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      lazy val newImporterAnswer : UserAnswers = UserAnswers(sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty, packagingSiteListWith1)
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
+
+      val application =
+        applicationBuilder(userAnswers = Some(newImporterAnswer))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packagingSiteDetailsRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to journey recovery when user doesn't have a user answers but has a subscription when the data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packagingSiteDetailsRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to journey recovery when user doesn't have a subscription or user answers when the data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(None)
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packagingSiteDetailsRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

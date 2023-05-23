@@ -35,10 +35,7 @@ class ReturnsController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
                                    override val messagesApi: MessagesApi,
                                   config: FrontendAppConfig,
                                    identify: IdentifierAction,
-                                   getData: DataRetrievalAction,
-                                   returnService: ReturnService,
                                    val controllerComponents: MessagesControllerComponents,
-                                   sessionCache: SDILSessionCache
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 

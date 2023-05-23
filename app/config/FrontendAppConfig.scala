@@ -85,7 +85,6 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
         s"$host${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
-
   }
 
 }

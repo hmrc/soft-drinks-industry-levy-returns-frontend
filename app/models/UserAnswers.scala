@@ -103,13 +103,14 @@ object UserAnswers {
         (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
         (__ \ "warehouseList").read[Map[String, EncryptedValue]] and
         (__ \ "submitted").read[Boolean] and
+        (__ \ "isNilReturn").read[Boolean] and
         (__ \ "lastUpdated").read[Instant]
       )(ModelEncryption.decryptUserAnswers _)
   }
 
   def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
     override def writes(userAnswers: UserAnswers): JsObject = {
-      val encryptedValue: (String, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Instant) = {
+      val encryptedValue: (String, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
         ModelEncryption.encryptUserAnswers(userAnswers)
       }
       Json.obj(
@@ -119,7 +120,8 @@ object UserAnswers {
         "packagingSiteList" -> encryptedValue._4,
         "warehouseList" -> encryptedValue._5,
         "submitted" -> encryptedValue._6,
-        "lastUpdated" -> encryptedValue._7
+        "isNilReturn" -> encryptedValue._7,
+        "lastUpdated" -> encryptedValue._8
       )
     }
   }

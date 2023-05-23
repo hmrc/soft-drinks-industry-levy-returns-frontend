@@ -16,17 +16,18 @@
 
 package controllers
 
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.PackagingSiteDetailsFormProvider
-import models.{Mode, SdilReturn}
 import models.backend.Site
-import navigation.Navigator
+import models.{Mode, NormalMode, SdilReturn}
 import pages.PackagingSiteDetailsPage
+import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.{AddressLookupService, PackingDetails}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.UserTypeCheck
 import views.html.PackagingSiteDetailsView
 
 import javax.inject.Inject
@@ -35,15 +36,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class PackagingSiteDetailsController @Inject()(
                                                 override val messagesApi: MessagesApi,
                                                 sessionRepository: SessionRepository,
-                                                sdilConnector: SoftDrinksIndustryLevyConnector,
-                                                navigator: Navigator,
                                                 identify: IdentifierAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
                                                 checkReturnSubmission: CheckingSubmissionAction,
                                                 formProvider: PackagingSiteDetailsFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
-                                                view: PackagingSiteDetailsView
+                                                view: PackagingSiteDetailsView,
+                                                addressLookupService: AddressLookupService
                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -69,12 +69,33 @@ class PackagingSiteDetailsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, updatedAnswers,Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)))
+            onwardUrl:String      <- if(value){
+              sessionRepository.set(updatedAnswers).flatMap(_ =>
+                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+            } else {
+              sessionRepository.set(updatedAnswers).flatMap(_ =>
+              (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
+                case (Some(sdilReturn), Some(subscription)) =>
+                  if (UserTypeCheck.isNewImporter (sdilReturn, subscription) ) {
+                   Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
+                  } else {
+                    Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
+                  }
+                case (_, Some(subscription)) =>
+                  logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
+                  Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                case _ =>
+                  logger.warn("SDIL return or subscription not provided for current unknown user")
+                  Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                }
+              )
+            }
+          } yield {
+            Redirect(onwardUrl)
+          }
       )
   }
 }
