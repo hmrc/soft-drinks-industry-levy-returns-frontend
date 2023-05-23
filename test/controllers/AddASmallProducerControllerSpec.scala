@@ -22,25 +22,21 @@ import errors.SessionDatabaseInsertError
 import forms.AddASmallProducerFormProvider
 import helpers.LoggerHelper
 import models.{BlankMode, NormalMode, ReturnPeriod, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AddASmallProducerPage
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 

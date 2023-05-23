@@ -29,7 +29,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
-import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.SecondaryWarehouseDetailsPage
 import play.api.data.Form
@@ -205,7 +204,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
     "must redirect to the next page when valid data is submitted (false)" in {
       val mockSessionRepository = mock[SessionRepository]
       val mockAddressLookupService = mock[AddressLookupService]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))

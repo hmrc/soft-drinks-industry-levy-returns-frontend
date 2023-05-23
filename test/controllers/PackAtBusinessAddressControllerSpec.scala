@@ -30,7 +30,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
-import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
 import play.api.data.Form
@@ -42,12 +41,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import queries.Settable
 import repositories.SessionRepository
+import services.{AddressLookupService, PackingDetails}
 import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
-import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers
-import play.api.mvc.Call
-import services.{AddressLookupService, PackingDetails}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Try}

@@ -22,14 +22,13 @@ import helpers.LoggerHelper
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Logger
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class KeepAliveControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
