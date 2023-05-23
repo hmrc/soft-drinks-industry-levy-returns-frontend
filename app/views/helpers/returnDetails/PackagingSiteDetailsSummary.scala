@@ -45,16 +45,11 @@ object PackagingSiteDetailsSummary {
           ),
           actions = if (packagingSiteList.size > 1) {
             Some(Actions("", Seq(
-              ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url)
-                .withVisuallyHiddenText(messages("packagingSiteDetails.hidden")),
               ActionItemViewModel("site.remove", routes.RemovePackagingDetailsConfirmationController.onPageLoad(site._1).url)
                 .withVisuallyHiddenText(messages("packagingSiteDetails.hidden"))
             )))
           } else {
-            Some(Actions("", Seq(
-              ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url)
-                .withVisuallyHiddenText(messages("packagingSiteDetails.edit.hidden"))
-            )))
+            None
           }
         )
     }.toList

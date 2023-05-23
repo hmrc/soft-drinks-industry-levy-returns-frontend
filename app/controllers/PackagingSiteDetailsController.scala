@@ -19,14 +19,15 @@ package controllers
 import controllers.actions._
 import forms.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.Mode
 import models.backend.Site
+import models.{Mode, NormalMode, SdilReturn}
 import navigation.Navigator
 import pages.PackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import services.{AddressLookupService, PackingDetails}
+import utilitlies.{GenericLogger, UserTypeCheck}
 import views.html.PackagingSiteDetailsView
 
 import javax.inject.Inject
@@ -44,6 +45,7 @@ class PackagingSiteDetailsController @Inject()(
                                                 checkReturnSubmission: CheckingSubmissionAction,
                                                 formProvider: PackagingSiteDetailsFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
+                                                addressLookupService: AddressLookupService,
                                                 view: PackagingSiteDetailsView
                                               )(implicit ec: ExecutionContext) extends ControllerHelper {
 
@@ -70,12 +72,34 @@ class PackagingSiteDetailsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
-        value => {
-          val updatedUserAnswers = request.userAnswers.set(
-            PackagingSiteDetailsPage, value)
 
-          updateDatabaseAndRedirect(updatedUserAnswers, PackagingSiteDetailsPage, mode,  withSdilReturn = true, Some(request.subscription))
-        }
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
+            onwardUrl:String      <- if(value){
+              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
+                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+            } else {
+              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
+              (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
+                case (Some(sdilReturn), Some(subscription)) =>
+                  if (UserTypeCheck.isNewImporter (sdilReturn, subscription) ) {
+                   Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
+                  } else {
+                    Future.successful(routes.CheckYourAnswersController.onPageLoad().url)
+                  }
+                case (_, Some(subscription)) =>
+                  genericLogger.logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
+                  Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                case _ =>
+                  genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
+                  Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                }
+              )
+            }
+          } yield {
+            Redirect(onwardUrl)
+          }
       )
   }
 }

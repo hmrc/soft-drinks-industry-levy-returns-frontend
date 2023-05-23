@@ -80,10 +80,6 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
 
       packagingSiteSummaryRowList mustBe List()
     }
-    "should return an edit action when 1 packaging site is passed in" in {
-      val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(packagingSiteListWith1)
-      packagingSiteSummaryRowList.mkString must include("Edit")
-    }
 
     "must not return a remove action if only 1 packaging site is passed in" in {
       val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(packagingSiteListWith1)
@@ -103,14 +99,10 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
         None)
       val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map("ref1" -> site1, "ref2" -> site2))
       packagingSiteSummaryRowList.head.key.content.asHtml.toString() mustBe "trade2<br>foo2, bar2, wizz2"
-      packagingSiteSummaryRowList.head.actions.toList.head.items.head.content.asHtml.toString() mustBe "Edit"
-      packagingSiteSummaryRowList.head.actions.toList.head.items.head.href mustBe controllers.routes.IndexController.onPageLoad().url
       packagingSiteSummaryRowList.head.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
       packagingSiteSummaryRowList.head.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad("ref1").url
 
       packagingSiteSummaryRowList.last.key.content.asHtml.toString() mustBe "trade<br>foo, bar, wizz"
-      packagingSiteSummaryRowList.last.actions.toList.head.items.head.content.asHtml.toString() mustBe "Edit"
-      packagingSiteSummaryRowList.last.actions.toList.head.items.head.href mustBe controllers.routes.IndexController.onPageLoad().url
       packagingSiteSummaryRowList.last.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
       packagingSiteSummaryRowList.last.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad("ref2").url
     }
