@@ -32,6 +32,7 @@ import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.SecondaryWarehouseDetailsPage
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Call}
@@ -57,9 +58,10 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
   lazy val secondaryWarehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
 
-  val twoWarehouses: Map[String,Warehouse] = Map("1"-> Warehouse(Some("ABC Ltd"),
-    UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-    "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+  val twoWarehouses: Map[String,Warehouse] = Map(
+    "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
+    "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
+  )
 
   val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,Json.obj(), List.empty,Map.empty,twoWarehouses)
 
@@ -131,6 +133,39 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           .tagName("ul").tagName("li").last().getElementsByClass("govuk-link").last()
         removeLink.attr("href") mustEqual "/soft-drinks-industry-levy-returns-frontend/remove-warehouse-details/2"
         contentAsString(result) mustEqual view(form, NormalMode, summaryList)(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and contain correct header when 1 warehouse available" in {
+
+      val userAnswers = UserAnswers(
+        sdilNumber,Json.obj(), List.empty,Map.empty,
+        Map("1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX")))
+      )
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        implicit val request = FakeRequest(GET, secondaryWarehouseDetailsRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() mustEqual "You added 1 UK warehouse - Soft Drinks Industry Levy - GOV.UK"
+      }
+    }
+
+    "must return OK and contain correct header when 2 warehouses available" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarehouses)).build()
+
+      running(application) {
+        implicit val request = FakeRequest(GET, secondaryWarehouseDetailsRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() mustEqual "You added 2 UK warehouses - Soft Drinks Industry Levy - GOV.UK"
       }
     }
 
