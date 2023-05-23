@@ -59,23 +59,23 @@ class Navigator @Inject()() {
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case OwnBrandsPage => userAnswers => checkOwnBrandPageNavigation(userAnswers)
-    case BrandsPackagedAtOwnSitesPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case BrandsPackagedAtOwnSitesPage => _ => routes.CheckYourAnswersController.onPageLoad
     case PackagedContractPackerPage => userAnswers => checkPackagedContractPackerPageNavigation(userAnswers)
-    case HowManyAsAContractPackerPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case HowManyAsAContractPackerPage => _ => routes.CheckYourAnswersController.onPageLoad
     case ExemptionsForSmallProducersPage => userAnswers => checkExemptionForSmallProducersPageNavigation(userAnswers)
     case SmallProducerDetailsPage => userAnswers => checkSmallProducerDetailsPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case RemoveWarehouseConfirmPage =>  _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
-    case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad
     case BroughtIntoUkFromSmallProducersPage => userAnswers => checkBroughtIntoUkFromSmallProducersPageNavigation(userAnswers)
-    case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => routes.CheckYourAnswersController.onPageLoad
     case ClaimCreditsForExportsPage => userAnswers => checkClaimCreditsForExportPageNavigation(userAnswers)
-    case HowManyCreditsForExportPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case HowManyCreditsForExportPage => _ => routes.CheckYourAnswersController.onPageLoad
     case ClaimCreditsForLostDamagedPage => userAnswers => checkClaimCreditsForLostDamagedPageNavigation(userAnswers)
-    case HowManyCreditsForLostDamagedPage => _ => routes.CheckYourAnswersController.onPageLoad()
-    case _ => _ => routes.CheckYourAnswersController.onPageLoad()
+    case HowManyCreditsForLostDamagedPage => _ => routes.CheckYourAnswersController.onPageLoad
+    case _ => _ => routes.CheckYourAnswersController.onPageLoad
   }
 
   private val EditRouteMap: Page => UserAnswers => Call = {
@@ -202,7 +202,7 @@ class Navigator @Inject()() {
         if (UserTypeCheck.isNewImporter(sdilReturn,subscription) || UserTypeCheck.isNewPacker(sdilReturn,subscription)) {
           routes.ReturnChangeRegistrationController.onPageLoad()
         } else {
-          routes.CheckYourAnswersController.onPageLoad()
+          routes.CheckYourAnswersController.onPageLoad
         }
       case (_, Some(subscription)) =>
         logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
@@ -217,7 +217,7 @@ class Navigator @Inject()() {
     if (userAnswers.get(page = BroughtIntoUKPage).contains(true)) {
       routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      routes.CheckYourAnswersController.onPageLoad
     }
   }
 
@@ -225,7 +225,7 @@ class Navigator @Inject()() {
     if(userAnswers.get(page = BroughtIntoUkFromSmallProducersPage).contains(true)) {
       routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      routes.CheckYourAnswersController.onPageLoad
     }
   }
 
@@ -233,7 +233,7 @@ class Navigator @Inject()() {
     if (userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
       routes.HowManyCreditsForExportController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      routes.CheckYourAnswersController.onPageLoad
     }
   }
 
@@ -241,7 +241,7 @@ class Navigator @Inject()() {
     if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      routes.CheckYourAnswersController.onPageLoad
     }
   }
 
@@ -250,7 +250,7 @@ class Navigator @Inject()() {
     if (userAnswers.get(page = OwnBrandsPage).contains(true)) {
       routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      routes.CheckYourAnswersController.onPageLoad
     }
   }
 
@@ -258,7 +258,7 @@ class Navigator @Inject()() {
     if (userAnswers.get(page = PackagedContractPackerPage).contains(true)) {
       routes.HowManyAsAContractPackerController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      routes.CheckYourAnswersController.onPageLoad
     }
   }
 
@@ -266,7 +266,7 @@ class Navigator @Inject()() {
     if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
       routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      routes.CheckYourAnswersController.onPageLoad
     }
   }
 
@@ -274,7 +274,7 @@ class Navigator @Inject()() {
     if (userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
       routes.AddASmallProducerController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad()
+      routes.CheckYourAnswersController.onPageLoad
     }
   }
 
@@ -307,7 +307,7 @@ class Navigator @Inject()() {
           if (UserTypeCheck.isNewImporter(sdilReturn,subscription)) {
             routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
           } else {
-            routes.CheckYourAnswersController.onPageLoad()
+            routes.CheckYourAnswersController.onPageLoad
           }
         case (_, Some(subscription)) =>
           logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")

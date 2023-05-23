@@ -125,7 +125,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
         val returnPeriod = ReturnPeriod(year = 2022, quarter = 3)
         when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(List(returnPeriod)))
-        val res = softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr)
+        val res = softDrinksIndustryLevyConnector.getPendingReturnPeriods(utr)
 
         whenReady(
           res

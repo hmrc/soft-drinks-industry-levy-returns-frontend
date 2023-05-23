@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.retrieved.RetrievedSubscription
-import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
+import models.{FinancialLineItem, ReturnPeriod, ReturnsVariation, SdilReturn}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -52,14 +52,13 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
 
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
-        http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
-        case Some(a) => Some(a)
-        case _ => None
+    http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
+    case Some(a) => Some(a)
+    case _ => None
   }
 
-  def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {
-    val returnPeriods = http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
-    returnPeriods.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
+  def getPendingReturnPeriods(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+   http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
   }
 
   def balance(
@@ -85,5 +84,10 @@ class SoftDrinksIndustryLevyConnector @Inject()(
       response => Some(response.status)
     }
   }
+
+  def returns_variation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier): Future[Option[Int]] =
+    http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map {
+      response => Some(response.status)
+    }
 
 }

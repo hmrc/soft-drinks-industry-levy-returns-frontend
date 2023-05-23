@@ -16,10 +16,8 @@
 
 package utilitlies
 
-import models.requests.DataRequest
 import models.{FinancialLineItem, SdilReturn, UserAnswers}
 import play.api.libs.json.Json
-import play.api.mvc.AnyContent
 
 object ReturnsHelper {
 
@@ -44,13 +42,6 @@ object ReturnsHelper {
       ))
 
   def emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
-
-  def extractReturnPeriod(request: DataRequest[AnyContent]) = {
-    request.returnPeriod match {
-      case Some(period) => period
-      case _ => throw new RuntimeException(s"Request does not contain return period for ${request.returnPeriod}")
-    }
-  }
 
   def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
     items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>

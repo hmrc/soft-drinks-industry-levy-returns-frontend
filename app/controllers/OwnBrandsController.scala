@@ -54,7 +54,7 @@ class OwnBrandsController @Inject()(
       }
 
         request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment)).submitted match {
-        case true => Redirect(routes.ReturnSentController.onPageLoad())
+        case true => Redirect(routes.ReturnSentController.onPageLoad)
         case false => Ok(view(preparedForm, mode))
       }
   }

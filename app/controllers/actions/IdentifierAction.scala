@@ -52,17 +52,14 @@ class AuthenticatedIdentifierAction @Inject()(
           Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
         case (Some(sdil), _) =>
           sdilConnector.retrieveSubscription(sdil.value, "sdil").flatMap {
-            case Some(sub) => sdilConnector.oldestPendingReturnPeriod(sub.utr).flatMap { optReturnPeriod =>
-              block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub, optReturnPeriod))
-            }
+            case Some(sub) =>
+              block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
             case None =>
               //ToDo redirect to current sdilFrontend
               Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
           }
         case (None, Some(utr)) => sdilConnector.retrieveSubscription(utr, "utr").flatMap {
-          case Some(sub) => sdilConnector.oldestPendingReturnPeriod(sub.utr).flatMap { optReturnPeriod =>
-            block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub, optReturnPeriod))
-          }
+          case Some(sub) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
           case None =>
             //ToDo redirect to current sdilFrontend
             Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))

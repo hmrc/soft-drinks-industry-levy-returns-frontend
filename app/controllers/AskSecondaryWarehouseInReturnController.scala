@@ -35,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AskSecondaryWarehouseInReturnController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
-                                         navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
@@ -72,7 +71,7 @@ class AskSecondaryWarehouseInReturnController @Inject()(
               addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
             } else {
               sessionRepository.set(updatedAnswers.copy(warehouseList = Map.empty)).flatMap(_ =>
-                Future.successful(routes.CheckYourAnswersController.onPageLoad().url))
+                Future.successful(routes.CheckYourAnswersController.onPageLoad.url))
             }
           } yield {
             Redirect(onwardUrl)

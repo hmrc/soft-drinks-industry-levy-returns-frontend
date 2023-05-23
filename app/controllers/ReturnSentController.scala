@@ -18,68 +18,53 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{Amounts, NormalMode}
 import navigation.Navigator
+import orchestrators.ReturnsOrchestrator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.{SDILSessionCache, SDILSessionKeys}
+import repositories.SDILSessionCache
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.CurrencyFormatter
-import utilitlies.ReturnsHelper.extractReturnPeriod
 import views.html.ReturnSentView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class ReturnSentController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      config:FrontendAppConfig,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      navigator: Navigator,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      view: ReturnSentView,
-                                      sessionCache: SDILSessionCache
+class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
+                                     override val messagesApi: MessagesApi,
+                                     config:FrontendAppConfig,
+                                     identify: IdentifierAction,
+                                     getData: DataRetrievalAction,
+                                     requireData: DataRequiredAction,
+                                     navigator: Navigator,
+                                     val controllerComponents: MessagesControllerComponents,
+                                     view: ReturnSentView,
+                                     sessionCache: SDILSessionCache
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  //Warehouse
-  val tradingName: String = "Soft Juice Ltd"
-  val line1: String = "3 Prospect St"
-  val line2: String = "Reading"
-  val line3: String = "Berkshire"
-  val line4: String = "United Kingdom"
-  val postcode: String = "CT44 0DF"
   val logger: Logger = Logger(this.getClass())
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val sdilEnrolment = request.sdilEnrolment
-      val subscription = request.subscription
-      val userAnswers = request.userAnswers
-      val returnPeriod = extractReturnPeriod(request)
-
-      for {
-        session <- sessionCache.fetchEntry[Amounts](sdilEnrolment, SDILSessionKeys.AMOUNTS)
-      } yield {
-        session match {
-          case Some(amounts) =>
-            if(userAnswers.submitted){
-              Ok(view(returnPeriod,
-                userAnswers,
-                amounts,
-                subscription,
-                CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
-                financialStatus = financialStatus(amounts.total)
-              )(implicitly, implicitly, config))
-            }else {
-              Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
-            }
-          case _ => Logger("Session Cache returned a None")
-            Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
+      val returnPeriod = request.returnPeriod
+      if (request.userAnswers.submitted) {
+        val sdilRef = request.sdilEnrolment
+        val subscription = request.subscription
+        val userAnswers = request.userAnswers
+        val returnPeriod = request.returnPeriod
+        returnsOrchestrator.calculateAmounts(sdilRef, userAnswers, returnPeriod).map { amounts =>
+          Ok(view(returnPeriod,
+            userAnswers,
+            amounts,
+            subscription,
+            CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
+            financialStatus = financialStatus(amounts.total)
+          )(implicitly, implicitly, config))
         }
+      } else {
+        Future.successful(Redirect(routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false)))
       }
   }
 

@@ -16,61 +16,45 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
-import models.Amounts
+import models.NormalMode
+import orchestrators.ReturnsOrchestrator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
+import repositories.SDILSessionCache
 import services.ReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.ReturnsHelper.extractReturnPeriod
-import views.html.ReturnSentView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 
-class ReturnsController @Inject()(
+class ReturnsController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
                                    override val messagesApi: MessagesApi,
-                                   sessionRepository: SessionRepository,
+                                  config: FrontendAppConfig,
                                    identify: IdentifierAction,
                                    getData: DataRetrievalAction,
                                    returnService: ReturnService,
-                                   requireData: DataRequiredAction,
                                    val controllerComponents: MessagesControllerComponents,
-                                   view: ReturnSentView,
                                    sessionCache: SDILSessionCache
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
   val logger: Logger = Logger(this.getClass())
 
-  def onPageLoad(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(year: Int, quarter: Int, nilReturn: Boolean): Action[AnyContent] = identify.async {
     implicit request =>
-      val sdilEnrolment = request.sdilEnrolment
-      val subscription = request.subscription
-      val userAnswers = request.userAnswers
-      val returnPeriod = extractReturnPeriod(request)
 
-      for {
-        session <- sessionCache.fetchEntry[Amounts](sdilEnrolment,SDILSessionKeys.AMOUNTS)
-        pendingReturns <- returnService.getPendingReturns(subscription.utr)
-      } yield {
-        session match {
-          case Some(amounts) =>
-            if (pendingReturns.contains(returnPeriod)) {
-              returnService.returnsUpdate(subscription, returnPeriod, userAnswers, nilReturn)
-              sessionRepository.set(request.userAnswers.copy(submitted = true))
-            } else {
-              logger.error(s"Pending returns for $sdilEnrolment don't contain the return for year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-              Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-            }
-           Redirect(routes.ReturnSentController.onPageLoad())
-          case _ =>
-            logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-            Redirect(routes.JourneyRecoveryController.onPageLoad())
-        }
+      returnsOrchestrator.setupNewReturn(year, quarter, nilReturn).value.map {
+        case Right(_) if nilReturn =>
+          Redirect(routes.CheckYourAnswersController.onPageLoad)
+        case Right(_) if request.subscription.activity.smallProducer =>
+          Redirect(routes.PackagedContractPackerController.onPageLoad(NormalMode))
+        case Right(_) =>
+          Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
+        case Left(_) => Redirect(config.sdilFrontendBaseUrl)
       }
   }
 }

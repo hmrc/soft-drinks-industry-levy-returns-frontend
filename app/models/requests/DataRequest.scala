@@ -30,4 +30,4 @@ case class DataRequest[A] (request: Request[A],
                            sdilEnrolment: String,
                            subscription: RetrievedSubscription,
                            userAnswers: UserAnswers,
-                           returnPeriod: Option[ReturnPeriod]) extends WrappedRequest[A](request)
+                           returnPeriod: ReturnPeriod) extends WrappedRequest[A](request)

@@ -34,6 +34,7 @@ final case class UserAnswers(
                               packagingSiteList: Map[String, Site] = Map.empty,
                               warehouseList: Map[String, Warehouse] = Map.empty,
                               submitted:Boolean = false,
+                              isNilReturn: Boolean = false,
                               lastUpdated: Instant = Instant.now
                             ) {
 

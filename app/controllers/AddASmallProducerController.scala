@@ -85,7 +85,7 @@ class AddASmallProducerController @Inject()(
               )
             case _ =>
               val preparedForm = form.fill(value)
-              sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod.get).flatMap {
+              sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod).flatMap {
                 case Some(false) =>
                   Future.successful(
                     BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
@@ -162,7 +162,7 @@ class AddASmallProducerController @Inject()(
   }
 
   private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String,
-                             smallProducerList: Seq[SmallProducer], returnPeriod: Option[ReturnPeriod])
+                             smallProducerList: Seq[SmallProducer], returnPeriod: ReturnPeriod)
                             (implicit hc: HeaderCarrier): Future[Either[SDILReferenceErrors, Unit]] = {
 
     if (currentSDILRef == addASmallProducerSDILRef) {
@@ -170,7 +170,7 @@ class AddASmallProducerController @Inject()(
     } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
       Future.successful(Left(AlreadyExists))
     } else {
-      sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod.get).map {
+      sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod).map {
         case Some(false) => Left(NotASmallProducer)
         case _ => Right(())
       }

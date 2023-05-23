@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package models.backend
+package models
 
-import models.Warehouse
-
-import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 
-case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate]
-               )
+case class Litres(lower: Long,
+                  higher: Long) {
+  def this(litresInBands: LitresInBands) = this(
+    lower = litresInBands.lowBand,
+    higher = litresInBands.highBand
+  )
+}
 
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
-
-  def fromWarehouse(warehouse: Warehouse): Site =
-    Site(warehouse.address, None, warehouse.tradingName, None)
+object Litres {
+  implicit val format: Format[Litres] = Json.format[Litres]
 }

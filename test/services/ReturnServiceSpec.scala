@@ -53,7 +53,7 @@ class ReturnServiceSpec extends SpecBase {
       "when a nil return is being submitted" in {
         val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
         when(mockSdilConnector.returns_update(aSubscription.utr, returnPeriod, emptyReturn)(hc)).thenReturn(Future.successful(Some(200)))
-        val res = service.returnsUpdate(aSubscription, returnPeriod, emptyUserAnswers, true)
+        val res = service.sendReturn(aSubscription, returnPeriod, emptyUserAnswers, true)
 
         whenReady(res) {result =>
           result mustBe ((): Unit)
@@ -71,7 +71,7 @@ class ReturnServiceSpec extends SpecBase {
           (1000, 1000)
         )
         when(mockSdilConnector.returns_update(aSubscription.utr, returnPeriod, returnFromUserAnswers)(hc)).thenReturn(Future.successful(Some(200)))
-        val res = service.returnsUpdate(aSubscription, returnPeriod, userAnswers, false)
+        val res = service.sendReturn(aSubscription, returnPeriod, userAnswers, false)
 
         whenReady(res) { result =>
           result mustBe ((): Unit)
@@ -83,7 +83,7 @@ class ReturnServiceSpec extends SpecBase {
         val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
         when(mockSdilConnector.returns_update(aSubscription.utr, returnPeriod, emptyReturn)(hc)).thenReturn(Future.successful(Some(200)))
-        val res = service.returnsUpdate(aSubscription, returnPeriod, userAnswers, false)
+        val res = service.sendReturn(aSubscription, returnPeriod, userAnswers, false)
 
         whenReady(res) { result =>
           result mustBe ((): Unit)
@@ -94,7 +94,7 @@ class ReturnServiceSpec extends SpecBase {
     "throw an exception when sending the return fails" in {
       val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
       when(mockSdilConnector.returns_update(aSubscription.utr, returnPeriod, emptyReturn)(hc)).thenReturn(Future.successful(None))
-      lazy val res = service.returnsUpdate(aSubscription, returnPeriod, emptyUserAnswers, true)
+      lazy val res = service.sendReturn(aSubscription, returnPeriod, emptyUserAnswers, true)
 
       intercept[RuntimeException](await(res))
     }
