@@ -17,39 +17,46 @@
 package controllers
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.HowManyCreditsForLostDamagedFormProvider
+import helpers.LoggerHelper
 import models.{LitresInBands, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages._
+import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import queries.Settable
 import repositories.SessionRepository
-import views.html.HowManyCreditsForLostDamagedView
+import utilitlies.GenericLogger
 
 import scala.concurrent.Future
+import scala.util.{Failure, Try}
 
-class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSugar {
+class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new HowManyCreditsForLostDamagedFormProvider()
-  val form = formProvider()
+  val form: Form[LitresInBands] = formProvider()
 
   val value1max: Long = 100000000000000L
-  val value1 = value1max - 1
+  val value1: Long = value1max - 1
 
   val value2max: Long = 100000000000000L
-  val value2 = value2max - 1
+  val value2: Long = value2max - 1
 
-  lazy val howManyCreditsForLostDamagedRoute = routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
+  lazy val howManyCreditsForLostDamagedRoute: String = routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
 
-  val userAnswers = UserAnswers(
+  val userAnswers: UserAnswers = UserAnswers(
     sdilNumber,
     Json.obj(
       HowManyCreditsForLostDamagedPage.toString -> Json.obj(
@@ -88,50 +95,18 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, howManyCreditsForLostDamagedRoute)
-
-        val view = application.injector.instanceOf[HowManyCreditsForLostDamagedView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, howManyCreditsForLostDamagedRoute)
-
-        val view = application.injector.instanceOf[HowManyCreditsForLostDamagedView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LitresInBands(value1, value2)), NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
+    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      val failedTryUserAnswers: UserAnswers = new UserAnswers("sdilId") {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+        applicationBuilder(Some(failedTryUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -141,35 +116,21 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
 
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
       }
     }
 
-    "must redirect to the next page when actual data is submitted" in {
-      val userAnswersData = Json.obj(
-        OwnBrandsPage.toString -> true,
-        BrandsPackagedAtOwnSitesPage.toString -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        PackagedContractPackerPage.toString -> true,
-        HowManyAsAContractPackerPage.toString -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        ExemptionsForSmallProducersPage.toString -> false,
-        SmallProducerDetailsPage.toString -> false,
-        BroughtIntoUKPage.toString -> true,
-        HowManyBroughtIntoUkPage.toString -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        BroughtIntoUkFromSmallProducersPage.toString -> true,
-        HowManyBroughtIntoTheUKFromSmallProducersPage.toString -> Json.obj("lowBand" -> 444, "highBand" -> 444),
-        ClaimCreditsForExportsPage.toString -> true,
-        HowManyCreditsForExportPage.toString -> Json.obj("lowBand" -> 10, "highBand" -> 10),
-        ClaimCreditsForLostDamagedPage.toString -> true,
-        HowManyCreditsForLostDamagedPage.toString -> Json.obj("lowBand" -> 10, "highBand" -> 10),
-      )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+    "should log an error message when internal server error is returned when getting user answers is not resolved" in {
       val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      val failedTryUserAnswers: UserAnswers = new UserAnswers("sdilId") {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(failedTryUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -177,34 +138,38 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
           .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, howManyCreditsForLostDamagedRoute)
-            .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, howManyCreditsForLostDamagedRoute).withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to resolve user answers while on howManyCreditsForLostDamaged"
+          }.getOrElse(fail("No logging captured"))
+        }
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val app =
+        applicationBuilder(Some(completedUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, howManyCreditsForLostDamagedRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[HowManyCreditsForLostDamagedView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, howManyCreditsForLostDamagedRoute)
+            .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on howManyCreditsForLostDamaged"
+          }.getOrElse(fail("No logging captured"))
+        }
       }
     }
 

@@ -17,50 +17,57 @@
 package controllers
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.RemoveWarehouseConfirmFormProvider
+import helpers.LoggerHelper
 import models.backend.UkAddress
 import models.{NormalMode, UserAnswers, Warehouse}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveWarehouseConfirmPage
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import queries.Settable
 import repositories.SessionRepository
+import utilitlies.GenericLogger
 import views.html.RemoveWarehouseConfirmView
 
 import scala.concurrent.Future
+import scala.util.{Failure, Try}
 
-class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {
+class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new RemoveWarehouseConfirmFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
   val testIndex = "1"
-  val testUkAddress = Html("Wild Lemonade Group<br>33, Rhes, Priordy, East London, E73 2RP")
-  val warehouseMap = Map(("1",Warehouse(
+  val testUkAddress: Html = Html("Wild Lemonade Group<br>33, Rhes, Priordy, East London, E73 2RP")
+  val warehouseMap: Map[String, Warehouse] = Map(("1",Warehouse(
     tradingName = Some("Wild Lemonade Group"),
     address = UkAddress(List("33","Rhes", "Priordy","East London"), "E73 2RP" ),
   )))
 
-  val userAnswersData = Json.obj(
+  val userAnswersData: JsObject = Json.obj(
     RemoveWarehouseConfirmPage.toString -> Json.obj(
       "tradingName" -> "Wild Lemonade Group",
       "address" -> UkAddress(List("33","Rhes","Priordy","East London"), "E73 2RP")
     )
   )
 
-  val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, warehouseMap)
+  val userAnswers: UserAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, warehouseMap)
 
-  lazy val removePackingSiteRoute = routes.RemoveWarehouseConfirmController.onPageLoad(s"$testIndex").url
+  lazy val removePackingSiteRoute: String = routes.RemoveWarehouseConfirmController.onPageLoad(s"$testIndex").url
 
   "RemovePackingSite Controller" - {
 
@@ -77,7 +84,6 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to returns sent page if return is already submitted when hitting the submit" in {
-      val ref: String = "foo"
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
@@ -114,7 +120,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap)))
@@ -140,7 +146,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap)))
@@ -211,5 +217,92 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+
+      val userAnswersWithWarehouseMapFailed: UserAnswers = new UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap) {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application =
+        applicationBuilder(Some(userAnswersWithWarehouseMapFailed))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, removePackingSiteRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
+      }
+    }
+
+    "should log an error message when internal server error is returned when getting user answers is not resolved" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+
+      val userAnswersWithWarehouseMapFailed: UserAnswers = new UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap) {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application =
+        applicationBuilder(Some(userAnswersWithWarehouseMapFailed))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, removePackingSiteRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to resolve user answers while on removeWarehouse"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+
+      val application =
+        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap)))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, removePackingSiteRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on removeWarehouse"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
   }
 }

@@ -17,15 +17,16 @@
 package controllers
 
 import controllers.actions._
+import handlers.ErrorHandler
 import models.Amounts
-import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import navigation.Navigator
+import pages.ReturnChangeRegistrationPage
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
 import services.ReturnService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import utilitlies.ReturnsHelper.extractReturnPeriod
-import views.html.ReturnSentView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,18 +34,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnsController @Inject()(
                                    override val messagesApi: MessagesApi,
-                                   sessionRepository: SessionRepository,
+                                   val sessionRepository: SessionRepository,
+                                   val navigator: Navigator,
+                                   val errorHandler: ErrorHandler,
+                                   val genericLogger: GenericLogger,
                                    identify: IdentifierAction,
                                    getData: DataRetrievalAction,
                                    returnService: ReturnService,
                                    requireData: DataRequiredAction,
                                    val controllerComponents: MessagesControllerComponents,
-                                   view: ReturnSentView,
                                    sessionCache: SDILSessionCache
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-
-  val logger: Logger = Logger(this.getClass())
+                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   def onPageLoad(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -61,14 +61,14 @@ class ReturnsController @Inject()(
           case Some(amounts) =>
             if (pendingReturns.contains(returnPeriod)) {
               returnService.returnsUpdate(subscription, returnPeriod, userAnswers, nilReturn)
-              sessionRepository.set(request.userAnswers.copy(submitted = true))
+              updateDatabaseWithoutRedirect(request.userAnswers.copy(submitted = true), page = ReturnChangeRegistrationPage) // page is a holder, only relevant if save to DB fails
             } else {
-              logger.error(s"Pending returns for $sdilEnrolment don't contain the return for year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+              genericLogger.logger.error(s"Pending returns for $sdilEnrolment don't contain the return for year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
               Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
             }
            Redirect(routes.ReturnSentController.onPageLoad())
           case _ =>
-            logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+            genericLogger.logger.error(s"No amount found in the cache for $sdilEnrolment year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
             Redirect(routes.JourneyRecoveryController.onPageLoad())
         }
       }

@@ -16,14 +16,13 @@
 
 package models
 
+import cats.implicits._
+import models.SdilReturn._
+import pages._
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
 import java.time.LocalDateTime
-import cats.implicits._
-import SdilReturn._
-import models.requests.DataRequest
-import pages._
 
 
 case class SdilReturn(
@@ -71,12 +70,12 @@ object SdilReturn {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
 
-  def apply(userAnswers: UserAnswers)(implicit request: DataRequest[_]): SdilReturn = {
+  def apply(userAnswers: UserAnswers): SdilReturn = {
     val lowOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
     val highOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
     val lowPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
     val highPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
-    val packSmall = request.userAnswers.smallProducerList
+    val packSmall = userAnswers.smallProducerList
     val lowImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
     val highImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
     val lowImportSmall = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)

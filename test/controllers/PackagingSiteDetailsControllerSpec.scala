@@ -18,16 +18,19 @@ package controllers
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
+import errors.SessionDatabaseInsertError
 import forms.PackagingSiteDetailsFormProvider
-import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{NormalMode, SdilReturn, UserAnswers}
+import helpers.LoggerHelper
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackagingSiteDetailsPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -35,17 +38,18 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails}
+import utilitlies.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.PackagingSiteDetailsView
 
 import scala.concurrent.Future
 
-class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with  SummaryListFluency{
+class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new PackagingSiteDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
   lazy val userAnswersWith1PackagingSite: UserAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
@@ -131,7 +135,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       val mockAddressLookupService = mock[AddressLookupService]
       val onwardUrlForALF = "foobarwizz"
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
         ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
         ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
@@ -167,7 +171,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       val mockSessionRepository = mock[SessionRepository]
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(None)
 
       val application =
@@ -196,7 +200,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       lazy val newImporterAnswer : UserAnswers = UserAnswers(sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty, packagingSiteListWith1)
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
 
       val application =
@@ -224,7 +228,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       val mockSessionRepository = mock[SessionRepository]
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
 
       val application =
@@ -252,7 +256,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       val mockSessionRepository = mock[SessionRepository]
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(None)
 
       val application =
@@ -327,5 +331,28 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val app =
+        applicationBuilder(Some(completedUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, packagingSiteDetailsRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on packagingSiteDetails"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
   }
 }

@@ -2,6 +2,7 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
+import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
@@ -102,7 +103,33 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
 
         }
       }
+      "user selected no and has litres in bands" in {
+        given
+          .commonPrecondition
 
+        val userAnswers = claimCreditsForLostDamagedPageWithLitresFullAnswers.success.value
+        setAnswers(userAnswers)
+
+        WsTestClient.withClient { client =>
+          val result =
+            client.url(s"$baseUrl/claim-credits-for-exports")
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+                "Csrf-Token" -> "nocheck")
+              .withFollowRedirects(false)
+              .post(Json.obj("value" -> false))
+
+
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/claim-credits-for-lost-damaged")
+            val updatedAnswers = getAnswers(sdilNumber).get
+            updatedAnswers.get(BroughtIntoUKPage) mustBe Some(false)
+            updatedAnswers.get(HowManyBroughtIntoUkPage) mustBe None
+          }
+
+        }
+      }
     }
   }
 }

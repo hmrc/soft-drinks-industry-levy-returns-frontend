@@ -17,29 +17,32 @@
 package controllers
 
 import base.SpecBase
-import org.mockito.ArgumentMatchers.any
+import errors.SessionDatabaseInsertError
+import helpers.LoggerHelper
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import utilitlies.GenericLogger
 
 import scala.concurrent.Future
 
-class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
+class KeepAliveControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
   "keepAlive" - {
 
     "when the user has answered some questions" - {
 
-      "must keep the answers alive and return OK" in {
+      "must keep the session alive and return OK" in {
 
         val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.keepAlive(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.keepAlive(ArgumentMatchers.eq(completedUserAnswers.id))) thenReturn Future.successful(Right(true))
 
         val application =
-          applicationBuilder(Some(emptyUserAnswers))
+          applicationBuilder(Some(completedUserAnswers))
             .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
             .build()
 
@@ -50,9 +53,58 @@ class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          verify(mockSessionRepository, times(1)).keepAlive(emptyUserAnswers.id)
+          verify(mockSessionRepository, times(1)).keepAlive(completedUserAnswers.id)
+        }
+      }
+    }
+
+    "when session repository keep alive fails" - {
+
+      "must return Internal Server Error" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.keepAlive(ArgumentMatchers.eq(completedUserAnswers.id))) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+        val application =
+          applicationBuilder(Some(completedUserAnswers))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, routes.KeepAliveController.keepAlive.url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+          verify(mockSessionRepository, times(1)).keepAlive(completedUserAnswers.id)
+        }
+      }
+    }
+
+    "should log an error message when internal server error is returned" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.keepAlive(ArgumentMatchers.eq(completedUserAnswers.id))) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val app =
+        applicationBuilder(Some(completedUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(GET, routes.KeepAliveController.keepAlive.url)
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual ("ERROR")
+              event.getMessage mustEqual ("Failed to keep the session alive due to error from mongo session repository's keepAlive")
+          }.getOrElse(fail("No logging captured"))
         }
       }
     }
   }
+
+
 }

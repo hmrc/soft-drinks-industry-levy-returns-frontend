@@ -2,17 +2,12 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.Amounts
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import org.scalatest.TryValues
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
-import repositories.{CacheMap, SDILSessionCache, SDILSessionKeys}
-import utilitlies.CacheHelper
-
-import scala.concurrent.Future
+import repositories.{CacheMap, SDILSessionCache}
 
 
 class ReturnSentControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {

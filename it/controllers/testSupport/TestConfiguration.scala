@@ -13,7 +13,7 @@ import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
-import repositories.{CacheMap, SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
+import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import services.AddressLookupService
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto

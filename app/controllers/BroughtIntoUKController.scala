@@ -18,14 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.BroughtIntoUKFormProvider
+import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
-import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.BroughtIntoUKView
 
 import javax.inject.Inject
@@ -33,8 +33,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BroughtIntoUKController @Inject()(
                                         override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
+                                        val sessionRepository: SessionRepository,
+                                        val navigator: Navigator,
+                                        val errorHandler: ErrorHandler,
+                                        val genericLogger: GenericLogger,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
@@ -42,10 +44,9 @@ class BroughtIntoUKController @Inject()(
                                         formProvider: BroughtIntoUKFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: BroughtIntoUKView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
-  val logger: Logger = Logger(this.getClass())
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
@@ -66,22 +67,12 @@ class BroughtIntoUKController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          (for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(BroughtIntoUKPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield updatedAnswers).flatMap { updatedAnswers =>
-            if (value) {
-              Future.successful(Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers)))
-            } else {
-              Future.fromTry(updatedAnswers.remove(HowManyBroughtIntoUkPage)).flatMap {
-                updatedAnswers =>
-                  sessionRepository.set(updatedAnswers).map {
-                    _ => Redirect(navigator.nextPage(BroughtIntoUKPage, mode, updatedAnswers))
-                  }
-              }
-            }
-          }
+        value => {
+          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(
+            BroughtIntoUKPage, HowManyBroughtIntoUkPage, value)
+
+          updateDatabaseAndRedirect(updatedUserAnswers, BroughtIntoUKPage, mode)
+        }
       )
   }
 }

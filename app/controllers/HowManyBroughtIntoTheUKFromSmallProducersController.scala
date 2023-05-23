@@ -18,13 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.HowManyBroughtIntoTheUKFromSmallProducersFormProvider
+import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.HowManyBroughtIntoTheUKFromSmallProducersPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.HowManyBroughtIntoTheUKFromSmallProducersView
 
 import javax.inject.Inject
@@ -32,8 +33,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
                                       override val messagesApi: MessagesApi,
-                                      sessionRepository: SessionRepository,
-                                      navigator: Navigator,
+                                      val sessionRepository: SessionRepository,
+                                      val navigator: Navigator,
+                                      val errorHandler: ErrorHandler,
+                                      val genericLogger: GenericLogger,
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
@@ -41,9 +44,9 @@ class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
                                       formProvider: HowManyBroughtIntoTheUKFromSmallProducersFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: HowManyBroughtIntoTheUKFromSmallProducersView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
@@ -62,11 +65,12 @@ class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HowManyBroughtIntoTheUKFromSmallProducersPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HowManyBroughtIntoTheUKFromSmallProducersPage, mode, updatedAnswers))
+        value => {
+          val updatedUserAnswers = request.userAnswers.set(
+            HowManyBroughtIntoTheUKFromSmallProducersPage, value)
+
+          updateDatabaseAndRedirect(updatedUserAnswers, HowManyBroughtIntoTheUKFromSmallProducersPage, mode)
+        }
       )
   }
 }
