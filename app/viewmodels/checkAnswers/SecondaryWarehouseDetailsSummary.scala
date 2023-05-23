@@ -58,8 +58,6 @@ object SecondaryWarehouseDetailsSummary  {
           key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("",Seq(
-            ActionItemViewModel("site.edit", routes.IndexController.onPageLoad().url)
-              .withVisuallyHiddenText(messages("secondaryWarehouseDetails.edit.hidden")),
             ActionItemViewModel("site.remove", routes.RemoveWarehouseConfirmController.onPageLoad(warehouse._1).url)
               .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
           )))

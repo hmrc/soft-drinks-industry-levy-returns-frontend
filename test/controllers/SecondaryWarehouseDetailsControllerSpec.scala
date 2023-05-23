@@ -116,7 +116,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         summaryListContents.first.text() must include ("ABC Ltd")
         summaryListContents.last.text() must include ("Super Cola Ltd")
 
-        val summaryActions = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions-list")
+        val summaryActions = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")
         summaryActions.size() mustEqual 2
         summaryActions.first.text() must include("Remove")
         summaryActions.last.text() must include("Remove")
