@@ -2,12 +2,8 @@ package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
-<<<<<<< HEAD
 import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
-import play.api.libs.json.Json
-=======
 import play.api.libs.json.{JsObject, Json}
->>>>>>> origin/main
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames

@@ -67,10 +67,8 @@ class HowManyCreditsForLostDamagedController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          println(Console.YELLOW + "inside value 11111111111111111111 " + Console.WHITE)
           val updatedUserAnswers = request.userAnswers.set(
             HowManyCreditsForLostDamagedPage, value)
-
           updateDatabaseAndRedirect(updatedUserAnswers, HowManyCreditsForLostDamagedPage, mode, withSdilReturn = true, Some(request.subscription))
         }
       )

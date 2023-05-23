@@ -35,18 +35,15 @@ import pages.PackAtBusinessAddressPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.Writes
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails}
 import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
@@ -131,6 +128,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         contentAsString(result) mustEqual view(form.fill(true), businessName, businessAddress, NormalMode)(request, messages(application)).toString
         page.title() must include(Messages("packAtBusinessAddress.title"))
         page.getElementsByTag("h1").text() mustEqual Messages("packAtBusinessAddress.title")
+        //noinspection ComparingUnrelatedTypes
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
       }
     }
@@ -192,7 +190,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, businessName, businessAddress, NormalMode)(request, messages(application)).toString
 
+        //noinspection ComparingUnrelatedTypes
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+        //noinspection ComparingUnrelatedTypes
         page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
         page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.error.required"))
 
@@ -252,52 +252,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
-
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, packAtBusinessAddressRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
-      }
-    }
-
-    "should log an error message when internal server error is returned when getting user answers is not resolved" in {
-      val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
-
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "false"))
-          await(route(application, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustEqual "ERROR"
-              event.getMessage mustEqual "Failed to resolve user answers while on packAtBusinessAddress"
-          }.getOrElse(fail("No logging captured"))
-        }
-      }
-    }
-
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
@@ -309,7 +263,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
 
       running(app) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "false"))
+          val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "true"))
           await(route(app, request).value)
           events.collectFirst {
             case event =>

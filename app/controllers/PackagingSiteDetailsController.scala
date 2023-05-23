@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SdilReturn}
+import models.Mode
 import models.backend.Site
 import navigation.Navigator
 import pages.PackagingSiteDetailsPage

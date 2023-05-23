@@ -78,17 +78,10 @@ class SecondaryWarehouseDetailsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
-//        value => {
-//          val updatedUserAnswers = request.userAnswers.set(
-//            SecondaryWarehouseDetailsPage, value)
-//
-//          updateDatabaseAndRedirect(updatedUserAnswers, SecondaryWarehouseDetailsPage, mode)
-//        }
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _              <- updateDatabaseWithoutRedirect(updatedAnswers,SecondaryWarehouseDetailsPage)
             onwardUrl              <- if(value){
               addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)
             } else {

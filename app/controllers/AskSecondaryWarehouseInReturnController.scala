@@ -72,19 +72,14 @@ class AskSecondaryWarehouseInReturnController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-//        value => {
-//          val updatedUserAnswers = request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value)
-//          updateDatabaseAndRedirect(updatedUserAnswers, AskSecondaryWarehouseInReturnPage, mode)
-//        }
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value))
             onwardUrl              <- if(value){
-            sessionRepository.set(updatedAnswers).flatMap(_ =>
+            updateDatabaseWithoutRedirect(updatedAnswers, AskSecondaryWarehouseInReturnPage).flatMap(_ =>
               addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
             } else {
-              sessionRepository.set(updatedAnswers.copy(warehouseList = Map.empty)).flatMap(_ =>
+              updateDatabaseWithoutRedirect(updatedAnswers.copy(warehouseList = Map.empty), AskSecondaryWarehouseInReturnPage).flatMap(_ =>
                 Future.successful(routes.CheckYourAnswersController.onPageLoad().url))
             }
           } yield {

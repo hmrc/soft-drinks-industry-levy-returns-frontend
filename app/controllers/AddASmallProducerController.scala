@@ -155,14 +155,10 @@ class AddASmallProducerController @Inject()(
     }
 
   private def updateDatabase(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
-    // update answers to database (requires data to not be future)
-    val updatedAnswers = userAnswers.set(AddASmallProducerPage, addSmallProducer)
-    val updatedSmallProducerList = updatedAnswers.get.smallProducerList
-    val updatedAnswersFinal = updatedAnswers.get.copy(smallProducerList = smallProducerInfoFormatted(addSmallProducer) :: updatedSmallProducerList)
-  updateDatabaseWithoutRedirect(updatedAnswersFinal)
     for {
       updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
       updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducerInfoFormatted(addSmallProducer) :: updatedAnswers.smallProducerList)
+      _ <- updateDatabaseWithoutRedirect(updatedAnswersFinal, AddASmallProducerPage)
     } yield {
       updatedAnswersFinal
     }
@@ -192,7 +188,7 @@ class AddASmallProducerController @Inject()(
       updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, formData))
       newListWithOldSPRemoved = updatedAnswers.smallProducerList.filterNot(_.sdilRef == sdilUnderEdit)
       updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducerInfoFormatted(formData) :: newListWithOldSPRemoved)
-      _ <- updateDatabaseWithoutRedirect(updatedAnswersFinal)
+      _ <- updateDatabaseWithoutRedirect(updatedAnswersFinal, AddASmallProducerPage)
     } yield {
       updatedAnswersFinal
     }

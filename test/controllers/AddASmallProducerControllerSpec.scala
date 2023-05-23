@@ -724,7 +724,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustEqual "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on addASmallProducer"
           }.getOrElse(fail("No logging captured"))
         }
       }

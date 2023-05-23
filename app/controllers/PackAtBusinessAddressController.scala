@@ -18,24 +18,16 @@ package controllers
 
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
-
 import handlers.ErrorHandler
-import models.Mode
-import navigation.Navigator
-
 import models.{Mode, NormalMode}
 import models.backend.Site
-
+import navigation.Navigator
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-
-import utilitlies.GenericLogger
-
 import services.{AddressLookupService, PackingDetails}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
+import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
 
 import javax.inject.Inject
@@ -81,35 +73,26 @@ class PackAtBusinessAddressController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
 
-
-//        value => {
-//          val updatedUserAnswers = request.userAnswers.set(
-//            PackAtBusinessAddressPage, value)
-//
-//          updateDatabaseAndRedirect(updatedUserAnswers, PackAtBusinessAddressPage, mode)
-//        }
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
             onwardUrl              <- if(value){
-              sessionRepository.set(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
+              updateDatabaseWithoutRedirect(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
                 Site(
                   address = businessAddress,
                   ref = None,
                   tradingName = Some(businessName),
                   closureDate = None
                 )
-              ))).flatMap(_ =>
+              )), PackAtBusinessAddressPage).flatMap(_ =>
                 Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
             } else {
-              sessionRepository.set(updatedAnswers).flatMap(_ =>
+              updateDatabaseWithoutRedirect(updatedAnswers, PackAtBusinessAddressPage).flatMap(_ =>
                 addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
             }
           } yield {
             Redirect(onwardUrl)
           }
-
       )
   }
 }

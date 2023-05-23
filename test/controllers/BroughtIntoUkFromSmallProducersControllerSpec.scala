@@ -246,7 +246,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, broughtIntoUkFromSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))
-          val result = await(route(application, request).value)
+          await(route(application, request).value)
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustEqual ("ERROR")

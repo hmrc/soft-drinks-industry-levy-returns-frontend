@@ -51,7 +51,6 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
     }
 
     "must redirect to returns sent page if return is already submitted when hitting the submit" in {
-      val ref: String = "foo"
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {

@@ -246,7 +246,7 @@ class BroughtIntoUKControllerSpec extends SpecBase with MockitoSugar with Logger
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, broughtIntoUKRoute).withFormUrlEncodedBody(("value", "false"))
-          val result = await(route(application, request).value)
+          await(route(application, request).value)
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustEqual ("ERROR")

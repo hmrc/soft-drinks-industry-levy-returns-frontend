@@ -57,12 +57,12 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
   val sdilReferenceParty = "XMSDIL000000113"
   val bandMax: Long = 100000000000000L
   val litres: Long = bandMax - 1
-  val smallProducerList = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
-  val smallProducerListWithTwoProducers = List(
+  val smallProducerList: List[SmallProducer] = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
+  val smallProducerListWithTwoProducers: List[SmallProducer] = List(
     SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)),
     SmallProducer(producerName, sdilReference, (litres, litres))
   )
-  val smallProducerListOnlySuperCola = List(SmallProducer(producerName, sdilReference, (litres, litres)))
+  val smallProducerListOnlySuperCola: List[SmallProducer] = List(SmallProducer(producerName, sdilReference, (litres, litres)))
   val userAnswersData: JsObject = Json.obj(
     RemoveSmallProducerConfirmPage.toString -> Json.obj(
       "producerName" -> producerName,
@@ -92,7 +92,6 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must redirect to returns sent page if return is already submitted when hitting the submit" in {
-      val ref: String = "foo"
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
