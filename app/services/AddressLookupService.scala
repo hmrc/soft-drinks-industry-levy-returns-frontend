@@ -130,7 +130,6 @@ class AddressLookupService @Inject()(
 
  private def returnJourneyLabels(state: AddressLookupState)(implicit messages: Messages): Option[JourneyLabels] = {
     state match {
-
       case PackingDetails => Some(
         JourneyLabels(
           en = Some(LanguageLabels(
@@ -194,7 +193,7 @@ class AddressLookupService @Inject()(
   private def returnContinueUrl(state: AddressLookupState, sdilId: String): String = {
     state match {
       case WarehouseDetails => frontendAppConfig.AddressLookupConfig.WarehouseDetails.offRampUrl(sdilId)
-      case PackingDetails => frontendAppConfig.AddressLookupConfig.PackingDetails.offRampUrl(sdilId) //routes.IndexController.onPageLoad().url
+      case PackingDetails => frontendAppConfig.AddressLookupConfig.PackingDetails.offRampUrl(sdilId)
     }
   }
 }
