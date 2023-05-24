@@ -35,7 +35,7 @@
     <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.heading1")</h1>
 
     @govukWarningText(WarningText(
-    iconFallbackText = "Warning",
+    iconFallbackText = Some("Warning"),
     content = Text(messages("claimCreditsForLostDamaged.warning"))
     ))
 
