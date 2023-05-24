@@ -16,11 +16,10 @@
 
 package controllers
 
-import cats.implicits.catsSyntaxApplicativeId
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import controllers.actions.{CheckingSubmissionAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions._
 import models.requests.DataRequest
 import models.{Amounts, UserAnswers}
 import play.api.Logger
@@ -55,7 +54,7 @@ class CheckYourAnswersController @Inject()(
   val logger: Logger = Logger(this.getClass())
 
   def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-     Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
+        Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
   }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
@@ -113,8 +112,8 @@ class CheckYourAnswersController @Inject()(
       )(request,messages, config))
     }) recoverWith {
       case t: Throwable =>
-        logger.error(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
-        Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
+        logger.warn(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
+        Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 }
