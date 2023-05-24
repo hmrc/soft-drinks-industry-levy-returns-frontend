@@ -96,7 +96,7 @@ class RequiredUserAnswers @Inject()(implicit val executionContext: ExecutionCont
         Some(PreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
       RequiredPage(BroughtIntoUkFromSmallProducersPage, None)(implicitly[Reads[Boolean]]),
       RequiredPage(HowManyBroughtIntoTheUKFromSmallProducersPage,
-        Some(PreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+        Some(PreviousPage(BroughtIntoUkFromSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
       RequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]),
       RequiredPage(HowManyCreditsForExportPage,
         Some(PreviousPage(ClaimCreditsForExportsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),

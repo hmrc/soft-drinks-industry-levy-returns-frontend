@@ -43,7 +43,7 @@ class RequiredUserAnswersSpec extends SpecBase {
     None
   )
 
-  val basicJourney = List(RequiredPage(PackagedContractPackerPage, None)(implicitly[Reads[Boolean]]),
+  val basicJourney =     List(RequiredPage(PackagedContractPackerPage, None)(implicitly[Reads[Boolean]]),
     RequiredPage(HowManyAsAContractPackerPage,
       Some(PreviousPage(PackagedContractPackerPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
     RequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
@@ -54,7 +54,7 @@ class RequiredUserAnswersSpec extends SpecBase {
       Some(PreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
     RequiredPage(BroughtIntoUkFromSmallProducersPage, None)(implicitly[Reads[Boolean]]),
     RequiredPage(HowManyBroughtIntoTheUKFromSmallProducersPage,
-      Some(PreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+      Some(PreviousPage(BroughtIntoUkFromSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
     RequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]),
     RequiredPage(HowManyCreditsForExportPage,
       Some(PreviousPage(ClaimCreditsForExportsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
