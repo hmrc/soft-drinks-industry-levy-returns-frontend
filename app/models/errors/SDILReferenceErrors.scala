@@ -19,3 +19,5 @@ package models.errors
 sealed trait SDILReferenceErrors
 case object AlreadyExists extends SDILReferenceErrors
 case object NotASmallProducer extends SDILReferenceErrors
+case object FailedToSubmitReturn extends SDILReferenceErrors
+case object FailedToSubmitReturnVariation extends SDILReferenceErrors

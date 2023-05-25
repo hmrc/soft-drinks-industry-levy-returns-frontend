@@ -17,8 +17,8 @@ class TestingControllerIntegrationSpec extends
   ".resetUserAnswers" should {
 
     "must remove a record" in {
-      setAnswers(userAnswers)
-      setAnswers(userAnswers2)
+      setUpData(userAnswers)
+      setUpData(userAnswers2)
 
       getAnswers(userAnswers.id).get.id mustBe userAnswers.id
       getAnswers(userAnswers2.id).get.id mustBe userAnswers2.id

@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import base.ReturnsTestData._
 import errors.SessionDatabaseInsertError
 import forms.SmallProducerDetailsFormProvider
 import helpers.LoggerHelper
@@ -62,7 +63,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -77,7 +78,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 

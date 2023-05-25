@@ -72,6 +72,7 @@ class SessionRepositoryISpec
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
         false,
+        false,
         Instant.ofEpochSecond(1))
       val setResult = await(repository.set(userAnswersBefore))
       setResult mustBe Right(true)

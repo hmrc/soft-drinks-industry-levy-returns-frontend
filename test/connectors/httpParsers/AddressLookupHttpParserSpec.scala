@@ -16,6 +16,7 @@
 
 package connectors.httpParsers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import connectors.httpParsers.AddressLookupHttpParser.{AddressLookupGetAddressReads, AddressLookupInitJourneyReads}
 import models.core.ErrorModel

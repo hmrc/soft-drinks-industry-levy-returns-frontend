@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package models.backend
+package models.retrieved
 
-import models.Warehouse
-
-import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 
-case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate]
-               )
+case class OptSmallProducer(optSmallProducer: Option[Boolean])
 
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
-
-  def fromWarehouse(warehouse: Warehouse): Site =
-    Site(warehouse.address, None, warehouse.tradingName, None)
+object OptSmallProducer {
+  implicit val format: Format[OptSmallProducer] = Json.format[OptSmallProducer]
 }

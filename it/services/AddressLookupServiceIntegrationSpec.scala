@@ -11,8 +11,6 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class AddressLookupServiceIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues with FutureAwaits with DefaultAwaitTimeout {
   implicit val hc = HeaderCarrier()
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]

@@ -29,7 +29,7 @@ class CheckingSubmission @Inject()(implicit val executionContext: ExecutionConte
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
     request.userAnswers.submitted match {
       case true =>
-       Future(Left(Redirect(routes.ReturnSentController.onPageLoad())))
+       Future(Left(Redirect(routes.ReturnSentController.onPageLoad)))
       case false =>
         Future.successful(Right(request))
     }

@@ -29,12 +29,13 @@ class DataRequiredActionImpl @Inject()(implicit val executionContext: ExecutionC
 
   val logger: Logger = Logger(this.getClass())
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-    request.userAnswers match {
-      case None =>
+    (request.userAnswers, request.returnPeriod) match {
+      case (Some(data), Some(returnPeriod))=>
+        Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data, returnPeriod)))
+      case _ =>
         logger.warn("[DataRequiredActionImpl][refine] - no user answers in session")
         Future.successful(Left(Redirect(routes.JourneyRecoveryController.onPageLoad())))
-      case Some(data) =>
-        Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data, request.returnPeriod)))
+
     }
   }
 }

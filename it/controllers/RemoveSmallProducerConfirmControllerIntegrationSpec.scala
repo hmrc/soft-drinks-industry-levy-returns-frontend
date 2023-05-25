@@ -23,7 +23,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
 
       val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
       val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre))))
-        setAnswers(updatedUserAnswers)
+        setUpData(updatedUserAnswers)
       given
       .commonPrecondition
 
@@ -54,7 +54,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
           SmallProducer(s"$aliasSuperCola",s"$sdilRefSuperCola",(smallLitre,largeLitre)))
         )
 
-        setAnswers(updatedUserAnswers)
+        setUpData(updatedUserAnswers)
 
 
         WsTestClient.withClient { client =>
@@ -85,7 +85,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
           SmallProducer(s"$aliasPartyDrinks", s"$sdilRefPartyDrinks", (smallLitre, largeLitre)))
         )
 
-        setAnswers(updatedUserAnswers)
+        setUpData(updatedUserAnswers)
 
 
         WsTestClient.withClient { client =>
@@ -110,7 +110,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
 
         val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
         val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre))))
-        setAnswers(updatedUserAnswers)
+        setUpData(updatedUserAnswers)
 
         given
           .commonPrecondition

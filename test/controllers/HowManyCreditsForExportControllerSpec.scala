@@ -16,6 +16,7 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.HowManyCreditsForExportFormProvider
@@ -77,7 +78,7 @@ class HowManyCreditsForExportControllerSpec extends SpecBase with MockitoSugar w
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -109,7 +110,7 @@ class HowManyCreditsForExportControllerSpec extends SpecBase with MockitoSugar w
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 

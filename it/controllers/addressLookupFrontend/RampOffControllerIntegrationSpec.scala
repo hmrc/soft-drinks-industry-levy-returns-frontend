@@ -17,7 +17,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       "no address exists in DB currently for SDILID provided" in {
         val sdilId: String = "foo"
         val alfId: String = "bar"
-        setAnswers(emptyUserAnswers)
+        setUpData(emptyUserAnswers)
         given
           .commonPrecondition
           .alf.getAddress(alfId)
@@ -47,7 +47,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         val sdilId: String = "foo"
         val alfId: String = "bar"
         val userAnswersBefore = emptyUserAnswers.copy(warehouseList = Map(sdilId -> Warehouse(None, UkAddress(List.empty, "foo", Some("wizz")))))
-        setAnswers(userAnswersBefore)
+        setUpData(userAnswersBefore)
         given
           .commonPrecondition
           .alf.getAddress(alfId)
@@ -77,7 +77,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       "alf returns error" in {
         val sdilId: String = "foo"
         val alfId: String = "bar"
-        setAnswers(emptyUserAnswers)
+        setUpData(emptyUserAnswers)
         given
           .commonPrecondition
           .alf.getBadAddress(alfId)
@@ -108,7 +108,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       "no address exists in DB currently for SDILID provided" in {
         val sdilId: String = "foo"
         val alfId: String = "bar"
-        setAnswers(emptyUserAnswers)
+        setUpData(emptyUserAnswers)
         given
           .commonPrecondition
           .alf.getAddress(alfId)
@@ -139,7 +139,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         val sdilId: String = "foo"
         val alfId: String = "bar"
         val userAnswersBefore = emptyUserAnswers.copy(packagingSiteList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
-        setAnswers(userAnswersBefore)
+        setUpData(userAnswersBefore)
         given
           .commonPrecondition
           .alf.getAddress(alfId)
@@ -170,7 +170,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       "alf returns error" in {
         val sdilId: String = "foo"
         val alfId: String = "bar"
-        setAnswers(emptyUserAnswers)
+        setUpData(emptyUserAnswers)
         given
           .commonPrecondition
           .alf.getBadAddress(alfId)

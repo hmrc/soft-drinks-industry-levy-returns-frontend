@@ -18,7 +18,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
         "1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
         "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
 
-      setAnswers(newPackerPartialAnswers.copy( warehouseList = twoWarehouses))
+      setUpData(newPackerPartialAnswers.copy( warehouseList = twoWarehouses))
       given
         .commonPrecondition
 
@@ -42,7 +42,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
       val twoWarehouses: Map[String,Warehouse] = Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
         "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
       val removedWarehouseMap: Map[String,Warehouse] = Map("2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
-      setAnswers(newPackerPartialAnswers.copy(id = sdilNumber , warehouseList = twoWarehouses))
+      setUpData(newPackerPartialAnswers.copy(id = sdilNumber , warehouseList = twoWarehouses))
       given
         .commonPrecondition
 
@@ -66,7 +66,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
   "user inputs remove on index that doesn't exist" in {
 
-    setAnswers(newPackerPartialAnswers)
+    setUpData(newPackerPartialAnswers)
     given
       .commonPrecondition
 

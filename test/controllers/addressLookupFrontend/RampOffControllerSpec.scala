@@ -31,7 +31,7 @@
  */
 
 package controllers.addressLookupFrontend
-
+import base.ReturnsTestData._
 import base.SpecBase
 import models.alf.{AlfAddress, AlfResponse}
 import models.{NormalMode, UserAnswers}

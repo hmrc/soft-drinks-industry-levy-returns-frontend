@@ -4,22 +4,24 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
-import models.UserAnswers
+import models.retrieved.OptSmallProducer
+import models.{ReturnCharge, ReturnPeriod, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite, TestSuite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
-import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
+import repositories.{CacheMap, SDILSessionCache, SDILSessionCacheRepository, SDILSessionKeys, SessionRepository}
 import services.AddressLookupService
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
 import java.time.{Clock, ZoneOffset}
-import scala.concurrent.Await
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
 
@@ -61,8 +63,38 @@ trait TestConfiguration
   lazy val mongo: SessionRepository = app.injector.instanceOf[SessionRepository]
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
   lazy val sdilSessionCache: SDILSessionCache = app.injector.instanceOf[SDILSessionCache]
-  def setAnswers(userAnswers: UserAnswers)(implicit timeout: Duration): Unit  = Await.result(mongo.set(userAnswers), timeout)
-  def getAnswers(id: String)(implicit timeout: Duration): Option[UserAnswers] = Await.result(mongo.get(id), timeout)
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+
+
+  def setUpData(userAnswers: UserAnswers, returnPeriod: Option[ReturnPeriod] = Some(ReturnPeriod(2018, 1)))
+               (implicit timeout: Duration): Unit  ={
+    val res = mongo.set(userAnswers).flatMap(_ => returnPeriod match {
+      case Some(rt) => sdilSessionCache.save[ReturnPeriod](userAnswers.id, SDILSessionKeys.RETURN_PERIOD, rt)
+        .map(_ => ())
+      case None => Future.successful(())
+    })
+    Await.result(res, timeout)
+  }
+
+  def setUpDataWithBackendCallsForAmountsCached(userAnswers: UserAnswers,
+                                                isSmallProducer: Option[Boolean] = None,
+                                                balance: BigDecimal = BigDecimal(-100))
+                         (implicit timeout: Duration): Unit  = {
+    val returnPeriod = ReturnPeriod(2018, 1)
+    val cacheMap = CacheMap(userAnswers.id,
+      Map(
+        SDILSessionKeys.RETURN_PERIOD -> Json.toJson(returnPeriod),
+        SDILSessionKeys.balance(false) -> Json.toJson(balance),
+        SDILSessionKeys.smallProducerForPeriod(returnPeriod) -> Json.toJson(OptSmallProducer(isSmallProducer))
+      )
+    )
+    val res = for {
+      _ <- mongo.set(userAnswers)
+      _ <- sdilSessionCacheRepo.upsert(cacheMap)
+    } yield ()
+    Await.result(res, timeout)
+  }
+    def getAnswers(id: String)(implicit timeout: Duration): Option[UserAnswers] = Await.result(mongo.get(id), timeout)
 
   val authCookie: String = createSessionCookieAsString(authData).substring(5)
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)

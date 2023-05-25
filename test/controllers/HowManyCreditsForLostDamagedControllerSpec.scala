@@ -16,6 +16,7 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.HowManyCreditsForLostDamagedFormProvider
@@ -76,7 +77,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -91,7 +92,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 

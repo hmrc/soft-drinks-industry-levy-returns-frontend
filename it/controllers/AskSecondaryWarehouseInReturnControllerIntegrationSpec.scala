@@ -13,7 +13,7 @@ import play.mvc.Http.HeaderNames
 class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData {
   "AskSecondaryWarehouseInReturnController" should {
     "Ask for if user wants to register any UK warehouses where user used to store liable drinks" in {
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
 
@@ -32,7 +32,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
 
     "user selects yes and saves and continues updating the user answers and ramps onto ALF, also NOT wiping the warehouse list" in {
       val warehouseToRemain = Map("foo" -> Warehouse(None, UkAddress(List.empty, "", None)))
-      setAnswers(emptyUserAnswers.copy(warehouseList = warehouseToRemain))
+      setUpData(emptyUserAnswers.copy(warehouseList = warehouseToRemain))
 
       val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
         version = 2,
@@ -130,7 +130,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
     }
     "user selects no and saves and continues, user is taken to check your answers, also wiping the warehouse list" in {
       val warehouseToBeWiped = Map("foo" -> Warehouse(None, UkAddress(List.empty, "", None)))
-      setAnswers(emptyUserAnswers.copy(warehouseList = warehouseToBeWiped))
+      setUpData(emptyUserAnswers.copy(warehouseList = warehouseToBeWiped))
 
       given
         .commonPrecondition
@@ -150,7 +150,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
 
         whenReady(result1) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(routes.CheckYourAnswersController.onPageLoad().url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.CheckYourAnswersController.onPageLoad.url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           getAnswers(sdilNumber).map(userAnswers => userAnswers.warehouseList).get mustBe Map.empty
 

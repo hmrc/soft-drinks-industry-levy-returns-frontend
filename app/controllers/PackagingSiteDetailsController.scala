@@ -86,7 +86,7 @@ class PackagingSiteDetailsController @Inject()(
                   if (UserTypeCheck.isNewImporter (sdilReturn, subscription) ) {
                    Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
                   } else {
-                    Future.successful(routes.CheckYourAnswersController.onPageLoad().url)
+                    Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
                   }
                 case (_, Some(subscription)) =>
                   genericLogger.logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")

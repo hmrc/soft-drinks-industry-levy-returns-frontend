@@ -20,3 +20,5 @@ sealed trait ReturnsErrors
 
 object SessionDatabaseInsertError extends ReturnsErrors
 
+object NoPendingReturnForGivenPeriod extends ReturnsErrors
+

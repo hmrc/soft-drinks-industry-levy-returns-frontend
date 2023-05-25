@@ -38,7 +38,7 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   }
 
   val basGatewayBaseUrl: String = servicesConfig.baseUrl("bas-gateway")
-  val sdilFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")
+  val sdilFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-frontend") + "/soft-drinks-industry-levy"
   val sdilBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy")
 
   val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"

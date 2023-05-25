@@ -16,6 +16,7 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
@@ -70,7 +71,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -85,7 +86,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 

@@ -10,9 +10,8 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
-POST        /check-your-answers/nil-return/:nilReturn    controllers.CheckYourAnswersController.onSubmit(nilReturn: Boolean)
-GET         /check-your-answers/no-activity-to-report    controllers.CheckYourAnswersController.noActivityToReport()
+GET         /check-your-answers                         controllers.CheckYourAnswersController.onPageLoad
+POST        /check-your-answers                         controllers.CheckYourAnswersController.onSubmit
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -125,8 +124,8 @@ POST       /packaging-site-details                              controllers.Pack
 GET        /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /submit-return/nil-return/:nilReturn                 controllers.ReturnsController.onPageLoad(nilReturn: Boolean)
-GET        /return-sent                                         controllers.ReturnSentController.onPageLoad()
+GET        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn                 controllers.ReturnsController.onPageLoad(year: Int, quarter: Int, nilReturn: Boolean)
+GET        /return-sent                                         controllers.ReturnSentController.onPageLoad
 
 
 GET        /remove-warehouse-details/:index                     controllers.RemoveWarehouseConfirmController.onPageLoad(mode: Mode = NormalMode, index: String)

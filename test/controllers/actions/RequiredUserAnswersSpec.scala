@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import base.ReturnsTestData._
 import base.SpecBase
 import models.backend.{Contact, Site, UkAddress}
 import models.requests.DataRequest
@@ -39,7 +40,7 @@ class RequiredUserAnswersSpec extends SpecBase {
       "","","", UkAddress(List.empty, "", None),
       RetrievedActivity(true,true,true,true,true),LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None),
     emptyUserAnswers,
-    None
+    defaultReturnsPeriod
   )
 
   val basicJourney =List(RequiredPage(PackagedContractPackerPage, None)(implicitly[Reads[Boolean]]),

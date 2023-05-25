@@ -16,6 +16,7 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import helpers.LoggerHelper

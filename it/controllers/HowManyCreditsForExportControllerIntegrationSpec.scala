@@ -12,7 +12,7 @@ class HowManyCreditsForExportControllerIntegrationSpec extends Specifications wi
 
     "Ask for how many credits user wants to claim for liable drinks that have ben exported" in {
       val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
 
       given
         .commonPrecondition

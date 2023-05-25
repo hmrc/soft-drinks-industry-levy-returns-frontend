@@ -80,7 +80,7 @@ class AskSecondaryWarehouseInReturnController @Inject()(
               addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
             } else {
               updateDatabaseWithoutRedirect(updatedAnswers.copy(warehouseList = Map.empty), AskSecondaryWarehouseInReturnPage).flatMap(_ =>
-                Future.successful(routes.CheckYourAnswersController.onPageLoad().url))
+                Future.successful(routes.CheckYourAnswersController.onPageLoad.url))
             }
           } yield {
             Redirect(onwardUrl)

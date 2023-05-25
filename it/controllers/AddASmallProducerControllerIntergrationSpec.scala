@@ -25,7 +25,7 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
   "AddASmallProducerController" should {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = addASmallProducerPartialAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
 
@@ -50,7 +50,7 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
         .commonPrecondition
 
       val userAnswers = addASmallProducerFullAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -78,7 +78,7 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
         SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre)))
       )
 
-      setAnswers(updatedUserAnswers)
+      setUpData(updatedUserAnswers)
 
       given
         .commonPrecondition
@@ -112,7 +112,7 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
         SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre)))
       )
 
-      setAnswers(updatedUserAnswers)
+      setUpData(updatedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -157,7 +157,7 @@ class AddASmallProducerControllerIntergrationSpec extends Specifications with Te
         SmallProducer(s"$aliasSparkyJuice", s"$sdilRefSparkyJuice", (litre, litre)))
       )
 
-      setAnswers(updatedUserAnswers)
+      setUpData(updatedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result =

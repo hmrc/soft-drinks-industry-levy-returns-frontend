@@ -16,6 +16,7 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
@@ -46,7 +47,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -61,7 +62,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 

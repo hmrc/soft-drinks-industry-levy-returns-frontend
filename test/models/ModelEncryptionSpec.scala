@@ -36,6 +36,7 @@ class ModelEncryptionSpec extends SpecBase {
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
         false,
+        false,
         Instant.ofEpochSecond(1))
 
       val result = ModelEncryption.encryptUserAnswers(userAnswers)
@@ -47,7 +48,8 @@ class ModelEncryptionSpec extends SpecBase {
       Json.parse(encryption.crypto.decrypt(result._5.head._2, userAnswers.id)).as[Warehouse] mustBe userAnswers.warehouseList.head._2
       result._5.head._1 mustBe userAnswers.warehouseList.head._1
       result._6 mustBe userAnswers.submitted
-      result._7 mustBe userAnswers.lastUpdated
+      result._7 mustBe userAnswers.isNilReturn
+      result._8 mustBe userAnswers.lastUpdated
     }
   }
   "decryptUserAnswers" - {
@@ -58,6 +60,7 @@ class ModelEncryptionSpec extends SpecBase {
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
         false,
+        false,
         Instant.ofEpochSecond(1))
 
      val result = ModelEncryption.decryptUserAnswers(
@@ -66,7 +69,7 @@ class ModelEncryptionSpec extends SpecBase {
         encryption.crypto.encrypt(Json.toJson(userAnswers.smallProducerList).toString(), userAnswers.id),
         userAnswers.packagingSiteList.map(site => site._1 -> encryption.crypto.encrypt(Json.toJson(site._2).toString(), userAnswers.id)),
         userAnswers.warehouseList.map(warehouse => warehouse._1 -> encryption.crypto.encrypt(Json.toJson(warehouse._2).toString(), userAnswers.id)),
-        userAnswers.submitted, userAnswers.lastUpdated
+        userAnswers.submitted, userAnswers.isNilReturn, userAnswers.lastUpdated
       )
       result mustBe userAnswers
 

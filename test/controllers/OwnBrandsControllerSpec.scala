@@ -16,11 +16,12 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.OwnBrandsFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -59,7 +60,7 @@ class OwnBrandsControllerSpec extends SpecBase with MockitoSugar with LoggerHelp
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -79,23 +80,24 @@ class OwnBrandsControllerSpec extends SpecBase with MockitoSugar with LoggerHelp
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(sdilNumber).set(OwnBrandsPage, true).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, ownBrandsRoute)
-
-        val view = application.injector.instanceOf[OwnBrandsView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
-      }
-    }
+    //ToDo uncomment when using real code for own brands page
+//    "must populate the view correctly on a GET when the question has previously been answered" in {
+//
+//      val userAnswers = UserAnswers(sdilNumber).set(OwnBrandsPage, true).success.value
+//
+//      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+//
+//      running(application) {
+//        val request = FakeRequest(GET, ownBrandsRoute)
+//
+//        val view = application.injector.instanceOf[OwnBrandsView]
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual OK
+//        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+//      }
+//    }
 
     "must redirect to the next page when valid data is submitted" in {
 

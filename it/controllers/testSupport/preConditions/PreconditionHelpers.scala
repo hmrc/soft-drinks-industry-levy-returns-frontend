@@ -8,7 +8,7 @@ trait PreconditionHelpers {
       .user.isAuthorisedAndEnrolled
       .sdilBackend.retrieveSubscription("utr","0000001611")
       .sdilBackend.retrieveSubscription("sdil","XKSDIL000000022")
-      .sdilBackend.oldestPendingReturnPeriod("0000001611")
+      .sdilBackend.pendingReturnPeriod("0000001611")
   }
 
 }

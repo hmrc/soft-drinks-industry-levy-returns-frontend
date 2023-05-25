@@ -16,8 +16,9 @@
 
 package connectors
 
+import base.ReturnsTestData._
 import base.SpecBase
-import models.retrieved.RetrievedSubscription
+import models.retrieved.{OptRetrievedSubscription, RetrievedSubscription}
 import models.{FinancialLineItem, ReturnPeriod, SdilReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,7 +29,7 @@ import play.api.libs.json.{JsValue, Json}
 import repositories.{CacheMap, SDILSessionCache}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.Future
 
 class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures {
@@ -39,8 +40,6 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
   val mockSDILSessionCache = mock[SDILSessionCache]
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, frontendAppConfig, mockSDILSessionCache)
 
-  implicit val hc = HeaderCarrier()
-
   val utr: String = "1234567891"
 
   "SoftDrinksIndustryLevyConnector" - {
@@ -49,7 +48,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
         val identifierType: String = "sdil"
         val sdilNumber: String = "XKSDIL000000022"
-        when(mockSDILSessionCache.fetchEntry[RetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(Some(aSubscription)))
+        when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(Some(OptRetrievedSubscription(Some(aSubscription)))))
         val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
         whenReady(
@@ -63,9 +62,9 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
     "when there is no subscription in cache" in {
       val identifierType: String = "sdil"
       val sdilNumber: String = "XKSDIL000000022"
-      when(mockSDILSessionCache.fetchEntry[RetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
       when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
-      when(mockSDILSessionCache.save[RetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(CacheMap("test", Map("SUBSCRIPTION" -> Json.toJson(aSubscription)))))
+      when(mockSDILSessionCache.save[OptRetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(CacheMap("test", Map("SUBSCRIPTION" -> Json.toJson(aSubscription)))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
       whenReady(
@@ -79,8 +78,9 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       "when there is no subscription in cache and no subscription in the database" in {
         val identifierType: String = "sdil"
         val sdilNumber: String = "XKSDIL000000022"
-        when(mockSDILSessionCache.fetchEntry[RetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
+        when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
         when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+        when(mockSDILSessionCache.save[OptRetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(CacheMap("test", Map("SUBSCRIPTION" -> Json.toJson(aSubscription)))))
         val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
         whenReady(
@@ -121,17 +121,17 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
       }
 
-      "return a oldest pending return period successfully" in {
+      "return the pending returns period successfully" in {
 
         val returnPeriod = ReturnPeriod(year = 2022, quarter = 3)
         when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(List(returnPeriod)))
-        val res = softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr)
+        val res = softDrinksIndustryLevyConnector.getPendingReturnPeriods(utr)
 
         whenReady(
           res
         ) {
           response =>
-            response mustEqual Some(returnPeriod)
+            response mustEqual List(returnPeriod)
         }
       }
 
@@ -165,7 +165,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
       when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(returnPeriods))
 
-      val res = softDrinksIndustryLevyConnector.returns_pending(utr)
+      val res = softDrinksIndustryLevyConnector.getPendingReturnPeriods(utr)
 
       whenReady(
         res

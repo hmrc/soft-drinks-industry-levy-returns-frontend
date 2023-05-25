@@ -16,11 +16,12 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.RemoveSmallProducerConfirmFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, SmallProducer, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -51,18 +52,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
   val formProvider = new RemoveSmallProducerConfirmFormProvider()
   val form: Form[Boolean] = formProvider()
-  val producerName = "Super Cola Plc"
-  val sdilReference = "XCSDIL000000069"
-  val producerNameParty = "Soft Juice"
-  val sdilReferenceParty = "XMSDIL000000113"
-  val bandMax: Long = 100000000000000L
-  val litres: Long = bandMax - 1
-  val smallProducerList: List[SmallProducer] = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
-  val smallProducerListWithTwoProducers: List[SmallProducer] = List(
-    SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)),
-    SmallProducer(producerName, sdilReference, (litres, litres))
-  )
-  val smallProducerListOnlySuperCola: List[SmallProducer] = List(SmallProducer(producerName, sdilReference, (litres, litres)))
+
   val userAnswersData: JsObject = Json.obj(
     RemoveSmallProducerConfirmPage.toString -> Json.obj(
       "producerName" -> producerName,
@@ -87,7 +77,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -102,7 +92,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 

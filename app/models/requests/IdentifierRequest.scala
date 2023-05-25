@@ -17,10 +17,8 @@
 package models.requests
 
 import models.retrieved.RetrievedSubscription
-import models.ReturnPeriod
 import play.api.mvc.{Request, WrappedRequest}
 
 case class IdentifierRequest[A] (request: Request[A],
                                  sdilEnrolment: String,
-                                 subscription: RetrievedSubscription,
-                                 returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
+                                 subscription: RetrievedSubscription) extends WrappedRequest[A](request)

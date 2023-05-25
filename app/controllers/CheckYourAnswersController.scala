@@ -18,102 +18,56 @@ package controllers
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
-import models.requests.DataRequest
-import models.{Amounts, UserAnswers}
-import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import orchestrators.ReturnsOrchestrator
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import repositories.{SDILSessionCache, SessionRepository}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.ReturnsHelper.{extractReturnPeriod, extractTotal, listItemsWithTotal}
-import utilitlies.{CacheHelper, LevyCalculator, ReturnsHelper, TotalForQuarter}
+import utilitlies.GenericLogger
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
-                                            sessionRepository: SessionRepository,
-                                            config: FrontendAppConfig,
+                                            val config: FrontendAppConfig,
+                                            val genericLogger: GenericLogger,
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             checkReturnSubmission: CheckingSubmissionAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             checkYourAnswersView: CheckYourAnswersView,
-                                            sdilConnector: SoftDrinksIndustryLevyConnector,
-                                            sessionCache: SDILSessionCache,
-                                            levyCalculator: LevyCalculator
+                                            returnsOrchestrator: ReturnsOrchestrator
                                           ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val lowerBandCostPerLitre: BigDecimal = config.lowerBandCostPerLitre
-  val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
-  val logger: Logger = Logger(this.getClass())
-
-  def onSubmit(nilReturn: Boolean): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-        Redirect(routes.ReturnsController.onPageLoad(nilReturn = nilReturn))
-  }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-       constructPage(request)
+      val sdilRef = request.sdilEnrolment
+      val returnPeriod = request.returnPeriod
+      val userAnswers = request.userAnswers
+
+      returnsOrchestrator.calculateAmounts(sdilRef, userAnswers, returnPeriod).map{ amounts =>
+        val submitUrl: Call = routes.CheckYourAnswersController.onSubmit
+
+        Ok(checkYourAnswersView(request.subscription.orgName,
+          returnPeriod,
+          userAnswers,
+          amounts,
+          submitUrl
+        )(implicitly, implicitly, config))
+      }.recoverWith {
+        case t: Throwable =>
+          genericLogger.logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+      }
   }
 
-  def noActivityToReport: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      val noActivityUserAnswers = ReturnsHelper.noActivityUserAnswers(request.sdilEnrolment)
-      constructPage(request, Some(noActivityUserAnswers))
-  }
-
-  private def constructPage(request: DataRequest[AnyContent],
-                            userAnswers: Option[UserAnswers] = None
-                           )(implicit hc: HeaderCarrier, messages: Messages) = {
-
-    val balanceAllEnabled = config.balanceAllEnabled
-    val sdilEnrolment = request.sdilEnrolment
-    val returnPeriod = extractReturnPeriod(request)
-
-    val answers = userAnswers match {
-      case Some(answers) => answers
-      case _ => request.userAnswers
-    }
-
-    val rowCalculations = levyCalculator.calculateLevyForAnswers(answers)
-    val cacheHelper = new CacheHelper(sessionCache)
-
-    (for {
-      _ <- cacheHelper.cacheRowAmounts(sdilEnrolment, rowCalculations)
-      isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilEnrolment, returnPeriod)
-      balanceBroughtForward <-
-        if (balanceAllEnabled) {
-          sdilConnector.balanceHistory(sdilEnrolment, withAssessment = false).map { financialItem =>
-            extractTotal(listItemsWithTotal(financialItem))
-          }
-        } else {
-          sdilConnector.balance(sdilEnrolment, withAssessment = false)
-        }
-    } yield {
-
-      val totalForQuarter = TotalForQuarter.calculateTotal(answers, isSmallProducer.getOrElse(false))(config)
-      val total = totalForQuarter - balanceBroughtForward
-      val isNilReturn = totalForQuarter == 0
-      val amounts = Amounts(totalForQuarter, balanceBroughtForward, total)
-      val submitUrl: Call = routes.CheckYourAnswersController.onSubmit(isNilReturn)
-      cacheHelper.cacheAmounts(sdilEnrolment, amounts)
-
-      Ok(checkYourAnswersView(request.subscription.orgName,
-        returnPeriod,
-        answers,
-        amounts,
-        submitUrl
-      )(request,messages, config))
-    }) recoverWith {
-      case t: Throwable =>
-        logger.warn(s"Exception occurred while retrieving SDIL data for $sdilEnrolment", t)
-        Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+    returnsOrchestrator.completeReturnAndUpdateUserAnswers.map{ _ =>
+      Redirect(routes.ReturnSentController.onPageLoad)
     }
   }
 }

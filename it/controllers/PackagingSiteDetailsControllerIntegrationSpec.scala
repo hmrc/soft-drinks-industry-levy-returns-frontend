@@ -90,7 +90,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
         )
         val alfOnRampURL: String = "http://onramp.com"
 
-        setAnswers(UserAnswers(sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty))
+        setUpData(UserAnswers(sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty))
         given
           .commonPrecondition
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)
@@ -119,7 +119,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
         given
         .commonPrecondition
         val userAnswers = newPackerPartialAnswers
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
         WsTestClient.withClient { client =>
           val result =
             client.url(s"$baseUrl/packaging-site-details")
@@ -148,7 +148,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
         val userAnswers = newPackerPartialAnswers.copy(packagingSiteList =
           Map("4564561" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
             Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -178,7 +178,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
           packagingSiteList =
           Map("6541651568" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
             Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =

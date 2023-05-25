@@ -16,47 +16,134 @@
 
 package services
 
+import cats.implicits._
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
+import models.backend.Site
 import models.retrieved.RetrievedSubscription
-import models.{ReturnPeriod, SdilReturn, UserAnswers}
+import models.{Amounts, ReturnPeriod, ReturnsVariation, SdilReturn, UserAnswers}
 import pages._
 import play.api.Logger
-import play.api.http.Status.OK
+import play.api.http.Status.{NO_CONTENT, OK}
 import uk.gov.hmrc.http.HeaderCarrier
-import utilitlies.ReturnsHelper
+import utilitlies.ReturnsHelper.{extractTotal, listItemsWithTotal}
+import utilitlies.{ReturnsHelper, TotalForQuarter, UserTypeCheck}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector) {
+class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
+                              config: FrontendAppConfig) {
 
   val logger: Logger = Logger(this.getClass())
 
-  def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.returns_pending(utr)
+  val costLower = config.lowerBandCostPerLitre
+  val costHigher = config.higherBandCostPerLitre
 
-  def returnsUpdate(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers, nilReturn: Boolean)
-                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    sdilConnector.returns_update(subscription.utr, returnPeriod, returnToBeSubmitted(nilReturn, userAnswers)).map {
+  def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.getPendingReturnPeriods(utr)
+
+  def sendReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers, nilReturn: Boolean)
+                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+
+    if(nilReturn) {
+      submitNilReturnAndVariation(subscription, returnPeriod, userAnswers)
+    } else {
+      submitReturnAndVariation(subscription, returnPeriod, userAnswers)
+    }
+  }
+
+  def submitNilReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    val sdilReturn = ReturnsHelper.emptyReturn
+    val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
+    for {
+      _ <- submitReturn(subscription, returnPeriod, sdilReturn)
+      variation <- submitReturnVariation(subscription.sdilRef, sdilVariation)
+    } yield variation
+  }
+
+  def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    val sdilReturn = returnToBeSubmitted(userAnswers)
+    val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
+    for {
+      _ <- submitReturn(subscription, returnPeriod, sdilReturn)
+      variation <- submitReturnVariation(subscription.sdilRef, sdilVariation)
+    } yield variation
+  }
+
+  def calculateAmounts(sdilRef: String,
+                       userAnswers: UserAnswers,
+                       returnPeriod: ReturnPeriod)
+                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Amounts] = {
+    for {
+      isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
+      balanceBroughtForward <- getBalanceBroughtForward(sdilRef)
+    } yield getAmounts(userAnswers, balanceBroughtForward, isSmallProducer.getOrElse(false))
+
+  }
+
+  def getBalanceBroughtForward(sdilRef: String)
+                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[BigDecimal] = {
+    if (config.balanceAllEnabled) {
+      sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { financialItem =>
+        extractTotal(listItemsWithTotal(financialItem))
+      }
+    } else {
+      sdilConnector.balance(sdilRef, withAssessment = false)
+    }
+  }
+
+  def getAmounts(userAnswers: UserAnswers, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean): Amounts = {
+    val totalForQuarter = TotalForQuarter.calculateTotal(userAnswers, isSmallProducer)(config)
+    val total = totalForQuarter - balanceBroughtForward
+    Amounts(totalForQuarter, balanceBroughtForward, total)
+  }
+
+  private def submitReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, sdilReturn: SdilReturn)
+                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    sdilConnector.returns_update(subscription.utr, returnPeriod, sdilReturn).map {
       case Some(OK) => logger.info(s"Return submitted for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
       case _ => logger.error(s"Failed to submit return for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
         throw new RuntimeException(s"Failed to submit return ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
     }
   }
 
-  private def returnToBeSubmitted(nilReturn: Boolean, userAnswers: UserAnswers): SdilReturn = {
-    if (nilReturn) {
-      ReturnsHelper.emptyReturn
-    } else {
-      SdilReturn(
-        ownBrandsLitres(userAnswers),
-        packLargeLitres(userAnswers),
-        userAnswers.smallProducerList,
-        importsLitres(userAnswers),
-        importsSmallLitres(userAnswers),
-        exportLitres(userAnswers),
-        wastageLitres(userAnswers))
+  private def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    sdilConnector.returns_variation(sdilRef, variation).map {
+      case Some(NO_CONTENT) => logger.info(s"Return variation submitted for $sdilRef")
+      case _ => logger.error(s"Failed to submit return variation for $sdilRef")
+        throw new RuntimeException(s"Failed to submit return variation $sdilRef")
     }
+  }
+
+  private def returnVariationToBeSubmitted(subscription: RetrievedSubscription, sdilReturn: SdilReturn, userAnswers: UserAnswers) = {
+    val isNewImporter = UserTypeCheck.isNewImporter(sdilReturn, subscription)
+    val isNewPacker = UserTypeCheck.isNewPacker(sdilReturn, subscription)
+    ReturnsVariation(
+      orgName = subscription.orgName,
+      ppobAddress = subscription.address,
+      importer = (isNewImporter, ((sdilReturn.totalImported)).combineN(4)),
+      packer = (isNewPacker, (sdilReturn.totalPacked).combineN(4)),
+      warehouses = getWarehouseSites(userAnswers),
+      packingSites = userAnswers.packagingSiteList.values.toList,
+      phoneNumber = subscription.contact.phoneNumber,
+      email = subscription.contact.email,
+      taxEstimation = taxEstimation(sdilReturn)
+    )
+  }
+
+  private def returnToBeSubmitted(userAnswers: UserAnswers): SdilReturn = {
+    SdilReturn(
+      ownBrandsLitres(userAnswers),
+      packLargeLitres(userAnswers),
+      userAnswers.smallProducerList,
+      importsLitres(userAnswers),
+      importsSmallLitres(userAnswers),
+      exportLitres(userAnswers),
+      wastageLitres(userAnswers))
   }
 
 
@@ -90,5 +177,14 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector) {
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L))
   }
 
+  private def getWarehouseSites(userAnswers: UserAnswers): List[Site] = {
+    userAnswers.warehouseList.map { case (id, warehouse) =>
+      Site.fromWarehouse(warehouse)
+    }.toList
+  }
 
+  private def taxEstimation(r: SdilReturn): BigDecimal = {
+    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
+    (t._1 * costLower |+| t._2 * costHigher) * 4
+  }
 }

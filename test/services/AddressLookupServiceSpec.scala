@@ -16,6 +16,7 @@
 
 package services
 
+import base.ReturnsTestData._
 import base.SpecBase
 import connectors.AddressLookupConnector
 import controllers.routes
@@ -27,15 +28,12 @@ import models.core.ErrorModel
 import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, when}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAwaitTimeout  {
 
   val mockSdilConnector = mock[AddressLookupConnector]
-  implicit val hc = HeaderCarrier()
   val service = new AddressLookupService(mockSdilConnector, frontendAppConfig)
 
   "getAddress" - {

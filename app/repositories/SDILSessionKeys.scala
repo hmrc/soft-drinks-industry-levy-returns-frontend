@@ -16,10 +16,28 @@
 
 package repositories
 
+import models.ReturnPeriod
+
 object SDILSessionKeys {
 
   val SUBSCRIPTION = "SUBSCRIPTION"
   val AMOUNTS = "AMOUNTS"
-  val ROW_CALCULATIONS = "ROW-CALCULATIONS"
+  val RETURN_PERIOD = "RETURN_PERIOD"
+
+  def balanceHistory(withAssessment: Boolean) = if(withAssessment) {
+    "BALANCE_HISTORY_WITH_ASSESSMENT"
+  } else {
+    "BALANCE_HISTORY_WITH_NO_ASSESSMENT"
+  }
+
+  def balance(withAssessment: Boolean) = if (withAssessment) {
+    "BALANCE_WITH_ASSESSMENT"
+  } else {
+    "BALANCE_WITH_NO_ASSESSMENT"
+  }
+
+
+  def smallProducerForPeriod(returnPeriod: ReturnPeriod) =
+    s"SMALL_PRODUCER_YEAR_${returnPeriod.year}_QUARTER_${returnPeriod.quarter}"
 
 }

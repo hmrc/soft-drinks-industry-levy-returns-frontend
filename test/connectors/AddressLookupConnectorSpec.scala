@@ -16,6 +16,7 @@
 
 package connectors
 
+import base.ReturnsTestData._
 import base.SpecBase
 import connectors.httpParsers.AddressLookupHttpParser.AddressLookupInitJourneyReads
 import connectors.httpParsers.ResponseHttpParser.HttpResult
@@ -27,9 +28,8 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.HeaderNames
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHttp {
@@ -38,7 +38,6 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
   val testAddressLookupConnector = new AddressLookupConnector(mockHttp, frontendAppConfig)
 
   lazy val id = "111111111"
-  implicit val hc = HeaderCarrier()
 
   "AddressLookupConnector" - {
 

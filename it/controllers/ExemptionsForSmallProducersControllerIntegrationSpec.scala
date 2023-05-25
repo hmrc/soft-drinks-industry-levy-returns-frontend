@@ -12,7 +12,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
 
     "Ask for if user need to claim an exemption for any of the liable drinks they have packaged for registered small producers" in {
       val userAnswers = exemptionsForSmallProducersPartialAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
 
@@ -47,7 +47,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
           .commonPrecondition
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -83,7 +83,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
           .commonPrecondition
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =

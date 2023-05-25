@@ -13,7 +13,7 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
 
     "Ask if user is needing to claim a credit for liable drinks that have been exported" in {
       val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
 
@@ -108,7 +108,7 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
           .commonPrecondition
 
         val userAnswers = claimCreditsForLostDamagedPageWithLitresFullAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =

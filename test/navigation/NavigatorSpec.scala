@@ -16,6 +16,7 @@
 
 package navigation
 
+import base.ReturnsTestData._
 import base.SpecBase
 import controllers.routes
 import helpers.LoggerHelper
@@ -27,13 +28,6 @@ import play.api.libs.json.Json
 class NavigatorSpec extends SpecBase with LoggerHelper {
 
   val navigator = new Navigator
-
-  val id = "id"
-  val superColaProducerAlias = "Super Cola Ltd"
-  val superJuiceProducerAlias = "Super Juice Ltd"
-  val referenceNumber1 = "XZSDIL000000234"
-  val referenceNumber2 = "XZSDIL000000235"
-  val litreage = (10L, 20L)
 
   "Navigator" - {
 
@@ -124,7 +118,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
               val result = navigate(false, CheckMode)
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
           }
@@ -170,7 +164,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
               val result = navigate(false, CheckMode)
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
           }
@@ -193,7 +187,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
               val result = navigate(false, CheckMode)
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
           }
@@ -229,7 +223,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
               val result = navigate(false, CheckMode)
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
           }
@@ -263,7 +257,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
               val result = navigate(false, CheckMode)
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
           }
 
@@ -305,7 +299,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
                 val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
-                result mustBe routes.CheckYourAnswersController.onPageLoad()
+                result mustBe routes.CheckYourAnswersController.onPageLoad
               }
             }
 
@@ -349,7 +343,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
                 val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
-                result mustBe routes.CheckYourAnswersController.onPageLoad()
+                result mustBe routes.CheckYourAnswersController.onPageLoad
               }
             }
 
@@ -369,7 +363,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
                 val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
                 val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
-                result mustBe routes.CheckYourAnswersController.onPageLoad()
+                result mustBe routes.CheckYourAnswersController.onPageLoad
               }
             }
 
@@ -423,7 +417,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
             "should redirect to check your answers page when current sdil is already a packer" in {
@@ -431,7 +425,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
             "should redirect to check your answers page when current sdil is already an importer" in {
@@ -439,7 +433,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
             "should redirect to check your answers page when current sdil is already an importer and a packer" in {
@@ -447,7 +441,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
-              result mustBe routes.CheckYourAnswersController.onPageLoad()
+              result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
             "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
@@ -743,7 +737,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" - {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad()
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad
       }
 
 
@@ -751,7 +745,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
         "Should navigate to Check Your Answers page when no is selected" in {
           navigator.nextPage(OwnBrandsPage, CheckMode, UserAnswers(id, Json.obj("ownBrands" -> false))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many packed at your own own site page when yes is selected" in {
@@ -765,7 +759,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             UserAnswers(id, Json.obj("ownBrands" -> true,
               "brandsPackagedAtOwnSites" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
       }
 
@@ -773,7 +767,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
         "Should navigate to Check Your Answers page when no is selected" in {
           navigator.nextPage(PackagedContractPackerPage, CheckMode, UserAnswers(id, Json.obj("packagedContractPacker" -> false))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many packed at your as contract packer page when yes is selected" in {
@@ -787,7 +781,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             UserAnswers(id, Json.obj("packagedContractPacker" -> true,
               "howManyAsAContractPacker" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
       }
@@ -796,7 +790,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
         "Should navigate to Check Your Answers page when no is selected" in {
           navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> false))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to small producer details page when yes is selected" in {
@@ -809,7 +803,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             CheckMode,
             UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true,
               "addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
       }
 
@@ -818,7 +812,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
         "Should navigate to Check Your Answers page when no is selected" in {
           navigator.nextPage(BroughtIntoUKPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUK" -> false))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many brought into UK page when yes is selected" in {
@@ -832,7 +826,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             UserAnswers(id, Json.obj("broughtIntoUK" -> true,
               "HowManyBroughtIntoUk" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
       }
@@ -841,7 +835,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
         "Should navigate to Check Your Answers page when no is selected" in {
           navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> false))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many brought into uk from small producers page when yes is selected" in {
@@ -855,7 +849,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> true,
               "howManyBroughtIntoTheUKFromSmallProducers" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
       }
@@ -864,7 +858,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
         "Should navigate to Check Your Answers page when no is selected" in {
           navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForExports" -> false))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many credits for exports page when yes is selected" in {
@@ -878,7 +872,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             UserAnswers(id, Json.obj("claimCreditsForExports" -> true,
               "howManyCreditsForExport" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
       }
 
@@ -886,7 +880,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
         "Should navigate to Check Your Answers page when no is selected" in {
           navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> false))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many credits for lost or damaged page when yes is selected" in {
@@ -900,7 +894,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true,
               "howManyCreditsForLostDamaged" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
       }
 
@@ -908,7 +902,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
         "Should navigate to Check Your Answers page when no is selected" in {
           navigator.nextPage(SmallProducerDetailsPage, CheckMode, UserAnswers(id, Json.obj("smallProducerDetails" -> false))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad()
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many credits for lost or damaged page when yes is selected" in {

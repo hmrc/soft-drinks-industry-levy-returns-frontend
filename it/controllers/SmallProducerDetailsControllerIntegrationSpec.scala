@@ -12,7 +12,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
   "SmallProducerDetailsController" should {
     "Ask for if user wants to add more small producer" in {
       val userAnswers = smallProducerDetaisPartialAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
 
@@ -46,7 +46,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           .commonPrecondition
 
         val userAnswers = addASmallProducerFullAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -82,7 +82,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           .commonPrecondition
 
         val userAnswers = smallProducerDetaisNoProducerAnswers
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -121,7 +121,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           .commonPrecondition
 
         val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("","",(1L, 1L))))
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =
