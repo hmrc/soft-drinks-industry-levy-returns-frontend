@@ -16,6 +16,10 @@
 
 package controllers.actions
 
+import models.NormalMode
+import models.retrieved.RetrievedSubscription
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.{EnrolmentIdentifier, Enrolments}
 
 trait ActionHelpers {
@@ -35,4 +39,13 @@ trait ActionHelpers {
       .getEnrolment("IR-CT")
       .orElse(enrolments.getEnrolment("IR-SA"))
       .flatMap(_.getIdentifier("UTR").map(_.value))
+
+
+  protected def redirectToStartOfJourney(subscription: RetrievedSubscription): Result = {
+    if(subscription.activity.smallProducer) {
+      Redirect(controllers.routes.PackagedContractPackerController.onPageLoad(NormalMode))
+    } else {
+      Redirect(controllers.routes.OwnBrandsController.onPageLoad(NormalMode))
+    }
+  }
 }

@@ -192,7 +192,7 @@ askSecondaryWarehouseInReturn.change.hidden = AskSecondaryWarehouseInReturn
 claimCreditsForExports.title = Exported drinks
 claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
 claimCreditsForExports.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
-claimCreditsForExports.warning = You can only claim credit if you?ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
+claimCreditsForExports.warning = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
 claimCreditsForExports.detailsLink = What can I claim a credit for?
 claimCreditsForExports.detailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
 claimCreditsForExports.detailsContent2 = brand of the liable drinks
@@ -242,7 +242,7 @@ addASmallProducer.error.referenceNumber.notASmallProducer = Small producer refer
 addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
 
 secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
-secondaryWarehouseDetails.heading = You added {0} UK warehouses
+secondaryWarehouseDetails.heading = You added {0} UK warehouse{1}
 secondaryWarehouseDetails.checkYourAnswersLabel = secondaryWarehouseDetails
 secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel = Warehouses
 secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
@@ -305,7 +305,7 @@ balanceBroughtForward = Balance brought forward
 total = Total
 financiallineitem.returncharge = Return <br/><span class="form-hint">for {0} to {1}</span>
 
-registeredUkSites = Registered UK Sites
+registeredUkSites = UK site details
 packagingSites = Packaging Sites
 
 sendYourReturn = Send your return
@@ -349,7 +349,6 @@ returnSent.broughtIntoUkSmallProducer = Brought into the UK from small producers
 returnSent.exported = Exported
 returnSent.lostDestroyed = Lost or destroyed
 returnSent.amountToPay = Amount to pay
-returnSent.RegisteredSites = Registered UK sites
 returnSent.details = Details of your return
 
 checkYourAnswers.amountToPay.title = Amount to pay

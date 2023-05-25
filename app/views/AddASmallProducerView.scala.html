@@ -33,7 +33,7 @@
   sdilReference: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @htmlContent = {
-    <label class="govuk-heading-s">@messages("addASmallProducer.referenceNumber")</label>
+    <label class="govuk-label govuk-!-font-weight-bold">@messages("addASmallProducer.referenceNumber")</label>
 }
 @action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdilReference.getOrElse("")) else routes.AddASmallProducerController.onSubmit(mode)}
 

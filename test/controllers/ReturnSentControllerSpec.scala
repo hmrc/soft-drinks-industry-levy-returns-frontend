@@ -554,7 +554,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty, submitted = true)
       val subscription = aSubscription.copy(activity = RetrievedActivity(true, true, false,false,false))
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod), Some(subscription)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 

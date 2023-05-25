@@ -16,13 +16,10 @@
 
 package controllers
 
-import cats.implicits.catsSyntaxApplicativeId
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.SoftDrinksIndustryLevyConnector
-import controllers.actions.{CheckingSubmissionAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions._
 import orchestrators.ReturnsOrchestrator
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -41,7 +38,7 @@ class CheckYourAnswersController @Inject()(
                                             checkReturnSubmission: CheckingSubmissionAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             checkYourAnswersView: CheckYourAnswersView,
-                                            returnsOrchestrator: ReturnsOrchestrator,
+                                            returnsOrchestrator: ReturnsOrchestrator
                                           ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
@@ -63,7 +60,7 @@ class CheckYourAnswersController @Inject()(
       }.recoverWith {
         case t: Throwable =>
           genericLogger.logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
-          Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
       }
   }
 

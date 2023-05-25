@@ -35,7 +35,7 @@ class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       val controllerComponents: MessagesControllerComponents,
-                                      view: ReturnSentView,
+                                      view: ReturnSentView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {

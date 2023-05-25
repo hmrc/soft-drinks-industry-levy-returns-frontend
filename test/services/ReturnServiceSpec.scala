@@ -23,7 +23,6 @@ import connectors.SoftDrinksIndustryLevyConnector
 import models.{ReturnPeriod, SdilReturn}
 import org.mockito.MockitoSugar.{mock, when}
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 

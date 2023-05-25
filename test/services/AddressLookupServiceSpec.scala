@@ -28,7 +28,6 @@ import models.core.ErrorModel
 import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, when}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
