@@ -103,7 +103,6 @@ class Navigator @Inject()() {
     }
   }
 
-
   private def packagedContractPackerPageNavigation(userAnswers: UserAnswers) = {
     if(userAnswers.get(page = PackagedContractPackerPage).contains(true)) {
       routes.HowManyAsAContractPackerController.onPageLoad(NormalMode)
