@@ -128,7 +128,7 @@ case class UserAnswers(
             "warehouseList" -> encryptedValue._5,
             "submitted" -> encryptedValue._6,
             "isNilReturn" -> encryptedValue._7,
-            "lastUpdated" -> encryptedValue._7
+            "lastUpdated" -> encryptedValue._8
           )
         }
       }

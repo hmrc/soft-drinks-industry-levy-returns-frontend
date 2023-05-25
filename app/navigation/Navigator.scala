@@ -293,30 +293,4 @@ class Navigator @Inject()() {
         routes.JourneyRecoveryController.onPageLoad()
     }
   }
-//<<<<<<< HEAD
-//
-//  private def packagingSiteDetailsPageNavigation( userAnswers: UserAnswers,
-//                                                  sdilReturnOpt: Option[SdilReturn],
-//                                                  subscriptionOpt: Option[RetrievedSubscription]) = {
-//    if (userAnswers.get(page = PackagingSiteDetailsPage).contains(true)){
-//      routes.IndexController.onPageLoad()
-//    }else {
-//      (sdilReturnOpt, subscriptionOpt) match {
-//        case (Some(sdilReturn), Some(subscription)) =>
-//          if (UserTypeCheck.isNewImporter(sdilReturn,subscription)) {
-//            routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
-//          } else {
-//            routes.CheckYourAnswersController.onPageLoad
-//          }
-//        case (_, Some(subscription)) =>
-//          logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
-//          routes.JourneyRecoveryController.onPageLoad()
-//        case _ =>
-//          logger.warn("SDIL return or subscription not provided for current unknown user")
-//          routes.JourneyRecoveryController.onPageLoad()
-//      }
-//    }
-//  }
-//=======
-//>>>>>>> b2f19b9edc751ae3774ca79cf64971e85284fd92
 }
