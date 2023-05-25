@@ -242,7 +242,7 @@ addASmallProducer.error.referenceNumber.notASmallProducer = Small producer refer
 addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
 
 secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
-secondaryWarehouseDetails.heading = You added {0} UK warehouses
+secondaryWarehouseDetails.heading = You added {0} UK warehouse{1}
 secondaryWarehouseDetails.checkYourAnswersLabel = secondaryWarehouseDetails
 secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel = Warehouses
 secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
@@ -305,7 +305,7 @@ balanceBroughtForward = Balance brought forward
 total = Total
 financiallineitem.returncharge = Return <br/><span class="form-hint">for {0} to {1}</span>
 
-registeredUkSites = Registered UK Sites
+registeredUkSites = UK site details
 packagingSites = Packaging Sites
 
 sendYourReturn = Send your return
@@ -349,7 +349,6 @@ returnSent.broughtIntoUkSmallProducer = Brought into the UK from small producers
 returnSent.exported = Exported
 returnSent.lostDestroyed = Lost or destroyed
 returnSent.amountToPay = Amount to pay
-returnSent.RegisteredSites = Registered UK sites
 returnSent.details = Details of your return
 
 checkYourAnswers.amountToPay.title = Amount to pay
