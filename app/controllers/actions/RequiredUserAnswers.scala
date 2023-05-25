@@ -20,22 +20,20 @@ import models.requests.DataRequest
 import models.retrieved.RetrievedSubscription
 import models.{AddASmallProducer, LitresInBands, SdilReturn, UserAnswers}
 import pages._
-import play.api.Logger
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.Result
-import utilitlies.UserTypeCheck
+import utilitlies.{GenericLogger, UserTypeCheck}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 
-class RequiredUserAnswers @Inject()(implicit val executionContext: ExecutionContext) extends ActionHelpers {
-  val logger = Logger(this.getClass)
+class RequiredUserAnswers @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
 
   def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     page match {
       case CheckYourAnswersPage if isNilReturn(request.userAnswers) => {
-        logger.info(s"${request.userAnswers.id} Nil return true on CYA")
+        genericLogger.logger.info(s"${request.userAnswers.id} Nil return true on CYA")
         action
       }
       case CheckYourAnswersPage => checkYourAnswersRequiredData(action)
@@ -50,7 +48,7 @@ class RequiredUserAnswers @Inject()(implicit val executionContext: ExecutionCont
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(mainRoute)
     if (userAnswersMissing.nonEmpty) {
-      logger.warn(s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing")
+      genericLogger.logger.warn(s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing")
       Future.successful(redirectToStartOfJourney(request.subscription))
     } else {
       action

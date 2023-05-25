@@ -28,12 +28,11 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RequiredUserAnswersSpec extends SpecBase {
 
-  val requiredUserAnswers = new RequiredUserAnswers
+  val requiredUserAnswers = application.injector.instanceOf[RequiredUserAnswers]
   val basicRequestWithEmptyAnswers = DataRequest(FakeRequest(),
     "",
     RetrievedSubscription(
