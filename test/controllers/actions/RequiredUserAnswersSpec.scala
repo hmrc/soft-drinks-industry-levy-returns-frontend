@@ -43,7 +43,7 @@ class RequiredUserAnswersSpec extends SpecBase {
     None
   )
 
-  val basicJourney =     List(RequiredPage(PackagedContractPackerPage, None)(implicitly[Reads[Boolean]]),
+  val basicJourney =List(RequiredPage(PackagedContractPackerPage, None)(implicitly[Reads[Boolean]]),
     RequiredPage(HowManyAsAContractPackerPage,
       Some(PreviousPage(PackagedContractPackerPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
     RequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
@@ -242,7 +242,7 @@ class RequiredUserAnswersSpec extends SpecBase {
 
       res mustBe smallProducerFalseJourney ++ basicJourney ++ coPackerFalseJourney ++ importerFalseJourney
     }
-    "should return all correct answers if user is NOT newImporter && NOT co packer && NOT small producer" in {
+    "should return all correct answers if user is NOT newImporter && NOT new co packer && NOT small producer" in {
       val completedUserAnswers = UserAnswers("foo",
         Json.obj("ownBrands" -> false,
           "packagedContractPacker" -> true,
