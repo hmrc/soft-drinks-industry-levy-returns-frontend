@@ -12,7 +12,7 @@ class HowManyAsAContractPackerIntergrationSpec extends Specifications with TestC
 
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       val userAnswers = howManyAsContractPackerPartialAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
 
@@ -43,7 +43,7 @@ class HowManyAsAContractPackerIntergrationSpec extends Specifications with TestC
         .commonPrecondition
 
       val userAnswers = howManyAsContractPackerFullAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =

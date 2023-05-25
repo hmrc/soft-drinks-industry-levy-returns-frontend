@@ -14,7 +14,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
 
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       val userAnswers = ownBrandPageAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
 
@@ -39,7 +39,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
         .commonPrecondition
 
       val userAnswers = ownBrandPageAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =

@@ -16,7 +16,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
 
     "Ask the user if the address shown, is a UK packaging site they operate to produce liable drinks " in {
 
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
 
@@ -104,7 +104,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
         ))
       val alfOnRampURL: String = "http://onramp.com"
 
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
@@ -137,7 +137,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
 
       val expectedPackingSiteListDB = Some(Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)))
 
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
 

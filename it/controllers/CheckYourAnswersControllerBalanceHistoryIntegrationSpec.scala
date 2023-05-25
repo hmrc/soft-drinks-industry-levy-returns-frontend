@@ -15,7 +15,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends Specificat
 
     "Load when valid user answers present" in {
 
-      setAnswers(checkYourAnswersFullAnswers)
+      setUpData(checkYourAnswersFullAnswers)
 
       given.commonPrecondition
       given.sdilBackend.balanceHistory("XKSDIL000000022", false)

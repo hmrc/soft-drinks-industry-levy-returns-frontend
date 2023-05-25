@@ -15,7 +15,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
 
     "Ask for are you reporting liable drinks brought into uk from outside uk" in {
       val userAnswers = broughtIntoUkPartialAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
       WsTestClient.withClient { client =>
@@ -47,7 +47,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
           .commonPrecondition
 
         val userAnswers: UserAnswers = broughtIntoUkFullAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -73,7 +73,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
           .commonPrecondition
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
 
         WsTestClient.withClient { client =>
           val result =

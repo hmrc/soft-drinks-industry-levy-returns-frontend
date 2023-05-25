@@ -16,46 +16,44 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.RemoveSmallProducerConfirmFormProvider
-import models.{NormalMode, SmallProducer, UserAnswers}
+import helpers.LoggerHelper
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import queries.Settable
 import repositories.SessionRepository
+import utilitlies.GenericLogger
 import views.html.RemoveSmallProducerConfirmView
 
 import scala.concurrent.Future
+import scala.util.{Failure, Try}
 
 
-class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSugar {
+class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new RemoveSmallProducerConfirmFormProvider()
-  val form = formProvider()
-  val producerName = "Super Cola Plc"
-  val sdilReference = "XCSDIL000000069"
-  val producerNameParty = "Soft Juice"
-  val sdilReferenceParty = "XMSDIL000000113"
-  val bandMax: Long = 100000000000000L
-  val litres = bandMax - 1
-  val smallProducerList = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
-  val smallProducerListWithTwoProducers = List(
-    SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)),
-    SmallProducer(producerName, sdilReference, (litres, litres))
-  )
-  val smallProducerListOnlySuperCola = List(SmallProducer(producerName, sdilReference, (litres, litres)))
-  val userAnswersData = Json.obj(
+  val form: Form[Boolean] = formProvider()
+
+  val userAnswersData: JsObject = Json.obj(
     RemoveSmallProducerConfirmPage.toString -> Json.obj(
       "producerName" -> producerName,
       "referenceNumber" -> sdilReference,
@@ -63,11 +61,11 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       "highBand" -> litres
     )
   )
-  val userAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerList)
-  val userAnswersWithTwoProducers = UserAnswers(sdilNumber, userAnswersData, smallProducerListWithTwoProducers)
-  val userAnswersWithOneProducer = UserAnswers(sdilNumber, userAnswersData, smallProducerListOnlySuperCola)
+  val userAnswers: UserAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerList)
+  val userAnswersWithTwoProducers: UserAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerListWithTwoProducers)
+  val userAnswersWithOneProducer: UserAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerListOnlySuperCola)
 
-  lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$sdilReferenceParty").url
+  lazy val removeSmallProducerConfirmRoute: String = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$sdilReferenceParty").url
 
   "RemoveSmallProducerConfirm Controller" - {
 
@@ -79,12 +77,11 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
     "must redirect to returns sent page if return is already submitted when hitting the submit" in {
-      val ref: String = "foo"
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
@@ -95,7 +92,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -147,7 +144,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     "must redirect to the next page when valid data is submitted" in {
       val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
@@ -168,7 +165,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     "must return to small producer details page when no is selected and there are two producers on the list" in {
       val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -190,7 +187,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(
         RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
@@ -245,6 +242,80 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
+
+      val userAnswers: UserAnswers = new UserAnswers("sdilId", Json.obj(), smallProducerList) {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, removeSmallProducerConfirmRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
+      }
+    }
+
+    "should log an error message when internal server error is returned when getting user answers is not resolved" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+
+      val userAnswers: UserAnswers = new UserAnswers("sdilId", Json.obj(), smallProducerList) {
+        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+      }
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to resolve user answers while on removeSmallProducerConfirm"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val app =
+        applicationBuilder(Some(UserAnswers("sdilId", Json.obj(), smallProducerList)))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, removeSmallProducerConfirmRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on removeSmallProducerConfirm"
+          }.getOrElse(fail("No logging captured"))
+        }
       }
     }
 

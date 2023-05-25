@@ -26,6 +26,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,18 +34,16 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             val config: FrontendAppConfig,
+                                            val genericLogger: GenericLogger,
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             checkReturnSubmission: CheckingSubmissionAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             checkYourAnswersView: CheckYourAnswersView,
-                                            val sdilConnector: SoftDrinksIndustryLevyConnector,
                                             returnsOrchestrator: ReturnsOrchestrator,
                                           ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-
-  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
@@ -63,7 +62,7 @@ class CheckYourAnswersController @Inject()(
         )(implicitly, implicitly, config))
       }.recoverWith {
         case t: Throwable =>
-          logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
+          genericLogger.logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
           Redirect(routes.JourneyRecoveryController.onPageLoad()).pure[Future]
       }
   }

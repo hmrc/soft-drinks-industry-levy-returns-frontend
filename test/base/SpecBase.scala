@@ -16,12 +16,12 @@
 
 package base
 
+import base.ReturnsTestData.defaultReturnsPeriod
 import config.FrontendAppConfig
 import controllers.actions._
-import models.alf.{AlfAddress, AlfResponse}
-import models.backend.{Contact, Site, UkAddress}
-import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{ReturnCharge, ReturnPeriod, SmallProducer, UserAnswers}
+import models.retrieved.RetrievedSubscription
+import models.{ReturnPeriod, UserAnswers}
+import orchestrators.ReturnsOrchestrator
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -30,54 +30,12 @@ import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubControllerComponents
+import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
-
-object SpecBase {
-  val aSubscription = RetrievedSubscription(
-    utr = "0000000022",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(
-      Site(
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        Some("88"),
-        Some("Wild Lemonade Group"),
-        Some(LocalDate.of(2018, 2, 26))),
-      Site(
-        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-        Some("87"),
-        Some("Highly Addictive Drinks Plc"),
-        Some(LocalDate.of(2019, 8, 19))),
-      Site(
-        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
-        Some("94"),
-        Some("Monster Bottle Ltd"),
-        Some(LocalDate.of(2017, 9, 23))),
-      Site(
-        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
-        Some("27"),
-        Some("Super Lemonade Group"),
-        Some(LocalDate.of(2017, 4, 23))),
-      Site(
-        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
-        Some("96"),
-        Some("Star Products Ltd"),
-        Some(LocalDate.of(2017, 2, 11)))
-    ),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
-
-}
+import scala.concurrent.ExecutionContext
 trait SpecBase
   extends AnyFreeSpec
     with Matchers
@@ -91,142 +49,22 @@ trait SpecBase
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
   lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val hc = HeaderCarrier()
+  implicit val ec = application.injector.instanceOf[ExecutionContext]
 
-  val organisation = "soft drinks ltd"
-  val addressLine1 = "line 1"
-  val veryLongAddressLine1 = "liiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiine 1"
-  val foreignCharsLine1 = "1 Falsche Straße"
-  val addressLine2 = "line 2"
-  val addressLine3 = "line 3"
-  val addressLine4 = "line 4"
-  val postcode = "aa1 1aa"
-  val countryName = "United Kingdom"
-  val countryCode = "UK"
-
-  val customerAddressJsonError: JsObject = Json.obj(
-    "address" -> Json.obj(
-      "lines" -> 4
-    )
-  )
-  val customerAddressMax: AlfResponse = AlfResponse(
-    AlfAddress(
-    Some(organisation),
-    List(addressLine1, addressLine2, addressLine3, addressLine4),
-    Some(postcode),
-    Some(countryCode)
-  ))
-
-  val customerAddressMaxJson = Json.toJson(AlfResponse(
-    AlfAddress(
-    Some(organisation),
-    List(addressLine1, addressLine2, addressLine3, addressLine4),
-    Some(postcode),
-    Some(countryCode)
-  )))
-
-  val returnPeriod = ReturnPeriod(2022,1)
-  val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
-  val genericSmallProducerAlias = "Generic Producer LTD"
-  val baseUrl = "/soft-drinks-industry-levy-returns-frontend"
-  val baseAlias = "Jackson's Drinks"
-  val baseLitreage = 100L
-  val sdilNumber: String = "XKSDIL000000022"
-  val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1L, 1L))
-  val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (100L, 100L))
-  val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
-  val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
-  val financialItemList = List(financialItem1, financialItem2)
-
-  val baseSessionData =
-    Json.obj(
-      "producerName" -> baseAlias,
-      "referenceNumber" -> sdilNumber,
-      "lowBand" -> baseLitreage,
-      "highBand" -> baseLitreage
-    )
-
-  val aSubscription = RetrievedSubscription(
-    utr = "0000000022",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(
-      Site(
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        Some("88"),
-        Some("Wild Lemonade Group"),
-        Some(LocalDate.of(2018, 2, 26))),
-      Site(
-        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-        Some("87"),
-        Some("Highly Addictive Drinks Plc"),
-        Some(LocalDate.of(2019, 8, 19))),
-      Site(
-        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
-        Some("94"),
-        Some("Monster Bottle Ltd"),
-        Some(LocalDate.of(2017, 9, 23))),
-      Site(
-        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
-        Some("27"),
-        Some("Super Lemonade Group"),
-        Some(LocalDate.of(2017, 4, 23))),
-      Site(
-        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
-        Some("96"),
-        Some("Star Products Ltd"),
-        Some(LocalDate.of(2017, 2, 11)))
-    ),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
-
-  lazy val subscriptionWithCopacker = RetrievedSubscription(
-    utr = "0000000022",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = false,
-      voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
-
-  lazy val emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
-  lazy val submittedAnswers = UserAnswers(sdilNumber, Json.obj(), submitted = true)
-  lazy val completedUserAnswers = UserAnswers(sdilNumber, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
-    true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-    "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj(
-      "lowBand" -> 259, "highBand" -> 923), "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports"
-      -> false, "claimCreditsForLostDamaged" -> false), List.empty, Map.empty)
-
-  val PackagingSite1 = Site(
-    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-    None,
-    Some("Wild Lemonade Group"),
-    None)
-
-  lazy val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None,
-                                    returnPeriod: Option[ReturnPeriod] = None,
+                                    returnPeriod: Option[ReturnPeriod] = Some(defaultReturnsPeriod),
                                     subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
     val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].toInstance(new FakeIdentifierAction(subscription, returnPeriod, bodyParsers)),
+        bind[IdentifierAction].toInstance(new FakeIdentifierAction(subscription, bodyParsers)),
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
-
   }
 
 }

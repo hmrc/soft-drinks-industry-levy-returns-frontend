@@ -16,6 +16,7 @@
 
 package views
 
+import base.ReturnsTestData._
 import base.UserAnswersTestData
 import config.FrontendAppConfig
 import models.Amounts

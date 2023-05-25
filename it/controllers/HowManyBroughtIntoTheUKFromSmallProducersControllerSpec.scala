@@ -10,7 +10,7 @@ import play.mvc.Http.HeaderNames
 class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
   "HowManyBroughtIntoTheUKFromSmallProducersController" should {
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
-      setAnswers(broughtIntoUkFullAnswers.success.value)
+      setUpData(broughtIntoUkFullAnswers.success.value)
       given
         .commonPrecondition
 
@@ -42,7 +42,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specificat
         .commonPrecondition
 
       val userAnswers = howManyAsContractPackerFullAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =

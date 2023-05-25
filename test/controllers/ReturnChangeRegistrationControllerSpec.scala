@@ -16,6 +16,7 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
@@ -46,12 +47,11 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
     "must redirect to returns sent page if return is already submitted when hitting the submit" in {
-      val ref: String = "foo"
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
@@ -62,7 +62,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -87,7 +87,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
 
     val mockSessionRepository = mock[SessionRepository]
 
-    when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+    when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
     val application =
       applicationBuilder(userAnswers = Some(emptyUserAnswers))

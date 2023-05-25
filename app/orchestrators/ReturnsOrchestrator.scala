@@ -19,10 +19,12 @@ package orchestrators
 import cats.data.EitherT
 import cats.implicits._
 import com.google.inject.{Inject, Singleton}
-import models.requests.{DataRequest, IdentifierRequest}
+import errors.{NoPendingReturnForGivenPeriod, ReturnsErrors}
+import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import models.{Amounts, ReturnPeriod, UserAnswers}
 import play.api.mvc.AnyContent
 import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
+import service.ReturnResult
 import services.ReturnService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -35,16 +37,32 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
 
 
 
+  //ToDo remove when ATs etc route through the dashboard
+  def tempSetupReturn
+                     (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
+    val latestReturn = returnService.getPendingReturns(request.subscription.utr).map{pendingReturns =>
+      pendingReturns.sortBy(_.year).sortBy(_.quarter).headOption match {
+        case Some(pendingReturn) => Right(pendingReturn)
+        case _ => Left(NoPendingReturnForGivenPeriod)
+      }}
+    for {
+      lr <- EitherT(latestReturn)
+      _ <- EitherT.right[ReturnsErrors](sdilSessionCache.save[ReturnPeriod](request.sdilEnrolment, SDILSessionKeys.RETURN_PERIOD, lr))
+      _ <- setupUserAnswers(request.sdilEnrolment, false)
+    } yield ((): Unit)
+  }
   def setupNewReturn(year: Int, quarter: Int, nilReturn: Boolean)
-                    (implicit request: IdentifierRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, String, Unit] = {
+                    (implicit request: IdentifierRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
     for {
       _ <- getAndSaveValidReturnPeriod(year, quarter)
-      _ <- EitherT.right(setupUserAnswers(nilReturn))
+      _ <- setupUserAnswers(request.sdilEnrolment, nilReturn)
     } yield ((): Unit)
   }
 
   def getAndSaveValidReturnPeriod(year: Int, quarter: Int)
-                 (implicit request: IdentifierRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, String, ReturnPeriod] = EitherT {
+                 (implicit request: IdentifierRequest[AnyContent],
+                  hc: HeaderCarrier,
+                  ec: ExecutionContext): ReturnResult[ReturnPeriod] = EitherT{
     returnService.getPendingReturns(request.subscription.utr).flatMap { pendingReturns =>
       val returnPeriod = ReturnPeriod(year, quarter)
       if(pendingReturns.contains(returnPeriod)) {
@@ -52,13 +70,13 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
           _ => Right(returnPeriod)
         )
       } else {
-        Future.successful(Left("NO_PENDING_RETURNS_FOR_GIVEN_PERIOD"))
+        Future.successful(Left(NoPendingReturnForGivenPeriod))
       }
     }
   }
 
-  def setupUserAnswers(nilReturn: Boolean)(implicit request: IdentifierRequest[AnyContent]): Future[Boolean] = {
-    val defaultUserAnswers = UserAnswers(request.sdilEnrolment, isNilReturn = nilReturn)
+  def setupUserAnswers(sdilRef: String, nilReturn: Boolean): ReturnResult[Boolean] = EitherT {
+    val defaultUserAnswers = UserAnswers(sdilRef, isNilReturn = nilReturn)
     sessionRepository.set(defaultUserAnswers)
   }
 

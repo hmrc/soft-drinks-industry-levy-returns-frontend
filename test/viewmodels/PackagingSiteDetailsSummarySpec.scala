@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import base.ReturnsTestData._
 import base.SpecBase
 import models.backend.{Site, UkAddress}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._

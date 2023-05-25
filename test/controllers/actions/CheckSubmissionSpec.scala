@@ -25,8 +25,10 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.Future
+import base.ReturnsTestData._
+
 
 class CheckSubmissionSpec extends SpecBase with MockitoSugar {
 
@@ -41,7 +43,7 @@ class CheckSubmissionSpec extends SpecBase with MockitoSugar {
       "must redirect the user to returns sent page" in {
 
         val action = new Harness()
-        val result = action.callRefine(new DataRequest(FakeRequest(), "id", aSubscription, submittedAnswers, Some(ReturnPeriod(2023,1)))).futureValue
+        val result = action.callRefine(new DataRequest(FakeRequest(), "id", aSubscription, submittedAnswers, ReturnPeriod(2023,1))).futureValue
 
         result must matchPattern{case Left(_) =>}
 
@@ -56,7 +58,7 @@ class CheckSubmissionSpec extends SpecBase with MockitoSugar {
 
       "must build a userAnswers object and add it to the request" in {
         val action = new Harness()
-        val result = action.callRefine(new DataRequest(FakeRequest(), "id", aSubscription, completedUserAnswers, Some(ReturnPeriod(2023, 1)))).futureValue
+        val result = action.callRefine(new DataRequest(FakeRequest(), "id", aSubscription, completedUserAnswers, ReturnPeriod(2023, 1))).futureValue
 
         result must matchPattern { case Right(_) => }
 

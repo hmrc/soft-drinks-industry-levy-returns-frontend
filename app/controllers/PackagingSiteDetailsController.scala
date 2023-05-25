@@ -18,16 +18,16 @@ package controllers
 
 import controllers.actions._
 import forms.PackagingSiteDetailsFormProvider
+import handlers.ErrorHandler
 import models.backend.Site
 import models.{Mode, NormalMode, SdilReturn}
+import navigation.Navigator
 import pages.PackagingSiteDetailsPage
-import play.api.i18n.Lang.logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.UserTypeCheck
+import utilitlies.{GenericLogger, UserTypeCheck}
 import views.html.PackagingSiteDetailsView
 
 import javax.inject.Inject
@@ -35,18 +35,21 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PackagingSiteDetailsController @Inject()(
                                                 override val messagesApi: MessagesApi,
-                                                sessionRepository: SessionRepository,
+                                                val sessionRepository: SessionRepository,
+                                                val navigator: Navigator,
+                                                val errorHandler: ErrorHandler,
+                                                val genericLogger: GenericLogger,
                                                 identify: IdentifierAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
                                                 checkReturnSubmission: CheckingSubmissionAction,
                                                 formProvider: PackagingSiteDetailsFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
-                                                view: PackagingSiteDetailsView,
-                                                addressLookupService: AddressLookupService
-                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                addressLookupService: AddressLookupService,
+                                                view: PackagingSiteDetailsView
+                                              )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
@@ -69,14 +72,15 @@ class PackagingSiteDetailsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
             onwardUrl:String      <- if(value){
-              sessionRepository.set(updatedAnswers).flatMap(_ =>
+              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
                 addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
             } else {
-              sessionRepository.set(updatedAnswers).flatMap(_ =>
+              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
               (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
                 case (Some(sdilReturn), Some(subscription)) =>
                   if (UserTypeCheck.isNewImporter (sdilReturn, subscription) ) {
@@ -85,10 +89,10 @@ class PackagingSiteDetailsController @Inject()(
                     Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
                   }
                 case (_, Some(subscription)) =>
-                  logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
+                  genericLogger.logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
                   Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
                 case _ =>
-                  logger.warn("SDIL return or subscription not provided for current unknown user")
+                  genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
                   Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
                 }
               )

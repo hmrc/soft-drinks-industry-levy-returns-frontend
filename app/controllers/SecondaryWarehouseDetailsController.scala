@@ -18,14 +18,16 @@ package controllers
 
 import controllers.actions._
 import forms.SecondaryWarehouseDetailsFormProvider
+import handlers.ErrorHandler
 import models.Mode
+import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import viewmodels.govuk.summarylist._
 import views.html.SecondaryWarehouseDetailsView
@@ -35,18 +37,21 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryWarehouseDetailsController @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
+                                         val sessionRepository: SessionRepository,
+                                         val navigator: Navigator,
+                                         val errorHandler: ErrorHandler,
+                                         val genericLogger: GenericLogger,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: SecondaryWarehouseDetailsFormProvider,
+                                         checkReturnSubmission: CheckingSubmissionAction,
+                                         addressLookupService: AddressLookupService,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: SecondaryWarehouseDetailsView,
-                                         addressLookupService: AddressLookupService
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                         view: SecondaryWarehouseDetailsView
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
@@ -72,16 +77,18 @@ class SecondaryWarehouseDetailsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _              <- updateDatabaseWithoutRedirect(updatedAnswers,SecondaryWarehouseDetailsPage)
             onwardUrl              <- if(value){
               addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)
             } else {
               Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
             }
           } yield Redirect(onwardUrl)
+
       )
   }
 }

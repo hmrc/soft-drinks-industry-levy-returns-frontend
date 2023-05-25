@@ -11,7 +11,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
   "GET" should {
     "return view" in {
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
 
@@ -32,7 +32,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
   }
   "POST" should {
     "take user to next destination successfully if user " in {
-      setAnswers(newPackerPartialAnswers)
+      setUpData(newPackerPartialAnswers)
       given
         .commonPrecondition
 
@@ -52,7 +52,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
       }
     }
     s"take user to next destination successfully if new packer is true" in {
-      setAnswers(newPackerPartialAnswers)
+      setUpData(newPackerPartialAnswers)
       given
         .commonPrecondition
 
@@ -72,7 +72,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
       }
     }
     s"take user to next destination successfully if new packer is false and new importer is true" in {
-      setAnswers(newImporterAnswers)
+      setUpData(newImporterAnswers)
       given
         .commonPrecondition
 

@@ -15,7 +15,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
 
       "user entered No on own brand page" in {
         val userAnswers = ownBrandPageFalseAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
         given
           .commonPrecondition
 
@@ -34,7 +34,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
 
       "user entered Yes on own brand page " in {
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
         given
           .commonPrecondition
 
@@ -64,7 +64,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
           ))
 
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
         given
           .commonPrecondition
 
@@ -95,7 +95,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
           ))
 
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
-        setAnswers(userAnswers)
+        setUpData(userAnswers)
         given
           .commonPrecondition
 

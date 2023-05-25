@@ -16,41 +16,50 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
+import errors.SessionDatabaseInsertError
 import forms.PackAtBusinessAddressFormProvider
+import helpers.LoggerHelper
+import models.backend.UkAddress
+import models.retrieved.RetrievedSubscription
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import play.api.i18n.Messages
+import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
+import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.PackAtBusinessAddressView
-import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers
-import play.api.mvc.Call
 import services.{AddressLookupService, PackingDetails}
+import utilitlies.GenericLogger
+import views.html.PackAtBusinessAddressView
 
 import scala.concurrent.Future
 
-class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
+class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new PackAtBusinessAddressFormProvider()
-  val form = formProvider()
-  val mockSessionRepository = mock[SessionRepository]
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-  var usersRetrievedSubscription = aSubscription
-  val businessName = usersRetrievedSubscription.orgName
-  val businessAddress = usersRetrievedSubscription.address
+  val form: Form[Boolean] = formProvider()
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  var usersRetrievedSubscription: RetrievedSubscription = aSubscription
+  val businessName: String = usersRetrievedSubscription.orgName
+  val businessAddress: UkAddress = usersRetrievedSubscription.address
 
-  lazy val packAtBusinessAddressRoute = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+
+  lazy val packAtBusinessAddressRoute: String = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
   "PackAtBusinessAddress Controller" - {
 
@@ -62,7 +71,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -77,7 +86,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
       }
     }
 
@@ -120,6 +129,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual view(form.fill(true), businessName, businessAddress, NormalMode)(request, messages(application)).toString
         page.title() must include(Messages("packAtBusinessAddress.title"))
         page.getElementsByTag("h1").text() mustEqual Messages("packAtBusinessAddress.title")
+        //noinspection ComparingUnrelatedTypes
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
       }
     }
@@ -129,7 +139,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       val mockAddressLookupService = mock[AddressLookupService]
       val onwardUrlForALF = "foobarwizz"
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
         ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
         ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
@@ -156,7 +167,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -180,7 +191,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, businessName, businessAddress, NormalMode)(request, messages(application)).toString
 
+        //noinspection ComparingUnrelatedTypes
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+        //noinspection ComparingUnrelatedTypes
         page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
         page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.error.required"))
 
@@ -217,11 +230,12 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page removing litreage data from user answers, when valid data is submitted (true)" in {
+
+    "must redirect to the next page removing litre data from user answers, when valid data is submitted (true)" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -238,5 +252,28 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
       }
     }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val app =
+        applicationBuilder(Some(completedUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "true"))
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on packAtBusinessAddress"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
   }
 }

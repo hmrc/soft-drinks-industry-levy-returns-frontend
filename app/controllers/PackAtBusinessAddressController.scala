@@ -18,14 +18,16 @@ package controllers
 
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
+import handlers.ErrorHandler
 import models.{Mode, NormalMode}
 import models.backend.Site
+import navigation.Navigator
 import pages.PackAtBusinessAddressPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
 
 import javax.inject.Inject
@@ -34,18 +36,21 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PackAtBusinessAddressController @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
+                                         val sessionRepository: SessionRepository,
+                                         val navigator: Navigator,
+                                         val errorHandler: ErrorHandler,
+                                         val genericLogger: GenericLogger,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         addressLookupService: AddressLookupService,
                                          checkReturnSubmission: CheckingSubmissionAction,
                                          formProvider: PackAtBusinessAddressFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: PackAtBusinessAddressView,
-                                         addressLookupService: AddressLookupService
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                         view: PackAtBusinessAddressView
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
@@ -72,17 +77,17 @@ class PackAtBusinessAddressController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
             onwardUrl              <- if(value){
-              sessionRepository.set(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
+              updateDatabaseWithoutRedirect(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
                 Site(
                   address = businessAddress,
                   ref = None,
                   tradingName = Some(businessName),
                   closureDate = None
                 )
-              ))).flatMap(_ =>
+              )), PackAtBusinessAddressPage).flatMap(_ =>
                 Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
             } else {
-              sessionRepository.set(updatedAnswers).flatMap(_ =>
+              updateDatabaseWithoutRedirect(updatedAnswers, PackAtBusinessAddressPage).flatMap(_ =>
                 addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
             }
           } yield {

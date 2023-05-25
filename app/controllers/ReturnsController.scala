@@ -20,11 +20,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.NormalMode
 import orchestrators.ReturnsOrchestrator
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SDILSessionCache
-import services.ReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -35,11 +32,8 @@ class ReturnsController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
                                    override val messagesApi: MessagesApi,
                                   config: FrontendAppConfig,
                                    identify: IdentifierAction,
-                                   val controllerComponents: MessagesControllerComponents,
+                                   val controllerComponents: MessagesControllerComponents
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-
-  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad(year: Int, quarter: Int, nilReturn: Boolean): Action[AnyContent] = identify.async {
     implicit request =>

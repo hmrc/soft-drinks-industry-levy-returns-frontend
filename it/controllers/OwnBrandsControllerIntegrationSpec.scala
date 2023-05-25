@@ -11,7 +11,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
 
     "Ask if user is reporting liable drinks they have packaged as a third party or contract packer at UK sites user operates" in {
 
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
 
@@ -30,7 +30,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
 
     "Post the Own brand packaged at own sites " when {
       "user selected yes" in {
-        setAnswers(emptyUserAnswers)
+        setUpData(emptyUserAnswers)
         val expectedResult:Some[JsObject] = Some(
           Json.obj(
             "ownBrands" -> true
@@ -59,7 +59,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
 
       "user selected no" in {
 
-        setAnswers(emptyUserAnswers)
+        setUpData(emptyUserAnswers)
         val expectedResult: Some[JsObject] = Some(
           Json.obj(
             "ownBrands" -> false

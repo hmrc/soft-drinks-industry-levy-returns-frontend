@@ -16,10 +16,12 @@
 
 package controllers
 
+import base.ReturnsTestData._
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedActivity
 import models.{Amounts, NormalMode, SmallProducer, UserAnswers}
+import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -39,29 +41,21 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
   "ReturnSent Controller" - {
 
-    val zero = BigDecimal(0.00)
-    val amounts = Amounts(zero, zero, zero)
-    val mockSessionCache = mock[SDILSessionCache]
-    when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
-    val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-
-    when(mockSdilConnector.returns_pending(any())(any())) thenReturn Future.successful(returnPeriods)
-    when(mockSdilConnector.returns_update(any(),any(),any())(any())) thenReturn Future.successful(Some(OK))
+    val mockOrchestrator = mock[ReturnsOrchestrator]
 
     "must not show return sent page as return has not been sent" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(), submitted = false)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).get mustEqual routes.OwnBrandsController.onPageLoad(NormalMode).url
+        redirectLocation(result).get mustEqual routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, userAnswers.isNilReturn).url
       }
 
     }
@@ -70,12 +64,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted =  true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -92,12 +87,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted =  true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -121,12 +117,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -143,12 +140,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -159,12 +157,12 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("£0.00")
+        page.getElementsByTag("dd").text() must include("£180.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£0.00")
+        page.getElementsByTag("dd").text() must include("£480.00")
       }
     }
 
@@ -172,12 +170,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -191,12 +190,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -213,12 +213,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -242,13 +243,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
+
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -265,12 +267,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -294,13 +297,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -317,12 +320,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -346,13 +350,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
+
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
 
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -369,12 +374,12 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -403,12 +408,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola), Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -420,12 +426,12 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show correct message to user when nothing is owed " in {
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amountsZero)
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -438,15 +444,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show correct message to user when user is owed funding" in {
       val amounts = Amounts(0, 0, -6600)
-      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -460,15 +466,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show correct message to user when user owes funds" in {
       val amounts = Amounts(0, 0, 6600)
-      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -481,15 +487,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show correct total for quarter " in {
       val amounts = Amounts(660, 0, 660)
-      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -502,15 +508,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show correct balance brought forward" in {
       val amounts = Amounts(660, 0, 660)
-      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -524,15 +530,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show correct total when non nil return" in {
       val amounts = Amounts(660, 0, 660)
-      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty, submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -545,17 +551,17 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must display 0 lowband and highband amounts when for own brands and small producer" in {
       val amounts = Amounts(660, 0, 660)
-      when(mockSessionCache.fetchEntry[Amounts](any(), any())(any())) thenReturn Future.successful(Some(amounts))
 
       val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty, submitted = true)
       val subscription = aSubscription.copy(activity = RetrievedActivity(true, true, false,false,false))
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod), Some(subscription)).overrides(
-        bind[SDILSessionCache].toInstance(mockSessionCache),
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
       running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
 
         status(result) mustEqual OK

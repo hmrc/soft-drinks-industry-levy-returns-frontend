@@ -13,7 +13,7 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
     val broughtIntoUkFromSmallProducersUrl = "brought-into-uk-from-small-producers"
     "Ask for Are you reporting liable drinks you have brought into the UK from small producers" in {
       val userAnswers = broughtIntoUkFullAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
       WsTestClient.withClient { client =>

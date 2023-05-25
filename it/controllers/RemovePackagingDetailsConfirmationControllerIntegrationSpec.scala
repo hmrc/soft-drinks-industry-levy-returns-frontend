@@ -18,7 +18,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Specif
         Some("trading"),
         None))
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSite)
-      setAnswers(updatedUserAnswers)
+      setUpData(updatedUserAnswers)
       given
         .commonPrecondition
 
@@ -51,7 +51,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Specif
           None))
 
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSites)
-      setAnswers(updatedUserAnswers)
+      setUpData(updatedUserAnswers)
       given
         .commonPrecondition
       WsTestClient.withClient { client =>
@@ -88,7 +88,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Specif
           None))
 
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSites)
-      setAnswers(updatedUserAnswers)
+      setUpData(updatedUserAnswers)
       given
         .commonPrecondition
       WsTestClient.withClient { client =>

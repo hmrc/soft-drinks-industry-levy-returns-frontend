@@ -18,12 +18,9 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import navigation.Navigator
 import orchestrators.ReturnsOrchestrator
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SDILSessionCache
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.CurrencyFormatter
 import views.html.ReturnSentView
@@ -32,22 +29,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
-                                     override val messagesApi: MessagesApi,
-                                     config:FrontendAppConfig,
-                                     identify: IdentifierAction,
-                                     getData: DataRetrievalAction,
-                                     requireData: DataRequiredAction,
-                                     navigator: Navigator,
-                                     val controllerComponents: MessagesControllerComponents,
-                                     view: ReturnSentView,
-                                     sessionCache: SDILSessionCache
+                                      override val messagesApi: MessagesApi,
+                                      config:FrontendAppConfig,
+                                      identify: IdentifierAction,
+                                      getData: DataRetrievalAction,
+                                      requireData: DataRequiredAction,
+                                      val controllerComponents: MessagesControllerComponents,
+                                      view: ReturnSentView,
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val logger: Logger = Logger(this.getClass())
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       val returnPeriod = request.returnPeriod
       if (request.userAnswers.submitted) {
         val sdilRef = request.sdilEnrolment

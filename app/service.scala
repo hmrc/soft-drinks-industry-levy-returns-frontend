@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package models.errors
+import cats.data.EitherT
+import errors.ReturnsErrors
 
-sealed trait SDILReferenceErrors
-case object AlreadyExists extends SDILReferenceErrors
-case object NotASmallProducer extends SDILReferenceErrors
-case object FailedToSubmitReturn extends SDILReferenceErrors
-case object FailedToSubmitReturnVariation extends SDILReferenceErrors
+import scala.concurrent.Future
+
+package object service {
+
+  type EitherF[A, B] = EitherT[Future, A, B]
+  type ReturnResult[T] = EitherF[ReturnsErrors, T]
+}

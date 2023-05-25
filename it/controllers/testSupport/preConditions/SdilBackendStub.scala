@@ -62,7 +62,7 @@ case class SdilBackendStub()
     builder
   }
 
-  def oldestPendingReturnPeriod(utr: String) = {
+  def pendingReturnPeriod(utr: String) = {
     stubFor(
       get(
         urlPathMatching(s"/returns/$utr/pending"))

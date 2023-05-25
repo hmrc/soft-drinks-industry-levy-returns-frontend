@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package models.errors
+package utilitlies
 
-sealed trait SDILReferenceErrors
-case object AlreadyExists extends SDILReferenceErrors
-case object NotASmallProducer extends SDILReferenceErrors
-case object FailedToSubmitReturn extends SDILReferenceErrors
-case object FailedToSubmitReturnVariation extends SDILReferenceErrors
+import play.api.Logger
+
+class GenericLogger {
+
+  val logger: Logger = Logger(this.getClass)
+
+}

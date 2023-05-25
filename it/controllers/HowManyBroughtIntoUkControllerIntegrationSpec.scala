@@ -13,7 +13,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
     "Ask for how many liable drinks brought in UK" in {
 
       val userAnswers = broughtIntoUkFullAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
       given
         .commonPrecondition
 
@@ -44,7 +44,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
         ))
 
       val userAnswers = howManyBroughtIntoUkFullAnswers.success.value
-      setAnswers(userAnswers)
+      setUpData(userAnswers)
 
       given
         .commonPrecondition

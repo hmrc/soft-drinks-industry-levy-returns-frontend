@@ -16,6 +16,7 @@
 
 package views
 
+import base.ReturnsTestData._
 import base.UserAnswersTestData
 import config.FrontendAppConfig
 import controllers.routes
@@ -39,7 +40,7 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
   val amounts = Amounts(1000, 100, 1100)
 
-  val call = routes.CheckYourAnswersController.onSubmit(false)
+  val call = routes.CheckYourAnswersController.onSubmit
 
   "checkYourAnswersView" - {
     val html: HtmlFormat.Appendable =

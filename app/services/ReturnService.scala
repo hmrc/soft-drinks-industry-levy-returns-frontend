@@ -16,7 +16,7 @@
 
 package services
 
-import cats.implicits.catsSyntaxSemigroup
+import cats.implicits._
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import models.backend.Site
@@ -24,7 +24,7 @@ import models.retrieved.RetrievedSubscription
 import models.{Amounts, ReturnPeriod, ReturnsVariation, SdilReturn, UserAnswers}
 import pages._
 import play.api.Logger
-import play.api.http.Status.OK
+import play.api.http.Status.{NO_CONTENT, OK}
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.ReturnsHelper.{extractTotal, listItemsWithTotal}
 import utilitlies.{ReturnsHelper, TotalForQuarter, UserTypeCheck}
@@ -41,22 +41,26 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
   val costLower = config.lowerBandCostPerLitre
   val costHigher = config.higherBandCostPerLitre
 
-  def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.returns_pending(utr)
+  def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.getPendingReturnPeriods(utr)
 
   def sendReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers, nilReturn: Boolean)
                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
     if(nilReturn) {
-      submitNilReturn(subscription, returnPeriod)
+      submitNilReturnAndVariation(subscription, returnPeriod, userAnswers)
     } else {
       submitReturnAndVariation(subscription, returnPeriod, userAnswers)
     }
   }
 
-  def submitNilReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod)
+  def submitNilReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val sdilReturn = ReturnsHelper.emptyReturn
-    submitReturn(subscription, returnPeriod, sdilReturn)
+    val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
+    for {
+      _ <- submitReturn(subscription, returnPeriod, sdilReturn)
+      variation <- submitReturnVariation(subscription.sdilRef, sdilVariation)
+    } yield variation
   }
 
   def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)
@@ -65,8 +69,8 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
     val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
     for {
       _ <- submitReturn(subscription, returnPeriod, sdilReturn)
-      varition <- submitReturnVariation(subscription.sdilRef, sdilVariation)
-    } yield varition
+      variation <- submitReturnVariation(subscription.sdilRef, sdilVariation)
+    } yield variation
   }
 
   def calculateAmounts(sdilRef: String,
@@ -109,7 +113,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
   private def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     sdilConnector.returns_variation(sdilRef, variation).map {
-      case Some(OK) => logger.info(s"Return variation submitted for $sdilRef")
+      case Some(NO_CONTENT) => logger.info(s"Return variation submitted for $sdilRef")
       case _ => logger.error(s"Failed to submit return variation for $sdilRef")
         throw new RuntimeException(s"Failed to submit return variation $sdilRef")
     }

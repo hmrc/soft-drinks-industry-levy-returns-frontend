@@ -16,20 +16,20 @@
 
 package controllers.actions
 
+import base.ReturnsTestData._
 import base.SpecBase
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import models.{ReturnPeriod, UserAnswers}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
-import repositories.SessionRepository
+import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
-  class Harness(sessionRepository: SessionRepository) extends DataRetrievalActionImpl(sessionRepository) {
+  class Harness(sessionRepository: SessionRepository, sdilSessionCache: SDILSessionCache) extends DataRetrievalActionImpl(sessionRepository, sdilSessionCache) {
     def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 
@@ -40,10 +40,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must set userAnswers to 'None' in the request" in {
 
         val sessionRepository = mock[SessionRepository]
+        val sdilSessionCache = mock[SDILSessionCache]
         when(sessionRepository.get("id")) thenReturn Future(None)
-        val action = new Harness(sessionRepository)
+        when(sdilSessionCache.fetchEntry[ReturnPeriod]("id", SDILSessionKeys.RETURN_PERIOD)) thenReturn Future(Some(returnPeriod))
+        val action = new Harness(sessionRepository, sdilSessionCache)
 
-        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", aSubscription, Some(ReturnPeriod(2023,1)))).futureValue
+        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
 
         result.userAnswers must not be defined
       }
@@ -54,10 +56,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must build a userAnswers object and add it to the request" in {
 
         val sessionRepository = mock[SessionRepository]
+        val sdilSessionCache = mock[SDILSessionCache]
         when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
-        val action = new Harness(sessionRepository)
+        when(sdilSessionCache.fetchEntry[ReturnPeriod]("id", SDILSessionKeys.RETURN_PERIOD)) thenReturn Future(Some(returnPeriod))
+        val action = new Harness(sessionRepository, sdilSessionCache)
 
-        val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", aSubscription, Some(ReturnPeriod(2023,1)))).futureValue
+        val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
 
         result.userAnswers mustBe defined
       }

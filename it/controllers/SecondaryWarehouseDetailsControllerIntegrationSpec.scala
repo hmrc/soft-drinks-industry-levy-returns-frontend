@@ -14,7 +14,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
   "SecondaryWarehouseDetailsController" should {
     "Ask for if user wants to add more warehouses" in {
 
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
 
@@ -101,7 +101,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
         ))
       val alfOnRampURL: String = "http://onramp.com"
 
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
@@ -132,7 +132,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
           "secondaryWarehouseDetails" -> false
         ))
 
-      setAnswers(emptyUserAnswers)
+      setUpData(emptyUserAnswers)
       given
         .commonPrecondition
 

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package models.errors
+package models.retrieved
 
-sealed trait SDILReferenceErrors
-case object AlreadyExists extends SDILReferenceErrors
-case object NotASmallProducer extends SDILReferenceErrors
-case object FailedToSubmitReturn extends SDILReferenceErrors
-case object FailedToSubmitReturnVariation extends SDILReferenceErrors
+import play.api.libs.json.{Format, Json}
+
+case class OptRetrievedSubscription(optRetrievedSubscription: Option[RetrievedSubscription])
+
+object OptRetrievedSubscription {
+  implicit val format: Format[OptRetrievedSubscription] = Json.format[OptRetrievedSubscription]
+}

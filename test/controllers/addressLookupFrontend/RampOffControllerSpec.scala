@@ -14,8 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.addressLookupFrontend
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package controllers.addressLookupFrontend
+import base.ReturnsTestData._
 import base.SpecBase
 import models.alf.{AlfAddress, AlfResponse}
 import models.{NormalMode, UserAnswers}
@@ -59,7 +75,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         ArgumentMatchers.eq(alfId)))
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
-        .thenReturn(Future.successful(true))
+        .thenReturn(Future.successful(Right(true)))
 
       running(application) {
         val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, alfId).url)
@@ -168,7 +184,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         ArgumentMatchers.eq(alfId)))
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
-        .thenReturn(Future.successful(true))
+        .thenReturn(Future.successful(Right(true)))
 
       running(application) {
         val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId).url)

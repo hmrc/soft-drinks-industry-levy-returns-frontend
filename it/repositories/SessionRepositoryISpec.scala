@@ -53,7 +53,7 @@ class SessionRepositoryISpec
       val updatedRecord = await(repository.get(userAnswersBefore.id)).get
       lazy val timeAfterTest = Instant.now()
 
-      setResult mustEqual true
+      setResult mustEqual Right(true)
       assert(updatedRecord.lastUpdated.toEpochMilli > timeBeforeTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeBeforeTest.toEpochMilli)
       assert(updatedRecord.lastUpdated.toEpochMilli < timeAfterTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeAfterTest.toEpochMilli)
 
@@ -72,9 +72,10 @@ class SessionRepositoryISpec
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
         false,
+        false,
         Instant.ofEpochSecond(1))
       val setResult = await(repository.set(userAnswersBefore))
-      setResult mustBe true
+      setResult mustBe Right(true)
       val updatedRecord = await(repository.collection.find[BsonDocument](BsonDocument()).toFuture()).head
       val resultParsedToJson = Json.parse(updatedRecord.toJson).as[JsObject]
       val dataDecrypted = {
@@ -162,7 +163,7 @@ class SessionRepositoryISpec
         val timeBeforeTest = Instant.now()
         val result = await(repository.keepAlive(userAnswersBefore.id))
         lazy val timeAfterTest = Instant.now()
-        result mustEqual true
+        result mustEqual Right(true)
         val updatedRecord = await(repository.collection.find(BsonDocument()).headOption()).get
 
         assert(updatedRecord.lastUpdated.toEpochMilli > timeBeforeTest.toEpochMilli || updatedRecord.lastUpdated.toEpochMilli == timeBeforeTest.toEpochMilli)
@@ -181,7 +182,7 @@ class SessionRepositoryISpec
 
       "must return true" in {
 
-        await(repository.keepAlive("id that does not exist")) mustEqual true
+        await(repository.keepAlive("id that does not exist")) mustEqual Right(true)
       }
     }
   }
