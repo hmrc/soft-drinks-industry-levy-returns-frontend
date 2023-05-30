@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
 import orchestrators.ReturnsOrchestrator
+import pages.CheckYourAnswersPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,6 +36,7 @@ class CheckYourAnswersController @Inject()(
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
+                                            requiredUserAnswers: RequiredUserAnswers,
                                             checkReturnSubmission: CheckingSubmissionAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             checkYourAnswersView: CheckYourAnswersView,
@@ -44,30 +46,34 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      val sdilRef = request.sdilEnrolment
-      val returnPeriod = request.returnPeriod
-      val userAnswers = request.userAnswers
+      requiredUserAnswers.requireData(CheckYourAnswersPage) {
+        val sdilRef = request.sdilEnrolment
+        val returnPeriod = request.returnPeriod
+        val userAnswers = request.userAnswers
 
-      returnsOrchestrator.calculateAmounts(sdilRef, userAnswers, returnPeriod).map{ amounts =>
-        val submitUrl: Call = routes.CheckYourAnswersController.onSubmit
+        returnsOrchestrator.calculateAmounts(sdilRef, userAnswers, returnPeriod).map { amounts =>
+          val submitUrl: Call = routes.CheckYourAnswersController.onSubmit
 
-        Ok(checkYourAnswersView(request.subscription.orgName,
-          returnPeriod,
-          userAnswers,
-          amounts,
-          submitUrl
-        )(implicitly, implicitly, config))
-      }.recoverWith {
-        case t: Throwable =>
-          genericLogger.logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
-          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+          Ok(checkYourAnswersView(request.subscription.orgName,
+            returnPeriod,
+            userAnswers,
+            amounts,
+            submitUrl
+          )(implicitly, implicitly, config))
+        }.recoverWith {
+          case t: Throwable =>
+            genericLogger.logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
+            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        }
       }
   }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-    returnsOrchestrator.completeReturnAndUpdateUserAnswers.map{ _ =>
-      Redirect(routes.ReturnSentController.onPageLoad)
-    }
+      requiredUserAnswers.requireData(CheckYourAnswersPage) {
+        returnsOrchestrator.completeReturnAndUpdateUserAnswers.map { _ =>
+          Redirect(routes.ReturnSentController.onPageLoad)
+        }
+      }
   }
 }
