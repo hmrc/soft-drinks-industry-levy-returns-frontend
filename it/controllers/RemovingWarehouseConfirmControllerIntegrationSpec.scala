@@ -20,7 +20,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
       setUpData(newPackerPartialAnswers.copy( warehouseList = twoWarehouses))
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result = client.url(s"$baseUrl/remove-warehouse-details/1")
@@ -44,7 +44,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
       val removedWarehouseMap: Map[String,Warehouse] = Map("2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
       setUpData(newPackerPartialAnswers.copy(id = sdilNumber , warehouseList = twoWarehouses))
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result =
@@ -68,7 +68,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
     setUpData(newPackerPartialAnswers)
     given
-      .commonPrecondition
+      .commonPrecondition(aSubscription)
 
     WsTestClient.withClient { client =>
       val result = client.url(s"$baseUrl/remove-warehouse-details/3")

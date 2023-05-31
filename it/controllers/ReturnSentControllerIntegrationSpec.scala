@@ -17,7 +17,7 @@ class ReturnSentControllerIntegrationSpec extends Specifications with TestConfig
     "Show the user their submitted information after successfully submitting their return" in {
       val userAnswersSubmitted = checkYourAnswersFullAnswers.copy(submitted = true)
       setUpDataWithBackendCallsForAmountsCached(userAnswersSubmitted)
-      given.commonPrecondition
+      given.commonPrecondition(aSubscription)
 
 
       WsTestClient.withClient { client =>
@@ -38,7 +38,7 @@ class ReturnSentControllerIntegrationSpec extends Specifications with TestConfig
 //      val userAnswers = smallProducerDetaisPartialAnswers.success.value
 //      setUpData(userAnswers.copy(submitted = false))
 //      given
-//        .commonPrecondition
+//        .commonPrecondition(aSubscription)
 //
 //      WsTestClient.withClient { client =>
 //        val result1 = client.url(s"$baseUrl/return-sent")

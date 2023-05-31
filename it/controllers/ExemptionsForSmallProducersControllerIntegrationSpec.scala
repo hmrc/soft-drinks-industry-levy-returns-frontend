@@ -14,7 +14,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
       val userAnswers = exemptionsForSmallProducersPartialAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/exemptions-for-small-producers")
@@ -44,7 +44,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
 
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
         setUpData(userAnswers)
@@ -80,7 +80,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
           ))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
         setUpData(userAnswers)

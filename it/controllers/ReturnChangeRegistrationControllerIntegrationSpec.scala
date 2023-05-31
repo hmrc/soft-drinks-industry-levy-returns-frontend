@@ -13,7 +13,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
     "return view" in {
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result = client.url(s"$baseUrl/return-change-registration")
@@ -34,7 +34,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
     "take user to next destination successfully if user " in {
       setUpData(newPackerPartialAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result = client.url(s"$baseUrl/return-change-registration")
@@ -54,7 +54,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
     s"take user to next destination successfully if new packer is true" in {
       setUpData(newPackerPartialAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result = client.url(s"$baseUrl/return-change-registration")
@@ -74,7 +74,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
     s"take user to next destination successfully if new packer is false and new importer is true" in {
       setUpData(newImporterAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result = client.url(s"$baseUrl/return-change-registration")

@@ -1,6 +1,7 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import models.retrieved.RetrievedActivity
 import org.scalatest.TryValues
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
@@ -17,7 +18,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends Specificat
 
       setUpData(checkYourAnswersFullAnswers)
 
-      given.commonPrecondition
+      given.commonPrecondition(aSubscription.copy(activity = RetrievedActivity(true,true,true,true,true)))
       given.sdilBackend.balanceHistory("XKSDIL000000022", false)
 
       WsTestClient.withClient { client =>

@@ -15,7 +15,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
     "Ask for if user wants to register any UK warehouses where user used to store liable drinks" in {
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/ask-secondary-warehouses-in-return")
@@ -106,7 +106,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
       val alfOnRampURL: String = "http://onramp.com"
 
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
       WsTestClient.withClient { client =>
@@ -133,7 +133,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
       setUpData(emptyUserAnswers.copy(warehouseList = warehouseToBeWiped))
 
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       val expectedResult: Some[JsObject] = Some(
         Json.obj(

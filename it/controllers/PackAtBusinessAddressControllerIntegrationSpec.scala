@@ -10,7 +10,7 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class PackAtBusinessAddressControllerIntergrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
+class PackAtBusinessAddressControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
 
   "PackAtBusinessAddressController" should {
 
@@ -18,7 +18,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/pack-at-business-address-in-return")
@@ -106,7 +106,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
       WsTestClient.withClient { client =>
@@ -139,7 +139,7 @@ class PackAtBusinessAddressControllerIntergrationSpec extends Specifications wit
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result =

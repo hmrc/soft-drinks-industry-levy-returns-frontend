@@ -5,7 +5,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, res
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
 import models.retrieved.OptSmallProducer
-import models.{ReturnCharge, ReturnPeriod, UserAnswers}
+import models.{ReturnPeriod, UserAnswers}
+import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite, TestSuite}
@@ -15,14 +16,15 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
-import repositories.{CacheMap, SDILSessionCache, SDILSessionCacheRepository, SDILSessionKeys, SessionRepository}
+import repositories._
 import services.AddressLookupService
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
 import java.time.{Clock, ZoneOffset}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
 
 trait TestConfiguration
@@ -148,7 +150,10 @@ trait TestConfiguration
   }
 
   override def beforeEach() = {
+    Await.result(mongo.collection.deleteMany(BsonDocument()).toFuture(),Duration(5,TimeUnit.SECONDS))
+    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(),Duration(5,TimeUnit.SECONDS))
     resetAllScenarios()
+
     reset()
   }
 

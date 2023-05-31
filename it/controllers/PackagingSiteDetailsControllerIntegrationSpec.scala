@@ -92,7 +92,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 
         setUpData(UserAnswers(sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty))
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
         WsTestClient.withClient { client =>
@@ -117,7 +117,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
 
       "user selected remove on one of the addresses" in {
         given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
         val userAnswers = newPackerPartialAnswers
         setUpData(userAnswers)
         WsTestClient.withClient { client =>
@@ -144,7 +144,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
           Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
         val userAnswers = newPackerPartialAnswers.copy(packagingSiteList =
           Map("4564561" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
             Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
@@ -173,7 +173,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends Specifications with 
           Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
         val userAnswers = newPackerPartialNewImporterAnswers.copy(
           packagingSiteList =
           Map("6541651568" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),

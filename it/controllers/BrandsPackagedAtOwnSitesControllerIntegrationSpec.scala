@@ -16,7 +16,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
       val userAnswers = ownBrandPageAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-own-brands-packaged-at-own-sites")
@@ -36,7 +36,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
        val expectedResult:Some[JsObject] = Some(Json.obj( "ownBrands" -> true,"brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000)))
 
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       val userAnswers = ownBrandPageAnswers.success.value
       setUpData(userAnswers)
