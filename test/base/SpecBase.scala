@@ -25,8 +25,8 @@ import orchestrators.ReturnsOrchestrator
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{OptionValues, TryValues}
-import play.api.Application
+import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
+import play.api.{Application, Play}
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -42,7 +42,7 @@ trait SpecBase
     with TryValues
     with OptionValues
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience with BeforeAndAfterEach {
 
   lazy val application = applicationBuilder(userAnswers = None).build()
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
@@ -54,6 +54,10 @@ trait SpecBase
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
+  override def afterEach(): Unit = {
+    Play.stop(application)
+    super.afterEach()
+  }
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None,
                                     returnPeriod: Option[ReturnPeriod] = Some(defaultReturnsPeriod),
