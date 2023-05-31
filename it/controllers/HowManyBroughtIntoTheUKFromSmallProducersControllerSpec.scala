@@ -12,7 +12,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specificat
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       setUpData(broughtIntoUkFullAnswers.success.value)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-into-uk-small-producers")
@@ -39,7 +39,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specificat
         ))
 
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       val userAnswers = howManyAsContractPackerFullAnswers.success.value
       setUpData(userAnswers)

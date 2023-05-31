@@ -15,7 +15,7 @@ class HowManyCreditsForExportControllerIntegrationSpec extends Specifications wi
       setUpData(userAnswers)
 
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-credits-for-exports")
@@ -33,18 +33,11 @@ class HowManyCreditsForExportControllerIntegrationSpec extends Specifications wi
     "Post how many claim credits for export " in {
       val expectedResult:Some[JsObject] = Some(
         Json.obj(
-          "ownBrands" -> true,
-          "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
-          "packagedContractPacker" -> true,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" -> false,
-          "broughtIntoUkFromSmallProducers" -> false,
           "howManyCreditsForExport" -> Json.obj("lowBand" -> 1000, "highBand" ->1000)
         ))
-
+      setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
 
       WsTestClient.withClient { client =>

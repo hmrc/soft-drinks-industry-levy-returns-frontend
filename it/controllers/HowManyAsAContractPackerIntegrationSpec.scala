@@ -7,14 +7,14 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class HowManyAsAContractPackerIntergrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class HowManyAsAContractPackerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
   "PackagedContractPackerController" should {
 
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       val userAnswers = howManyAsContractPackerPartialAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-packaged-as-contract-packer")
@@ -40,7 +40,7 @@ class HowManyAsAContractPackerIntergrationSpec extends Specifications with TestC
         ))
 
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       val userAnswers = howManyAsContractPackerFullAnswers.success.value
       setUpData(userAnswers)

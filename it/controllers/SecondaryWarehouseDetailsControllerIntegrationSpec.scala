@@ -16,7 +16,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/secondary-warehouse-details")
@@ -103,7 +103,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
       WsTestClient.withClient { client =>
@@ -134,7 +134,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result =

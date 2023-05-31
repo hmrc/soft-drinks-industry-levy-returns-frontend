@@ -17,7 +17,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         val userAnswers = ownBrandPageFalseAnswers.success.value
         setUpData(userAnswers)
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/packaged-as-contract-packer")
@@ -36,7 +36,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/packaged-as-contract-packer")
@@ -66,7 +66,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
@@ -97,7 +97,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =

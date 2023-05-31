@@ -14,7 +14,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
       val userAnswers = smallProducerDetaisPartialAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/small-producer-details")
@@ -43,7 +43,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           ))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         val userAnswers = addASmallProducerFullAnswers.success.value
         setUpData(userAnswers)
@@ -79,7 +79,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           ))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         val userAnswers = smallProducerDetaisNoProducerAnswers
         setUpData(userAnswers)
@@ -118,7 +118,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           ))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("","",(1L, 1L))))
         setUpData(userAnswers)

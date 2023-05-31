@@ -13,7 +13,8 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications
     "Ask for if user want to claim a credit for liable drinks which they been lost or destroyed" in {
 
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
+      setUpData(emptyUserAnswers)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/claim-credits-for-lost-damaged")
@@ -32,17 +33,12 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications
 
       "user selected yes " in {
 
-        val expectedResult:Some[JsObject] = Some(
-          Json.obj(
-            "ownBrands" -> true,
-            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
-            "packagedContractPacker" -> false,
-            "claimCreditsForLostDamaged"->true
-          ))
+        val expectedResult:Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged"-> true))
 
         given
-          .commonPrecondition
-
+          .commonPrecondition(aSubscription)
+        setUpData(emptyUserAnswers
+        )
         WsTestClient.withClient { client =>
           val result =
             client.url(s"$baseUrl/claim-credits-for-lost-damaged")
@@ -65,17 +61,11 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications
     }
 
       "user selected no " in {
-
-        val expectedResult:Some[JsObject] = Some(
-          Json.obj(
-            "ownBrands" -> true,
-            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
-            "packagedContractPacker" -> false,
-            "claimCreditsForLostDamaged"->false
-          ))
+        val expectedResult:Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged"-> false))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
+        setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result =

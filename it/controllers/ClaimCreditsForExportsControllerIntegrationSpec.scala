@@ -8,14 +8,14 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class ClaimCreditsForExportsControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
   "ClaimCreditsForExportsController" should {
 
     "Ask if user is needing to claim a credit for liable drinks that have been exported" in {
       val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/claim-credits-for-exports")
@@ -31,23 +31,11 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
     }
 
     "Post the brought into UK " when {
-
-      val expectedResult:Some[JsObject] = Some(
-        Json.obj(
-          "ownBrands" -> true,
-          "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
-          "packagedContractPacker" -> true,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" ->  false,
-          "broughtIntoUkFromSmallProducers" -> false,
-          "claimCreditsForExports"->true
-        ))
-
       "user selected yes " in {
-
+        val expectedResult: Some[JsObject] = Some(Json.obj("claimCreditsForExports"-> true))
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
+        setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -64,26 +52,15 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/how-many-credits-for-exports")
             getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
-
         }
       }
 
       "user selected no " in {
 
-        val expectedResult:Some[JsObject] = Some(
-          Json.obj(
-            "ownBrands" -> true,
-            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
-            "packagedContractPacker" -> true,
-            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-            "exemptionsForSmallProducers" -> false,
-            "broughtIntoUK" ->  false,
-            "broughtIntoUkFromSmallProducers" -> false,
-            "claimCreditsForExports"->false
-          ))
-
+        val expectedResult: Some[JsObject] = Some(Json.obj("claimCreditsForExports"-> false))
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
+        setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -105,7 +82,7 @@ class ClaimCreditsForExportsControllerIntergrationSpec extends Specifications wi
       }
       "user selected no and has litres in bands" in {
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         val userAnswers = claimCreditsForLostDamagedPageWithLitresFullAnswers.success.value
         setUpData(userAnswers)

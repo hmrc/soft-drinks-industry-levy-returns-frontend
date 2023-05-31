@@ -8,6 +8,7 @@ import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
 class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+
   "BroughtIntoUkFromSmallProducersController" should {
 
     val broughtIntoUkFromSmallProducersUrl = "brought-into-uk-from-small-producers"
@@ -15,7 +16,7 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
       val userAnswers = broughtIntoUkFullAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/$broughtIntoUkFromSmallProducersUrl")
           .withFollowRedirects(false)
@@ -31,19 +32,11 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
 
     "Post the brought into UK " when {
       "user selected yes " in {
-
-        val expectedResult:Some[JsObject] = Some(
-          Json.obj("ownBrands" -> true,
-            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
-            "packagedContractPacker" -> true,
-            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-            "exemptionsForSmallProducers" -> false,
-            "broughtIntoUK" ->  true,
-            "broughtIntoUkFromSmallProducers" -> true
-          ))
+        val expectedResult: Some[JsObject] = Some(Json.obj("broughtIntoUkFromSmallProducers" -> true))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
+        setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -65,21 +58,11 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
       }
 
       "user selected no " in {
-
-        val expectedResult:Some[JsObject] = Some(
-          Json.obj(
-            "ownBrands" -> true,
-            "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
-            "packagedContractPacker" -> true,
-            "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-            "exemptionsForSmallProducers" -> false,
-            "broughtIntoUK" ->  true,
-            "broughtIntoUkFromSmallProducers" -> false
-          ))
+        val expectedResult: Some[JsObject] = Some(Json.obj("broughtIntoUkFromSmallProducers" -> false))
 
         given
-          .commonPrecondition
-
+          .commonPrecondition(aSubscription)
+        setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result =
@@ -96,10 +79,8 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
             res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/claim-credits-for-exports")
             getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustEqual expectedResult
           }
-
         }
       }
-
     }
   }
 

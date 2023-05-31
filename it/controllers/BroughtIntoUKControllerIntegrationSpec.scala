@@ -17,7 +17,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
       val userAnswers = broughtIntoUkPartialAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/$broughtIntoUkUrl")
           .withFollowRedirects(false)
@@ -32,22 +32,14 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
     }
 
     "Post the brought into UK " when {
-
-      val expectedResult:Some[JsObject] = Some(
-        Json.obj("ownBrands" -> true,
-          "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000,"highBand" -> 1000),
-          "packagedContractPacker" -> true,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" ->  true
-        ))
-
       "user selected yes " in {
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         val userAnswers: UserAnswers = broughtIntoUkFullAnswers.success.value
-        setUpData(userAnswers)
+        val expectedResult: Some[JsObject] = Some(Json.obj("broughtIntoUK" ->  true))
+        setUpData(emptyUserAnswers)
+
 
         WsTestClient.withClient { client =>
           val result =
@@ -70,7 +62,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
 
       "user selected no " in {
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
         setUpData(userAnswers)

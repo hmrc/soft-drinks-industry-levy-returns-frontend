@@ -15,7 +15,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
       val userAnswers = broughtIntoUkFullAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-brought-into-uk")
@@ -47,7 +47,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
       setUpData(userAnswers)
 
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
 
       WsTestClient.withClient { client =>

@@ -13,7 +13,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition
+        .commonPrecondition(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
@@ -37,7 +37,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
           ))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
@@ -66,7 +66,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
           ))
 
         given
-          .commonPrecondition
+          .commonPrecondition(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
