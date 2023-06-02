@@ -34,8 +34,9 @@ import scala.concurrent.Future
 
 class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
-  lazy val returnChangeRegistrationRoute = routes.ReturnChangeRegistrationController.onPageLoad().url
+  def onwardRoute: Call = Call("GET", "/foo")
+
+  lazy val returnChangeRegistrationRoute: String = routes.ReturnChangeRegistrationController.onPageLoad().url
 
   "ReturnChangeRegistration Controller" - {
 
@@ -66,46 +67,63 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET with a link back to Co-packer question if new copacker" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(completedUserAnswers), subscription = Some(aSubscription)).build()
+      val urlLink: String = routes.PackagedContractPackerController.onPageLoad(NormalMode).url
+      running(application) {
+        val request = FakeRequest(GET, routes.ReturnChangeRegistrationController.onPageLoad().url)
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[ReturnChangeRegistrationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) must include(routes.PackagedContractPackerController.onPageLoad(NormalMode).url)
+        contentAsString(result) mustEqual view(urlLink)(request, messages(application)).toString
+        urlLink mustEqual "/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer"
+      }
+    }
+
+    "must return OK and the correct view for a GET with a link back to Brought into UK question if new importer" in {
+      val application = applicationBuilder(userAnswers = Some(completedUserAnswers), subscription = Some(subscriptionWithCopacker)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnChangeRegistrationController.onPageLoad().url)
-
+        val urlLink: String = routes.BroughtIntoUKController.onPageLoad(NormalMode).url
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ReturnChangeRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) must include (routes.PackagedContractPackerController.onPageLoad(NormalMode).url)
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) must include(routes.BroughtIntoUKController.onPageLoad(NormalMode).url)
+        contentAsString(result) mustEqual view(urlLink)(request, messages(application)).toString
+        urlLink mustEqual "/soft-drinks-industry-levy-returns-frontend/brought-into-uk"
       }
     }
-  }
-  "must redirect to the next page when valid data is submitted" in {
 
-    val mockSessionRepository = mock[SessionRepository]
+    "must redirect to the next page when valid data is submitted" in {
 
-    when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      val mockSessionRepository = mock[SessionRepository]
 
-    val application =
-      applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
-    running(application) {
-      val request =
-        FakeRequest(POST, returnChangeRegistrationRoute)
-          .withFormUrlEncodedBody(("value", ""))
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
 
-      val result = route(application, request).value
+      running(application) {
+        val request =
+          FakeRequest(POST, returnChangeRegistrationRoute)
+            .withFormUrlEncodedBody(("value", ""))
 
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
     }
   }
 }

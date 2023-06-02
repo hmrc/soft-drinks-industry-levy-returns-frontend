@@ -49,7 +49,6 @@ class ReturnChangeRegistrationController @Inject()(
       } else {
         urlLink = routes.PackagedContractPackerController.onPageLoad(NormalMode).url
       }
-      urlLink
       Ok(view(urlLink))
   }
 
