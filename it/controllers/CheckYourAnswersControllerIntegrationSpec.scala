@@ -1,5 +1,6 @@
 package controllers
 
+import controllers.testSupport.helpers.ReturnSentTestHelper
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.retrieved.{OptSmallProducer, RetrievedActivity}
 import models.{AddASmallProducer, FinancialLineItem, LitresInBands, NormalMode}
@@ -450,6 +451,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -475,6 +478,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -500,6 +505,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -525,6 +532,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -550,6 +559,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -575,6 +586,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -601,6 +614,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -626,6 +641,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -651,6 +668,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -676,6 +695,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -701,6 +722,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -726,6 +749,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }

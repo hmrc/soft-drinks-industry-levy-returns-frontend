@@ -1,5 +1,6 @@
 package controllers
 
+import controllers.testSupport.helpers.ReturnSentTestHelper
 import models.{Amounts, FinancialLineItem}
 import models.retrieved.OptSmallProducer
 import org.jsoup.Jsoup
@@ -320,6 +321,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -345,6 +348,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -370,6 +375,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -395,6 +402,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -420,6 +429,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -445,6 +456,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, emptyReturn, emptyVariation)
           }
         }
       }
@@ -471,6 +484,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -496,6 +511,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -521,6 +538,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -546,6 +565,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -571,6 +592,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
@@ -596,6 +619,8 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+            getAnswers(sdilNumber).get.submitted mustBe true
+            ReturnSentTestHelper.checkSdilReturnAndVariationSent(wireMockServer, populatedReturn, populatedVariation)
           }
         }
       }
