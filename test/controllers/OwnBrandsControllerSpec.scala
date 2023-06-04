@@ -21,13 +21,12 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.OwnBrandsFormProvider
 import helpers.LoggerHelper
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.OwnBrandsPage
 import play.api.inject.bind
 import play.api.libs.json.Writes
 import play.api.mvc.Call

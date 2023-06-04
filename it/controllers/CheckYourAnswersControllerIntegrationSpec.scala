@@ -1,16 +1,18 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
-import models.retrieved.RetrievedActivity
-import models.{AddASmallProducer, LitresInBands, NormalMode}
+import models.retrieved.{OptSmallProducer, RetrievedActivity}
+import models.{AddASmallProducer, FinancialLineItem, LitresInBands, NormalMode}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
+import play.api.test.Helpers.await
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import repositories.SDILSessionKeys
 
-class CheckYourAnswersControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageValidationHelper {
 
   override def configParams: Map[String, Any] = Map(
     "balanceAll.enabled" -> false
@@ -418,6 +420,312 @@ class CheckYourAnswersControllerIntegrationSpec extends Specifications with Test
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION).get mustBe controllers.routes.PackagedContractPackerController.onPageLoad(NormalMode).url
+          }
+        }
+      }
+    }
+  }
+
+
+  "POST /check-your-answers" should {
+    "send the return and return variation and redirect to returnSent" when {
+      "a nil return was submitted and the balance brought forward is 0" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
+        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "a nil return was submitted and the balance brought forward is positive" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
+        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "a nil return was submitted and the balance brought forward is negative" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
+        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "all answers equal no were submitted and the balance brought forward is 0" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
+        setUpData(checkYourAnswersFullAnswersAllNo)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "all answers equal no were submitted and the balance brought forward is positive" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
+        setUpData(checkYourAnswersFullAnswersAllNo)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "all answers equal no were submitted and the balance brought forward is negative" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
+        setUpData(checkYourAnswersFullAnswersAllNo)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+
+      "all answers equal yes with litres were submitted and the balance brought forward is 0" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
+        setUpData(checkYourAnswersFullAnswers)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "all answers equal yes with litres were submitted and the balance brought forward is positive" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
+        setUpData(checkYourAnswersFullAnswers)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "all answers equal yes with litres were submitted and the balance brought forward is negative" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
+        setUpData(checkYourAnswersFullAnswers)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "all answers equal yes with litres were submitted, the balance brought forward is 0 and the user is a small producer" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
+        setUpData(checkYourAnswersFullAnswers)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "all answers equal yes with litres were submitted, the balance brought forward is positive and the user is a small producer" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
+        setUpData(checkYourAnswersFullAnswers)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
+          }
+        }
+      }
+
+      "all answers equal yes with litres were submitted, the balance brought forward is negative and the user is a small producer" in {
+        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
+          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
+        await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
+        setUpData(checkYourAnswersFullAnswers)
+        given.commonPrecondition(aSubscription)
+          .sdilBackend.submitReturns()
+          .sdilBackend.submitVariations()
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withFollowRedirects(false)
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
+              "Csrf-Token" -> "nocheck")
+            .post("")
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).value mustBe routes.ReturnSentController.onPageLoad.url
           }
         }
       }

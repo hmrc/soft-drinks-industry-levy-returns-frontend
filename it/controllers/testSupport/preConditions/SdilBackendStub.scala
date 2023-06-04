@@ -37,6 +37,24 @@ case class SdilBackendStub()
           ok(Json.toJson(BigDecimal(10000)).toString())))
     builder
   }
+
+  def balanceNegative(sdilRef: String, withAssessment: Boolean) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/$withAssessment"))
+        .willReturn(
+          ok(Json.toJson(BigDecimal(-1000)).toString())))
+    builder
+  }
+
+  def balanceNone(sdilRef: String, withAssessment: Boolean) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/$withAssessment"))
+        .willReturn(
+          ok(Json.toJson(BigDecimal(0)).toString())))
+    builder
+  }
   def submitReturns(utr: String = "0000001611", year: Int = 2018, quarter: Int = 1) = {
     stubFor(
       post(
@@ -54,10 +72,31 @@ case class SdilBackendStub()
     builder
   }
 
-  def balanceHistory(sdilRef: String, withAssessment: Boolean) = {
+  def balanceHistoryNone(sdilRef: String) = {
     stubFor(
       get(
-        urlPathMatching(s"/balance/$sdilRef/history/all/$withAssessment"))
+        urlPathMatching(s"/balance/$sdilRef/history/all/false"))
+        .willReturn(
+          ok(Json.toJson[Seq[FinancialLineItem]](List(
+            ReturnCharge(returnPeriod, BigDecimal(0)))).toString())))
+    builder
+  }
+
+  def balanceHistoryInCredit(sdilRef: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/history/all/false"))
+        .willReturn(
+          ok(Json.toJson[Seq[FinancialLineItem]](List(
+            ReturnCharge(returnPeriod, BigDecimal(-1000)))).toString())))
+    builder
+  }
+
+
+  def balanceHistory(sdilRef: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/history/all/false"))
         .willReturn(
           ok(Json.toJson[Seq[FinancialLineItem]](List(
             ReturnCharge(returnPeriod, BigDecimal(1000)),

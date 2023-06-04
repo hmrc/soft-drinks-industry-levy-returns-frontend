@@ -39,8 +39,8 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
   val amountsLists: Map[String, Amounts] = Map(
     "total owed for this quarter is positive" -> amounts,
-    "total owed for this quarter is 0" -> amounts.copy(totalForQuarter = 0),
-    "total owed for this quarter is negative" -> amounts.copy(totalForQuarter = -1000)
+    "total owed for this quarter is 0" -> amounts.copy(total = 0),
+    "total owed for this quarter is negative" -> amounts.copy(total = -1000)
   )
 
   val amountOwed = "£100"
@@ -82,14 +82,14 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
           "that has the expected body" - {
             val body = document1.getElementById("whatNextText")
             "which has the expectedText" in {
-              val expectedText = if (amount.totalForQuarter > 0) {
+              val expectedText = if (amount.total > 0) {
                 "You need to pay £100 by 30 July 2022." +
                   " Make sure you include your Soft Drinks Industry Levy reference." +
                   " XKSDIL000000022 when making a payment." +
                   " See how to pay the levy (opens in a new tab)" +
                   " Your next return will be for July to September 2022." +
                   " You must send this return and make any payments by 30 October 2022."
-              } else if (amount.totalForQuarter < 0) {
+              } else if (amount.total < 0) {
                 "You do not need to do anything else." +
                   " We will take the payment from your Soft Drinks Industry Levy account shortly." +
                   " Your next return will be for July to September 2022." +
@@ -101,7 +101,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
               }
               body.text() mustEqual expectedText
             }
-            if(amount.totalForQuarter > 0) {
+            if(amount.total > 0) {
               "which has the sdil number in bold" in {
                 body.getElementsByTag("strong").text() mustBe aSubscription.sdilRef
               }

@@ -11,10 +11,13 @@ import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite, TestSuite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
+import play.api.test.DefaultAwaitTimeout
+import play.api.test.Helpers.await
 import play.api.{Application, Environment, Mode}
 import repositories._
 import services.AddressLookupService
@@ -22,9 +25,7 @@ import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
 import java.time.{Clock, ZoneOffset}
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
 
 trait TestConfiguration
@@ -32,7 +33,8 @@ trait TestConfiguration
     with IntegrationPatience
     with PatienceConfiguration
     with BeforeAndAfterEach
-    with BeforeAndAfterAll {
+    with BeforeAndAfterAll
+    with DefaultAwaitTimeout {
 
   me: Suite with TestSuite =>
 
@@ -66,22 +68,22 @@ trait TestConfiguration
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
   lazy val sdilSessionCache: SDILSessionCache = app.injector.instanceOf[SDILSessionCache]
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  implicit lazy val messagesAPI = app.injector.instanceOf[MessagesApi]
+  implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
+  def requestReturnPeriod = ReturnPeriod(2018, 1)
 
-
-  def setUpData(userAnswers: UserAnswers, returnPeriod: Option[ReturnPeriod] = Some(ReturnPeriod(2018, 1)))
-               (implicit timeout: Duration): Unit  ={
+  def setUpData(userAnswers: UserAnswers, returnPeriod: Option[ReturnPeriod] = Some(requestReturnPeriod)): Unit  ={
     val res = mongo.set(userAnswers).flatMap(_ => returnPeriod match {
       case Some(rt) => sdilSessionCache.save[ReturnPeriod](userAnswers.id, SDILSessionKeys.RETURN_PERIOD, rt)
         .map(_ => ())
       case None => Future.successful(())
     })
-    Await.result(res, timeout)
+    await(res)
   }
 
   def setUpDataWithBackendCallsForAmountsCached(userAnswers: UserAnswers,
                                                 isSmallProducer: Option[Boolean] = None,
-                                                balance: BigDecimal = BigDecimal(-100))
-                         (implicit timeout: Duration): Unit  = {
+                                                balance: BigDecimal = BigDecimal(-100)): Unit  = {
     val returnPeriod = ReturnPeriod(2018, 1)
     val cacheMap = CacheMap(userAnswers.id,
       Map(
@@ -94,9 +96,9 @@ trait TestConfiguration
       _ <- mongo.set(userAnswers)
       _ <- sdilSessionCacheRepo.upsert(cacheMap)
     } yield ()
-    Await.result(res, timeout)
+    await(res)
   }
-    def getAnswers(id: String)(implicit timeout: Duration): Option[UserAnswers] = Await.result(mongo.get(id), timeout)
+    def getAnswers(id: String): Option[UserAnswers] = await(mongo.get(id))
 
   val authCookie: String = createSessionCookieAsString(authData).substring(5)
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)
@@ -150,8 +152,8 @@ trait TestConfiguration
   }
 
   override def beforeEach() = {
-    Await.result(mongo.collection.deleteMany(BsonDocument()).toFuture(),Duration(5,TimeUnit.SECONDS))
-    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(),Duration(5,TimeUnit.SECONDS))
+    await(mongo.collection.deleteMany(BsonDocument()).toFuture())
+    await(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture())
     resetAllScenarios()
 
     reset()
