@@ -42,14 +42,12 @@ class ReturnChangeRegistrationController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
-      val sdilReturn = SdilReturn.apply(request.userAnswers)
-      var urlLink: String = ""
-      if (UserTypeCheck.isNewImporter(sdilReturn, request.subscription) && !UserTypeCheck.isNewPacker(sdilReturn, request.subscription) ) {
-        urlLink = routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+      if (UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription) &&
+        !UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) ) {
+        Ok(view(routes.BroughtIntoUKController.onPageLoad(NormalMode).url))
       } else {
-        urlLink = routes.PackagedContractPackerController.onPageLoad(NormalMode).url
+        Ok(view(routes.PackagedContractPackerController.onPageLoad(NormalMode).url))
       }
-      Ok(view(urlLink))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
