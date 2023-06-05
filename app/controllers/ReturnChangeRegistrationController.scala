@@ -23,6 +23,7 @@ import pages.ReturnChangeRegistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilitlies.UserTypeCheck
 import views.html.ReturnChangeRegistrationView
 
 import javax.inject.Inject
@@ -39,9 +40,14 @@ class ReturnChangeRegistrationController @Inject()(
                                        view: ReturnChangeRegistrationView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
-      Ok(view())
+      if (UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription) &&
+        !UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) ) {
+        Ok(view(routes.BroughtIntoUKController.onPageLoad(NormalMode).url))
+      } else {
+        Ok(view(routes.PackagedContractPackerController.onPageLoad(NormalMode).url))
+      }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
