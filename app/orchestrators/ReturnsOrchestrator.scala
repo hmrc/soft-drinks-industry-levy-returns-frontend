@@ -36,12 +36,11 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
                                     sessionRepository: SessionRepository) {
 
 
-
   //ToDo remove when ATs etc route through the dashboard
   def tempSetupReturn
                      (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
     val latestReturn = returnService.getPendingReturns(request.subscription.utr).map{pendingReturns =>
-      pendingReturns.sortBy(_.year).sortBy(_.quarter).headOption match {
+      pendingReturns.sortBy(_.start).headOption match {
         case Some(pendingReturn) => Right(pendingReturn)
         case _ => Left(NoPendingReturnForGivenPeriod)
       }}

@@ -43,6 +43,7 @@ object ReturnsTestData {
   val superJuiceProducerAlias = "Super Juice Ltd"
   val referenceNumber1 = "XZSDIL000000234"
   val referenceNumber2 = "XZSDIL000000235"
+  val utr = "0000000022"
 
   val producerName = "Super Cola Plc"
   val sdilReference = "XCSDIL000000069"
@@ -150,6 +151,16 @@ object ReturnsTestData {
     warehouseSites = List(),
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
+  )
+
+  lazy val subscriptionWithSmallProducerActivity = aSubscription.copy(
+    activity = RetrievedActivity(
+      smallProducer = true,
+      largeProducer = false,
+      contractPacker = false,
+      importer = false,
+      voluntaryRegistration = false
+    )
   )
 
   lazy val emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())

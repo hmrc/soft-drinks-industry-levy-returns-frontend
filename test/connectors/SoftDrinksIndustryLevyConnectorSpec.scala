@@ -25,10 +25,9 @@ import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.OK
-import play.api.libs.json.{JsValue, Json}
-import repositories.{CacheMap, SDILSessionCache}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-
+import play.api.libs.json.JsValue
+import repositories.SDILSessionCache
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 
 import scala.concurrent.Future
 
@@ -64,7 +63,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       val sdilNumber: String = "XKSDIL000000022"
       when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
       when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
-      when(mockSDILSessionCache.save[OptRetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(CacheMap("test", Map("SUBSCRIPTION" -> Json.toJson(aSubscription)))))
+      when(mockSDILSessionCache.save[OptRetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(true))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
       whenReady(
@@ -80,7 +79,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         val sdilNumber: String = "XKSDIL000000022"
         when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
         when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
-        when(mockSDILSessionCache.save[OptRetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(CacheMap("test", Map("SUBSCRIPTION" -> Json.toJson(aSubscription)))))
+        when(mockSDILSessionCache.save[OptRetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(true))
         val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
         whenReady(

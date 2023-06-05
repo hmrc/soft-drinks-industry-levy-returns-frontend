@@ -17,8 +17,10 @@
 package base
 
 import base.ReturnsTestData.defaultReturnsPeriod
+import cats.data.EitherT
 import config.FrontendAppConfig
 import controllers.actions._
+import errors.ReturnsErrors
 import models.retrieved.RetrievedSubscription
 import models.{ReturnPeriod, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -32,9 +34,10 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubControllerComponents
 import play.api.{Application, Play}
+import service.ReturnResult
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 trait SpecBase
   extends AnyFreeSpec
     with Matchers
@@ -69,5 +72,11 @@ trait SpecBase
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
   }
+
+  def createSuccessReturnResult[T](result: T): ReturnResult[T] =
+    EitherT.right[ReturnsErrors](Future.successful(result))
+
+  def createFailureReturnResult[T](error: ReturnsErrors): ReturnResult[T] =
+    EitherT.left(Future.successful(error))
 
 }
