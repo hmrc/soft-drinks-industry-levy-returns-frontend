@@ -122,7 +122,8 @@ trait TestConfiguration
     "json.encryption.key" -> "fqpLDZ4sumDsekHkeEBlCA==",
     "json.encryption.previousKeys" -> "[]",
     "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
-    "addressLookupFrontendTest.enabled" -> "false"
+    "addressLookupFrontendTest.enabled" -> "false",
+    "defaultReturnTest.enabled" -> "false"
   )
 
   override implicit lazy val app: Application = appBuilder().build()

@@ -5,15 +5,18 @@
 The Soft Drinks Industry Levy (SDIL) digital service is split into a number of different microservices all serving specific functions which are listed below:
 
 **Liability tool** - Standalone frontend service that is used to check a company's liability in regards to the levy.
-
+**Registration Frontend** - The initial subscription registration service.
 **Returns Frontend** - The returns journey frontend for the service.
-
+**Variations Frontend** - Service to submit variations on registration and returns functionalities.
+**Accounts Frontend** - Dashboard functionality service.
 **Backend** - The service that the frontend uses to call HOD APIs to retrieve and send information relating to business information and subscribing to the levy.
-
 **Stub** - Microservice that is used to mimic the DES APIs when running services locally or in the development and staging environments.
-
 For details about the sugar tax see [the GOV.UK guidance](https://www.gov.uk/guidance/soft-drinks-industry-levy)
 
+## Feature switches
+**addressLookupFrontendTest.enabled** switches between  our stub endpoints and real ALF
+**defaultReturnTest.enabled** defaults return for testing purposes so users do not have to navigate from dashboard
+**balanceAll.enabled** use balance history / balance in final calculation
 ## Running from source
 Clone the repository using SSH:
 

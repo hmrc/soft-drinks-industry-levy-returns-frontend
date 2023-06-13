@@ -18,35 +18,29 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import errors.NoPendingReturnForGivenPeriod
 import forms.OwnBrandsFormProvider
 import handlers.ErrorHandler
-import models.requests.OptionalDataRequest
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import models.Mode
 import navigation.Navigator
-import orchestrators.ReturnsOrchestrator
 import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
-import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.GenericLogger
 import views.html.OwnBrandsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OwnBrandsController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
-                                     override val messagesApi: MessagesApi,
+class OwnBrandsController @Inject()(override val messagesApi: MessagesApi,
                                      val sessionRepository: SessionRepository,
                                      val navigator: Navigator,
                                      val errorHandler: ErrorHandler,
                                      val genericLogger: GenericLogger,
                                      identify: IdentifierAction,
                                      getData: DataRetrievalAction,
-//                                     requireData: DataRequiredAction,
-//                                     checkReturnSubmission: CheckingSubmissionAction,
+                                     requireData: DataRequiredAction,
+                                     checkReturnSubmission: CheckingSubmissionAction,
                                      formProvider: OwnBrandsFormProvider,
                                      val controllerComponents: MessagesControllerComponents,
                                      view: OwnBrandsView,
@@ -54,57 +48,25 @@ class OwnBrandsController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
                                    )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
- //Todo use this function once ATs route to the ReturnsController from dashboard and use required data and checkSubmission actions
-//  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-//    implicit request =>
-//      val preparedForm = request.userAnswers.get(OwnBrandsPage) match {
-//        case None => form
-//        case Some(value) => form.fill(value)
-//      }
-//      Ok(view(preparedForm, mode))
-//  }
 
-
-  //ToDo remove this function once ATs route to the ReturnsController from dashboard and use required data and checkSubmission actions
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
-      val preparedForm = request.userAnswers.fold[Form[Boolean]](form) { ua =>
-        ua.get(OwnBrandsPage) match {
-          case Some(value) if mode == CheckMode => form.fill(value)
-          case _ => form
-        }
+      val preparedForm = request.userAnswers.get(OwnBrandsPage) match {
+        case None => form
+        case Some(value) => form.fill(value)
       }
-      request.returnPeriod match {
-        case Some(_) if mode == NormalMode =>
-          request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment)).submitted match {
-            case true => Future.successful(Redirect(routes.ReturnSentController.onPageLoad))
-            case false => Future.successful(Ok(view(preparedForm, mode)))
-          }
-        case _ => handleTempLandingPage(form)
-      }
+      Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val updatedUserAnswers = answers.setAndRemoveLitresIfReq(OwnBrandsPage, BrandsPackagedAtOwnSitesPage, value)
+          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(OwnBrandsPage, BrandsPackagedAtOwnSitesPage, value)
           updateDatabaseAndRedirect(updatedUserAnswers, OwnBrandsPage, mode)
         }
       )
-  }
-
-  //ToDo remove this function once ATs route to the ReturnsController from dashboard and use required data and checkSubmission actions
-  private def handleTempLandingPage(form: Form[Boolean])
-                                   (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    returnsOrchestrator.tempSetupReturn.value.map{
-      case Right(_) => Ok(view(form, NormalMode))
-      case Left(NoPendingReturnForGivenPeriod) => Redirect(config.sdilFrontendBaseUrl)
-      case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
-    }
   }
 }
