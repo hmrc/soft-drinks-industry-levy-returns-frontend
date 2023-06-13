@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.OwnBrandsPage
 import play.api.inject.bind
 import play.api.libs.json.Writes
 import play.api.mvc.Call
@@ -79,24 +80,24 @@ class OwnBrandsControllerSpec extends SpecBase with MockitoSugar with LoggerHelp
       }
     }
 
-    //ToDo uncomment when using real code for own brands page
-//    "must populate the view correctly on a GET when the question has previously been answered" in {
-//
-//      val userAnswers = UserAnswers(sdilNumber).set(OwnBrandsPage, true).success.value
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, ownBrandsRoute)
-//
-//        val view = application.injector.instanceOf[OwnBrandsView]
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
-//      }
-//    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+
+      val userAnswers = UserAnswers(sdilNumber).set(OwnBrandsPage, true).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, ownBrandsRoute)
+
+        val view = application.injector.instanceOf[OwnBrandsView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+      }
+    }
 
     "must redirect to the next page when valid data is submitted" in {
 
