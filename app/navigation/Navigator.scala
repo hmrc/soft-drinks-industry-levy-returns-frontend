@@ -261,7 +261,9 @@ class Navigator @Inject()() {
   }
 
   private def checkExemptionForSmallProducersPageNavigation(userAnswers: UserAnswers) = {
-    if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
+    if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
+      routes.AddASmallProducerController.onPageLoad(CheckMode)
+    } else if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true) && userAnswers.smallProducerList.nonEmpty) {
       routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     } else {
       routes.CheckYourAnswersController.onPageLoad
