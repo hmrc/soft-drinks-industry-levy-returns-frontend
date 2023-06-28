@@ -16,8 +16,10 @@
 
 package utilitlies
 
-import models.SdilReturn
+import cats.implicits._
+import models.{SdilReturn, UserAnswers}
 import models.retrieved.RetrievedSubscription
+import pages.{HowManyBroughtIntoTheUKFromSmallProducersPage, HowManyBroughtIntoUkPage}
 
 
 object UserTypeCheck {

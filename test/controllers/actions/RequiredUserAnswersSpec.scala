@@ -119,10 +119,9 @@ class RequiredUserAnswersSpec extends SpecBase {
         userAnswers = emptyUserAnswers.copy(data = Json.obj("foo" -> "bar"))))
       redirectLocation(res).get mustBe controllers.routes.PackagedContractPackerController.onPageLoad(NormalMode).url
     }
-    s"should check for $CheckYourAnswersPage and redirect to action when answers data is empty" in {
+    s"should check for $CheckYourAnswersPage and redirect to start page when answers data is empty" in {
       val res = requiredUserAnswers.requireData(CheckYourAnswersPage)(Future.successful(Ok("foo")))(basicRequestWithEmptyAnswers)
-      status(res) mustBe OK
-      contentAsString(res) mustBe "foo"
+      redirectLocation(res).get mustBe controllers.routes.PackagedContractPackerController.onPageLoad(NormalMode).url
     }
 
     s"should check for $CheckYourAnswersPage and allow the user to continue when all answers are complete" in {
@@ -339,28 +338,6 @@ class RequiredUserAnswersSpec extends SpecBase {
       val res = requiredUserAnswers.smallProducerCheck(subscription)
 
       res mustBe smallProducerFalseJourney
-    }
-  }
-  "isNilReturn" - {
-    "should return true when user answers is empty" in {
-      val userAnswers = UserAnswers("",Json.obj(),List.empty, Map.empty, Map.empty)
-      requiredUserAnswers.isNilReturn(userAnswers) mustBe true
-    }
-    "should return false when user answers is empty but data is not" in {
-      val userAnswers = UserAnswers("",Json.obj("foo" -> "bar"),List.empty, Map.empty, Map.empty)
-      requiredUserAnswers.isNilReturn(userAnswers) mustBe false
-    }
-    "should return false when user answers is empty but small producer list is not empty" in {
-      val userAnswers = UserAnswers("",Json.obj(),List(SmallProducer("","",(0,0))), Map.empty, Map.empty)
-      requiredUserAnswers.isNilReturn(userAnswers) mustBe false
-    }
-    "should return false when user answers is empty but packing list is not empty" in {
-      val userAnswers = UserAnswers("",Json.obj(),List.empty, Map("" -> Site(UkAddress(List.empty,"", None),None,None,None)), Map.empty)
-      requiredUserAnswers.isNilReturn(userAnswers) mustBe false
-    }
-    "should return false when user answers is empty but warehouse list is not empty" in {
-      val userAnswers = UserAnswers("",Json.obj(),List.empty, Map.empty, Map("" -> Warehouse(None, UkAddress(List.empty,"", None))))
-      requiredUserAnswers.isNilReturn(userAnswers) mustBe false
     }
   }
 }

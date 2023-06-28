@@ -23,10 +23,6 @@ import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
 import java.time.Instant
-import cats.implicits._
-import SdilReturn._
-import models.requests.DataRequest
-import pages._
 
 
 case class SdilReturn(

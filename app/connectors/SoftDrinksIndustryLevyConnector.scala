@@ -98,12 +98,16 @@ class SoftDrinksIndustryLevyConnector @Inject()(
 
   def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
     val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    println("$$$$$$$$$$$$")
+    println(sdilReturn)
     http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map {
       response => Some(response.status)
     }
   }
 
   def returns_variation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+    println("$$$$$$fff")
+    println(variation)
     http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map {
       response => Some(response.status)
     }

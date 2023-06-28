@@ -32,17 +32,9 @@ class RequiredUserAnswers @Inject()(genericLogger: GenericLogger)(implicit val e
 
   def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     page match {
-      case CheckYourAnswersPage if isNilReturn(request.userAnswers) => {
-        genericLogger.logger.info(s"${request.userAnswers.id} Nil return true on CYA")
-        action
-      }
       case CheckYourAnswersPage => checkYourAnswersRequiredData(action)
       case _ => action
     }
-  }
-
-  private[controllers] def isNilReturn(userAnswers: UserAnswers): Boolean = {
-      userAnswers.data == Json.obj() && userAnswers.smallProducerList.isEmpty && userAnswers.warehouseList.isEmpty && userAnswers.packagingSiteList.isEmpty
   }
 
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {

@@ -71,7 +71,7 @@ class CheckYourAnswersController @Inject()(
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       requiredUserAnswers.requireData(CheckYourAnswersPage) {
-        returnsOrchestrator.completeReturnAndUpdateUserAnswers.map { _ =>
+        returnsOrchestrator.completeReturnAndUpdateUserAnswers().map { _ =>
           Redirect(routes.ReturnSentController.onPageLoad)
         }
       }

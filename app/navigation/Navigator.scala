@@ -67,7 +67,7 @@ class Navigator @Inject()() {
     case RemoveWarehouseConfirmPage =>  _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
-    case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad
+    case HowManyBroughtIntoUkPage => userAnswers => routes.CheckYourAnswersController.onPageLoad
     case BroughtIntoUkFromSmallProducersPage => userAnswers => checkBroughtIntoUkFromSmallProducersPageNavigation(userAnswers)
     case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => routes.CheckYourAnswersController.onPageLoad
     case ClaimCreditsForExportsPage => userAnswers => checkClaimCreditsForExportPageNavigation(userAnswers)

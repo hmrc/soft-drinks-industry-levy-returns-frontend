@@ -2,7 +2,7 @@ package controllers.testSupport
 
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{AddASmallProducer, LitresInBands, UserAnswers}
+import models.{AddASmallProducer, DefaultUserAnswersData, LitresInBands, UserAnswers}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
@@ -18,8 +18,49 @@ trait ITCoreTestData extends TryValues {
   val producerName = Some("Super Cola Ltd")
   val refNumber = "XZSDIL000000234"
 
+
+  val aSubscription = RetrievedSubscription(
+    utr = "0000001611",
+    sdilRef = "XKSDIL000000022",
+    orgName = "Super Lemonade Plc",
+    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
+    liabilityDate = LocalDate.of(2018, 4, 19),
+    productionSites = List(
+      Site(
+        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+        Some("88"),
+        Some("Wild Lemonade Group"),
+        Some(LocalDate.of(2018, 2, 26))),
+      Site(
+        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
+        Some("87"),
+        Some("Highly Addictive Drinks Plc"),
+        Some(LocalDate.of(2019, 8, 19))),
+      Site(
+        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
+        Some("94"),
+        Some("Monster Bottle Ltd"),
+        Some(LocalDate.of(2017, 9, 23))),
+      Site(
+        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
+        Some("27"),
+        Some("Super Lemonade Group"),
+        Some(LocalDate.of(2017, 4, 23))),
+      Site(
+        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
+        Some("96"),
+        Some("Star Products Ltd"),
+        Some(LocalDate.of(2017, 2, 11)))
+    ),
+    warehouseSites = List(),
+    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+    deregDate = None
+  )
+
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+  def defaultNilReturnUserAnswers = UserAnswers(sdilNumber, Json.toJsObject(new DefaultUserAnswersData(aSubscription)), isNilReturn = true)
   def submittedAnswers = UserAnswers(sdilNumber, Json.obj(), submitted = true)
 
   def failedUserAnswers = Failure(new Exception(""))
@@ -170,43 +211,5 @@ def claimCreditsForLostDamagedPageWithLitresFullAnswers = newPackerPartialAnswer
     .set(ClaimCreditsForLostDamagedPage, true).success.value
     .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
 
-  val aSubscription = RetrievedSubscription(
-    utr = "0000001611",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(
-      Site(
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        Some("88"),
-        Some("Wild Lemonade Group"),
-        Some(LocalDate.of(2018, 2, 26))),
-      Site(
-        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-        Some("87"),
-        Some("Highly Addictive Drinks Plc"),
-        Some(LocalDate.of(2019, 8, 19))),
-      Site(
-        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
-        Some("94"),
-        Some("Monster Bottle Ltd"),
-        Some(LocalDate.of(2017, 9, 23))),
-      Site(
-        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
-        Some("27"),
-        Some("Super Lemonade Group"),
-        Some(LocalDate.of(2017, 4, 23))),
-      Site(
-        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
-        Some("96"),
-        Some("Star Products Ltd"),
-        Some(LocalDate.of(2017, 2, 11)))
-    ),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
 
 }

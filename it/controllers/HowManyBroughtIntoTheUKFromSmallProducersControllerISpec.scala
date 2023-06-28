@@ -7,7 +7,7 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
+class HowManyBroughtIntoTheUKFromSmallProducersControllerISpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
   "HowManyBroughtIntoTheUKFromSmallProducersController" should {
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       setUpData(broughtIntoUkFullAnswers.success.value)
