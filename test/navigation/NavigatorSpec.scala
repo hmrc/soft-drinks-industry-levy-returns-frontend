@@ -20,9 +20,9 @@ import base.ReturnsTestData._
 import base.SpecBase
 import controllers.routes
 import helpers.LoggerHelper
-import pages._
 import models._
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import pages._
 import play.api.libs.json.Json
 
 class NavigatorSpec extends SpecBase with LoggerHelper {
@@ -50,23 +50,25 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               UserAnswers(id, Json.obj("ownBrands" -> value)))
 
             "select Yes to navigate to How Many own brands packaged at own sites page" in {
-              val result = navigate(true)
+              val result = navigate(value = true)
               result mustBe routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode)
             }
 
             "select No to navigate to packaged as contract packer page" in {
-              val result = navigate(false)
+              val result = navigate(value = false)
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
             }
           }
 
           "Remove Packaging details confirmation if" - {
             "Yes is selected go to Packing details page" in {
-              val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode, UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> true)))
+              val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode,
+                UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> true)))
               result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
             }
             "No is selected go to Packing details page" in {
-              val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode, UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> false)))
+              val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode,
+                UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> false)))
               result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
             }
           }
@@ -107,17 +109,17 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               UserAnswers(id, Json.obj("packagedContractPacker" -> value)))
 
             "select Yes to navigate to How Many packaged as contract packer" in {
-              val result = navigate(true)
+              val result = navigate(value = true)
               result mustBe routes.HowManyAsAContractPackerController.onPageLoad(NormalMode)
             }
 
             "select No to navigate to exemptions for small producers page" in {
-              val result = navigate(false)
+              val result = navigate(value = false)
               result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
             }
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
-              val result = navigate(false, CheckMode)
+              val result = navigate(value = false, CheckMode)
               result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
@@ -143,7 +145,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               UserAnswers(sdilNumber, Json.obj("exemptionsForSmallProducers" -> value)))
 
             "select Yes to navigate to Add small producer pager" in {
-              val result = navigate(true)
+              val result = navigate(value = true)
               result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
             }
 
@@ -158,12 +160,12 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "select No to navigate to brought into uk page" in {
-              val result = navigate(false)
+              val result = navigate(value = false)
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
             }
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
-              val result = navigate(false, CheckMode)
+              val result = navigate(value = false, CheckMode)
               result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
@@ -176,17 +178,17 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               UserAnswers(sdilNumber, Json.obj("broughtIntoUK" -> value)))
 
             "select Yes to navigate to How many brought into UK pager" in {
-              val result = navigate(true)
+              val result = navigate(value = true)
               result mustBe routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode)
             }
 
             "select No to navigate to brought into uk page" in {
-              val result = navigate(false)
+              val result = navigate(value = false)
               result mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
             }
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
-              val result = navigate(false, CheckMode)
+              val result = navigate(value = false, CheckMode)
               result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
@@ -212,17 +214,17 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               UserAnswers(sdilNumber, Json.obj("broughtIntoUkFromSmallProducers" -> value)))
 
             "select Yes to navigate to How many brought into UK pager" in {
-              val result = navigate(true)
+              val result = navigate(value = true)
               result mustBe routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(NormalMode)
             }
 
             "select No to navigate to brought into uk page" in {
-              val result = navigate(false)
+              val result = navigate(value = false)
               result mustBe routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
             }
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
-              val result = navigate(false, CheckMode)
+              val result = navigate(value = false, CheckMode)
               result mustBe routes.CheckYourAnswersController.onPageLoad
             }
 
@@ -246,17 +248,17 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               UserAnswers(sdilNumber, Json.obj("claimCreditsForExports" -> value)))
 
             "select Yes to navigate to How many credits for export page" in {
-              val result = navigate(true)
+              val result = navigate(value = true)
               result mustBe routes.HowManyCreditsForExportController.onPageLoad(NormalMode)
             }
 
             "select No to navigate to brought into uk page" in {
-              val result = navigate(false)
+              val result = navigate(value = false)
               result mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
             }
 
             "Should navigate to Check Your Answers page when no is selected in check mode" in {
-              val result = navigate(false, CheckMode)
+              val result = navigate(value = false, CheckMode)
               result mustBe routes.CheckYourAnswersController.onPageLoad
             }
           }
@@ -298,7 +300,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
-                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+                val result = navigate(value = false, _ => userAnswers(false), Some(sdilReturn))
                 result mustBe routes.CheckYourAnswersController.onPageLoad
               }
             }
@@ -310,7 +312,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                     "claimCreditsForLostDamaged" -> value))
 
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+                val result = navigate(value = false, _ => userAnswers(value = false), Some(sdilReturn))
                 result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
               }
             }
@@ -322,7 +324,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                     "claimCreditsForLostDamaged" -> value))
 
                 val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn))
+                val result = navigate(value = false, _ => userAnswers(value = false), Some(sdilReturn))
                 result mustBe routes.ReturnChangeRegistrationController.onPageLoad()
               }
             }
@@ -342,7 +344,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                 val importerSubscription = aSubscription.copy(activity = importerActivity)
 
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (100L, 100L), (100L, 100L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
+                val result = navigate(value = false, _ => userAnswers(value = false), Some(sdilReturn), Some(importerSubscription))
                 result mustBe routes.CheckYourAnswersController.onPageLoad
               }
             }
@@ -362,7 +364,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                 val importerSubscription = aSubscription.copy(activity = importerActivity)
 
                 val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), Some(importerSubscription))
+                val result = navigate(value = false, _ => userAnswers(value = false), Some(sdilReturn), Some(importerSubscription))
                 result mustBe routes.CheckYourAnswersController.onPageLoad
               }
             }
@@ -374,7 +376,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                     "claimCreditsForLostDamaged" -> value))
 
                 val sdilReturn = SdilReturn((100L, 100L), (100L, 100L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
-                val result = navigate(false, (_ => userAnswers(false)), Some(sdilReturn), None)
+                val result = navigate(value = false, _ => userAnswers(value = false), Some(sdilReturn), None)
                 result mustBe routes.JourneyRecoveryController.onPageLoad()
               }
             }
@@ -385,7 +387,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
-                val result = navigate(false, (_ => userAnswers(false)), None)
+                val result = navigate(value = false, _ => userAnswers(value = false), None)
                 result mustBe routes.JourneyRecoveryController.onPageLoad()
               }
             }
@@ -396,7 +398,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
-                val result = navigate(false, (_ => userAnswers(false)), None, None)
+                val result = navigate(value = false, _ => userAnswers(value = false), None, None)
                 result mustBe routes.JourneyRecoveryController.onPageLoad()
               }
             }
@@ -413,7 +415,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "should redirect to check your answers page when current sdil is neither a packer nor an importer" in {
-              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                importer = false, voluntaryRegistration = false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -421,7 +424,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "should redirect to check your answers page when current sdil is already a packer" in {
-              val sdilActivity = RetrievedActivity(false, true, contractPacker = true, importer = false, false)
+              val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true,
+                importer = false, voluntaryRegistration = false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -429,7 +433,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "should redirect to check your answers page when current sdil is already an importer" in {
-              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = true, false)
+              val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                importer = true, voluntaryRegistration = false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -437,7 +442,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "should redirect to check your answers page when current sdil is already an importer and a packer" in {
-              val sdilActivity = RetrievedActivity(false, true, contractPacker = true, importer = true, false)
+              val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true,
+                importer = true, voluntaryRegistration = false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
               val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -446,7 +452,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
               "but meets the pack large conditions for being a new packer" in {
-                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                  importer = false, voluntaryRegistration = false)
                 val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
                 val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List.empty, (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -456,7 +463,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
               "but meets the pack small conditions for being a new packer" in {
-                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                  importer = false, voluntaryRegistration = false)
                 val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List(SmallProducer("","",(1L, 1L))), (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -466,7 +474,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
               "but meets the pack small and pack large conditions for being a new packer" in {
-                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                  importer = false, voluntaryRegistration = false)
                 val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
                 val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List(SmallProducer("", "", (1L, 1L))), (0L, 0L), (0L, 0L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -476,7 +485,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
               "but meets the large import conditions for being a new importer" in {
-                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                  importer = false, voluntaryRegistration = false)
                 val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -486,7 +496,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
               "but meets the small import conditions for being a new importer" in {
-                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                  importer = false, voluntaryRegistration = false)
                 val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (0L, 0L), (1L, 1L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -496,7 +507,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
               "but meets the large and small import conditions for being a new importer" in {
-                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                  importer = false, voluntaryRegistration = false)
                 val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
                 val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -506,7 +518,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to return change registration page when current sdil is neither a packer nor an importer" - {
               "but meets the pack conditions and import conditions for being a new packer and new packer" in {
-                val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                  importer = false, voluntaryRegistration = false)
                 val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
                 val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List(SmallProducer("", "", (1L, 1L))), (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -520,8 +533,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                 result mustBe routes.JourneyRecoveryController.onPageLoad()
                 events.collectFirst {
                   case event =>
-                    event.getLevel.levelStr mustEqual("WARN")
-                    event.getMessage mustEqual(s"SDIL return not provided for ${aSubscription.sdilRef}")
+                    event.getLevel.levelStr mustEqual "WARN"
+                    event.getMessage mustEqual s"SDIL return not provided for ${aSubscription.sdilRef}"
                 }.getOrElse(fail("No logging captured"))
               }
             }
@@ -533,8 +546,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                 result mustBe routes.JourneyRecoveryController.onPageLoad()
                 events.collectFirst {
                   case event =>
-                    event.getLevel.levelStr mustEqual ("WARN")
-                    event.getMessage mustEqual ("SDIL return or subscription not provided for current unknown user")
+                    event.getLevel.levelStr mustEqual "WARN"
+                    event.getMessage mustEqual "SDIL return or subscription not provided for current unknown user"
                 }.getOrElse(fail("No logging captured"))
               }
             }
@@ -545,8 +558,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                 result mustBe routes.JourneyRecoveryController.onPageLoad()
                 events.collectFirst {
                   case event =>
-                    event.getLevel.levelStr mustEqual ("WARN")
-                    event.getMessage mustEqual ("SDIL return or subscription not provided for current unknown user")
+                    event.getLevel.levelStr mustEqual "WARN"
+                    event.getMessage mustEqual "SDIL return or subscription not provided for current unknown user"
                 }.getOrElse(fail("No logging captured"))
               }
             }
@@ -564,7 +577,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to Ask Secondary Warehouse page when user clicks change registration" - {
               "when meets the large import conditions for being a new importer" in {
-              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                importer = false, voluntaryRegistration = false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
               val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
@@ -575,7 +589,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to Pack At Business Address page when user clicks change registration" - {
               "when meets the pack conditions and import conditions for being a new packer and new importer" in {
-                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false)
+                val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                  importer = false, voluntaryRegistration = false)
                 val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
                 val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List(SmallProducer("", "", (1L, 1L))), (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
@@ -591,7 +606,8 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "should redirect to journey recovery when no sdil return is found" in {
-              val sdilActivity = RetrievedActivity(false, true, contractPacker = false, importer = false, false)
+              val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
+                importer = false, voluntaryRegistration = false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
               val result = navigate(userAnswers, None,Some(modifiedSubscription))
@@ -793,18 +809,18 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
-        "Should navigate to small producer details page when yes is selected" in {
-          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true))
+        "Should navigate to small producer details page when yes is selected AND there is at least 1 small producer in the list" in {
+          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode,
+            UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true), smallProducerListOnlySuperCola)
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
 
-        "Should navigate to Check Your Answers page when yes is selected and data present" in {
-          navigator.nextPage(HowManyAsAContractPackerPage,
-            CheckMode,
-            UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true,
-              "addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
-          ) mustBe routes.CheckYourAnswersController.onPageLoad
+        "Should navigate to add a small producer page when yes is selected AND the small producer list is empty" in {
+          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode,
+            UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true), smallProducerList = List.empty)
+          ) mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
         }
+
       }
 
 
@@ -914,7 +930,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
       "Add a small producer " - {
 
-        "Should navigate to small producer details controller when no is selected" in {
+        "Should navigate to small producer details controller when data is entered" in {
           navigator.nextPage(AddASmallProducerPage,
             CheckMode,
             UserAnswers(id, Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
