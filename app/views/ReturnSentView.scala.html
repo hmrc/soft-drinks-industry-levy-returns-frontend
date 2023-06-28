@@ -64,7 +64,7 @@
 
 
     <p class="govuk-body" id="whatNextText">
-        @if(amounts.totalForQuarter > 0){
+        @if(amounts.total > 0){
             @Html(messages("returnSent.paymentsBlurb.payby",
                             amountOwed,
                             returnPeriod.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
@@ -75,7 +75,7 @@
             <br>
             <br>
             <a class="govuk-link" href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">@messages("returnSent.paymentBlurb.paybyLink")</a>
-        } else if(amounts.totalForQuarter < 0){
+        } else if(amounts.total < 0){
             @messages("returnSent.paymentsBlurb.nothingOwed")
             @messages("returnSent.paymentsBlurb.credited")
         } else{

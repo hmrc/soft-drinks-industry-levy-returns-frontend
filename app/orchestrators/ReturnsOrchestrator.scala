@@ -22,6 +22,7 @@ import com.google.inject.{Inject, Singleton}
 import errors.NoPendingReturnForGivenPeriod
 import models.requests.{DataRequest, IdentifierRequest}
 import models.retrieved.RetrievedSubscription
+
 import models.{Amounts, ReturnPeriod, UserAnswers}
 import play.api.mvc.AnyContent
 import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
@@ -35,6 +36,20 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReturnsOrchestrator @Inject()(returnService: ReturnService,
                                     sdilSessionCache: SDILSessionCache,
                                     sessionRepository: SessionRepository) {
+
+//  def tempSetupReturnTest
+//                     (implicit request: IdentifierRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
+//    lazy val latestReturn = returnService.getPendingReturns(request.subscription.utr).map{pendingReturns =>
+//      pendingReturns.sortBy(_.start).headOption match {
+//        case Some(pendingReturn) => Right(pendingReturn)
+//        case _ => Left(NoPendingReturnForGivenPeriod)
+//      }}
+//    for {
+//      lr <- EitherT(latestReturn)
+//      _ <- EitherT.right[ReturnsErrors](sdilSessionCache.save[ReturnPeriod](request.sdilEnrolment, SDILSessionKeys.RETURN_PERIOD, lr))
+//      _ <- setupUserAnswers(request.subscription, false)
+//    } yield ((): Unit)
+//  }
 
   def setupNewReturn(year: Int, quarter: Int, nilReturn: Boolean)
                     (implicit request: IdentifierRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {

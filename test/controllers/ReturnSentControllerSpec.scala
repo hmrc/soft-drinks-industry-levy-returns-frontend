@@ -18,9 +18,8 @@ package controllers
 
 import base.ReturnsTestData._
 import base.SpecBase
-import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedActivity
-import models.{Amounts, NormalMode, SmallProducer, UserAnswers}
+import models.{Amounts, SmallProducer, UserAnswers}
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -32,7 +31,6 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SDILSessionCache
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -67,7 +65,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -90,7 +88,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -120,7 +118,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -143,7 +141,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -173,7 +171,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -193,7 +191,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -216,7 +214,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -246,7 +244,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
 
       running(application) {
@@ -270,7 +268,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -300,7 +298,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -323,7 +321,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -353,7 +351,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
 
       running(application) {
@@ -377,7 +375,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
@@ -411,7 +409,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -429,7 +427,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amountsZero)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amountsZero)
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result = route(application, request).value
@@ -449,7 +447,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -471,7 +469,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -492,7 +490,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -513,7 +511,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -535,7 +533,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -558,7 +556,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)

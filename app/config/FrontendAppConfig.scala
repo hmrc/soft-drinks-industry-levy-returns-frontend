@@ -58,7 +58,7 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
 
   val balanceAllEnabled: Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
-
+  val defaultReturnSetup: Boolean = servicesConfig.getBoolean("defaultReturnTest.enabled")
   val softDrinksIndustryLevyFrontendLink :String  = s"${servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
   val addressLookupService: String  = servicesConfig.baseUrl("address-lookup-frontend")
 

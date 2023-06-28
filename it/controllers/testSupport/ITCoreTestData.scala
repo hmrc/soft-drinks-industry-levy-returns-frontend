@@ -2,7 +2,7 @@ package controllers.testSupport
 
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{AddASmallProducer, DefaultUserAnswersData, LitresInBands, UserAnswers}
+import models.{AddASmallProducer, Amounts, DefaultUserAnswersData, LitresInBands, SmallProducer, UserAnswers, Warehouse}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
@@ -17,7 +17,6 @@ trait ITCoreTestData extends TryValues {
   val sdilNumber = "XKSDIL000000022"
   val producerName = Some("Super Cola Ltd")
   val refNumber = "XZSDIL000000234"
-
 
   val aSubscription = RetrievedSubscription(
     utr = "0000001611",
@@ -57,6 +56,15 @@ trait ITCoreTestData extends TryValues {
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
   )
+  val PackagingSite1 = Site(
+    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+    None,
+    Some("Wild Lemonade Group"),
+    None)
+
+  val smallProducerListOnlySuperCola: List[SmallProducer] = List(SmallProducer(producerName.get, refNumber, (lowBand, highBand)))
+
+  val warehouse: Warehouse = Warehouse(None, UkAddress(List("34 Rhes Priordy", "East London"), "E73 2RP"))
 
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
@@ -180,18 +188,34 @@ trait ITCoreTestData extends TryValues {
     .set(ClaimCreditsForExportsPage, false).success.value
 
   def checkYourAnswersFullAnswers = emptyUserAnswers
+    .copy(smallProducerList = smallProducerListOnlySuperCola,
+      packagingSiteList = Map("1" -> PackagingSite1),
+      warehouseList = Map("1" -> warehouse))
     .set(OwnBrandsPage, true).success.value
     .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
     .set(PackagedContractPackerPage, true).success.value
     .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(ExemptionsForSmallProducersPage, true).success.value
+    .set(AddASmallProducerPage, AddASmallProducer(None, refNumber, lowBand, highBand)).success.value
     .set(BroughtIntoUKPage, true).success.value
     .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+    .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
     .set(ClaimCreditsForExportsPage, true).success.value
     .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
     .set(ClaimCreditsForLostDamagedPage, true).success.value
     .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+    .set(PackAtBusinessAddressPage, true).success.value
+    .set(AskSecondaryWarehouseInReturnPage, true).success.value
+
+  def checkYourAnswersFullAnswersAllNo = emptyUserAnswers
+    .set(OwnBrandsPage, false).success.value
+    .set(PackagedContractPackerPage, false).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, false).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, false).success.value
+    .set(ClaimCreditsForLostDamagedPage, false).success.value
 
 def claimCreditsForLostDamagedPageWithLitresFullAnswers = newPackerPartialAnswers
   .set(ClaimCreditsForExportsPage, true).success.value
@@ -211,5 +235,9 @@ def claimCreditsForLostDamagedPageWithLitresFullAnswers = newPackerPartialAnswer
     .set(ClaimCreditsForLostDamagedPage, true).success.value
     .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
 
+
+  val zero = BigDecimal(0.00)
+  val amountsZero = Amounts(zero, zero, zero)
+  val amounts = Amounts(1000, 3000, 2000)
 
 }

@@ -26,7 +26,7 @@ class SDILSessionCache @Inject()(sdilSessionCacheRepository: SDILSessionCacheRep
 
   def save[A](sdilEnrolment: String, key: String, value: A)(
     implicit fmt: Format[A]
-  ): Future[CacheMap] = {
+  ): Future[Boolean] = {
     sdilSessionCacheRepository.get(sdilEnrolment).flatMap { optionalCacheMap =>
       val updatedCacheMap = cascadeUpsert(
         key,
@@ -34,7 +34,7 @@ class SDILSessionCache @Inject()(sdilSessionCacheRepository: SDILSessionCacheRep
         optionalCacheMap.getOrElse(CacheMap(sdilEnrolment, Map()))
       )
       sdilSessionCacheRepository.upsert(updatedCacheMap).map { _ =>
-        updatedCacheMap
+        true
       }
     }
   }

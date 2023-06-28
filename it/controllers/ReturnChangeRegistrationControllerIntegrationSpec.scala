@@ -11,7 +11,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
   "GET" should {
     "return view" in {
-      setUpData(emptyUserAnswers)
+      setUpData(newPackerPartialAnswers)
       given
         .commonPrecondition(aSubscription)
 
@@ -26,6 +26,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
           val doc = Jsoup.parse(res.body)
           doc.getElementsByTag("h1").text() mustBe "You changed your soft drinks business activity"
           doc.getElementsByTag("title").text() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
+          doc.getElementById("main-content").getElementsByTag("a").attr("href") mustBe "/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer"
         }
       }
     }

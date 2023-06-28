@@ -21,7 +21,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.OwnBrandsFormProvider
 import helpers.LoggerHelper
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any

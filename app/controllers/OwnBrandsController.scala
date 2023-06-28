@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.OwnBrandsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
 import play.api.i18n.MessagesApi
@@ -54,14 +54,13 @@ class OwnBrandsController @Inject()(override val messagesApi: MessagesApi,
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val updatedUserAnswers = answers.setAndRemoveLitresIfReq(OwnBrandsPage, BrandsPackagedAtOwnSitesPage, value)
+          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(OwnBrandsPage, BrandsPackagedAtOwnSitesPage, value)
           updateDatabaseAndRedirect(updatedUserAnswers, OwnBrandsPage, mode)
         }
       )
