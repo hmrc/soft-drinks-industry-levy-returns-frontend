@@ -51,12 +51,4 @@ class ReturnsController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
         case Left(_) => Redirect(config.sdilFrontendBaseUrl)
       }
   }
-//  private def setupReturn(year: Int, quarter: Int, nilReturn: Boolean)(
-//    implicit request: IdentifierRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
-//   if(config.defaultReturnSetup) {
-//     returnsOrchestrator.tempSetupReturnTest
-//   } else {
-//     returnsOrchestrator.setupNewReturn(year, quarter, nilReturn)
-//}
-//  }
 }
