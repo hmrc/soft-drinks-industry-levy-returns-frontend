@@ -1,10 +1,8 @@
 package controllers
 
 import controllers.testSupport.helpers.ReturnSentTestHelper
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.retrieved.{OptSmallProducer, RetrievedActivity}
-import models.{AddASmallProducer, FinancialLineItem, LitresInBands, NormalMode}
-import org.scalatest.TryValues
+import models.{AddASmallProducer, LitresInBands, NormalMode}
 import pages._
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
@@ -22,8 +20,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
   "CheckYourAnswersController" when {
     "GET" should {
       "Load when NIL return" in {
-        val nilReturnUserAnswers = emptyUserAnswers
-        setUpData(nilReturnUserAnswers)
+        setUpData(defaultNilReturnUserAnswers)
 
         given.commonPrecondition(aSubscription)
         given.sdilBackend.balance(emptyUserAnswers.id, false)
@@ -54,6 +51,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
           .set(ClaimCreditsForLostDamagedPage, true).success.value
           .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+
         setUpData(userAnswersStandardFlow)
 
         given.commonPrecondition(aSubscription.copy(activity = RetrievedActivity(true, true, true, true, true)))
@@ -226,19 +224,18 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
     "POST" should {
       "Redirect to return sent when NIL return" in {
-        val nilReturnUserAnswers = emptyUserAnswers
-        setUpData(nilReturnUserAnswers)
+        setUpData(defaultNilReturnUserAnswers)
 
-        setUpDataWithBackendCallsForAmountsCached(nilReturnUserAnswers)
+        setUpDataWithBackendCallsForAmountsCached(defaultNilReturnUserAnswers)
         given
           .commonPrecondition(aSubscription)
           .sdilBackend.submitReturns(aSubscription.utr)
-          .sdilBackend.submitVariations(nilReturnUserAnswers.id)
+          .sdilBackend.submitVariations(defaultNilReturnUserAnswers.id)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> nilReturnUserAnswers.id,
+            .withHttpHeaders("X-Session-ID" -> defaultNilReturnUserAnswers.id,
               "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj())
@@ -434,7 +431,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
@@ -461,7 +458,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
@@ -488,7 +485,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()

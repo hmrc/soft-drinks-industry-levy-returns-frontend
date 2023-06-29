@@ -139,21 +139,5 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
       }
     }
   }
-  "tempSetupReturnTest" - {
-    "should cache a return period and setup user answers for testing purposes when user has not navigated from accounts repo" in {
-      when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
-      when(mockSdilCache.save[ReturnPeriod](sdilReference, SDILSessionKeys.RETURN_PERIOD, ReturnPeriod(2019,1))).thenReturn(Future.successful(true))
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
-      whenReady(orchestrator.tempSetupReturnTest(identifierRequest, hc, ec).value) { res =>
-        res.isRight mustBe true
-      }
-    }
-    s"should return $NoPendingReturnForGivenPeriod when no periods exist for testing purposes when user not navigated from accounts repo" in {
-      when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(List.empty))
-      whenReady(orchestrator.tempSetupReturnTest(identifierRequest, hc, ec).value) { res =>
-        res mustBe Left(NoPendingReturnForGivenPeriod)
-      }
-    }
-  }
 
 }

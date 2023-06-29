@@ -2,8 +2,7 @@ package controllers.testSupport.helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import models.{ReturnsVariation, SdilReturn}
-import models.alf.init.JourneyConfig
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.Json
 
 import scala.jdk.CollectionConverters._
 

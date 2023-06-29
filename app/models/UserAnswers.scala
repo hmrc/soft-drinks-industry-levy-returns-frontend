@@ -17,6 +17,7 @@
 package models
 
 import models.backend.Site
+import models.retrieved.RetrievedSubscription
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import queries.{Gettable, Settable}
@@ -37,6 +38,12 @@ case class UserAnswers(
                         isNilReturn: Boolean = false,
                         lastUpdated: Instant = Instant.now
                       ) {
+
+  def this(subscription: RetrievedSubscription, nilReturn: Boolean) = this(
+    id = subscription.sdilRef,
+    data = Json.toJsObject(new DefaultUserAnswersData(subscription)),
+    isNilReturn = nilReturn
+  )
 
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
@@ -102,7 +109,7 @@ case class UserAnswers(
       implicit val cryptEncryptedValueFormats: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
       import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats.Implicits._
 
-      def reads()(implicit encryption: Encryption): Reads[UserAnswers] = {
+      def reads(implicit encryption: Encryption): Reads[UserAnswers] = {
         (
           (__ \ "_id").read[String] and
             (__ \ "data").read[EncryptedValue] and

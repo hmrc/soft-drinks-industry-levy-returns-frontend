@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.OwnBrandsFormProvider
 import handlers.ErrorHandler
@@ -43,12 +42,9 @@ class OwnBrandsController @Inject()(override val messagesApi: MessagesApi,
                                      checkReturnSubmission: CheckingSubmissionAction,
                                      formProvider: OwnBrandsFormProvider,
                                      val controllerComponents: MessagesControllerComponents,
-                                     view: OwnBrandsView,
-                                     config: FrontendAppConfig
-                                   )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                     view: OwnBrandsView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
       val preparedForm = request.userAnswers.get(OwnBrandsPage) match {

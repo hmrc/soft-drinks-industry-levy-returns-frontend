@@ -22,7 +22,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
       "a nil return was submitted and the balance brought forward is 0" in {
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.balanceHistoryNone(sdilNumber)
 
@@ -45,7 +45,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
       "a nil return was submitted and the balance brought forward is positive" in {
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.balanceHistoryInCredit(sdilNumber)
 
@@ -68,7 +68,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
       "a nil return was submitted and the balance brought forward is negative" in {
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.balanceHistory(sdilNumber)
 
@@ -304,7 +304,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryNone))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
@@ -331,7 +331,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryCredit))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
@@ -358,7 +358,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistory))
-        setUpData(emptyUserAnswers.copy(isNilReturn = true))
+        setUpData(defaultNilReturnUserAnswers)
         given.commonPrecondition(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
