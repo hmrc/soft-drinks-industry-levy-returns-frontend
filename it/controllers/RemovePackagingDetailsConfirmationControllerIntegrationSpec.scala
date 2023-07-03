@@ -1,13 +1,12 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.backend.{Site, UkAddress}
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData {
+class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends ControllerITTestHelper {
 
   "GET" should {
     "return view" in {
@@ -20,7 +19,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Specif
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSite)
       setUpData(updatedUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/remove-packaging-site-details/$ref")
@@ -53,7 +52,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Specif
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSites)
       setUpData(updatedUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result =
           client.url(s"$baseUrl/remove-packaging-site-details/$ref")
@@ -90,7 +89,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Specif
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSites)
       setUpData(updatedUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result =
           client.url(s"$baseUrl/remove-packaging-site-details/$ref")

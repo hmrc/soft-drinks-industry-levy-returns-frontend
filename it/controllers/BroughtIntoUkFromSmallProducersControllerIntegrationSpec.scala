@@ -1,13 +1,12 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
   "BroughtIntoUkFromSmallProducersController" should {
 
@@ -16,7 +15,7 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
       val userAnswers = broughtIntoUkFullAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/$broughtIntoUkFromSmallProducersUrl")
           .withFollowRedirects(false)
@@ -35,7 +34,7 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
         val expectedResult: Some[JsObject] = Some(Json.obj("broughtIntoUkFromSmallProducers" -> true))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
@@ -61,7 +60,7 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
         val expectedResult: Some[JsObject] = Some(Json.obj("broughtIntoUkFromSmallProducers" -> false))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
@@ -82,6 +81,7 @@ class BroughtIntoUkFromSmallProducersControllerIntegrationSpec extends Specifica
         }
       }
     }
+    testUnauthorisedUser(baseUrl + "/" + broughtIntoUkFromSmallProducersUrl)
   }
 
 }

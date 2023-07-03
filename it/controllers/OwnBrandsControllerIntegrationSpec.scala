@@ -1,19 +1,18 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData {
+class OwnBrandsControllerIntegrationSpec extends ControllerITTestHelper {
   "OwnBrandsController" should {
 
     "Ask if user is reporting liable drinks they have packaged as a third party or contract packer at UK sites user operates" in {
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
@@ -37,7 +36,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
           ))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
@@ -66,7 +65,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
           ))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
@@ -86,5 +85,7 @@ class OwnBrandsControllerIntegrationSpec extends Specifications with TestConfigu
         }
       }
     }
+
+    testUnauthorisedUser(baseUrl + "/own-brands-packaged-at-own-sites")
   }
 }

@@ -1,21 +1,20 @@
 package controllers
 
 import controllers.testSupport.helpers.ALFTestHelper
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.Warehouse
-import models.alf.init.{AppLevelLabels, ConfirmPageConfig, EditPageLabels, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, LookupPageLabels, SelectPageConfig, TimeoutConfig}
+import models.alf.init._
 import models.backend.UkAddress
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData {
+class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends ControllerITTestHelper {
   "AskSecondaryWarehouseInReturnController" should {
     "Ask for if user wants to register any UK warehouses where user used to store liable drinks" in {
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/ask-secondary-warehouses-in-return")
@@ -106,7 +105,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
       val alfOnRampURL: String = "http://onramp.com"
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
       WsTestClient.withClient { client =>
@@ -133,7 +132,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
       setUpData(emptyUserAnswers.copy(warehouseList = warehouseToBeWiped))
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       val expectedResult: Some[JsObject] = Some(
         Json.obj(
@@ -158,7 +157,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends Specificati
 
       }
     }
-
+    testUnauthorisedUser(baseUrl + "/ask-secondary-warehouses-in-return")
   }
 }
 

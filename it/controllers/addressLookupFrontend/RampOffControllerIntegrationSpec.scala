@@ -19,7 +19,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         val alfId: String = "bar"
         setUpData(emptyUserAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
           .alf.getAddress(alfId)
 
         WsTestClient.withClient { client =>
@@ -49,7 +49,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         val userAnswersBefore = emptyUserAnswers.copy(warehouseList = Map(sdilId -> Warehouse(None, UkAddress(List.empty, "foo", Some("wizz")))))
         setUpData(userAnswersBefore)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
           .alf.getAddress(alfId)
 
         WsTestClient.withClient { client =>
@@ -79,7 +79,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         val alfId: String = "bar"
         setUpData(emptyUserAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
           .alf.getBadAddress(alfId)
 
         WsTestClient.withClient { client =>
@@ -110,7 +110,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         val alfId: String = "bar"
         setUpData(emptyUserAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
           .alf.getAddress(alfId)
 
         WsTestClient.withClient { client =>
@@ -141,7 +141,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         val userAnswersBefore = emptyUserAnswers.copy(packagingSiteList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
         setUpData(userAnswersBefore)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
           .alf.getAddress(alfId)
 
         WsTestClient.withClient { client =>
@@ -172,7 +172,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         val alfId: String = "bar"
         setUpData(emptyUserAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
           .alf.getBadAddress(alfId)
 
         WsTestClient.withClient { client =>

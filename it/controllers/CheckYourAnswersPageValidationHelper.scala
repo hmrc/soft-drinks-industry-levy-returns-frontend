@@ -36,7 +36,7 @@ trait CheckYourAnswersPageValidationHelper extends ReturnSummaryValidationHelper
     ReturnCharge(ReturnPeriod(2018, 2), BigDecimal(0)))
 
   def emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
-  def populatedReturn = SdilReturn((lowBand, highBand), (lowBand, highBand), List(SmallProducer(producerName.get, refNumber, (lowBand, highBand))),
+  def populatedReturn: SdilReturn = SdilReturn((lowBand, highBand), (lowBand, highBand), List(SmallProducer(producerName.get, refNumber, (lowBand, highBand))),
     (lowBand, highBand), (lowBand, highBand), (lowBand, highBand), (lowBand, highBand))
 
   def emptyVariation = ReturnsVariation(

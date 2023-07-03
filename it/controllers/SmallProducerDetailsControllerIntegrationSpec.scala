@@ -1,6 +1,5 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.SmallProducer
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
@@ -8,13 +7,13 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class SmallProducerDetailsControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "SmallProducerDetailsController" should {
     "Ask for if user wants to add more small producer" in {
       val userAnswers = smallProducerDetaisPartialAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/small-producer-details")
@@ -43,7 +42,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           ))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = addASmallProducerFullAnswers.success.value
         setUpData(userAnswers)
@@ -79,7 +78,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           ))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = smallProducerDetaisNoProducerAnswers
         setUpData(userAnswers)
@@ -118,7 +117,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
           ))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("","",(1L, 1L))))
         setUpData(userAnswers)
@@ -143,6 +142,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends Specifications with 
 
       }
     }
+    testUnauthorisedUser(baseUrl + "/small-producer-details")
   }
 
 }

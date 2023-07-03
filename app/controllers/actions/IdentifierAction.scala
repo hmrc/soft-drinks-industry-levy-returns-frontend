@@ -49,20 +49,18 @@ class AuthenticatedIdentifierAction @Inject()(
       val maybeSdil = getSdilEnrolment(enrolments)
       (maybeSdil, maybeUtr) match {
         case (None, None) =>
-          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+          Future.successful(Redirect(config.accountHomeUrl))
         case (Some(sdil), _) =>
           sdilConnector.retrieveSubscription(sdil.value, "sdil").flatMap {
             case Some(sub) =>
               block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
             case None =>
-              //ToDo redirect to current sdilFrontend
-              Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+              Future.successful(Redirect(config.accountHomeUrl))
           }
         case (None, Some(utr)) => sdilConnector.retrieveSubscription(utr, "utr").flatMap {
           case Some(sub) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
           case None =>
-            //ToDo redirect to current sdilFrontend
-            Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+            Future.successful(Redirect(config.accountHomeUrl))
         }
       }
     } recover {

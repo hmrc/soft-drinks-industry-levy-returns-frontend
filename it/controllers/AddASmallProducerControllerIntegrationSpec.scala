@@ -1,6 +1,5 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.SmallProducer
 import org.scalatest.TryValues
 import play.api.libs.json.Json
@@ -8,7 +7,7 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class AddASmallProducerControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
   val sdilRefSparkyJuice = "XZSDIL000000234"
   val aliasSparkyJuice = "Sparky Juice"
@@ -17,13 +16,13 @@ class AddASmallProducerControllerIntegrationSpec extends Specifications with Tes
   val aliasSuperCola = "Super Cola"
 
   val litreMax: Long = 100000000000000L
-  val litre = litreMax - 1
+  val litre: Long = litreMax - 1
 
   "AddASmallProducerController" should {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = addASmallProducerPartialAnswers.success.value
       setUpData(userAnswers)
-      given.commonPrecondition(aSubscription)
+      given.commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/add-small-producer")
@@ -40,10 +39,11 @@ class AddASmallProducerControllerIntegrationSpec extends Specifications with Tes
 
     "Post the new form data and navigate to small producer details page " in {
 
-      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = "Super Cola Ltd" , sdilRef = "XZSDIL000000234", litreage = (1000L,1000L))))
+      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = "Super Cola Ltd" ,
+        sdilRef = "XZSDIL000000234", litreage = (1000L,1000L))))
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = addASmallProducerFullAnswers.success.value
       setUpData(userAnswers)
@@ -77,7 +77,7 @@ class AddASmallProducerControllerIntegrationSpec extends Specifications with Tes
       setUpData(updatedUserAnswers)
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
@@ -98,7 +98,7 @@ class AddASmallProducerControllerIntegrationSpec extends Specifications with Tes
       val amendedHighBand = "5000"
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = addASmallProducerFullAnswers.success.value
       val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
@@ -125,9 +125,9 @@ class AddASmallProducerControllerIntegrationSpec extends Specifications with Tes
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/small-producer-details")
           val smallProducer = getAnswers("XKSDIL000000022").get.smallProducerList.head
-          smallProducer.alias mustEqual(amendedProducerAlias)
-          smallProducer.litreage._1.toString mustEqual(amendedLowBand)
-          smallProducer.litreage._2.toString mustEqual(amendedHighBand)
+          smallProducer.alias mustEqual amendedProducerAlias
+          smallProducer.litreage._1.toString mustEqual amendedLowBand
+          smallProducer.litreage._2.toString mustEqual amendedHighBand
         }
 
       }
@@ -142,7 +142,7 @@ class AddASmallProducerControllerIntegrationSpec extends Specifications with Tes
       val amendedHighBand = "5000"
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = addASmallProducerFullAnswers.success.value
       val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
@@ -177,6 +177,7 @@ class AddASmallProducerControllerIntegrationSpec extends Specifications with Tes
       }
 
     }
+    testUnauthorisedUser(baseUrl + "/add-small-producer")
   }
 }
 

@@ -11,7 +11,7 @@ import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 import repositories.SDILSessionKeys
 
-class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageValidationHelper {
+class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper with CheckYourAnswersPageValidationHelper {
 
   override def configParams: Map[String, Any] = Map(
     "balanceAll.enabled" -> false
@@ -22,7 +22,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
       "Load when NIL return" in {
         setUpData(defaultNilReturnUserAnswers)
 
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
         given.sdilBackend.balance(emptyUserAnswers.id, false)
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -54,7 +54,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpData(userAnswersStandardFlow)
 
-        given.commonPrecondition(aSubscription.copy(activity = RetrievedActivity(true, true, true, true, true)))
+        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, true, true)))
         given.sdilBackend.balance(userAnswersStandardFlow.id, false)
 
         WsTestClient.withClient { client =>
@@ -89,7 +89,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpData(userAnswersAllPages)
 
-        given.commonPrecondition(aSubscription.copy(
+        given.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(false, false, false, false, false),
           warehouseSites = List.empty))
         given.sdilBackend.balance(userAnswersAllPages.id, false)
@@ -124,7 +124,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpData(userAnswersAllPages)
 
-        given.commonPrecondition(aSubscription.copy(
+        given.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = true, false, false, false, false),
           warehouseSites = List.empty))
         given.sdilBackend.balance(userAnswersAllPages.id, false)
@@ -151,7 +151,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpData(userAnswersAllPages)
 
-        given.commonPrecondition(aSubscription.copy(
+        given.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = true, true, true, true, true),
           warehouseSites = List.empty))
         given.sdilBackend.balance(userAnswersAllPages.id, false)
@@ -177,8 +177,8 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpData(userAnswerMissing)
 
-        given.commonPrecondition(aSubscription.copy(
-          activity = RetrievedActivity(smallProducer = true, true, true, true, true),
+        given.commonPreconditionChangeSubscription(aSubscription.copy(
+          activity = RetrievedActivity(smallProducer = true, largeProducer = false, true, true, true),
           warehouseSites = List.empty))
         given.sdilBackend.balance(userAnswerMissing.id, false)
 
@@ -204,7 +204,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpData(userAnswerMissing)
 
-        given.commonPrecondition(aSubscription.copy(
+        given.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = false, true, true, true, true),
           warehouseSites = List.empty))
 
@@ -228,7 +228,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpDataWithBackendCallsForAmountsCached(defaultNilReturnUserAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns(aSubscription.utr)
           .sdilBackend.submitVariations(defaultNilReturnUserAnswers.id)
 
@@ -269,7 +269,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
         given
-          .commonPrecondition(aSubscription.copy(
+          .commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(false, false, false, false, false),
           warehouseSites = List.empty))
           .sdilBackend.submitReturns(aSubscription.utr)
@@ -302,7 +302,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
         given
-          .commonPrecondition(aSubscription.copy(
+          .commonPreconditionChangeSubscription(aSubscription.copy(
             activity = RetrievedActivity(true, true, true, true, true),
             warehouseSites = List.empty))
           .sdilBackend.submitReturns(aSubscription.utr)
@@ -343,7 +343,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
         given
-          .commonPrecondition(aSubscription.copy(
+          .commonPreconditionChangeSubscription(aSubscription.copy(
             activity = RetrievedActivity(smallProducer = true, false, false, false, false),
             warehouseSites = List.empty))
           .sdilBackend.submitReturns(aSubscription.utr)
@@ -374,7 +374,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpData(userAnswerMissing)
 
-        given.commonPrecondition(aSubscription.copy(
+        given.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = false, true, true, true, true),
           warehouseSites = List.empty))
 
@@ -403,7 +403,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
 
         setUpData(userAnswerMissing)
 
-        given.commonPrecondition(aSubscription.copy(
+        given.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = true, true, true, true, true),
           warehouseSites = List.empty))
 
@@ -431,8 +431,10 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
+
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
+
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -458,8 +460,10 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
+
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
+
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -485,8 +489,10 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
+
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
+
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -513,7 +519,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -540,7 +546,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -567,7 +573,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -595,7 +601,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -622,7 +628,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -649,7 +655,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -676,7 +682,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -703,7 +709,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -730,7 +736,7 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPrecondition(aSubscription)
+        given.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -753,4 +759,5 @@ class CheckYourAnswersControllerIntegrationSpec extends CheckYourAnswersPageVali
       }
     }
   }
+  testUnauthorisedUser(baseUrl + "/check-your-answers")
 }

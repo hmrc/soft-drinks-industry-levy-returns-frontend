@@ -1,19 +1,18 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues{
+class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTestHelper with TryValues{
   "ClaimCreditsForLostDamagedController" should {
 
     "Ask for if user want to claim a credit for liable drinks which they been lost or destroyed" in {
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
       setUpData(emptyUserAnswers)
 
       WsTestClient.withClient { client =>
@@ -36,7 +35,7 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications
         val expectedResult:Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged"-> true))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers
         )
         WsTestClient.withClient { client =>
@@ -64,7 +63,7 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications
         val expectedResult:Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged"-> false))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
@@ -84,5 +83,6 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends Specifications
           }
         }
       }
+    testUnauthorisedUser(baseUrl + "/claim-credits-for-lost-damaged")
     }
 }

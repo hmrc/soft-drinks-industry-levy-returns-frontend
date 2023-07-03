@@ -1,8 +1,7 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import controllers.testSupport.helpers.ALFTestHelper
-import models.alf.init.{AppLevelLabels, ConfirmPageConfig, EditPageLabels, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, LookupPageLabels, SelectPageConfig, TimeoutConfig}
+import models.alf.init._
 import models.backend.{Site, UkAddress}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
@@ -10,7 +9,7 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class PackAtBusinessAddressControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
+class PackAtBusinessAddressControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
   "PackAtBusinessAddressController" should {
 
@@ -18,7 +17,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends Specifications with
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/pack-at-business-address-in-return")
@@ -106,7 +105,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends Specifications with
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
       WsTestClient.withClient { client =>
@@ -139,7 +138,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends Specifications with
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result =
@@ -158,8 +157,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends Specifications with
         }
       }
     }
+    testUnauthorisedUser(baseUrl + "/pack-at-business-address-in-return")
   }
-
-
 
 }
