@@ -1,13 +1,12 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class PackagedContractPackerControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class PackagedContractPackerControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "PackagedContractPackerController" should {
 
 
@@ -17,7 +16,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         val userAnswers = ownBrandPageFalseAnswers.success.value
         setUpData(userAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/packaged-as-contract-packer")
@@ -36,7 +35,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/packaged-as-contract-packer")
@@ -66,7 +65,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
@@ -97,7 +96,7 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
@@ -120,6 +119,8 @@ class PackagedContractPackerControllerIntegrationSpec extends Specifications wit
 
 
     }
+
+    testUnauthorisedUser(baseUrl + "/packaged-as-contract-packer")
   }
 
 }

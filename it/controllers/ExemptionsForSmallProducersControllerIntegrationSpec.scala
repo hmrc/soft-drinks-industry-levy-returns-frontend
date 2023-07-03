@@ -1,20 +1,19 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class ExemptionsForSmallProducersControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "ExemptionsForSmallProducersController" should {
 
     "Ask for if user need to claim an exemption for any of the liable drinks they have packaged for registered small producers" in {
       val userAnswers = exemptionsForSmallProducersPartialAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/exemptions-for-small-producers")
@@ -44,7 +43,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
 
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
         setUpData(userAnswers)
@@ -80,7 +79,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
           ))
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
         setUpData(userAnswers)
@@ -105,6 +104,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends Specification
       }
 
     }
+    testUnauthorisedUser(baseUrl + "/exemptions-for-small-producers")
   }
 
 }

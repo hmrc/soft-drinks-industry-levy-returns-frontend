@@ -1,14 +1,13 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
+class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
-class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
 
   "BrandsPackagedAtOwnSitesController" should {
 
@@ -16,7 +15,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
       val userAnswers = ownBrandPageAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-own-brands-packaged-at-own-sites")
@@ -36,7 +35,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
        val expectedResult:Some[JsObject] = Some(Json.obj( "ownBrands" -> true,"brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000)))
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = ownBrandPageAnswers.success.value
       setUpData(userAnswers)
@@ -58,8 +57,10 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends Specifications w
         }
 
       }
-
     }
+
+    testUnauthorisedUser(baseUrl + "/how-many-own-brands-packaged-at-own-sites")
+
   }
 
 }

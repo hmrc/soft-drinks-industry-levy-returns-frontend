@@ -1,6 +1,5 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.UserAnswers
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
@@ -8,7 +7,7 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues{
+class BroughtIntoUKControllerIntegrationSpec extends ControllerITTestHelper with TryValues{
   "BroughtIntoUKController" should {
 
     val broughtIntoUkUrl = "brought-into-uk"
@@ -17,7 +16,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
       val userAnswers = broughtIntoUkPartialAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/$broughtIntoUkUrl")
           .withFollowRedirects(false)
@@ -34,7 +33,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
     "Post the brought into UK " when {
       "user selected yes " in {
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers: UserAnswers = broughtIntoUkFullAnswers.success.value
         val expectedResult: Some[JsObject] = Some(Json.obj("broughtIntoUK" ->  true))
@@ -62,7 +61,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
 
       "user selected no " in {
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
         setUpData(userAnswers)
@@ -86,6 +85,7 @@ class BroughtIntoUKControllerIntegrationSpec extends Specifications with TestCon
       }
 
     }
+    testUnauthorisedUser(baseUrl + "/" + broughtIntoUkUrl)
   }
 
 }

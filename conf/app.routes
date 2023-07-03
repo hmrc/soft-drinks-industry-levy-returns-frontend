@@ -1,23 +1,23 @@
 # microservice specific routes
 
-->          /hmrc-frontend                               hmrcfrontend.Routes
+->          /hmrc-frontend                                      hmrcfrontend.Routes
 
-GET         /                                            controllers.IndexController.onPageLoad()
+GET         /                                                   controllers.IndexController.onPageLoad()
 
-GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                                       controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /refresh-session                             controllers.KeepAliveController.keepAlive
+GET         /refresh-session                                    controllers.KeepAliveController.keepAlive
 
-GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /there-is-a-problem                                 controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                         controllers.CheckYourAnswersController.onPageLoad
-POST        /check-your-answers                         controllers.CheckYourAnswersController.onSubmit
+GET         /check-your-answers                                 controllers.CheckYourAnswersController.onPageLoad
+POST        /check-your-answers                                 controllers.CheckYourAnswersController.onSubmit
 
-GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
-GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
-GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad()
+GET         /account/sign-out-survey                            controllers.auth.AuthController.signOut()
+GET         /account/sign-out                                   controllers.auth.AuthController.signOutNoSurvey()
+GET         /account/signed-out                                 controllers.auth.SignedOutController.onPageLoad()
 
-GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
+GET         /unauthorised                                       controllers.UnauthorisedController.onPageLoad()
 
 GET        /packaged-as-contract-packer                         controllers.PackagedContractPackerController.onPageLoad(mode: Mode = NormalMode)
 POST       /packaged-as-contract-packer                         controllers.PackagedContractPackerController.onSubmit(mode: Mode = NormalMode)
@@ -124,16 +124,16 @@ POST       /packaging-site-details                              controllers.Pack
 GET        /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn                 controllers.ReturnsController.onPageLoad(year: Int, quarter: Int, nilReturn: Boolean)
+GET        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn  controllers.ReturnsController.onPageLoad(year: Int, quarter: Int, nilReturn: Boolean)
 GET        /return-sent                                         controllers.ReturnSentController.onPageLoad
 
 
 GET        /remove-warehouse-details/:index                     controllers.RemoveWarehouseConfirmController.onPageLoad(mode: Mode = NormalMode, index: String)
 POST       /remove-warehouse-details/:index                     controllers.RemoveWarehouseConfirmController.onSubmit(mode: Mode = NormalMode, index: String)
 
-GET        /remove-packaging-site-details/:ref                   controllers.RemovePackagingDetailsConfirmationController.onPageLoad(mode: Mode = NormalMode, ref: String)
-POST       /remove-packaging-site-details/:ref                   controllers.RemovePackagingDetailsConfirmationController.onSubmit(mode: Mode = NormalMode, ref: String)
+GET        /remove-packaging-site-details/:ref                  controllers.RemovePackagingDetailsConfirmationController.onPageLoad(mode: Mode = NormalMode, ref: String)
+POST       /remove-packaging-site-details/:ref                  controllers.RemovePackagingDetailsConfirmationController.onSubmit(mode: Mode = NormalMode, ref: String)
 
 
-GET       /off-ramp/secondary-warehouses/:sdilId                       controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String)
-GET       /off-ramp/packing-site-details/:sdilId                       controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String)
+GET       /off-ramp/secondary-warehouses/:sdilId                controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String)
+GET       /off-ramp/packing-site-details/:sdilId                controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String)

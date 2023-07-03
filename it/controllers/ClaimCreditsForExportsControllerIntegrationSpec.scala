@@ -1,6 +1,5 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
 import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
 import play.api.libs.json.{JsObject, Json}
@@ -8,14 +7,14 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class ClaimCreditsForExportsControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class ClaimCreditsForExportsControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "ClaimCreditsForExportsController" should {
 
     "Ask if user is needing to claim a credit for liable drinks that have been exported" in {
       val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/claim-credits-for-exports")
@@ -34,7 +33,7 @@ class ClaimCreditsForExportsControllerIntegrationSpec extends Specifications wit
       "user selected yes " in {
         val expectedResult: Some[JsObject] = Some(Json.obj("claimCreditsForExports"-> true))
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
@@ -59,7 +58,7 @@ class ClaimCreditsForExportsControllerIntegrationSpec extends Specifications wit
 
         val expectedResult: Some[JsObject] = Some(Json.obj("claimCreditsForExports"-> false))
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers)
 
         WsTestClient.withClient { client =>
@@ -82,7 +81,7 @@ class ClaimCreditsForExportsControllerIntegrationSpec extends Specifications wit
       }
       "user selected no and has litres in bands" in {
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = claimCreditsForLostDamagedPageWithLitresFullAnswers.success.value
         setUpData(userAnswers)
@@ -108,5 +107,6 @@ class ClaimCreditsForExportsControllerIntegrationSpec extends Specifications wit
         }
       }
     }
+    testUnauthorisedUser(baseUrl + "/claim-credits-for-exports")
   }
 }

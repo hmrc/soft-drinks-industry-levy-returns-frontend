@@ -1,13 +1,12 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with TestConfiguration  with  ITCoreTestData with TryValues{
+class HowManyBroughtIntoUkControllerIntegrationSpec extends ControllerITTestHelper with TryValues{
   "HowManyBroughtIntoUkController" should {
 
     "Ask for how many liable drinks brought in UK" in {
@@ -15,7 +14,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
       val userAnswers = broughtIntoUkFullAnswers.success.value
       setUpData(userAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-brought-into-uk")
@@ -47,7 +46,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
       setUpData(userAnswers)
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
 
       WsTestClient.withClient { client =>
@@ -69,6 +68,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends Specifications with 
       }
 
     }
+    testUnauthorisedUser(baseUrl + "/how-many-brought-into-uk")
   }
 
 }

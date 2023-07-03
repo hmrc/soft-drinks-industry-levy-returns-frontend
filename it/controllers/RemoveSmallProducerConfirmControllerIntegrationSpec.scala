@@ -1,6 +1,5 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.SmallProducer
 import org.scalatest.TryValues
 import play.api.libs.json.Json
@@ -8,15 +7,15 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class RemoveSmallProducerConfirmControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
   val sdilRefPartyDrinks = "XZSDIL000000234"
   val sdilRefSuperCola = "XZSDIL000000235"
   val aliasPartyDrinks = "Party Drinks Group"
   val aliasSuperCola = "Super Cola"
   val litreMax: Long = 100000000000000L
-  val smallLitre = litreMax - 1
-  val largeLitre = litreMax - 1
+  val smallLitre: Long = litreMax - 1
+  val largeLitre: Long = litreMax - 1
 
   "RemoveSmallProducerConfirmController" should {
     "Ask for if user wants to remove this small producer" in {
@@ -25,7 +24,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
       val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre))))
         setUpData(updatedUserAnswers)
       given
-      .commonPrecondition(aSubscription)
+      .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/remove-small-producer-confirm/$sdilRefPartyDrinks")
@@ -45,7 +44,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
       "user selected yes " in {
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val smallProducerToRemove = SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre))
         val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
@@ -78,7 +77,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
       "user selected yes when last small producer is being removed" in {
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
         val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
@@ -113,7 +112,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends Specifications
         setUpData(updatedUserAnswers)
 
         given
-          .commonPrecondition(aSubscription)
+          .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =

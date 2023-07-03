@@ -1,7 +1,6 @@
 package controllers
 
 import controllers.testSupport.helpers.ALFTestHelper
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import models.alf.init._
 import org.scalatest.TryValues
 import play.api.libs.json._
@@ -10,13 +9,13 @@ import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
 
-class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
+class SecondaryWarehouseDetailsControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "SecondaryWarehouseDetailsController" should {
     "Ask for if user wants to add more warehouses" in {
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/secondary-warehouse-details")
@@ -103,7 +102,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
       WsTestClient.withClient { client =>
@@ -134,7 +133,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
 
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result =
@@ -152,7 +151,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends Specifications 
         }
       }
     }
-
+    testUnauthorisedUser(baseUrl + "/secondary-warehouse-details")
   }
 
 }

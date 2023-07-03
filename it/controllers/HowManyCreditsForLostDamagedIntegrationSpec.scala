@@ -1,16 +1,15 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 
-class HowManyCreditsForLostDamagedIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData {
+class HowManyCreditsForLostDamagedIntegrationSpec extends ControllerITTestHelper {
 
   "controller" should {
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-credits-for-lost-damaged")
@@ -24,6 +23,7 @@ class HowManyCreditsForLostDamagedIntegrationSpec extends Specifications with Te
 
       }
     }
+    testUnauthorisedUser(baseUrl + "/how-many-credits-for-lost-damaged")
   }
 
 }

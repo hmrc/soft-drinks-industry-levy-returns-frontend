@@ -1,13 +1,12 @@
 package controllers
 
-import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class HowManyCreditsForExportControllerIntegrationSpec extends Specifications with TestConfiguration with  ITCoreTestData with TryValues {
+class HowManyCreditsForExportControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "HowManyCreditsForExportController" should {
 
     "Ask for how many credits user wants to claim for liable drinks that have ben exported" in {
@@ -15,7 +14,7 @@ class HowManyCreditsForExportControllerIntegrationSpec extends Specifications wi
       setUpData(userAnswers)
 
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/how-many-credits-for-exports")
@@ -37,7 +36,7 @@ class HowManyCreditsForExportControllerIntegrationSpec extends Specifications wi
         ))
       setUpData(emptyUserAnswers)
       given
-        .commonPrecondition(aSubscription)
+        .commonPreconditionChangeSubscription(aSubscription)
 
 
       WsTestClient.withClient { client =>
@@ -59,5 +58,6 @@ class HowManyCreditsForExportControllerIntegrationSpec extends Specifications wi
       }
 
     }
+    testUnauthorisedUser(baseUrl + "/how-many-credits-for-exports")
   }
 }
