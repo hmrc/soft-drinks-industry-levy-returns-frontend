@@ -41,7 +41,11 @@ case class UserAnswers(
 
   def this(subscription: RetrievedSubscription, nilReturn: Boolean) = this(
     id = subscription.sdilRef,
-    data = Json.toJsObject(new DefaultUserAnswersData(subscription)),
+    data = if(nilReturn) {
+      Json.toJsObject(new DefaultUserAnswersData(subscription))
+    } else {
+      Json.obj()
+    },
     isNilReturn = nilReturn
   )
 

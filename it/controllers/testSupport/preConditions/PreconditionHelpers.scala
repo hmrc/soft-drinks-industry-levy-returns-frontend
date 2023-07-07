@@ -15,6 +15,8 @@ trait PreconditionHelpers {
       .sdilBackend.pendingReturnPeriod("0000001611")
   }
 
+
+
   def commonPreconditionBoth: PreconditionBuilder = {
     builder
       .user.isAuthorisedAndEnrolledBoth
@@ -51,6 +53,13 @@ trait PreconditionHelpers {
     builder
       .user.isAuthorisedAndEnrolledBoth
       .sdilBackend.retrieveSubscriptionNone("sdil", sdilNumber)
+  }
+
+  def authorisedWithNoPendingReturns(retrievedSubscription: RetrievedSubscription): PreconditionBuilder = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.retrieveSubscriptionToModify("utr", UTR, retrievedSubscription)
+      .sdilBackend.pendingReturnPeriodNone("0000001611")
   }
 
   def unauthorisedPrecondition: PreconditionBuilder = {

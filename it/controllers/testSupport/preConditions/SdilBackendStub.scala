@@ -100,6 +100,15 @@ case class SdilBackendStub()
     builder
   }
 
+  def pendingReturnPeriodNone(utr: String): PreconditionBuilder = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/pending"))
+        .willReturn(
+          ok(Json.toJson(List.empty[ReturnPeriod]).toString())))
+    builder
+  }
+
   def balance(sdilRef: String, withAssessment: Boolean): PreconditionBuilder = {
     stubFor(
       get(
