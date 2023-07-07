@@ -45,7 +45,7 @@ object AmountToPaySummary  {
       ),
       SummaryListRowViewModel(
         key = "total",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))).withCssClass("total align-right")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))).withCssClass("total align-right govuk-!-font-weight-bold")
       ))
     )
   }
