@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions.RequiredUserAnswers
 import helpers.LoggerHelper
 import models.requests.DataRequest
+import models.retrieved.RetrievedSubscription
 import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
@@ -45,9 +46,9 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter with LoggerHelper {
 
-  val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-  val mockOrchestrator = mock[ReturnsOrchestrator]
-  val mockConfig = mock[FrontendAppConfig]
+  val bareBoneUserAnswers: UserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
+  val mockOrchestrator: ReturnsOrchestrator = mock[ReturnsOrchestrator]
+  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   def withRequiredAnswersComplete(guiceApplicationBuilder: GuiceApplicationBuilder): GuiceApplicationBuilder = {
     lazy val requiredAnswers: RequiredUserAnswers = new RequiredUserAnswers(mock[GenericLogger]) {
@@ -174,6 +175,28 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.JourneyRecoveryController.onPageLoad().url)
+    }
+
+    "must not show own brands packaged when user is a small producer" in {
+      val userAnswersData = Json.obj("packagedContractPacker" -> false)
+      val userAnswers = UserAnswers(id = "XGSDIL000001611", userAnswersData, List())
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers), None, Some(subscriptionWithSmallProducerActivity))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        // TODO
+        // it is not getting user answers in session & therefore redirecting before it gets to CYA
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() mustNot include(Messages("ownBrandsPackagedAtYourOwnSite"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
+      }
     }
 
     "must show own brands packaged at own site row when no selected" in {

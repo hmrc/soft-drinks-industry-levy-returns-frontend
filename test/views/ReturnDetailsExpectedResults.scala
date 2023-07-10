@@ -89,7 +89,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "ownBrands",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "packagedContractPacker",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "exemptionsForSmallProducers",
-    SummaryHeadingIds.broughtIntoTheUK -> "broughtIntoTheUK",
+    SummaryHeadingIds.broughtIntoTheUK -> "broughtIntoUK",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "broughtIntoUkFromSmallProducers",
     SummaryHeadingIds.exported -> "claimCreditsForExports",
     SummaryHeadingIds.lostOrDestroyed -> "claimCreditsForLostDamaged",

@@ -36,15 +36,13 @@ case class UserAnswers(
                         warehouseList: Map[String, Warehouse] = Map.empty,
                         submitted:Boolean = false,
                         isNilReturn: Boolean = false,
-                        isSmallProducer: Boolean = false,
                         lastUpdated: Instant = Instant.now
                       ) {
 
   def this(subscription: RetrievedSubscription, nilReturn: Boolean) = this(
     id = subscription.sdilRef,
     data = Json.toJsObject(new DefaultUserAnswersData(subscription)),
-    isNilReturn = nilReturn,
-    isSmallProducer = subscription.activity.smallProducer
+    isNilReturn = nilReturn
   )
   
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =

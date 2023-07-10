@@ -30,6 +30,7 @@ govukSummaryList: GovukSummaryList
   isCheckAnswers: Boolean,
   isSmallProducer: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
+@println(Console.YELLOW + "is user a small producer? -  return Detail Summary  " + isSmallProducer + Console.WHITE)
  @if(!isSmallProducer) {
   <h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
   @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers))

@@ -121,9 +121,7 @@ howManyBoughtIntoUk.checkYourAnswersLabel = howManyBoughtIntoUk
 
 broughtIntoUK.title = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 broughtIntoUK.subHeading = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
-broughtIntoUK.checkYourAnswersLabel = broughtIntoUK
 broughtIntoUK.error.required = Select yes if you are reporting liable drinks you have brought into the UK from anywhere outside of the UK
-broughtIntoUK.change.hidden = whether you bring liable drinks into the UK
 
 howManyCreditsForExport.title = How many credits do you want to claim for liable drinks that have been exported?
 howManyCreditsForExport.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
@@ -274,10 +272,10 @@ exemptionForRegisteredSmallProducers = Exemption for registered small producers?
 contractPackedForRegisteredSmallProducers.lowband.litres.hidden = number of litres in low band you're claiming exemption for
 contractPackedForRegisteredSmallProducers.highband.litres.hidden = number of litres in high band you're claiming exemption for
 
-broughtIntoTheUK = Brought into the UK
+broughtIntoUK = Brought into the UK
 reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK?
-broughtIntoTheUK.lowband.litres.hidden = number of litres in low band brought into the UK
-broughtIntoTheUK.highband.litres.hidden = number of litres in high band brought into the UK
+broughtIntoUK.lowband.litres.hidden = number of litres in low band brought into the UK
+broughtIntoUK.highband.litres.hidden = number of litres in high band brought into the UK
 
 broughtIntoTheUKFromSmallProducers = Brought into the UK from small producers
 reportingLiableDrinksBroughtIntoTheUKFromSmallProducers = Reporting liable drinks brought into the UK from small producers?
