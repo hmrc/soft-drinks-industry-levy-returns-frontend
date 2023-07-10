@@ -27,11 +27,14 @@ govukSummaryList: GovukSummaryList
 @(returnPeriod: ReturnPeriod,
   userAnswers: UserAnswers,
   amounts: Amounts,
-  isCheckAnswers: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+  isCheckAnswers: Boolean,
+  isSmallProducer: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
- <h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
- @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers))
-}
+ @if(!isSmallProducer) {
+  <h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
+  @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers))
+ }
+
 <h2 class="govuk-heading-m" id="contractPackedAtYourOwnSite">@messages("contractPackedAtYourOwnSite")</h2>
 @govukSummaryList(PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers))
 
