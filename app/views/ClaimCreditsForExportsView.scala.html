@@ -32,18 +32,20 @@
 
 @layout(pageTitle = title(form, messages("claimCreditsForExports.title"))) {
 
-    <div class="govuk-heading-m">@messages("claimCreditsForExports.heading2")</div>
-
-    @govukWarningText(WarningText(
-        iconFallbackText = Some("Warning"),
-        content = Text(messages("claimCreditsForExports.warning"))
-    ))
-
     @formHelper(action = routes.ClaimCreditsForExportsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        <div class="govuk-heading-m">@messages("claimCreditsForExports.heading2")</div>
+
+        @govukWarningText(WarningText(
+        iconFallbackText = Some("Warning"),
+        content = Text(messages("claimCreditsForExports.warning"))
+        ))
 
         <h1 class="govuk-heading-m">@messages("claimCreditsForExports.title")</h1>
         @govukRadios(
