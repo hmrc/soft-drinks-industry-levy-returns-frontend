@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.helpers.returnDetails
 
 import controllers.routes
 import models.{CheckMode, UserAnswers, Warehouse}
@@ -27,17 +27,17 @@ import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object SecondaryWarehouseDetailsSummary  {
+object AskSecondaryWarehouseSummary {
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
-             (implicit messages: Messages): Option[SummaryList] = {
+                 (implicit messages: Messages): Option[SummaryList] = {
     userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
       case Some(true) =>
         Some(
           SummaryListViewModel(
             rows = Seq(SummaryListRowViewModel(
-              key = "WarehouseSites",
-              value = ValueViewModel("1").withCssClass("align-right"),
+              key = "warehouseSites",
+              value = ValueViewModel(userAnswers.warehouseList.size.toString).withCssClass("align-right"),
               actions = if (isCheckAnswers) {
                 Seq(
                   ActionItemViewModel("site.change", routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url)
@@ -51,44 +51,8 @@ object SecondaryWarehouseDetailsSummary  {
             )
           )
         )
-
       case _ => None
     }
   }
 
-  def warehouseList(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val value = 1.toString
-    SummaryListRow(
-      key = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
-      value = ValueViewModel(value)
-    )
-  }
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondaryWarehouseDetailsPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        SummaryListRowViewModel(
-          key     = "secondaryWarehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value).withCssClass("align-right"),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("secondaryWarehouseDetails.change.hidden"))
-          )
-        )
-    }
-
-  def row2(warehouseList: Map[String, Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
-    warehouseList.map {
-      warehouse =>
-        SummaryListRow(
-          key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
-          classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
-          actions = Some(Actions("",Seq(
-            ActionItemViewModel("site.remove", routes.RemoveWarehouseConfirmController.onPageLoad(warehouse._1).url)
-              .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
-          )))
-        )
-    }
-  }.toList
 }

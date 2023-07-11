@@ -19,7 +19,7 @@ package base
 import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{Amounts, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, UserAnswers}
+import models.{Amounts, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, UserAnswers, Warehouse}
 import play.api.libs.json.{JsObject, Json}
 
 import java.time.LocalDate
@@ -177,7 +177,14 @@ object ReturnsTestData {
     Some("Wild Lemonade Group"),
     None)
 
+    val WarehouseSite1 = Warehouse(
+    tradingName = Some("Wild Lemonade Group"),
+    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"))
+
   lazy val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
+
+
+  lazy val warhouseSiteListWith1 = Map(("78941132", WarehouseSite1))
 
   val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
