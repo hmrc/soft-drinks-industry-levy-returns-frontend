@@ -252,11 +252,6 @@ secondQuarter = April to June
 thirdQuarter = July to September
 fourthQuarter = October to December
 
-litresInTheLowBand = Litres in the low band
-lowBandLevy = Low band levy
-litresInTheHighBand = Litres in the high band
-highBandLevy = High band levy
-
 ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
 reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
 ownBrandsPackagedAtYourOwnSite.lowband.litres.hidden = number of litres in low band packaged at your own site

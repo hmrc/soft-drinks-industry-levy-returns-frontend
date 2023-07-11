@@ -177,7 +177,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       redirectLocation(result) mustBe Some(routes.JourneyRecoveryController.onPageLoad().url)
     }
 
-    "must not show own brands packaged when user is a small producer - foo" in {
+    "must not show own brands packaged when user is a small producer" in {
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers),
         Some(ReturnPeriod(year = 2019, quarter = 3)),Some(subscriptionWithSmallProducerActivity))).overrides(
