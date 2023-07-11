@@ -30,7 +30,6 @@ govukSummaryList: GovukSummaryList
   isCheckAnswers: Boolean,
   isSmallProducer: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
-@println(Console.YELLOW + "is user a small producer? -  return Detail Summary  " + isSmallProducer + Console.WHITE)
  @if(!isSmallProducer) {
   <h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
   @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers))
@@ -42,7 +41,7 @@ govukSummaryList: GovukSummaryList
 <h2 class="govuk-heading-m" id="contractPackedForRegisteredSmallProducers">@messages("contractPackedForRegisteredSmallProducers")</h2>
 @govukSummaryList(ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m" id="broughtIntoTheUK">@messages("broughtIntoUK")</h2>
+<h2 class="govuk-heading-m" id="broughtIntoUK">@messages("broughtIntoUK")</h2>
 @govukSummaryList(BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers))
 
 <h2 class="govuk-heading-m" id="broughtIntoTheUKFromSmallProducers">@messages("broughtIntoTheUKFromSmallProducers")</h2>

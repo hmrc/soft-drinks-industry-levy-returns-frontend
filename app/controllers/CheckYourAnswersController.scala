@@ -54,8 +54,6 @@ class CheckYourAnswersController @Inject()(
 
         returnsOrchestrator.calculateAmounts(sdilRef, userAnswers, returnPeriod).map { amounts =>
           val submitUrl: Call = routes.CheckYourAnswersController.onSubmit
-          println(Console.YELLOW + "is user a small producer? from CYA Controller " + isSmallProducer + Console.WHITE)
-          println(Console.YELLOW + "subscription from CYA Controller " + request.subscription + Console.WHITE)
           Ok(checkYourAnswersView(request.subscription.orgName,
             returnPeriod,
             userAnswers,

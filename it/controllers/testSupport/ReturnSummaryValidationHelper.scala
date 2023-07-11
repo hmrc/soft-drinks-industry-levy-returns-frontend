@@ -16,7 +16,7 @@ trait ReturnSummaryValidationHelper extends Specifications
     "ownBrandsPackagedAtYourOwnSite",
     "contractPackedAtYourOwnSite",
     "contractPackedForRegisteredSmallProducers",
-    "broughtIntoTheUK",
+    "broughtIntoUK",
     "broughtIntoTheUKFromSmallProducers",
     "exported",
     "lostOrDestroyed",

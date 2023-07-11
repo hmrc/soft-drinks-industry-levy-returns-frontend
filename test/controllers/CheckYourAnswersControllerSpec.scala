@@ -425,7 +425,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUK"))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoUK"))
         page.getElementsByTag("dt").text() must include(Messages("reportingLiableDrinksBroughtIntoTheUK"))
         page.getElementById("change-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk"
       }
@@ -448,7 +448,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUK"))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoUK"))
         page.getElementsByTag("dt").text() must include(Messages("reportingLiableDrinksBroughtIntoTheUK"))
         page.getElementById("change-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk"
 
@@ -464,8 +464,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.lowband.litres.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.highband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.highband.litres.hidden"))
       }
     }
 

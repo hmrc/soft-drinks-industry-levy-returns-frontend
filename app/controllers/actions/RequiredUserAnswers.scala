@@ -31,7 +31,6 @@ import scala.reflect.ClassTag
 class RequiredUserAnswers @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
 
   def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    println(Console.BLUE + "RequiredData being called "  + Console.WHITE)
     page match {
       case CheckYourAnswersPage => checkYourAnswersRequiredData(action)
       case _ => action
@@ -62,7 +61,6 @@ class RequiredUserAnswers @Inject()(genericLogger: GenericLogger)(implicit val e
     }
   }
   private[controllers] def smallProducerCheck(subscription: RetrievedSubscription): List[RequiredPage[_, _,_]] = {
-    println(Console.YELLOW + "smallProducerCheck = " + subscription.activity.smallProducer + Console.WHITE)
     if (subscription.activity.smallProducer) {
       List.empty
     } else {
