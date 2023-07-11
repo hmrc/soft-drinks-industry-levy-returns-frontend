@@ -264,8 +264,8 @@ contractPackedAtYourOwnSite.highband.litres.hidden = number of litres in high ba
 
 contractPackedForRegisteredSmallProducers = Contract packed for registered small producers
 exemptionForRegisteredSmallProducers = Exemption for registered small producers?
-contractPackedForRegisteredSmallProducers.lowband.litres.hidden = number of litres in low band you're claiming exemption for
-contractPackedForRegisteredSmallProducers.highband.litres.hidden = number of litres in high band you're claiming exemption for
+contractPackedForRegisteredSmallProducers.lowband.litres.hidden = number of litres in low band you are claiming exemption for
+contractPackedForRegisteredSmallProducers.highband.litres.hidden = number of litres in high band you are claiming exemption for
 
 broughtIntoUK = Brought into the UK
 reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK?
