@@ -87,7 +87,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))))
         .overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        
+
       ).build()
 
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
@@ -177,20 +177,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       redirectLocation(result) mustBe Some(routes.JourneyRecoveryController.onPageLoad().url)
     }
 
-    "must not show own brands packaged when user is a small producer" in {
-      val userAnswersData = Json.obj("packagedContractPacker" -> false)
-      val userAnswers = UserAnswers(id = "XGSDIL000001611", userAnswersData, List())
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers), None, Some(subscriptionWithSmallProducerActivity))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
+    "must not show own brands packaged when user is a small producer - foo" in {
+
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers),
+        Some(ReturnPeriod(year = 2019, quarter = 3)),Some(subscriptionWithSmallProducerActivity))).overrides(
+          bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
 
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
-        // TODO
-        // it is not getting user answers in session & therefore redirecting before it gets to CYA
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
