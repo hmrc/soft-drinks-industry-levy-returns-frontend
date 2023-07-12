@@ -848,7 +848,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must return OK and contain registered UK sites section header when packaging site present" in {
 
       val userAnswersData = Json.obj("packAtBusinessAddress" -> true)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -861,6 +861,25 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("registeredUkSites").text mustEqual Messages("registeredUkSites")
         page.getElementsByTag("dt").text() must include(Messages("packagingSites"))
+      }
+    }
+
+    "must return OK and contain registered UK sites section header when warehouse site present" in {
+
+      val userAnswersData = Json.obj("askSecondaryWarehouseInReturn" -> true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, warehouseList = warhouseSiteListWith1)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("registeredUkSites").text mustEqual Messages("registeredUkSites")
+        page.getElementsByTag("dt").text() must include(Messages("warehouseSites"))
       }
     }
 

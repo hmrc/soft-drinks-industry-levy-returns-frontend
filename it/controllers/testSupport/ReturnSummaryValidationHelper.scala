@@ -54,7 +54,7 @@ trait ReturnSummaryValidationHelper extends Specifications
 
   def validateSummaryRowsPresentWithAllYes(details: Element, amounts: Amounts, isCheckAnswers: Boolean = false) = {
     val summaryLists = details.getElementsByClass("govuk-summary-list")
-    summaryLists.size() mustBe summaryKeys.size + 1
+    summaryLists.size() mustBe summaryKeys.size + 2
     summaryKeys.zipWithIndex.foreach { case (summaryKey, index) =>
       val summaryRows = summaryLists.get(index).getElementsByClass("govuk-summary-list__row")
       if (headingIds(index) == "amount-to-pay-title") {

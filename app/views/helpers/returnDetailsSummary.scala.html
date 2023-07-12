@@ -56,10 +56,22 @@ govukSummaryList: GovukSummaryList
 <h2 class="govuk-heading-m" id="amount-to-pay-title">@AmountToPaySummary.sectionHeaderTitle(amounts.total)</h2>
 @govukSummaryList(AmountToPaySummary.amountToPaySummary(amounts))
 
+@if(userAnswers.packagingSiteList.nonEmpty || userAnswers.warehouseList.nonEmpty){
+ <h2 class="govuk-heading-m" id="registeredUkSites">@messages("registeredUkSites")</h2>
+}
+
 @PackAtBusinessAddressSummary.summaryList(userAnswers, isCheckAnswers) match {
  case Some(site) => {
-  <h2 class="govuk-heading-m" id="registeredUkSites">@messages("registeredUkSites")</h2>
   @govukSummaryList(site)
+ }
+ case _ => {
+  <br>
+ }
+}
+
+@AskSecondaryWarehouseSummary.summaryList(userAnswers, isCheckAnswers) match {
+ case Some(warehouse) => {
+  @govukSummaryList(warehouse)
  }
  case _ => {
   <br>
