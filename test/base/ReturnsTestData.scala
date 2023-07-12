@@ -38,7 +38,7 @@ object ReturnsTestData {
   val countryName = "United Kingdom"
   val countryCode = "UK"
   val litreage = (10L, 20L)
-  var id = "id"
+  val id = "id"
   val superColaProducerAlias = "Super Cola Ltd"
   val superJuiceProducerAlias = "Super Juice Ltd"
   val referenceNumber1 = "XZSDIL000000234"
