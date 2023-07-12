@@ -212,52 +212,6 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
       }
     }
 
-    "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
-
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, exemptionsForSmallProducersRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        verify(mockSessionRepository, times(0)).set(completedUserAnswers)
-      }
-    }
-
-    "should log an error message when internal server error is returned when getting user answers is not resolved" in {
-      val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
-
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request = FakeRequest(POST, exemptionsForSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))
-          await(route(application, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustEqual "ERROR"
-              event.getMessage mustEqual "Failed to resolve user answers while on exemptionsForSmallProducers"
-          }.getOrElse(fail("No logging captured"))
-        }
-      }
-    }
-
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))

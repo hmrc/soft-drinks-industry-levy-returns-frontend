@@ -1,5 +1,6 @@
 package controllers
 
+import models.SmallProducer
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
@@ -109,12 +110,10 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITT
       given
         .commonPreconditionChangeSubscription(aSubscription)
 
-      val userAnswers = smallProducerDetaisFullAnswers.success.value
+      val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("","",(1L, 1L))))
       setUpData(userAnswers)
-      Thread.sleep(2000)
-      val smallProducerList = getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList)
 
-      println(Console.YELLOW + "SP list after setting answers " + smallProducerList + Console.WHITE)
+      getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList).get.size mustBe 1
 
       WsTestClient.withClient { client =>
         val result =
@@ -125,13 +124,10 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITT
             .withFollowRedirects(false)
             .post(Json.obj("value" -> false))
 
-        smallProducerList.size mustBe 1
-        println(Console.YELLOW + "SP list after setting answers " + userAnswers.smallProducerList + Console.WHITE)
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/check-your-answers")
-          println(Console.BLUE + "SP list after post " + getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) + Console.WHITE)
-          getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList).size mustBe 0
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList).get.size mustBe 0
         }
 
       }
