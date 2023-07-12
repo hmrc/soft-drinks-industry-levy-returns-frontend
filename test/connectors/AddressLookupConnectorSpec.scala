@@ -39,7 +39,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
 
   val errorModel: HttpResponse = HttpResponse(Status.BAD_REQUEST, "Error Message")
 
-  val testAddressLookupConnector = new AddressLookupConnector(mockHttp, new GenericLogger,frontendAppConfig)
+  val testAddressLookupConnector = new AddressLookupConnector(mockHttp, frontendAppConfig)
 
   lazy val id = "111111111"
 
@@ -52,7 +52,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
       }
       "calling getAddressUrl when feature switch is enabled" in {
         val testUrl = testAddressLookupConnector.getAddressUrl(id, addressLookupFrontendTestEnabled = true)
-        testUrl mustEqual s"${frontendAppConfig.host}${controllers.test.routes.AddressFrontendStubController.addresses(id).url}"
+        testUrl mustEqual s"${frontendAppConfig.returnsFrontendBaseUrl}${controllers.test.routes.AddressFrontendStubController.addresses(id).url}"
       }
     }
     "return correct initAddressUrl correctly" - {
@@ -61,7 +61,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
       }
       "when feature switch is enabled" in {
         testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true) mustBe
-          s"${frontendAppConfig.host}${controllers.test.routes.AddressFrontendStubController.initialise().url}"
+          s"${frontendAppConfig.returnsFrontendBaseUrl}${controllers.test.routes.AddressFrontendStubController.initialise().url}"
       }
     }
 

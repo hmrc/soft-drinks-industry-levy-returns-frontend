@@ -29,21 +29,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddressLookupConnector @Inject()(val http: HttpClient,
-                                       val genericLogger: GenericLogger,
                                        implicit val config: FrontendAppConfig) {
   private[connectors] def getAddressUrl(id: String, addressLookupFrontendTestEnabled: Boolean): String = {
     if(addressLookupFrontendTestEnabled) {
-      genericLogger.logger.info(s"AddressLookupConnector.getAddressUrl configured host is ${config.host}")
-      s"${config.host}${controllers.test.routes.AddressFrontendStubController.addresses(id).url}"
+      s"${config.returnsFrontendBaseUrl}${controllers.test.routes.AddressFrontendStubController.addresses(id).url}"
     } else {
       s"${config.addressLookupService}/api/confirmed?id=$id"
     }
   }
   private[connectors] def initJourneyUrl(addressLookupFrontendTestEnabled: Boolean): String = {
     if(addressLookupFrontendTestEnabled) {
-      genericLogger.logger.info(s"AddressLookupConnector.initJourneyUrl configured host is ${config.host}\n and " +
-        s"configured test url is ${controllers.test.routes.AddressFrontendStubController.initialise().url}")
-      s"${config.host}${controllers.test.routes.AddressFrontendStubController.initialise().url}"
+      s"${config.returnsFrontendBaseUrl}${controllers.test.routes.AddressFrontendStubController.initialise().url}"
     } else {
       s"${config.addressLookupService}/api/init"
     }
