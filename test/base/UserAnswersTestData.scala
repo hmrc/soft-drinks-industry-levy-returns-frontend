@@ -140,6 +140,16 @@ object UserAnswersTestData {
     ("packAtBusinessAddress", JsBoolean(false))
   )
 
+  val smallProducerJourneyDataWithQuestionsAllFalseAndNoLitres: JsObject = Json.obj(
+    ("packagedContractPacker", JsBoolean(false)),
+    ("exemptionsForSmallProducers", JsBoolean(false)),
+    ("broughtIntoUK", JsBoolean(false)),
+    ("broughtIntoUkFromSmallProducers", JsBoolean(false)),
+    ("claimCreditsForExports", JsBoolean(false)),
+    ("claimCreditsForLostDamaged", JsBoolean(false)),
+    ("packAtBusinessAddress", JsBoolean(false))
+  )
+
   val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
   val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (2000L, 1000L))
 
@@ -159,7 +169,7 @@ object UserAnswersTestData {
   val packagingSiteList = Map("90831480921" -> packagingSite)
 
   val emptyUserDetails = create(Json.obj())
-
+  val userIsSmallProducer = createSmallProducer(smallProducerJourneyDataWithQuestionsAllFalseAndNoLitres)
   val withQuestionsAllTrueAllLitresInAllBands1SmallProducer = create(dataWithQuestionsAllTrueAndAllLitresInAllBands, smallProducerList1Producer, true)
 
   val withQuestionsAllTrueAllLitresInAllBands2SmallProducer = create(dataWithQuestionsAllTrueAndAllLitresInAllBands, smallProducerList2Producers, true)
@@ -205,8 +215,26 @@ object UserAnswersTestData {
       id = sdilRef,
       data = data,
       smallProducerList = smallProducerList,
-      packagingSiteList = if(withPackagingSite) {packagingSiteList} else {Map.empty},
+      packagingSiteList = if (withPackagingSite) {
+        packagingSiteList
+      } else {
+        Map.empty
+      },
       lastUpdated = Instant.now()
     )
+  }
+
+    private def createSmallProducer(data: JsObject, smallProducerList: List[SmallProducer] = List.empty, withPackagingSite: Boolean = false): UserAnswers = {
+      UserAnswers(
+        id = "XGSDIL000001611",
+        data = data,
+        smallProducerList = smallProducerList,
+        packagingSiteList = if (withPackagingSite) {
+          packagingSiteList
+        } else {
+          Map.empty
+        },
+        lastUpdated = Instant.now()
+      )
   }
 }

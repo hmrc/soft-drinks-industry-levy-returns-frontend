@@ -67,14 +67,14 @@ packagedContractPacker.title = Are you reporting liable drinks you have packaged
 packagedContractPacker.subHeading = Do not include liable drinks you have packaged for registered small producers.
 packagedContractPacker.checkYourAnswersLabel = packagedContractPacker
 packagedContractPacker.error.required = Select yes if you are reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate
-packagedContractPacker.change.hidden = packaged contract packer
+packagedContractPacker.change.hidden = whether you use contract packing at your own site
 
 
 ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
 ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
 ownBrands.checkYourAnswersLabel = ownBrands
 ownBrands.error.required = Select yes if you are reporting your own brands of liable drinks you have packaged at UK sites you operate
-ownBrands.change.hidden = OwnBrands
+ownBrands.change.hidden = whether you package your own brands at your own site
 
 
 whatIsASmallProducer.detailsLink = What is a small producer?
@@ -121,9 +121,7 @@ howManyBoughtIntoUk.checkYourAnswersLabel = howManyBoughtIntoUk
 
 broughtIntoUK.title = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 broughtIntoUK.subHeading = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
-broughtIntoUK.checkYourAnswersLabel = broughtIntoUK
 broughtIntoUK.error.required = Select yes if you are reporting liable drinks you have brought into the UK from anywhere outside of the UK
-broughtIntoUK.change.hidden = BroughtIntoUK
 
 howManyCreditsForExport.title = How many credits do you want to claim for liable drinks that have been exported?
 howManyCreditsForExport.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
@@ -152,7 +150,7 @@ claimCreditsForLostDamaged.detailsContent6 = lost
 claimCreditsForLostDamaged.detailsContent7 = spilled and can’t be used
 claimCreditsForLostDamaged.detailsContent8 = To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.
 claimCreditsForLostDamaged.error.required = Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed
-claimCreditsForLostDamaged.change.hidden = ClaimCreditsForLostDamaged
+claimCreditsForLostDamaged.change.hidden = whether you want to claim credits for exported liable drinks
 
 howManyCreditsForLostDamaged.title = How many credits do you want to claim for liable drinks which have been lost or destroyed?
 howManyCreditsForLostDamaged.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
@@ -169,7 +167,7 @@ broughtIntoUkFromSmallProducers.subHeading = Include your own brands of liable d
 
 broughtIntoUkFromSmallProducers.checkYourAnswersLabel = broughtIntoUkFromSmallProducers
 broughtIntoUkFromSmallProducers.error.required = Select yes if you are reporting liable drinks you have brought into the UK from small producers
-broughtIntoUkFromSmallProducers.change.hidden = BroughtIntoUkFromSmallProducers
+broughtIntoUkFromSmallProducers.change.hidden = whether you bring liable drinks into the UK from a small producer
 
 
 LiableDrinksBroughtIntoUkFromSmallProducers.DetailsLink = Liable drinks from small producers
@@ -201,7 +199,7 @@ claimCreditsForExports.detailsContent4 = customer and destination the liable dri
 claimCreditsForExports.detailsContent5 = method of delivery
 claimCreditsForExports.detailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
 claimCreditsForExports.error.required = Select yes if you want to claim a credit for liable drinks that has been exported
-claimCreditsForExports.change.hidden = ClaimCreditsForExports
+claimCreditsForExports.change.hidden = whether you want to claim credits for exported liable drinks
 
 
 smallProducerDetails.title = Do you want to add another small producer?
@@ -211,8 +209,8 @@ smallProducerDetails.checkYourAnswersLabel = smallProducerDetails
 smallProducerDetails.producerList.checkYourAnswersLabel = Packaging sites
 smallProducerDetails.error.required = Select yes if you want to add another small producer
 smallProducerDetails.change.hidden = Do you want to add another small producer?
-smallProducerDetails.edit.hidden = Edit small producer
-smallProducerDetails.remove.hidden = Remove small producer
+smallProducerDetails.edit.hidden = small producer
+smallProducerDetails.remove.hidden = small producer
 
 
 returnChangeRegistration.title = You changed your soft drinks business activity
@@ -224,9 +222,8 @@ returnChangeRegistration.subtext4 = If you’re happy with the change, select Up
 
 removeSmallProducerConfirm.title = Are you sure you want to remove this small producer?
 removeSmallProducerConfirm.heading = Are you sure you want to remove this small producer?
-removeSmallProducerConfirm.checkYourAnswersLabel = removeSmallProducerConfirm
 removeSmallProducerConfirm.error.required = Select yes if you want to remove this small producer
-removeSmallProducerConfirm.change.hidden = removeSmallProducerConfirm
+
 
 
 addASmallProducer.title = Enter the registered small producer’s details
@@ -247,53 +244,48 @@ secondaryWarehouseDetails.checkYourAnswersLabel = secondaryWarehouseDetails
 secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel = Warehouses
 secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
 secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
-secondaryWarehouseDetails.edit.hidden = Edit UK warehouse
-secondaryWarehouseDetails.remove.hidden = remove UK warehouse
+secondaryWarehouseDetails.edit.hidden = UK warehouse
+secondaryWarehouseDetails.remove.hidden = UK warehouse
 
 firstQuarter = January to March
 secondQuarter = April to June
 thirdQuarter = July to September
 fourthQuarter = October to December
 
-litresInTheLowBand = Litres in the low band
-lowBandLevy = Low band levy
-litresInTheHighBand = Litres in the high band
-highBandLevy = High band levy
-
 ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
 reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
-ownBrandsPackagedAtYourOwnSite.lowband.litres.hidden = low band litres of own brands packaged at your own site
-ownBrandsPackagedAtYourOwnSite.highband.litres.hidden = high band litres of own brands packaged at your own site
+ownBrandsPackagedAtYourOwnSite.lowband.litres.hidden = number of litres in low band packaged at your own site
+ownBrandsPackagedAtYourOwnSite.highband.litres.hidden = number of litres in high band packaged at your own site
 
 contractPackedAtYourOwnSite = Contract packed at your own site
 reportingContractPackedAtYourOwnSite = Reporting contract packed at your own sites?
-contractPackedAtYourOwnSite.lowband.litres.hidden = low band litres of contract packed at your own site
-contractPackedAtYourOwnSite.highband.litres.hidden = high band litres of contract packed at your own site
+contractPackedAtYourOwnSite.lowband.litres.hidden = number of litres in low band contract packed at your own site
+contractPackedAtYourOwnSite.highband.litres.hidden = number of litres in high band contract packed at your own site
 
 contractPackedForRegisteredSmallProducers = Contract packed for registered small producers
 exemptionForRegisteredSmallProducers = Exemption for registered small producers?
-contractPackedForRegisteredSmallProducers.lowband.litres.hidden = low band total litres of contract packed for registered small producers
-contractPackedForRegisteredSmallProducers.highband.litres.hidden = high band total litres of contract packed for registered small producers
+contractPackedForRegisteredSmallProducers.lowband.litres.hidden = number of litres in low band you are claiming exemption for
+contractPackedForRegisteredSmallProducers.highband.litres.hidden = number of litres in high band you are claiming exemption for
 
-broughtIntoTheUK = Brought into the UK
+broughtIntoUK = Brought into the UK
 reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK?
-broughtIntoTheUK.lowband.litres.hidden = low band litres of liable drinks brought into the UK
-broughtIntoTheUK.highband.litres.hidden = high band litres of liable drinks brought into the UK
+broughtIntoUK.lowband.litres.hidden = number of litres in low band brought into the UK
+broughtIntoUK.highband.litres.hidden = number of litres in high band brought into the UK
 
 broughtIntoTheUKFromSmallProducers = Brought into the UK from small producers
-reportingLiableDrinksBroughtIntoTheUKFromSmallProducers = Reporting liable drinks brought into the UK from small producers
-broughtIntoTheUKFromSmallProducers.lowband.litres.hidden = low band litres of liable drinks brought into the UK from small producers
-broughtIntoTheUKFromSmallProducers.highband.litres.hidden = high band litres of liable drinks brought into the UK from small producers
+reportingLiableDrinksBroughtIntoTheUKFromSmallProducers = Reporting liable drinks brought into the UK from small producers?
+broughtIntoTheUKFromSmallProducers.lowband.litres.hidden = number of litres in low band brought into the UK from a small producer
+broughtIntoTheUKFromSmallProducers.highband.litres.hidden = number of litres in high band brought into the UK from a small producer
 
 exported = Exported
 claimingCreditForExportedLiableDrinks = Claiming credit for exported liable drinks?
-exported.lowband.litres.hidden = low band litres if claiming credit for exported liable drinks
-exported.highband.litres.hidden = high band litres if claiming credit for exported liable drinks
+exported.lowband.litres.hidden = number of litres in the low band for exported liable drinks
+exported.highband.litres.hidden = number of litres in the high band for exported liable drinks
 
 lostOrDestroyed = Lost or destroyed
 claimingCreditForLostOrDestroyedLiableDrinks = Claiming credit for lost or destroyed liable drinks?
-lostOrDestroyed.lowband.litres.hidden = low band litres if claiming credit for lost or destroyed liable drinks
-lostOrDestroyed.highband.litres.hidden = high band litres if claiming credit for lost or destroyed liable drinks
+lostOrDestroyed.lowband.litres.hidden = number of litres in the low band for lost or destroyed drinks
+lostOrDestroyed.highband.litres.hidden = number of litres in the high band for lost or destroyed drinks
 
 amountToPay = Amount to pay
 youDoNotNeedToPayAnything = You do not need to pay anything
@@ -314,10 +306,10 @@ confirmDetailsAndSendReturn = Confirm details and send return
 
 reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site
 exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?
-exemptionsForSmallProducers.change.hidden = exemptions for registered small producers
+exemptionsForSmallProducers.change.hidden = whether you need to claim an exemption for registered small producers
 ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site
 broughtIntoUK.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
-broughtIntoUK.change.hidden = reported liable drinks brought into the UK
+broughtIntoUK.change.hidden = whether you bring liable drinks into the UK
 claimCreditsForLostDamaged.checkYourAnswersLabel = Claiming credit for lost or destroyed liable drinks?
 broughtIntoUKFromSmallProducers.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
 
@@ -368,7 +360,7 @@ packagingSiteDetails.info = You must tell us about all of the UK packaging sites
 packagingSiteDetails.checkYourAnswersLabel = PackagingSiteDetails
 packagingSiteDetails.addAnotherPackingSite = Do you want to add another UK packaging site?
 packagingSiteDetails.error.required = Select yes if you need to add another packaging site
-packagingSiteDetails.change.hidden = Packaging Site Details
+packagingSiteDetails.change.hidden = UK packaging site details 
 packagingSiteDetails.hidden = packaging site
 
 removeWarehouseConfirm.title = Are you sure you want to remove this warehouse?

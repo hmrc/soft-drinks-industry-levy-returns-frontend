@@ -27,10 +27,13 @@ govukSummaryList: GovukSummaryList
 @(returnPeriod: ReturnPeriod,
   userAnswers: UserAnswers,
   amounts: Amounts,
-  isCheckAnswers: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+  isCheckAnswers: Boolean,
+  isSmallProducer: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
-<h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
-@govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers))
+ @if(!isSmallProducer) {
+  <h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
+  @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers))
+ }
 
 <h2 class="govuk-heading-m" id="contractPackedAtYourOwnSite">@messages("contractPackedAtYourOwnSite")</h2>
 @govukSummaryList(PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers))
@@ -38,7 +41,7 @@ govukSummaryList: GovukSummaryList
 <h2 class="govuk-heading-m" id="contractPackedForRegisteredSmallProducers">@messages("contractPackedForRegisteredSmallProducers")</h2>
 @govukSummaryList(ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m" id="broughtIntoTheUK">@messages("broughtIntoTheUK")</h2>
+<h2 class="govuk-heading-m" id="broughtIntoUK">@messages("broughtIntoUK")</h2>
 @govukSummaryList(BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers))
 
 <h2 class="govuk-heading-m" id="broughtIntoTheUKFromSmallProducers">@messages("broughtIntoTheUKFromSmallProducers")</h2>

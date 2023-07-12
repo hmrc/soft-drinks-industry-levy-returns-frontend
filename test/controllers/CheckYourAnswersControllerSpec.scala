@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions.RequiredUserAnswers
 import helpers.LoggerHelper
 import models.requests.DataRequest
+import models.retrieved.RetrievedSubscription
 import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
@@ -45,9 +46,9 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter with LoggerHelper {
 
-  val bareBoneUserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
-  val mockOrchestrator = mock[ReturnsOrchestrator]
-  val mockConfig = mock[FrontendAppConfig]
+  val bareBoneUserAnswers: UserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
+  val mockOrchestrator: ReturnsOrchestrator = mock[ReturnsOrchestrator]
+  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   def withRequiredAnswersComplete(guiceApplicationBuilder: GuiceApplicationBuilder): GuiceApplicationBuilder = {
     lazy val requiredAnswers: RequiredUserAnswers = new RequiredUserAnswers(mock[GenericLogger]) {
@@ -86,7 +87,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))))
         .overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        
+
       ).build()
 
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
@@ -174,6 +175,26 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.JourneyRecoveryController.onPageLoad().url)
+    }
+
+    "must not show own brands packaged when user is a small producer" in {
+
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers),
+        Some(ReturnPeriod(year = 2019, quarter = 3)),Some(subscriptionWithSmallProducerActivity))).overrides(
+          bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() mustNot include(Messages("ownBrandsPackagedAtYourOwnSite"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("reportingOwnBrandsPackagedAtYourOwnSite"))
+      }
     }
 
     "must show own brands packaged at own site row when no selected" in {
@@ -404,7 +425,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUK"))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoUK"))
         page.getElementsByTag("dt").text() must include(Messages("reportingLiableDrinksBroughtIntoTheUK"))
         page.getElementById("change-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk"
       }
@@ -427,7 +448,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUK"))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoUK"))
         page.getElementsByTag("dt").text() must include(Messages("reportingLiableDrinksBroughtIntoTheUK"))
         page.getElementById("change-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk"
 
@@ -443,8 +464,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
 
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.lowband.litres.hidden"))
-        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUK.highband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.highband.litres.hidden"))
       }
     }
 

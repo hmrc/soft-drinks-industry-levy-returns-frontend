@@ -109,7 +109,7 @@
 
     @govukDetails(Details(
         summary = Text(Messages("returnSent.details")),
-        content = HtmlContent(Html(s"${returnDetailsSummary(returnPeriod, userAnswers, amounts, false)}"))
+        content = HtmlContent(Html(s"${returnDetailsSummary(returnPeriod, userAnswers, amounts, false, subscription.activity.smallProducer)}"))
     ))
 
 

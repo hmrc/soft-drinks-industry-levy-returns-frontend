@@ -50,15 +50,16 @@ class CheckYourAnswersController @Inject()(
         val sdilRef = request.sdilEnrolment
         val returnPeriod = request.returnPeriod
         val userAnswers = request.userAnswers
+        val isSmallProducer = request.subscription.activity.smallProducer
 
         returnsOrchestrator.calculateAmounts(sdilRef, userAnswers, returnPeriod).map { amounts =>
           val submitUrl: Call = routes.CheckYourAnswersController.onSubmit
-
           Ok(checkYourAnswersView(request.subscription.orgName,
             returnPeriod,
             userAnswers,
             amounts,
-            submitUrl
+            submitUrl,
+            isSmallProducer
           )(implicitly, implicitly, config))
         }.recoverWith {
           case t: Throwable =>

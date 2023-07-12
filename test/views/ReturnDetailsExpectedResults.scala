@@ -22,7 +22,7 @@ trait ReturnDetailsExpectedResults {
     val ownBrands = "ownBrandsPackagedAtYourOwnSite"
     val contractPackedAtYourOwnSite = "contractPackedAtYourOwnSite"
     val contractPackedForRegisteredSmallProducers = "contractPackedForRegisteredSmallProducers"
-    val broughtIntoTheUK = "broughtIntoTheUK"
+    val broughtIntoUK = "broughtIntoUK"
     val broughtIntoTheUKFromSmallProducers = "broughtIntoTheUKFromSmallProducers"
     val exported = "exported"
     val lostOrDestroyed = "lostOrDestroyed"
@@ -34,7 +34,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "reportingOwnBrandsPackagedAtYourOwnSite",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "reportingContractPackedAtYourOwnSite",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "exemptionForRegisteredSmallProducers",
-    SummaryHeadingIds.broughtIntoTheUK -> "reportingLiableDrinksBroughtIntoTheUK",
+    SummaryHeadingIds.broughtIntoUK -> "reportingLiableDrinksBroughtIntoTheUK",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers",
     SummaryHeadingIds.exported -> "claimingCreditForExportedLiableDrinks",
     SummaryHeadingIds.lostOrDestroyed -> "claimingCreditForLostOrDestroyedLiableDrinks",
@@ -45,7 +45,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "own brands",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "contract packed at your own site",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "contract packed for registered small producers",
-    SummaryHeadingIds.broughtIntoTheUK -> "brought into the UK",
+    SummaryHeadingIds.broughtIntoUK -> "brought into the UK",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "brought into the UK from small producers",
     SummaryHeadingIds.exported -> "exported",
     SummaryHeadingIds.lostOrDestroyed -> "lost or destroyed",
@@ -57,7 +57,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "/change-own-brands-packaged-at-own-sites",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "/change-packaged-as-contract-packer",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "/change-exemptions-for-small-producers",
-    SummaryHeadingIds.broughtIntoTheUK -> "/change-brought-into-uk",
+    SummaryHeadingIds.broughtIntoUK -> "/change-brought-into-uk",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "/change-brought-into-uk-from-small-producers",
     SummaryHeadingIds.exported -> "/change-claim-credits-for-exports",
     SummaryHeadingIds.lostOrDestroyed -> "/change-claim-credits-for-lost-damaged",
@@ -68,7 +68,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "/change-how-many-own-brands-packaged-at-own-sites",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "/change-how-many-packaged-as-contract-packer",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "/change-small-producer-details",
-    SummaryHeadingIds.broughtIntoTheUK -> "/change-how-many-brought-into-uk",
+    SummaryHeadingIds.broughtIntoUK -> "/change-how-many-brought-into-uk",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "/change-how-many-into-uk-small-producers",
     SummaryHeadingIds.exported -> "/change-how-many-credits-for-exports",
     SummaryHeadingIds.lostOrDestroyed -> "/change-how-many-credits-for-lost-damaged"
@@ -78,7 +78,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "change-own-brands",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "change-contract-packer",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "change-exemption-small-producers",
-    SummaryHeadingIds.broughtIntoTheUK -> "change-brought-into-uk",
+    SummaryHeadingIds.broughtIntoUK -> "change-brought-into-uk",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "change-brought-into-uk-small-producers",
     SummaryHeadingIds.exported -> "change-exports",
     SummaryHeadingIds.lostOrDestroyed -> "change-credits-lost-damaged",
@@ -89,7 +89,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "ownBrands",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "packagedContractPacker",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "exemptionsForSmallProducers",
-    SummaryHeadingIds.broughtIntoTheUK -> "broughtIntoTheUK",
+    SummaryHeadingIds.broughtIntoUK -> "broughtIntoUK",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "broughtIntoUkFromSmallProducers",
     SummaryHeadingIds.exported -> "claimCreditsForExports",
     SummaryHeadingIds.lostOrDestroyed -> "claimCreditsForLostDamaged",
@@ -100,7 +100,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "own-site",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "contract-packer",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "small-producers",
-    SummaryHeadingIds.broughtIntoTheUK -> "brought-into-uk",
+    SummaryHeadingIds.broughtIntoUK -> "brought-into-uk",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "brought-into-uk-small-producers",
     SummaryHeadingIds.exported -> "export-credits",
     SummaryHeadingIds.lostOrDestroyed -> "lost-destroyed"
@@ -110,7 +110,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> "ownBrandsPackagedAtYourOwnSite",
     SummaryHeadingIds.contractPackedAtYourOwnSite -> "contractPackedAtYourOwnSite",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "contractPackedForRegisteredSmallProducers",
-    SummaryHeadingIds.broughtIntoTheUK -> "broughtIntoTheUK",
+    SummaryHeadingIds.broughtIntoUK -> "broughtIntoUK",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "broughtIntoTheUKFromSmallProducers",
     SummaryHeadingIds.exported -> "exported",
     SummaryHeadingIds.lostOrDestroyed -> "lostOrDestroyed"
@@ -120,7 +120,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.ownBrands -> 0,
     SummaryHeadingIds.contractPackedAtYourOwnSite -> 1,
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> 2,
-    SummaryHeadingIds.broughtIntoTheUK -> 3,
+    SummaryHeadingIds.broughtIntoUK -> 3,
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> 4,
     SummaryHeadingIds.exported -> 5,
     SummaryHeadingIds.lostOrDestroyed -> 6,

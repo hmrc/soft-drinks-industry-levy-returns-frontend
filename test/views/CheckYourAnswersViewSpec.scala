@@ -18,13 +18,15 @@ package views
 
 import base.ReturnsTestData._
 import base.UserAnswersTestData
+import base.UserAnswersTestData.userIsSmallProducer
 import config.FrontendAppConfig
 import controllers.routes
 import models.{Amounts, ReturnPeriod}
 import views.html.CheckYourAnswersView
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.libs.json.{JsBoolean, Json}
+import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import utilitlies.CurrencyFormatter
@@ -38,13 +40,14 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  val amounts = Amounts(1000, 100, 1100)
+  val amounts: Amounts = Amounts(1000, 100, 1100)
+  val isSmallProducer: Boolean = false
 
-  val call = routes.CheckYourAnswersController.onSubmit
+  val call: Call = routes.CheckYourAnswersController.onSubmit
 
   "checkYourAnswersView" - {
     val html: HtmlFormat.Appendable =
-      checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, call)
+      checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
     val document: Document = doc(html)
 
     "should have the expected title" in {
@@ -56,13 +59,13 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
     }
 
     "should have the expected caption" - {
-      List(0, 1, 2, 3).foreach(quater => {
-        val returnPeriodWithQuater = ReturnPeriod(2022, quater)
+      List(0, 1, 2, 3).foreach(quarter => {
+        val returnPeriodWithQuater = ReturnPeriod(2022, quarter)
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriodWithQuater, UserAnswersTestData.emptyUserDetails, amounts, call)
+          checkYourAnswersView(baseAlias, returnPeriodWithQuater, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
         val document1: Document = doc(html1)
 
-        s"when in return period is in quater $quater" in {
+        s"when in return period is in quarter $quarter" in {
           val returnPeriodString = ReturnPeriodQuarter.formatted(returnPeriodWithQuater)
           document1.getElementsByClass(Selectors.caption).text() mustEqual s"$baseAlias - $returnPeriodString"
         }
@@ -72,7 +75,7 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
     "should include the amount to pay sub header" - {
       "when the amount total is positive" in {
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, call)
+          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
         val document1: Document = doc(html1)
         val expectedResult = Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total))
 
@@ -84,9 +87,10 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       "when the amount total is negative" in {
         val amountsWithNegativeTotal = amounts.copy(total = -1000)
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amountsWithNegativeTotal, call)
+          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amountsWithNegativeTotal, call, isSmallProducer)
         val document1: Document = doc(html1)
-        val expectedResult = Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amountsWithNegativeTotal.total * -1))
+        val expectedResult =
+          Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amountsWithNegativeTotal.total * -1))
 
         val element = document1.getElementById("cya-sub-header")
         element.className() mustEqual Selectors.subHeading
@@ -98,16 +102,26 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       "when the total amount is 0" in {
         val amountsWith0Total = amounts.copy(total = 0)
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amountsWith0Total, call)
+          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amountsWith0Total, call, isSmallProducer)
         val document1: Document = doc(html1)
         document1.getElementById("cya-sub-header") mustBe null
+      }
+    }
+
+    "should not contain the own brands sub header" - {
+      "when the user is a small producer" in {
+        val amountsWith0Total = amounts.copy(total = 0)
+        val html1: HtmlFormat.Appendable =
+          checkYourAnswersView(baseAlias, returnPeriod, userIsSmallProducer, amountsWith0Total, call, isSmallProducer = true)
+        val document1: Document = doc(html1)
+        document1.getElementById("ownBrandsPackagedAtYourOwnSite") mustBe null
       }
     }
 
     UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
       s"when the $key" - {
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, userAnswers, amounts, call)
+          checkYourAnswersView(baseAlias, returnPeriod, userAnswers, amounts, call, isSmallProducer)
         val document1: Document = doc(html1)
         testSummaryLists(key, document1, userAnswers, isCheckAnswers = true)
       }

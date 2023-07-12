@@ -46,6 +46,7 @@ class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
         val subscription = request.subscription
         val userAnswers = request.userAnswers
         val returnPeriod = request.returnPeriod
+
         returnsOrchestrator.getCalculatedAmountsForReturnSent(sdilRef, userAnswers, returnPeriod).map { amounts =>
           Ok(view(returnPeriod,
             userAnswers,

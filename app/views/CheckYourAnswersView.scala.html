@@ -34,7 +34,8 @@
   returnPeriod: ReturnPeriod,
   userAnswers: UserAnswers,
   amounts: Amounts,
-  submitCall: Call)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+  submitCall: Call,
+  isSmallProducer: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
@@ -50,7 +51,7 @@
         }
     }
 
-    @returnDetailsSummary(returnPeriod, userAnswers, amounts, true)
+    @returnDetailsSummary(returnPeriod, userAnswers, amounts, true, isSmallProducer)
 
     <h2 class="govuk-heading-m" id="sendYourReturn">@messages("sendYourReturn")</h2>
     <p class="govuk-body govuk-!-margin-bottom-5" id="sendYourReturnConfirmation">@messages("sendYourReturnConfirmation")</p>
