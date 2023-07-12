@@ -29,33 +29,6 @@ import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary  {
 
-  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
-             (implicit messages: Messages): Option[SummaryList] = {
-    userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
-      case Some(true) =>
-        Some(
-          SummaryListViewModel(
-            rows = Seq(SummaryListRowViewModel(
-              key = "WarehouseSites",
-              value = ValueViewModel("1").withCssClass("align-right"),
-              actions = if (isCheckAnswers) {
-                Seq(
-                  ActionItemViewModel("site.change", routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url)
-                    .withAttribute(("id", "change-packaging-sites"))
-                    .withVisuallyHiddenText(messages("SecondaryWarehouse.change.hidden"))
-                )
-              } else {
-                Seq.empty
-              }
-            )
-            )
-          )
-        )
-
-      case _ => None
-    }
-  }
-
   def warehouseList(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
     val value = 1.toString
     SummaryListRow(
