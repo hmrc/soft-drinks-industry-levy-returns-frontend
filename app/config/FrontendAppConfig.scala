@@ -28,13 +28,13 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
   val appName: String = servicesConfig.getString("appName")
-  val host: String    = servicesConfig.getConfString("soft-drinks-industry-levy-returns-frontend.host", throw new Exception("missing config soft-drinks-industry-levy-returns-frontend.host"))
+  val returnsFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-returns-frontend")
 
   private val contactHost: String = servicesConfig.getConfString("contact-frontend.host", throw new Exception("missing config contact-frontend.host"))
   private val contactFormServiceIdentifier: String = "soft-drinks-industry-levy-returns-frontend"
 
   def feedbackUrl(implicit request: RequestHeader): String = {
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
+    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(returnsFrontendBaseUrl + request.uri).encodedUrl}"
   }
 
   val basGatewayBaseUrl: String = servicesConfig.baseUrl("bas-gateway")
@@ -81,13 +81,13 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     object WarehouseDetails {
 
       def offRampUrl(sdilId: String): String = {
-        s"$host${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$returnsFrontendBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
 
     object PackingDetails {
       def offRampUrl(sdilId: String): String = {
-        s"$host${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$returnsFrontendBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
   }
