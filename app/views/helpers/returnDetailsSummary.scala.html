@@ -71,7 +71,6 @@ govukSummaryList: GovukSummaryList
 
 @AskSecondaryWarehouseSummary.summaryList(userAnswers, isCheckAnswers) match {
  case Some(warehouse) => {
-  <h2 class="govuk-heading-m" id="registeredWarehouseSites">@messages("registeredUkSites")</h2>
   @govukSummaryList(warehouse)
  }
  case _ => {
