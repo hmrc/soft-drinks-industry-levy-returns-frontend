@@ -66,6 +66,7 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val defaultReturnSetup: Boolean = servicesConfig.getBoolean("defaultReturnTest.enabled")
   val softDrinksIndustryLevyFrontendLink :String  = s"${servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
   val addressLookupService: String  = servicesConfig.baseUrl("address-lookup-frontend")
+  val addressLookupOffRampUrl: String  = servicesConfig.getString("addressLookupOffRampUrl")
 
   object AddressLookupConfig {
 
@@ -81,13 +82,13 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     object WarehouseDetails {
 
       def offRampUrl(sdilId: String): String = {
-        s"$returnsFrontendBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
 
     object PackingDetails {
       def offRampUrl(sdilId: String): String = {
-        s"$returnsFrontendBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
   }
