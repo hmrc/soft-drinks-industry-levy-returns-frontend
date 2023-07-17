@@ -1,5 +1,6 @@
 package controllers
 
+import models.SmallProducer
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
@@ -101,6 +102,34 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITT
           }
 
         }
+      }
+
+    }
+    "Post the new form data with an empty SmallProducerList when a previously answered yes is changed to no " in {
+
+      given
+        .commonPreconditionChangeSubscription(aSubscription)
+
+      val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("","",(1L, 1L))))
+      setUpData(userAnswers)
+
+      getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList).get.size mustBe 1
+
+      WsTestClient.withClient { client =>
+        val result =
+          client.url(s"$baseUrl/change-exemptions-for-small-producers")
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+              "Csrf-Token" -> "nocheck")
+            .withFollowRedirects(false)
+            .post(Json.obj("value" -> false))
+
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/check-your-answers")
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList).get.size mustBe 0
+        }
+
       }
 
     }

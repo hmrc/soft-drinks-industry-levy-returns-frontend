@@ -19,9 +19,9 @@ package controllers
 import controllers.actions._
 import forms.ExemptionsForSmallProducersFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.ExemptionsForSmallProducersPage
+import pages.{ExemptionsForSmallProducersPage, Page}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -65,12 +65,25 @@ private val form = formProvider()
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          val updatedUserAnswers = request.userAnswers.set(
-            ExemptionsForSmallProducersPage, value)
-
-          updateDatabaseAndRedirect(updatedUserAnswers, ExemptionsForSmallProducersPage, mode)
+          if (!value) {
+            updateSmallProducerList(request.userAnswers).map(updatedAnswersFinal =>
+              Redirect(navigator.nextPage(ExemptionsForSmallProducersPage, mode, updatedAnswersFinal)))
+          } else {
+            val updatedUserAnswers = request.userAnswers.set(ExemptionsForSmallProducersPage, value)
+            updateDatabaseAndRedirect(updatedUserAnswers, ExemptionsForSmallProducersPage, mode)
+          }
         }
       )
   }
+
+      private def updateSmallProducerList(userAnswers: UserAnswers): Future[UserAnswers] = {
+        for {
+          updatedAnswers <- Future.fromTry(userAnswers.set(ExemptionsForSmallProducersPage, false))
+          updatedAnswersFinal = updatedAnswers.copy(smallProducerList = List.empty)
+          _ <- updateDatabaseWithoutRedirect(updatedAnswersFinal, ExemptionsForSmallProducersPage)
+        } yield {
+          updatedAnswersFinal
+        }
+      }
 
 }
