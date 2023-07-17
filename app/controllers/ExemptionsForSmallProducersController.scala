@@ -79,8 +79,7 @@ private val form = formProvider()
       private def updateSmallProducerList(userAnswers: UserAnswers): Future[UserAnswers] = {
         for {
           updatedAnswers <- Future.fromTry(userAnswers.set(ExemptionsForSmallProducersPage, false))
-          emtpySmallProducerList = updatedAnswers.smallProducerList.empty
-          updatedAnswersFinal = updatedAnswers.copy(smallProducerList = emtpySmallProducerList)
+          updatedAnswersFinal = updatedAnswers.copy(smallProducerList = List.empty)
           _ <- updateDatabaseWithoutRedirect(updatedAnswersFinal, ExemptionsForSmallProducersPage)
         } yield {
           updatedAnswersFinal
