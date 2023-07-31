@@ -82,11 +82,13 @@ whatIsASmallProducer.detailsContent1 = A business is a small producer if it:
 whatIsASmallProducer.detailsContent2 = has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months
 whatIsASmallProducer.detailsContent3 = will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days
 
-
+litres.text = Litres
 litres.lowBand = Litres in the low band
 litres.lowBandHint = At least 5 grams of sugar per 100 millilitres
+litres.lowBand.visuallyHidden = Error
 litres.highBand = Litres in the high band
 litres.highBandHint = At least 8 grams of sugar per 100 millilitres
+litres.highBand.visuallyHidden = Error
 litres.error.lowBand.required = Enter the number of litres in the low band
 litres.error.highBand.required = Enter the number of litres in the high band
 litres.error.lowBand.nonNumeric = Number of litres in the low band must be numeric
