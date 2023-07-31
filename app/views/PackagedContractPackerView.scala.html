@@ -15,6 +15,7 @@
  *@
 
 @import views.html.helpers._
+@import viewmodels.LegendSize.Medium
 
 @this(
         layout: templates.Layout,
@@ -26,7 +27,6 @@
         saveAndContinueButton: saveAndContinueButton,
         whatIsASmallProducer: whatIsASmallProducer
 )
-
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
@@ -40,12 +40,13 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("packagedContractPacker.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("packagedContractPacker.subHeading")), None
-            ))
+                legend = LegendViewModel(messages("packagedContractPacker.title")).asPageHeading(size = Medium),
+                hint = Some(Hint(content = Text(messages("packagedContractPacker.subHeading"))))
+            )
+        )
 
         @whatIsASmallProducer(form)(messages)
         @saveAndContinueButton(messages)

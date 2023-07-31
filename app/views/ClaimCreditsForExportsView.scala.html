@@ -15,6 +15,7 @@
  *@
 
 @import views.html.helpers._
+@import viewmodels.LegendSize.Medium
 
 @this(
         layout: templates.Layout,
@@ -47,14 +48,12 @@
         content = Text(messages("claimCreditsForExports.warning"))
         ))
 
-        <h1 class="govuk-heading-m">@messages("claimCreditsForExports.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("claimCreditsForExports.subHeading")),
-                hint = None
-            )
-        )
+                legend = LegendViewModel(messages("claimCreditsForExports.title")).asPageHeading(size = Medium),
+                hint = Some(Hint(content = Text(messages("claimCreditsForExports.subHeading"))))
+            ))
 
         @exportedWhatCanIClaimCreditFor(form)(messages)
         @saveAndContinueButton(messages)

@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import viewmodels.LegendSize.Medium
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -32,13 +34,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("ownBrands.title")</h1>
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("ownBrands.subHeading")),
-                hint = None
+                legend = LegendViewModel(messages("ownBrands.title")).asPageHeading(size = Medium),
+                hint = Some(Hint(content = Text(messages("ownBrands.subHeading"))))
             )
         )
 

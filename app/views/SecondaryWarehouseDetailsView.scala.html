@@ -39,12 +39,11 @@
 
         @govukSummaryList(warehouseList)
 
-        <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.title")</h1>
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(""), None
+                legend = LegendViewModel(messages("secondaryWarehouseDetails.title")).withCssClass("govuk-fieldset__legend--m"),
+                hint = None
             )
         )
 
