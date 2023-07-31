@@ -205,7 +205,7 @@ claimCreditsForExports.change.hidden = whether you want to claim credits for exp
 
 
 smallProducerDetails.title = Do you want to add another small producer?
-smallProducerDetails.heading1 = You added {0} small producers
+smallProducerDetails.heading1 = You added {0} small producer{1}
 smallProducerDetails.heading2 = Do you want to add another small producer?
 smallProducerDetails.checkYourAnswersLabel = smallProducerDetails
 smallProducerDetails.producerList.checkYourAnswersLabel = Packaging sites
