@@ -20,6 +20,7 @@ package pages
 import forms.RemovePackagingDetailsConfirmationFormProvider
 import models.NormalMode
 import pages.behaviours.PageBehaviours
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import views.ViewSpecHelper
@@ -27,9 +28,9 @@ import views.html.RemovePackagingDetailsConfirmationView
 
 class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with PageBehaviours {
 
-  lazy val view = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
-  lazy val form = application.injector.instanceOf[RemovePackagingDetailsConfirmationFormProvider]
-  implicit val fakeRequest = FakeRequest()
+  lazy val view: RemovePackagingDetailsConfirmationView = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
+  lazy val form: RemovePackagingDetailsConfirmationFormProvider = application.injector.instanceOf[RemovePackagingDetailsConfirmationFormProvider]
+  implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   "RemovePackagingDetailsConfirmationPage" - {
 
@@ -43,7 +44,7 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
       val result = doc(view(form(),NormalMode, "foo", Html("foo2")))
       result.getElementById("packagingSiteDetails").text() mustBe "foo2"
       result.getElementsByTag("title").first().text() mustBe "Are you sure you want to remove this packaging site? - Soft Drinks Industry Levy - GOV.UK"
-      result.getElementsByTag("h1").first().attr("class") mustBe "govuk-heading-m"
+      result.getElementsByTag("h1").first().attr("class") mustBe "govuk-heading-l"
       result.getElementsByTag("h1").first().text() mustBe "Are you sure you want to remove this packaging site?"
       result.getElementsByClass("hmrc-sign-out-nav__link").first().attr("href") mustBe controllers.auth.routes.AuthController.signOut().url
       result.getElementsByClass("govuk-radios__item").first().text() mustBe "Yes"
@@ -57,7 +58,7 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
       val result = doc(view(form().bind(Map("value" -> "")),NormalMode, "foo", Html("foo2")))
       result.getElementById("packagingSiteDetails").text() mustBe "foo2"
       result.getElementsByTag("title").first().text() mustBe "Error: Are you sure you want to remove this packaging site? - Soft Drinks Industry Levy - GOV.UK"
-      result.getElementsByTag("h1").first().attr("class") mustBe "govuk-heading-m"
+      result.getElementsByTag("h1").first().attr("class") mustBe "govuk-heading-l"
       result.getElementsByTag("h1").first().text() mustBe "Are you sure you want to remove this packaging site?"
       result.getElementsByClass("hmrc-sign-out-nav__link").first().attr("href") mustBe controllers.auth.routes.AuthController.signOut().url
       result.getElementsByClass("govuk-radios__item").first().text() mustBe "Yes"

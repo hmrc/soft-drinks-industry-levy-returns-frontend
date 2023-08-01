@@ -32,7 +32,7 @@ class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
       val renderedView = Jsoup.parse(view(urlLink)(FakeRequest(), implicitly).body)
       renderedView.title() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
       renderedView.getElementsByTag("h1").text() mustBe "You changed your soft drinks business activity"
-      renderedView.getElementsByTag("h1").attr("class") mustBe "govuk-heading-m"
+      renderedView.getElementsByTag("h1").attr("class") mustBe "govuk-heading-l"
 
       val bodyText = renderedView.getElementsByClass("govuk-body").eachText()
       bodyText.get(0) mustBe "In this return, you told us that you have packaged liable drinks in the UK."
@@ -49,7 +49,7 @@ class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
       val renderedView = Jsoup.parse(view(urlLink)(FakeRequest(), implicitly).body)
       renderedView.title() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
       renderedView.getElementsByTag("h1").text() mustBe "You changed your soft drinks business activity"
-      renderedView.getElementsByTag("h1").attr("class") mustBe "govuk-heading-m"
+      renderedView.getElementsByTag("h1").attr("class") mustBe "govuk-heading-l"
 
       val bodyText = renderedView.getElementsByClass("govuk-body").eachText()
       bodyText.get(0) mustBe "In this return, you told us that you have packaged liable drinks in the UK."

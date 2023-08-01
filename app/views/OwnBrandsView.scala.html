@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.LegendSize.Medium
+@import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
@@ -37,7 +37,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("ownBrands.title")).asPageHeading(size = Medium),
+                legend = LegendViewModel(messages("ownBrands.title")).asPageHeading(size = Large),
                 hint = Some(Hint(content = Text(messages("ownBrands.subHeading"))))
             )
         )
