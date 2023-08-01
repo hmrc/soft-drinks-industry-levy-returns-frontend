@@ -289,13 +289,11 @@ claimingCreditForLostOrDestroyedLiableDrinks = Claiming credit for lost or destr
 lostOrDestroyed.lowband.litres.hidden = number of litres in the low band for lost or destroyed drinks
 lostOrDestroyed.highband.litres.hidden = number of litres in the high band for lost or destroyed drinks
 
-amountToPay = Amount to pay
-youDoNotNeedToPayAnything = You do not need to pay anything
 youNeedToPay = You need to pay {0}
-amountYouWillBeCredited = Amount you will be credited
 yourSoftDrinksLevyAccountsWillBeCredited = Your Soft Drinks Levy Account will be credited {0}
 totalThisQuarter = Total this quarter
 balanceBroughtForward = Balance brought forward
+summary = Summary
 total = Total
 financiallineitem.returncharge = Return <br/><span class="form-hint">for {0} to {1}</span>
 
