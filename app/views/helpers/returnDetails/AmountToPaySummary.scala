@@ -60,15 +60,5 @@ object AmountToPaySummary  {
     }
   }
 
-  def sectionHeaderTitle(total: BigDecimal)(implicit messages: Messages) = {
-    if (total == 0) {
-      Messages("youDoNotNeedToPayAnything")
-    } else if (total < 0) {
-      Messages("amountYouWillBeCredited")
-    } else {
-      Messages("amountToPay")
-    }
-  }
-
 }
 

@@ -676,7 +676,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("amountToPay"))
+        page.getElementsByTag("h2").text() must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
         page.getElementsByClass("total-for-quarter").text() must include("£1,000.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
@@ -745,7 +745,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("youDoNotNeedToPayAnything"))
+        page.getElementsByTag("h2").text() must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
         page.getElementsByClass("total-for-quarter").text() must include("£0.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
@@ -789,7 +789,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amount-to-pay-title").text mustEqual (Messages("amountToPay"))
+        page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
         page.getElementsByClass("total-for-quarter").text() must include("£4,200.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
@@ -835,7 +835,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amount-to-pay-title").text mustEqual (Messages("amountYouWillBeCredited"))
+        page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
         page.getElementsByClass("total-for-quarter").text() must include("-£4,200.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))

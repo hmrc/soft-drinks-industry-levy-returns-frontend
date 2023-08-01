@@ -53,7 +53,7 @@ govukSummaryList: GovukSummaryList
 <h2 class="govuk-heading-m" id="lostOrDestroyed">@messages("lostOrDestroyed")</h2>
 @govukSummaryList(ClaimCreditsForLostDamagedSummary.summaryList(userAnswers, isCheckAnswers))
 
-<h2 class="govuk-heading-m" id="amount-to-pay-title">@AmountToPaySummary.sectionHeaderTitle(amounts.total)</h2>
+<h2 class="govuk-heading-m" id="amount-to-pay-title">@messages("summary")</h2>
 @govukSummaryList(AmountToPaySummary.amountToPaySummary(amounts))
 
 @if(userAnswers.packagingSiteList.nonEmpty || userAnswers.warehouseList.nonEmpty){
