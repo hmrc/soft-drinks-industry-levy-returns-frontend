@@ -32,9 +32,6 @@
   mode: Mode,
   sdilReference: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@htmlContent = {
-    <label class="govuk-label govuk-!-font-weight-bold">@messages("addASmallProducer.referenceNumber")</label>
-}
 @action = @{if(mode == EditMode) routes.AddASmallProducerController.onEditPageSubmit(sdilReference.getOrElse("")) else routes.AddASmallProducerController.onSubmit(mode)}
 
 @layout(pageTitle = title(form, messages("addASmallProducer.title"))) {
@@ -57,7 +54,7 @@
         @govukInput(
         InputViewModel(
             field = form("referenceNumber"),
-            label = Label(content = HtmlContent(htmlContent)),
+            label = Label(content = Text(messages("addASmallProducer.referenceNumber"))),
         )
         .withWidth(Fixed10)
         .withHint(Hint(content = Text(messages("addASmallProducer.hint2"))))
