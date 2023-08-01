@@ -139,8 +139,8 @@ whatCanIClaimCreditForDetailsContent5 = method of delivery
 whatCanIClaimCreditForDetailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
 
 
-claimCreditsForLostDamaged.title = Do you want to claim a credit for liable drinks which have been lost or destroyed?
-claimCreditsForLostDamaged.heading1 = Lost or destroyed drinks
+claimCreditsForLostDamaged.title = Lost or destroyed drinks
+claimCreditsForLostDamaged.heading1 = Do you want to claim a credit for liable drinks which have been lost or destroyed?
 claimCreditsForLostDamaged.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 claimCreditsForLostDamaged.warning = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
 claimCreditsForLostDamaged.detailsContent1 = You can claim a credit for liable drinks that have been:
@@ -189,8 +189,8 @@ askSecondaryWarehouseInReturn.error.required = Select yes if you want to registe
 askSecondaryWarehouseInReturn.change.hidden = AskSecondaryWarehouseInReturn
 
 
-claimCreditsForExports.heading2 = Exported drinks
-claimCreditsForExports.title = Do you want to claim a credit for liable drinks that have been exported?
+claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
+claimCreditsForExports.title = Exported drinks
 claimCreditsForExports.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 claimCreditsForExports.warning = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
 claimCreditsForExports.detailsLink = What can I claim a credit for?
