@@ -84,14 +84,7 @@ trait ReturnSummaryValidationHelper extends Specifications
   }
 
   def testAmountToPaySummary(summaryRows: Elements, heading: String, amounts: Amounts) = {
-    val expectedHeading = if (amounts.total > 0) {
-      Messages("amountToPay")
-    } else if (amounts.total < 0) {
-      Messages("amountYouWillBeCredited")
-    } else {
-      Messages("youDoNotNeedToPayAnything")
-    }
-    heading mustBe expectedHeading
+    heading mustBe Messages("summary")
     summaryRows.size() mustBe 3
     summaryRows.get(0).text() must include("Total this quarter")
     summaryRows.get(0).text() must include(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.totalForQuarter))

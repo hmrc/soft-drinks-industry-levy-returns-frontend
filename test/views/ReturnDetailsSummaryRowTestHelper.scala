@@ -84,7 +84,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
   def testSummaryHeading(subHeadingId: String, element: Element) = {
     "that has the correct subheading" in {
       val expectedHeading = if(subHeadingId == SummaryHeadingIds.amountToPay) {
-        "amountToPay"
+        "summary"
       } else {
         subHeadingId
       }

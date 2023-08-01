@@ -6,7 +6,7 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends ControllerITTestHelper with TryValues {
+class HowManyBroughtIntoTheUKFromSmallProducersControllerISpec extends ControllerITTestHelper with TryValues {
 
   "HowManyBroughtIntoTheUKFromSmallProducersController" should {
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
