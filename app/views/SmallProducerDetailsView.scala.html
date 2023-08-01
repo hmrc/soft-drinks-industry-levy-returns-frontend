@@ -36,7 +36,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("smallProducerDetails.heading1", smallProducerList.length)</h1>
+        <h1 class="govuk-heading-m">@messages("smallProducerDetails.heading1", smallProducerList.length, if(smallProducerList.length == 1) "" else "s")</h1>
         @govukSummaryList(SmallProducerDetailsSummary.producerList(smallProducerList))
 
         @govukRadios(
