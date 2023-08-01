@@ -39,12 +39,11 @@
         <h1 class="govuk-heading-m">@messages("smallProducerDetails.heading1", smallProducerList.length)</h1>
         @govukSummaryList(SmallProducerDetailsSummary.producerList(smallProducerList))
 
-        <h2 class="govuk-heading-m">@messages("smallProducerDetails.heading2")</h2>
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(""), None
+                legend = LegendViewModel(messages("smallProducerDetails.heading2")).withCssClass("govuk-fieldset__legend--m"),
+                hint = None
             )
         )
 

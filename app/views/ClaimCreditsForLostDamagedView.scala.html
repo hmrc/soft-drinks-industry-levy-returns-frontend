@@ -15,6 +15,7 @@
  *@
 
 @import views.html.helpers._
+@import viewmodels.LegendSize.Medium
 
 @this(
         layout: templates.Layout,
@@ -32,27 +33,26 @@
 
 @layout(pageTitle = title(form, messages("claimCreditsForLostDamaged.title"))) {
 
-    <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.heading1")</h1>
-
-    @govukWarningText(WarningText(
-    iconFallbackText = Some("Warning"),
-    content = Text(messages("claimCreditsForLostDamaged.warning"))
-    ))
-
     @formHelper(action = routes.ClaimCreditsForLostDamagedController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.title")</h1>
+        <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.heading1")</h1>
+
+        @govukWarningText(WarningText(
+        iconFallbackText = Some("Warning"),
+        content = Text(messages("claimCreditsForLostDamaged.warning"))
+        ))
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("claimCreditsForLostDamaged.subHeading")),
-                hint = None
-            )
-        )
+                legend = LegendViewModel(messages("claimCreditsForLostDamaged.title")).withCssClass("govuk-fieldset__legend--m"),
+                hint = Some(Hint(content = Text(messages("claimCreditsForLostDamaged.subHeading"))))
+            ))
+
         @claimCreditsForLostDamaged(form)(messages)
         @saveAndContinueButton(messages)
     }

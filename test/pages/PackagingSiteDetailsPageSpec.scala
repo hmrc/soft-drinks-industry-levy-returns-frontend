@@ -75,7 +75,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
               view(form.apply(), NormalMode, packagingSiteListWith1)(FakeRequest(), messages(application))
             val document = doc(html)
 
-            document.title() shouldBe "You added 1 packaging sites - Soft Drinks Industry Levy - GOV.UK"
+            document.title() shouldBe "You added 1 packaging site - Soft Drinks Industry Levy - GOV.UK"
           }
 
           "have the expected heading when there is only 1 packaging site" in {
@@ -85,7 +85,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
             document
               .getElementsByTag("h1")
-              .text shouldBe "You added 1 packaging sites"
+              .text shouldBe "You added 1 packaging site"
           }
 
           "show the correct packaging site in the list when there is only 1 packaging site" in {
@@ -113,7 +113,7 @@ class packagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
             val document = doc(html)
 
             document
-              .getElementsByTag("h2")
+              .getElementsByClass("govuk-fieldset__legend--m")
               .text must include("Do you want to add another UK packaging site?")
           }
 

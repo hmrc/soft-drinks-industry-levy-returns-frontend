@@ -100,9 +100,9 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val page = Jsoup.parse(contentAsString(result))
 
         contentAsString(result) mustEqual view(form, NormalMode, packagingSiteList)(request, messages(application)).toString
-        page.title() must include("You added 1 packaging sites")
-        page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
-        page.getElementsByTag("h2").text() must include("Do you want to add another UK packaging site?")
+        page.title() must include("You added 1 packaging site")
+        page.getElementsByTag("h1").text() mustEqual "You added 1 packaging site"
+        page.getElementsByClass("govuk-fieldset__legend--m").text() must include("Do you want to add another UK packaging site?")
       }
     }
 
@@ -125,8 +125,8 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val page = Jsoup.parse(contentAsString(result))
 
         contentAsString(result) mustEqual view(form.fill(true), NormalMode, packagingSiteList)(request, messages(application)).toString
-        page.title() must include("You added 1 packaging sites")
-        page.getElementsByTag("h1").text() mustEqual "You added 1 packaging sites"
+        page.title() must include("You added 1 packaging site")
+        page.getElementsByTag("h1").text() mustEqual "You added 1 packaging site"
         page.getElementById("value").`val`() mustEqual "true"
       }
     }

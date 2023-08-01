@@ -15,6 +15,7 @@
  *@
 
 @import views.html.helpers._
+@import viewmodels.LegendSize.Medium
 
 @this(
         layout: templates.Layout,
@@ -39,11 +40,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("exemptionsForSmallProducers.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("")),None
+                legend = LegendViewModel(messages("exemptionsForSmallProducers.title")).asPageHeading(size = Medium),
+                None
         ))
 
         @whatIsASmallProducer(form)(messages)

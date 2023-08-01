@@ -29,7 +29,7 @@
 
 @(form: Form[_], mode: Mode, siteList: Map[String, Site])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("packagingSiteDetails.title.heading", siteList.size))) {
+@layout(pageTitle = title(form, messages("packagingSiteDetails.title.heading", siteList.size, if(siteList.size == 1) "" else "s"))) {
 
     @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -37,17 +37,16 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.title.heading", siteList.size)</h1>
+        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.title.heading", siteList.size, if(siteList.size == 1) "" else "s")</h1>
         <p class="govuk-body-m">@messages("packagingSiteDetails.info")</p>
 
         @govukSummaryList(PackagingSiteDetailsSummary.summaryList(siteList))
 
-        <h2 class="govuk-heading-m">@messages("packagingSiteDetails.addAnotherPackingSite")</h2>
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(""), None
+                legend = LegendViewModel(messages("packagingSiteDetails.addAnotherPackingSite")).withCssClass("govuk-fieldset__legend--m"),
+                hint = None
             )
         )
 
