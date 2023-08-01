@@ -39,7 +39,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h2 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.heading1")</h2>
+        <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.heading1")</h1>
 
         @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
@@ -49,7 +49,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("claimCreditsForLostDamaged.title")).asPageHeading(size = Medium),
+                legend = LegendViewModel(messages("claimCreditsForLostDamaged.title")).withCssClass("govuk-fieldset__legend--m"),
                 hint = Some(Hint(content = Text(messages("claimCreditsForLostDamaged.subHeading"))))
             ))
 
