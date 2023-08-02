@@ -52,7 +52,7 @@ class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
             userAnswers,
             amounts,
             subscription,
-            CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
+            CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total)
           )(implicitly, implicitly, config))
         }
       } else {
