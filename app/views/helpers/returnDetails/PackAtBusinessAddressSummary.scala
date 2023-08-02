@@ -34,7 +34,7 @@ object PackAtBusinessAddressSummary {
           SummaryListViewModel(
           rows = Seq(SummaryListRowViewModel(
             key = "packagingSites",
-            value = ValueViewModel(userAnswers.packagingSiteList.size.toString).withCssClass("align-right"),
+            value = ValueViewModel(userAnswers.packagingSiteList.size.toString).withCssClass("sdil-right-align--desktop"),
             actions = if (isCheckAnswers) {
               Seq(
                 ActionItemViewModel("site.change", routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)

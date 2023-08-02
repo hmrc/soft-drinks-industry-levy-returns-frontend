@@ -5,7 +5,9 @@
   display: inline-block !important;
 }
 
-.align-right {
-  text-align:right;
-  padding-right: 0px !important;
+@media (min-width: 40.0625em) {
+  .sdil-right-align--desktop {
+    text-align: right;
+    padding-right: 0px !important;
+  }
 }

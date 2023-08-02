@@ -31,7 +31,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     val summaryList = "govuk-summary-list"
     val summaryListRow = "govuk-summary-list__row"
     val summaryListKey = "govuk-summary-list__key"
-    val summaryListValue = "govuk-summary-list__value  align-right"
+    val summaryListValue = "govuk-summary-list__value  sdil-right-align--desktop"
     val hidden = "govuk-visually-hidden"
     val link = "govuk-link"
     val panel = "govuk-panel govuk-panel--confirmation"

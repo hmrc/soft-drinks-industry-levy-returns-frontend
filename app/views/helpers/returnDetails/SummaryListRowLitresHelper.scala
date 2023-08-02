@@ -57,7 +57,7 @@ trait SummaryListRowLitresHelper {
     val value = HtmlFormat.escape(litres.toString).toString
     SummaryListRow(
       key = key,
-      value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
+      value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),
       classes = "govuk-summary-list__row--no-border",
       actions = action(isCheckAnswers, band)
     )
@@ -72,10 +72,10 @@ private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String
 
     val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(litres, bandCostPerLitre))).toString
 
-    SummaryListRowViewModel(
+    SummaryListRow(
       key = key,
-      value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-      actions = Seq()
+      value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),
+      classes = "govuk-summary-list__row--no-actions"
     )
   }
 

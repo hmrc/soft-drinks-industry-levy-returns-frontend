@@ -36,16 +36,16 @@ object AmountToPaySummary  {
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(totalForQuarter))).withCssClass("total-for-quarter align-right")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(totalForQuarter))).withCssClass("total-for-quarter sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "balanceBroughtForward",
         value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward)))
-          .withCssClass("balance-brought-forward align-right")
+          .withCssClass("balance-brought-forward sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "total",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))).withCssClass("total align-right govuk-!-font-weight-bold")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))).withCssClass("total sdil-right-align--desktop govuk-!-font-weight-bold")
       ))
     )
   }

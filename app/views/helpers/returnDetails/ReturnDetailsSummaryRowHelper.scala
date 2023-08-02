@@ -40,7 +40,7 @@ trait ReturnDetailsSummaryRowHelper {
     Seq(
       SummaryListRowViewModel(
         key = key,
-        value = ValueViewModel(value).withCssClass("align-right"),
+        value = ValueViewModel(value).withCssClass("sdil-right-align--desktop"),
         actions = if (isCheckAnswers) {
           Seq(
             ActionItemViewModel("site.change", action)
