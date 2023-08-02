@@ -44,11 +44,10 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
   )
 
   val amountOwed = "£100"
-  val fininacialStatus = "fininacialStatus"
 
   "returnSentView" - {
     val html: HtmlFormat.Appendable =
-      returnSentView(returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, aSubscription, amountOwed, fininacialStatus)
+      returnSentView(returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, aSubscription, amountOwed)
     val document: Document = doc(html)
 
     "should have the expected title" in {
@@ -71,7 +70,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
     amountsLists.foreach { case (key, amount) =>
       val html1: HtmlFormat.Appendable =
-        returnSentView(returnPeriod, emptyUserAnswers, amount, aSubscription, amountOwed, fininacialStatus)
+        returnSentView(returnPeriod, emptyUserAnswers, amount, aSubscription, amountOwed)
       val document1: Document = doc(html1)
       s"when the $key" - {
         "should include a what to do next section" - {
@@ -165,7 +164,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
           UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
             s"when the $key" - {
               val html1: HtmlFormat.Appendable =
-                returnSentView(returnPeriod, userAnswers, amounts, aSubscription, amountOwed, fininacialStatus)
+                returnSentView(returnPeriod, userAnswers, amounts, aSubscription, amountOwed)
               val document1: Document = doc(html1)
               val details = document1.getElementsByClass(Selectors.details).get(0)
               testSummaryLists(key, details, userAnswers, false)

@@ -18,13 +18,18 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.backend._
+import models.retrieved.{RetrievedActivity, RetrievedSubscription}
+import models.{Amounts, LitresInBands, ReturnPeriod, UserAnswers}
 import orchestrators.ReturnsOrchestrator
+import pages.{BroughtIntoUKPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, PackagedContractPackerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.CurrencyFormatter
 import views.html.ReturnSentView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,20 +58,11 @@ class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
             amounts,
             subscription,
             CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
-            financialStatus = financialStatus(amounts.total)
           )(implicitly, implicitly, config))
         }
       } else {
         Future.successful(Redirect(routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false)))
       }
-  }
-
-  private def financialStatus(total: BigDecimal): String = {
-    total match {
-      case total if total > 0 => "amountToPay"
-      case total if total < 0 => "creditedPay"
-      case _ => "noPayNeeded"
-    }
   }
 
 }
