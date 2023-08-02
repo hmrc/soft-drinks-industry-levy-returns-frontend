@@ -18,18 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.backend._
-import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{Amounts, LitresInBands, ReturnPeriod, UserAnswers}
 import orchestrators.ReturnsOrchestrator
-import pages.{BroughtIntoUKPage, HowManyAsAContractPackerPage, HowManyBroughtIntoUkPage, PackagedContractPackerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.CurrencyFormatter
 import views.html.ReturnSentView
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
