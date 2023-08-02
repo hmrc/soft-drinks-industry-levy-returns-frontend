@@ -43,6 +43,7 @@
 
         <h1 class="govuk-heading-l">@messages("claimCreditsForExports.heading2")</h1>
 
+
         @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
         content = Text(messages("claimCreditsForExports.warning"))
@@ -51,7 +52,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("claimCreditsForExports.title")).withCssClass("govuk-fieldset__legend--m"),
+                legend = LegendViewModel(messages("claimCreditsForExports.heading2")).withCssClass("govuk-fieldset__legend--m"),
                 hint = Some(Hint(content = Text(messages("claimCreditsForExports.subHeading"))))
             ))
 
