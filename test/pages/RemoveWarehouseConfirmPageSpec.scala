@@ -19,6 +19,7 @@ package pages
 import forms.RemoveWarehouseConfirmFormProvider
 import messages.RemoveWarehouseConfirmMessages
 import models.NormalMode
+import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.behaviours.PageBehaviours
 import play.api.i18n.{Messages, MessagesApi}
@@ -38,7 +39,7 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
   implicit lazy val testMessages: Messages =
     messagesApi.preferred(FakeRequest())
 
-  def documentPopForm(isYes: Boolean = true) = {
+  def documentPopForm(isYes: Boolean = true): Document = {
     val popForm = form.apply()
       .fill(isYes)
     val popView = view(popForm, NormalMode, Html(" 33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
@@ -46,10 +47,10 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
   }
 
   object Selectors {
-    val heading = "govuk-heading-m"
+    val heading = "govuk-heading-l"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body-m"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"

@@ -32,7 +32,7 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <h1 class="govuk-heading-m">@messages("removePackagingDetailsConfirmation.heading")</h1>
+        <h1 class="govuk-heading-l">@messages("removePackagingDetailsConfirmation.heading")</h1>
         <p class="govuk-body-m" id="packagingSiteDetails">@packagingSite</p>
 
         @govukRadios(

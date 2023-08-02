@@ -35,7 +35,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("secondaryWarehouseDetails.heading", warehouseList.rows.size, if(warehouseList.rows.size == 1) "" else "s")</h1>
+        <h1 class="govuk-heading-l">@messages("secondaryWarehouseDetails.heading", warehouseList.rows.size, if(warehouseList.rows.size == 1) "" else "s")</h1>
 
         @govukSummaryList(warehouseList)
 

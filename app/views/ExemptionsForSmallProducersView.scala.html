@@ -15,7 +15,7 @@
  *@
 
 @import views.html.helpers._
-@import viewmodels.LegendSize.Medium
+@import viewmodels.LegendSize.Large
 
 @this(
         layout: templates.Layout,
@@ -43,7 +43,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("exemptionsForSmallProducers.title")).asPageHeading(size = Medium),
+                legend = LegendViewModel(messages("exemptionsForSmallProducers.title")).asPageHeading(size = Large),
                 None
         ))
 

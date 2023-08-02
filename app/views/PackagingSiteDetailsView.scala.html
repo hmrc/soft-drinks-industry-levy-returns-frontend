@@ -37,7 +37,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("packagingSiteDetails.title.heading", siteList.size, if(siteList.size == 1) "" else "s")</h1>
+        <h1 class="govuk-heading-l">@messages("packagingSiteDetails.title.heading", siteList.size, if(siteList.size == 1) "" else "s")</h1>
         <p class="govuk-body-m">@messages("packagingSiteDetails.info")</p>
 
         @govukSummaryList(PackagingSiteDetailsSummary.summaryList(siteList))
