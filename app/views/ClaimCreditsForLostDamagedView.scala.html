@@ -15,7 +15,7 @@
  *@
 
 @import views.html.helpers._
-@import viewmodels.LegendSize.Medium
+@import viewmodels.LegendSize.Large
 
 @this(
         layout: templates.Layout,
@@ -39,7 +39,8 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("claimCreditsForLostDamaged.title")</h1>
+        <h1 class="govuk-heading-l">@messages("claimCreditsForLostDamaged.heading1")</h1>
+
 
         @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
