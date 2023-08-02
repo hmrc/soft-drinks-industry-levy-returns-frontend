@@ -43,7 +43,7 @@ object SecondaryWarehouseDetailsSummary  {
         val value = if (answer) "site.yes" else "site.no"
         SummaryListRowViewModel(
           key     = "secondaryWarehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value).withCssClass("align-right"),
+          value   = ValueViewModel(value).withCssClass("sdil-right-align--desktop"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("secondaryWarehouseDetails.change.hidden"))

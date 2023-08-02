@@ -37,7 +37,7 @@ object AskSecondaryWarehouseSummary {
           SummaryListViewModel(
             rows = Seq(SummaryListRowViewModel(
               key = "warehouseSites",
-              value = ValueViewModel(userAnswers.warehouseList.size.toString).withCssClass("align-right"),
+              value = ValueViewModel(userAnswers.warehouseList.size.toString).withCssClass("sdil-right-align--desktop"),
               actions = if (isCheckAnswers) {
                 Seq(
                   ActionItemViewModel("site.change", routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url)
