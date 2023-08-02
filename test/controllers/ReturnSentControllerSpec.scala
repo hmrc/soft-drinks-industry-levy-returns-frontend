@@ -335,12 +335,12 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("-£1,800.00")
+        page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("-£4,800.00")
+        page.getElementsByTag("dd").text() must include("−£4,800.00")
       }
     }
 
@@ -388,12 +388,12 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("-£1,800.00")
+        page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("-£4,800.00")
+        page.getElementsByTag("dd").text() must include("−£4,800.00")
       }
     }
 
@@ -458,7 +458,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         page.getElementById("amount-to-pay-title" ).text must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include(" -£6,600.00")
+        page.getElementsByTag("dd").text() must include(" −£6,600.00")
       }
     }
 

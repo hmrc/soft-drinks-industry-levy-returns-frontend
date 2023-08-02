@@ -36,23 +36,23 @@ object AmountToPaySummary  {
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "totalThisQuarter",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(totalForQuarter))).withCssClass("total-for-quarter sdil-right-align--desktop")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(totalForQuarter).replace("-", "&minus;"))).withCssClass("total-for-quarter sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward)))
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward).replace("-", "&minus;")))
           .withCssClass("balance-brought-forward sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "total",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))).withCssClass("total sdil-right-align--desktop govuk-!-font-weight-bold")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total).replace("-", "&minus;"))).withCssClass("total sdil-right-align--desktop govuk-!-font-weight-bold")
       ))
     )
   }
 
   def subheader(total: BigDecimal)(implicit messages: Messages) = {
     if (total < 0) {
-      Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total * -1)))
+      Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total * -1).replace("-", "&minus;")))
     } else if (total > 0) {
       Some(Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total)))
     } else {

@@ -20,18 +20,15 @@ import base.ReturnsTestData._
 import base.SpecBase
 import connectors.httpParsers.AddressLookupHttpParser.AddressLookupInitJourneyReads
 import connectors.httpParsers.ResponseHttpParser.HttpResult
-import helpers.LoggerHelper
 import mocks.MockHttp
 import models.alf.AlfResponse
 import models.alf.init.{JourneyConfig, JourneyOptions}
 import models.core.ErrorModel
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Logger
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.http.HttpResponse
-import utilitlies.GenericLogger
 
 import scala.concurrent.Future
 

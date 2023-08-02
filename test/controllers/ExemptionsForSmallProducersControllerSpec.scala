@@ -23,25 +23,20 @@ import forms.ExemptionsForSmallProducersFormProvider
 import helpers.LoggerHelper
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ExemptionsForSmallProducersPage
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.Writes
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.ExemptionsForSmallProducersView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 

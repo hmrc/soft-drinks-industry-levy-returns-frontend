@@ -17,13 +17,10 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, UserAnswers, Warehouse}
-import pages.{AskSecondaryWarehouseInReturnPage, SecondaryWarehouseDetailsPage}
+import models.{CheckMode, UserAnswers}
+import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key, SummaryList}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.AddressFormattingHelper
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
