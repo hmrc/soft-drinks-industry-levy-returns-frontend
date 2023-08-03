@@ -53,7 +53,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
   "RemovePackagingDetailsConfirmation Controller" - {
     def commonAssertionsForPageLoad(addressToBeDisplayed: Html, page: String, ref: String): Assertion = {
       val doc: Document = Jsoup.parse(page)
-      doc.getElementById("packagingSiteDetails").text() mustBe addressToBeDisplayed.toString()
+      doc.getElementById("value-hint").text() mustBe addressToBeDisplayed.toString()
       doc.getElementsByTag("h1").text() mustEqual "Are you sure you want to remove this packaging site?"
       doc.getElementsByTag("form").attr("action") mustBe routes.RemovePackagingDetailsConfirmationController.onSubmit(ref).url
     }

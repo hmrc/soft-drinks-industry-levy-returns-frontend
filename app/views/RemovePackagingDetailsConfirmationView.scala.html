@@ -32,14 +32,12 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <h1 class="govuk-heading-l">@messages("removePackagingDetailsConfirmation.heading")</h1>
-        <p class="govuk-body-m" id="packagingSiteDetails">@packagingSite</p>
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(""),
-                hint = None
+                legend = LegendViewModel(messages("removePackagingDetailsConfirmation.heading")).asPageHeading(),
+                hint = Some(Hint(content = HtmlContent(packagingSite)).withCssClass("govuk-body-m"))
             )
         )
 

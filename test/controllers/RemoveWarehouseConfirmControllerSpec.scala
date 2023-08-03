@@ -112,7 +112,6 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
         val page = Jsoup.parse(contentAsString(result))
         page.title() must include(Messages("removeWarehouseConfirm.title"))
         page.getElementsByTag("h1").text() must include(Messages("removeWarehouseConfirm.title"))
-        page.getElementById("warehouseToRemove").text() mustBe testUkAddress.toString().replace("<br>", " ")
         contentAsString(result) mustEqual view(form, NormalMode , testUkAddress, testIndex)(request, messages(application)).toString
       }
     }

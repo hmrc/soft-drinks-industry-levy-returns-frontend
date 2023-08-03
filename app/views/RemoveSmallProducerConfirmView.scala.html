@@ -26,6 +26,10 @@
 
 @(form: Form[_], mode: Mode, sdilNumber: String, smallProducerName: String)(implicit request: Request[_], messages: Messages)
 
+@hintContent = {
+    <span class="govuk-!-font-weight-bold">@sdilNumber </span> @smallProducerName
+}
+
 @layout(pageTitle = title(form, messages("removeSmallProducerConfirm.title"))) {
 
     @formHelper(action = routes.RemoveSmallProducerConfirmController.onSubmit(sdilNumber), Symbol("autoComplete") -> "off") {
@@ -34,25 +38,12 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-l">@messages("removeSmallProducerConfirm.heading")</h1>
-        @govukSummaryList(SummaryList(
-            rows = Seq(
-                SummaryListRow(
-                    key = Key(
-                        content = Text(sdilNumber)
-                    ),
-                    value = Value(
-                        content = Text(smallProducerName)
-                    )
-                ),
-            ),
-            classes = "govuk-summary-list--no-border"
-            ))
-
+        <h1 class="govuk-heading-l">@messages("")</h1>
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(""), None
+                    legend = LegendViewModel(messages("removeSmallProducerConfirm.heading")).asPageHeading(),
+                    hint = Some(Hint(content = HtmlContent(hintContent)))
                 ))
 
         @govukButton(
