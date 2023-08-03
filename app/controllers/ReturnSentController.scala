@@ -52,21 +52,12 @@ class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
             userAnswers,
             amounts,
             subscription,
-            CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total),
-            financialStatus = financialStatus(amounts.total)
+            CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total)
           )(implicitly, implicitly, config))
         }
       } else {
         Future.successful(Redirect(routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false)))
       }
-  }
-
-  private def financialStatus(total: BigDecimal): String = {
-    total match {
-      case total if total > 0 => "amountToPay"
-      case total if total < 0 => "creditedPay"
-      case _ => "noPayNeeded"
-    }
   }
 
 }

@@ -37,48 +37,49 @@
   userAnswers: UserAnswers,
   amounts: Amounts,
   subscription: RetrievedSubscription,
-  amountOwed:String,
-  financialStatus: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+  amountOwed:String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("returnSent.title"))) {
 
     @govukPanel(Panel(
-    title = Text(messages("returnSent.title")),
-    content = HtmlContent(messages("returnSent.panel.returnMessage", returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.end.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.start.getYear.toString, subscription.orgName))
+        title = Text(messages("returnSent.title")),
+        content = HtmlContent(messages("returnSent.panel.returnMessage", returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.end.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.start.getYear.toString, subscription.orgName))
     ))
-<p class="govuk-body-m" id="printPage" xmlns="http://www.w3.org/1999/html">
-    <a href="javascript:window.print()" class="govuk-link">@messages("site.print")</a>
+    <p class="govuk-body-m" id="printPage" xmlns="http://www.w3.org/1999/html">
+        <a href="javascript:window.print()" class="govuk-link">@messages("site.print")</a>
     </p>
 
-    <p class="govuk-body" id="returnDone">@messages("returnSent.returnsDoneMessage",
-        returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")),
-        returnPeriod.end.format(DateTimeFormatter.ofPattern("MMMM")),
-        returnPeriod.start.getYear.toString,
-        subscription.orgName,
-        LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
-        LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))</p>
+    <p class="govuk-body" id="returnDone">
+        @messages("returnSent.returnsDoneMessage",
+            returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")),
+            returnPeriod.end.format(DateTimeFormatter.ofPattern("MMMM")),
+            returnPeriod.start.getYear.toString,
+            subscription.orgName,
+            LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
+            LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+        )
+    </p>
 
     <h2 class="govuk-heading-m" id="whatNextHeader">
        @messages("returnSent.headerOne")
     </h2>
 
-
     <p class="govuk-body" id="whatNextText">
         @if(amounts.total > 0){
             @Html(messages("returnSent.paymentsBlurb.payby",
-                            amountOwed,
-                            returnPeriod.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-                    ))
+                amountOwed,
+                returnPeriod.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+            ))
             <br>
             <br>
             @messages("returnSent.paymentsBlurb.payby.info1") <strong>@subscription.sdilRef</strong> @messages("returnSent.paymentsBlurb.payby.info2")
             <br>
             <br>
             <a class="govuk-link" href="https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5" target="_blank">@messages("returnSent.paymentBlurb.paybyLink")</a>
-        } else if(amounts.total < 0){
+        } else if(amounts.total < 0) {
             @messages("returnSent.paymentsBlurb.nothingOwed")
             @messages("returnSent.paymentsBlurb.credited")
-        } else{
+        } else {
             @messages("returnSent.paymentsBlurb.nothingOwed")
         }
         <br>
@@ -96,21 +97,20 @@
     <p class="govuk-body" id="helpWithThisServiceText">
         @messages("returnSent.points")
     </p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("returnSent.list1")</li>
-            <li>@messages("returnSent.list2")</li>
-            <li>@messages("returnSent.list3")</li>
-            <li>@messages("returnSent.list4")</li>
-        </ul>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("returnSent.list1")</li>
+        <li>@messages("returnSent.list2")</li>
+        <li>@messages("returnSent.list3")</li>
+        <li>@messages("returnSent.list4")</li>
+    </ul>
 
     <p class="govuk-body" id="goToDashboard">
-        <a class="govuk-link" href=@config.softDrinksIndustryLevyFrontendLink target="_blank">@messages("returnSent.help.link")</a>
+        <a class="govuk-link" href=@config.softDrinksIndustryLevyFrontendLink>@messages("returnSent.help.link")</a>
     </p>
 
     @govukDetails(Details(
         summary = Text(Messages("returnSent.details")),
         content = HtmlContent(Html(s"${returnDetailsSummary(returnPeriod, userAnswers, amounts, false, subscription.activity.smallProducer)}"))
     ))
-
 
 }
