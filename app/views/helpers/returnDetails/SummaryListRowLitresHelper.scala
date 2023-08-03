@@ -17,7 +17,6 @@
 package views.helpers.returnDetails
 
 import config.FrontendAppConfig
-import controllers.actions.DataRetrievalAction
 import models.LitresInBands
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -70,7 +69,7 @@ private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String
       "highBandLevy"
     }
 
-    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(litres, bandCostPerLitre))).toString
+    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(litres, bandCostPerLitre))).toString.replace("-", "&minus;")
 
     SummaryListRow(
       key = key,

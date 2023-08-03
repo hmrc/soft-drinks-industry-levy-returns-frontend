@@ -67,7 +67,7 @@ trait ReturnSummaryValidationHelper extends Specifications
           ("£0.00", "£0.00")
         } else {
           if(List("claimingCreditForExportedLiableDrinks", "claimingCreditForLostOrDestroyedLiableDrinks").contains(summaryKey)) {
-            ("-£180.00", "-£240.00")
+            ("−£180.00", "−£240.00")
           } else {
             ("£180.00", "£240.00")
           }
@@ -87,11 +87,11 @@ trait ReturnSummaryValidationHelper extends Specifications
     heading mustBe Messages("summary")
     summaryRows.size() mustBe 3
     summaryRows.get(0).text() must include("Total this quarter")
-    summaryRows.get(0).text() must include(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.totalForQuarter))
+    summaryRows.get(0).text() must include(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.totalForQuarter).replace("-", "−"))
     summaryRows.get(1).text() must include("Balance brought forward")
-    summaryRows.get(1).text() must include(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.balanceBroughtForward * -1))
+    summaryRows.get(1).text() must include(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.balanceBroughtForward * -1).replace("-", "−"))
     summaryRows.get(2).text() must include("Total")
-    summaryRows.get(2).text() must include(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total))
+    summaryRows.get(2).text() must include(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total).replace("-", "−"))
   }
 
 }

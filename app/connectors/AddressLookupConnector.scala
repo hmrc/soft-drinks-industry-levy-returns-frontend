@@ -22,7 +22,6 @@ import connectors.httpParsers.ResponseHttpParser.HttpResult
 import models.alf.AlfResponse
 import models.alf.init.JourneyConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import utilitlies.GenericLogger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

@@ -22,15 +22,14 @@ import base.UserAnswersTestData.userIsSmallProducer
 import config.FrontendAppConfig
 import controllers.routes
 import models.{Amounts, ReturnPeriod}
-import views.html.CheckYourAnswersView
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
-import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import utilitlies.CurrencyFormatter
 import views.helpers.returnDetails.ReturnPeriodQuarter
+import views.html.CheckYourAnswersView
 
 class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
 

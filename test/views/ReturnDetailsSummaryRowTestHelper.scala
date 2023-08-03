@@ -115,7 +115,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         summaryRow.getElementsByClass(Selectors.summaryListKey).text() mustEqual "Balance brought forward"
       }
       "that has the correct value" in {
-        summaryRow.getElementsByTag("dd").text() mustEqual "-£100.00"
+        summaryRow.getElementsByTag("dd").text() mustEqual "−£100.00"
       }
     }
 
@@ -279,7 +279,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         .contains(summaryId)) {
       "£0.00"
     } else if (isNegativeLevy(summaryId)) {
-      "-£180.00"
+      "−£180.00"
     } else if (summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers) {
       userAnswers.smallProducerList.map(_.litreage._1).sum match {
         case 0 => "£0.00"
@@ -298,7 +298,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         .contains(summaryId)) {
       "£0.00"
     } else if (isNegativeLevy(summaryId)) {
-      "-£240.00"
+      "−£240.00"
     } else if(summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers) {
       userAnswers.smallProducerList.map(_.litreage._2).sum match {
         case 0 => "£0.00"
