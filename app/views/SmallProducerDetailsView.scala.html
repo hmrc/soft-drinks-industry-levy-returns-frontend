@@ -28,7 +28,7 @@
 
 @(form: Form[_], mode: Mode, smallProducerList: List[SmallProducer])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("smallProducerDetails.title"))) {
+@layout(pageTitle = title(form, messages("smallProducerDetails.title", smallProducerList.length, if(smallProducerList.length == 1) "" else "s"))) {
 
     @formHelper(action = routes.SmallProducerDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -36,13 +36,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-l">@messages("smallProducerDetails.heading1", smallProducerList.length, if(smallProducerList.length == 1) "" else "s")</h1>
+        <h1 class="govuk-heading-l">@messages("smallProducerDetails.title", smallProducerList.length, if(smallProducerList.length == 1) "" else "s")</h1>
+
         @govukSummaryList(SmallProducerDetailsSummary.producerList(smallProducerList))
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("smallProducerDetails.heading2")).withCssClass("govuk-fieldset__legend--m"),
+                legend = LegendViewModel(messages("smallProducerDetails.heading")).withCssClass("govuk-fieldset__legend--m"),
                 hint = None
             )
         )
