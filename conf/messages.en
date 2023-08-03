@@ -204,9 +204,8 @@ claimCreditsForExports.error.required = Select yes if you want to claim a credit
 claimCreditsForExports.change.hidden = whether you want to claim credits for exported liable drinks
 
 
-smallProducerDetails.title = Do you want to add another small producer?
-smallProducerDetails.heading1 = You added {0} small producer{1}
-smallProducerDetails.heading2 = Do you want to add another small producer?
+smallProducerDetails.title = You added {0} small producer{1}
+smallProducerDetails.heading = Do you want to add another small producer?
 smallProducerDetails.checkYourAnswersLabel = smallProducerDetails
 smallProducerDetails.producerList.checkYourAnswersLabel = Packaging sites
 smallProducerDetails.error.required = Select yes if you want to add another small producer

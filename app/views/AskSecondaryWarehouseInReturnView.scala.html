@@ -37,12 +37,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-
-        <h1 class="govuk-heading-l">@messages("askSecondaryWarehouseInReturn.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(""), None
+                legend = LegendViewModel("askSecondaryWarehouseInReturn.title").asPageHeading(),
+                None
         )
         )
         @govukDetails(Details(
