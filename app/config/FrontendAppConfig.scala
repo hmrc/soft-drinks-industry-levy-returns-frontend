@@ -44,10 +44,17 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
   val loginContinueUrl: String = s"$sdilFrontendBaseUrl/soft-drinks-industry-levy"
   val signOutUrl: String       = s"$basGatewayBaseUrl/bas-gateway/sign-out-without-state"
+  val routeToAccountFrontend: Boolean = servicesConfig.getBoolean("routeToAccountFrontend")
 
   val accountBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-registration-frontend")
-  val accountHomeUrl: String = {
-    s"$accountBaseUrl/soft-drinks-industry-levy-account-frontend/home"
+  val softDrinksIndustryLevyFrontendLink :String  = s"${servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
+
+  val sdilHomeUrl: String = {
+    if(routeToAccountFrontend) {
+      s"$accountBaseUrl/soft-drinks-industry-levy-account-frontend/home"
+    } else {
+      softDrinksIndustryLevyFrontendLink
+    }
   }
 
   private val exitSurveyBaseUrl: String = servicesConfig.baseUrl("feedback-frontend")
@@ -64,7 +71,6 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val balanceAllEnabled: Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
   val defaultReturnSetup: Boolean = servicesConfig.getBoolean("defaultReturnTest.enabled")
-  val softDrinksIndustryLevyFrontendLink :String  = s"${servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
   val addressLookupService: String  = servicesConfig.baseUrl("address-lookup-frontend")
   val addressLookupOffRampUrl: String  = servicesConfig.getString("addressLookupOffRampUrl")
 
