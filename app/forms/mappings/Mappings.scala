@@ -20,6 +20,7 @@ import java.time.LocalDate
 import play.api.data.{FieldMapping, Mapping}
 import play.api.data.Forms.of
 import models.Enumerable
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait Mappings extends Formatters with Constraints {
 
@@ -45,6 +46,26 @@ trait Mappings extends Formatters with Constraints {
                        args: Seq[String] = Seq.empty): Mapping[Long] =
     of(litresFormatter(band, args))
       .verifying(maximumValueNotEqual(100000000000000L, s"litres.error.$band.outOfMaxVal"))
+
+  protected def sdilReference(requiredKey: String = "error.required",
+                              userAnswersId: String,
+                              args: Seq[String] = Seq.empty): Mapping[String] = {
+    def checkSDILReference(): Constraint[String] = {
+
+      val validFormatPattern = "^X[A-Z]SDIL000[0-9]{6}$"
+
+      Constraint {
+        case sdilReference if !sdilReference.matches(validFormatPattern) =>
+          Invalid("addASmallProducer.error.referenceNumber.invalid")
+        case sdilReference if sdilReference == userAnswersId =>
+          Invalid("addASmallProducer.error.referenceNumber.same")
+        case _ =>
+          Valid
+      }
+    }
+
+    of(sdilReferenceFormatter(requiredKey, args)).verifying(checkSDILReference())
+  }
 
   protected def boolean(requiredKey: String = "error.required",
                         invalidKey: String = "error.boolean",
