@@ -20,7 +20,7 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -33,8 +33,11 @@ object AskSecondaryWarehouseSummary {
         Some(
           SummaryListViewModel(
             rows = Seq(SummaryListRowViewModel(
-              key = "warehouseSites",
-              value = ValueViewModel(userAnswers.warehouseList.size.toString).withCssClass("sdil-right-align--desktop"),
+              key = if(userAnswers.warehouseList.size > 1){
+                messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple",  {userAnswers.warehouseList.size.toString})}else{
+                messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one")
+              },
+              value = Value(),
               actions = if (isCheckAnswers) {
                 Seq(
                   ActionItemViewModel("site.change", routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url)

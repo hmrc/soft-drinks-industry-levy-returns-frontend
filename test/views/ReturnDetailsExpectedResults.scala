@@ -38,7 +38,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers",
     SummaryHeadingIds.exported -> "claimingCreditForExportedLiableDrinks",
     SummaryHeadingIds.lostOrDestroyed -> "claimingCreditForLostOrDestroyedLiableDrinks",
-    SummaryHeadingIds.registeredSites -> "packagingSites"
+    SummaryHeadingIds.registeredSites -> "You have 1 packaging site"
   )
 
   val returnDetailsSummaryListsWithListNames = Map(
@@ -93,7 +93,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "broughtIntoUkFromSmallProducers",
     SummaryHeadingIds.exported -> "claimCreditsForExports",
     SummaryHeadingIds.lostOrDestroyed -> "claimCreditsForLostDamaged",
-    SummaryHeadingIds.registeredSites -> "packAtBusinessAddress"
+    SummaryHeadingIds.registeredSites -> "checkYourAnswers.sites.packing"
   )
 
   val returnDetailsSummaryListsWithLitresActionId = Map(

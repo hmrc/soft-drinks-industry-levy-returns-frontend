@@ -45,6 +45,12 @@ index.guidance = Welcome to your new frontend. Please see the README file for a 
 
 checkYourAnswers.title = Check your answers before sending your update
 checkYourAnswers.heading = Check your answers before sending your update
+checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have 1 warehouse
+checkYourAnswers.warehouse.checkYourAnswersLabel.multiple = You have {0} warehouses
+checkYourAnswers.packing.checkYourAnswersLabel.one = You have 1 packaging site
+checkYourAnswers.packing.checkYourAnswersLabel.multiple = You have {0} packaging sites
+checkYourAnswers.sites.packing.change.hidden = the UK packaging site that you operate to produce liable drinks
+checkYourAnswers.sites.warehouse.change.hidden = the UK warehouses you use to store liable drinks
 
 
 journeyRecovery.title = Sorry, there is a problem with the service

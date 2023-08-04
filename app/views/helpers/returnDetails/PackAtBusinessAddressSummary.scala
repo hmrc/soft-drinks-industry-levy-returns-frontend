@@ -20,6 +20,7 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -33,13 +34,16 @@ object PackAtBusinessAddressSummary {
         Some(
           SummaryListViewModel(
           rows = Seq(SummaryListRowViewModel(
-            key = "packagingSites",
-            value = ValueViewModel(userAnswers.packagingSiteList.size.toString).withCssClass("sdil-right-align--desktop"),
+            key =  if(userAnswers.packagingSiteList.size > 1){
+              messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple",  {userAnswers.packagingSiteList.size.toString})}else{
+              messages("checkYourAnswers.packing.checkYourAnswersLabel.one")
+            },
+            value = Value(),
             actions = if (isCheckAnswers) {
               Seq(
                 ActionItemViewModel("site.change", routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)
                   .withAttribute(("id", "change-packaging-sites"))
-                  .withVisuallyHiddenText(messages("packAtBusinessAddress.change.hidden"))
+                  .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden"))
               )
             } else {
               Seq.empty
