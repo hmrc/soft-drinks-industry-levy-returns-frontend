@@ -150,7 +150,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
       val returnToDashboardSection = document.getElementById("goToDashboard")
       val link = returnToDashboardSection.getElementsByClass(Selectors.link)
       link.text() mustEqual Messages("returnSent.help.link")
-      link.get(0).attr("href") mustEqual config.softDrinksIndustryLevyFrontendLink
+      link.get(0).attr("href") mustEqual config.sdilHomeUrl
     }
 
     "should include a details section" - {

@@ -18,9 +18,9 @@ package controllers.actions
 
 import models.requests.DataRequest
 import models.retrieved.RetrievedSubscription
-import models.{AddASmallProducer, LitresInBands, SdilReturn, UserAnswers}
+import models.{AddASmallProducer, LitresInBands, SdilReturn}
 import pages._
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Reads
 import play.api.mvc.Result
 import utilitlies.{GenericLogger, UserTypeCheck}
 
