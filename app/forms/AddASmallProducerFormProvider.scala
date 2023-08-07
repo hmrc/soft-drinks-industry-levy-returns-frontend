@@ -21,40 +21,17 @@ import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
 import models.{AddASmallProducer, UserAnswers}
-import play.api.data.validation.{Constraint, Invalid, Valid}
 
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply(userAnswers: UserAnswers  ) = {
-
-    def checkSDILReference(): Constraint[String] = {
-
-      val validFormatPattern = "^X[A-Z]SDIL000[0-9]{6}$"
-
-      Constraint {
-        case sdilReference if !sdilReference.matches(validFormatPattern) =>
-          Invalid("addASmallProducer.error.referenceNumber.invalid")
-        case sdilReference if sdilReference == userAnswers.id =>
-          Invalid("addASmallProducer.error.referenceNumber.same")
-        case _ =>
-          Valid
-      }
-    }
-
+  def apply(userAnswers: UserAnswers) = {
     Form(
       mapping(
-        "producerName" -> optional(text(
-        ).verifying(
-          maxLength(160,"addASmallProducer.error.producerName.maxLength"))),
-        "referenceNumber" -> text(
-          "addASmallProducer.error.referenceNumber.required"
-        ).verifying(
-            checkSDILReference()),
-        "lowBand" -> litres (
-          "lowBand"),
-        "highBand" -> litres (
-          "highBand")
+        "producerName" -> optional(text().verifying(maxLength(160, "addASmallProducer.error.producerName.maxLength"))),
+        "referenceNumber" -> sdilReference("addASmallProducer.error.referenceNumber.required", userAnswers.id),
+        "lowBand" -> litres("lowBand"),
+        "highBand" -> litres("highBand")
       )(AddASmallProducer.apply)(AddASmallProducer.unapply)
     )
   }
