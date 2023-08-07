@@ -49,6 +49,7 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
   object Selectors {
     val heading = "govuk-heading-l"
     val radios = "govuk-radios__item"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--xl"
     val radioInput = "govuk-radios__input"
     val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body-m"
@@ -72,7 +73,9 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
       val document = doc(html)
 
       "have the expected title" in {
-        document.getElementsByClass(Selectors.heading).text shouldBe RemoveWarehouseConfirmMessages.title
+        val legend = document.getElementsByClass(Selectors.legend)
+        legend.size() mustBe 1
+        legend.get(0).getElementsByClass(Selectors.legend).text() mustEqual RemoveWarehouseConfirmMessages.title
       }
 
       "have the expected address message" in {
@@ -98,7 +101,10 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
       val document = doc(html)
 
       "have a page title containing error" in {
-        document.getElementsByClass(Selectors.heading).text shouldBe RemoveWarehouseConfirmMessages.title
+        val legend = document.getElementsByClass(Selectors.legend)
+        legend.size() mustBe 1
+        legend.get(0).getElementsByClass(Selectors.legend)
+          .text() mustEqual RemoveWarehouseConfirmMessages.title
       }
 
       "contains a message that links to field with error" in {
