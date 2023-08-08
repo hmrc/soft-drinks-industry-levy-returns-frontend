@@ -52,10 +52,7 @@ class SmallProducerDetailsController @Inject()(
     implicit request =>
 
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
-          val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
+          val preparedForm = form
 
       Ok(view(preparedForm, mode, smallProducerList))
   }
