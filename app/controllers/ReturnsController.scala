@@ -45,7 +45,7 @@ class ReturnsController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
           Redirect(routes.PackagedContractPackerController.onPageLoad(NormalMode))
         case Right(_) =>
           Redirect(routes.OwnBrandsController.onPageLoad(NormalMode))
-        case Left(_) => Redirect(config.sdilFrontendBaseUrl)
+        case Left(_) => Redirect(config.sdilHomeUrl)
       }
   }
 }

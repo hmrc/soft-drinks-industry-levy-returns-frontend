@@ -51,8 +51,8 @@ trait SpecBase
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
   lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-  implicit val hc = HeaderCarrier()
-  implicit val ec = application.injector.instanceOf[ExecutionContext]
+  implicit lazy val hc = HeaderCarrier()
+  implicit lazy val ec = application.injector.instanceOf[ExecutionContext]
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

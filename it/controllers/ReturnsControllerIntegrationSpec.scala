@@ -68,7 +68,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
 
           whenReady(result1) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION).value mustBe "http://localhost:8700/soft-drinks-industry-levy"
+            res.header(HeaderNames.LOCATION).value mustBe "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
             getAnswers(sdilNumber).isEmpty mustBe true
           }
         }
@@ -179,7 +179,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
 
           whenReady(result1) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION).value mustBe "http://localhost:8700/soft-drinks-industry-levy"
+            res.header(HeaderNames.LOCATION).value mustBe "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
             getAnswers(sdilNumber).isEmpty mustBe true
           }
         }
