@@ -136,7 +136,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     "that contains a summary list with 1 rows" in {
       summaryRows.size() mustEqual 1
     }
-    testSummaryRowBooleanSection(summarySubHeaderId, summaryRows.get(0), "1", isCheckAnswers)
+    testSummaryRowBooleanSection(summarySubHeaderId, summaryRows.get(0), "", isCheckAnswers)
   }
 
   def testSummaryListWithYesNoAndNoLitres(summarySubHeaderId: String, summaryList: Element, yesNo: String, isCheckAnswers: Boolean) = {
