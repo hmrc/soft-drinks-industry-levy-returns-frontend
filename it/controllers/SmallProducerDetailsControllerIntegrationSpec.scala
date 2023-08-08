@@ -14,7 +14,6 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
   "SmallProducerDetailsController" should {
     "Ask for if user wants to add more small producer" in {
       val userAnswers = smallProducerDetaisPartialAnswers.success.value
-        .set(SmallProducerDetailsPage, true).success.value
       setUpData(userAnswers)
       given
         .commonPreconditionChangeSubscription(aSubscription)
@@ -34,6 +33,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
     "Not pre populate the radio buttons" when {
       "user selected yes previously" in {
         val userAnswers = smallProducerDetaisPartialAnswers.success.value
+          .set(SmallProducerDetailsPage, true).success.value
         setUpData(userAnswers)
         given
           .commonPreconditionChangeSubscription(aSubscription)
@@ -46,6 +46,9 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
 
           whenReady(result1) { res =>
             res.status mustBe 200
+            val doc = Jsoup.parse(res.body)
+            assert(!doc.getElementById("value-no").hasAttr("checked"))
+            assert(!doc.getElementById("value").hasAttr("checked"))
           }
         }
       }
