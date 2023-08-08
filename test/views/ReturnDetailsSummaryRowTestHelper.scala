@@ -26,6 +26,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
   object Selectors {
     val heading = "govuk-heading-l"
     val subHeading = "govuk-heading-m"
+    val insetSubHeading = "govuk-inset-text govuk-!-margin-top-0"
     val caption = "govuk-caption-l"
     val bodyMargin5 = "govuk-body govuk-!-margin-bottom-5"
     val summaryList = "govuk-summary-list"

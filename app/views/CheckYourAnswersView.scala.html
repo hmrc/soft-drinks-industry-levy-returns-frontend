@@ -26,6 +26,7 @@
     govukSummaryList: GovukSummaryList,
     govukInput: GovukInput,
     govukButton: GovukButton,
+    govukInsetText: GovukInsetText,
     formHelper: FormWithCSRF,
     returnDetailsSummary: returnDetailsSummary
 )
@@ -39,16 +40,18 @@
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-    <span class="govuk-caption-l" id="pre-header-caption"> @alias - @ReturnPeriodQuarter.formatted(returnPeriod) </span>
     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-    @AmountToPaySummary.subheader(amounts.total) match {
-        case Some(amount) => {
-            <h2 class="govuk-heading-m" id="cya-sub-header">@AmountToPaySummary.subheader(amounts.total)</h2>
-        }
-        case _ => {
-            <br>
-        }
+    <p class="govuk-body" id="cya-returnPeriod" > @messages("checkYourAnswers.paragraph",alias ,ReturnPeriodQuarter.formatted(returnPeriod))</p>
+
+    @if(amounts.total != 0L) {
+        @govukInsetText(InsetText(
+            id = Some("cya-inset-sub-header"),
+            content = AmountToPaySummary.subheader(amounts.total),
+            classes = "govuk-!-margin-top-0"
+        ))
+    }else{
+        <br>
     }
 
     @returnDetailsSummary(returnPeriod, userAnswers, amounts, true, isSmallProducer)

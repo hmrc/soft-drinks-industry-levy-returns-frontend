@@ -1,7 +1,7 @@
 package controllers
 
 import models.{DefaultUserAnswersData, NormalMode}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames

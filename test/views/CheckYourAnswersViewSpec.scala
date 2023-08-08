@@ -66,7 +66,7 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
         s"when in return period is in quarter $quarter" in {
           val returnPeriodString = ReturnPeriodQuarter.formatted(returnPeriodWithQuater)
-          document1.getElementsByClass(Selectors.caption).text() mustEqual s"$baseAlias - $returnPeriodString"
+          document1.getElementById("cya-returnPeriod").text()  mustEqual s"This return is for $baseAlias for $returnPeriodString"
         }
       })
     }
@@ -78,8 +78,8 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
         val document1: Document = doc(html1)
         val expectedResult = Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total))
 
-        val element = document1.getElementById("cya-sub-header")
-        element.className() mustEqual Selectors.subHeading
+        val element = document1.getElementById("cya-inset-sub-header")
+        element.className() mustEqual Selectors.insetSubHeading
         element.text() mustEqual expectedResult
       }
 
@@ -91,8 +91,8 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
         val expectedResult =
           Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amountsWithNegativeTotal.total * -1))
 
-        val element = document1.getElementById("cya-sub-header")
-        element.className() mustEqual Selectors.subHeading
+        val element = document1.getElementById("cya-inset-sub-header")
+        element.className() mustEqual Selectors.insetSubHeading
         element.text() mustEqual expectedResult
       }
     }
