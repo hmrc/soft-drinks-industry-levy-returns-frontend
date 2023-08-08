@@ -85,7 +85,7 @@ class ReturnsControllerSpec extends SpecBase {
               val config = application.injector.instanceOf[FrontendAppConfig]
 
               status(result) mustEqual SEE_OTHER
-              redirectLocation(result).get mustBe config.sdilFrontendBaseUrl
+              redirectLocation(result).get mustBe config.sdilHomeUrl
             }
           }
         }
@@ -139,7 +139,7 @@ class ReturnsControllerSpec extends SpecBase {
               val config = application.injector.instanceOf[FrontendAppConfig]
 
               status(result) mustEqual SEE_OTHER
-              redirectLocation(result).get mustBe config.sdilFrontendBaseUrl
+              redirectLocation(result).get mustBe config.sdilHomeUrl
             }
           }
         }
