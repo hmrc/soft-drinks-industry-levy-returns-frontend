@@ -6,7 +6,6 @@ import org.scalatest.TryValues
 import pages.SmallProducerDetailsPage
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
-import play.api.test.Helpers.contentAsString
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 

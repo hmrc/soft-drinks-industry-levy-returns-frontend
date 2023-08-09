@@ -50,15 +50,12 @@ object AmountToPaySummary  {
     )
   }
 
-  def subheader(total: BigDecimal)(implicit messages: Messages) = {
+  def subheader(total: BigDecimal)(implicit messages: Messages):String = {
     if (total < 0) {
-      Some(Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total * -1).replace("-", "&minus;")))
-    } else if (total > 0) {
-      Some(Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total)))
+      Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total * -1).replace("-", "&minus;"))
     } else {
-      None
+      Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))
     }
   }
-
 }
 

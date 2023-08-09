@@ -10,7 +10,7 @@ import utilitlies.CurrencyFormatter
 
 trait CheckYourAnswersPageValidationHelper extends ReturnSummaryValidationHelper {
   def validateAmountToPaySubHeader(page: Document, total: BigDecimal) = {
-    val subHeader = page.getElementById("cya-sub-header")
+    val subHeader = page.getElementById("cya-inset-sub-header")
     if(total > 0) {
       subHeader.text() mustBe Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))
     } else if(total < 0) {

@@ -16,8 +16,8 @@
 
 package controllers
 
-import base.SpecBase
 import base.ReturnsTestData._
+import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.SmallProducerDetailsFormProvider
 import helpers.LoggerHelper
@@ -28,7 +28,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.SmallProducerDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{Json, Writes}

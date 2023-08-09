@@ -45,6 +45,7 @@ index.guidance = Welcome to your new frontend. Please see the README file for a 
 
 checkYourAnswers.title = Check your answers before sending your update
 checkYourAnswers.heading = Check your answers before sending your update
+checkYourAnswers.paragraph = This return is for {0} for {1}
 checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have 1 warehouse
 checkYourAnswers.warehouse.checkYourAnswersLabel.multiple = You have {0} warehouses
 checkYourAnswers.packing.checkYourAnswersLabel.one = You have 1 packaging site

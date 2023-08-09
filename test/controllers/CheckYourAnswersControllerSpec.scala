@@ -91,7 +91,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
 
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("firstQuarter")} 2022"
+      val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("firstQuarter")} 2022"
 
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -100,7 +100,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
-        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+        page.getElementById("cya-returnPeriod").text() mustEqual expectedPreHeader
       }
     }
 
@@ -112,7 +112,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
 
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("secondQuarter")} 2021"
+      val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("secondQuarter")} 2021"
+
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -120,7 +121,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
-        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+        page.getElementById("cya-returnPeriod").text() mustEqual expectedPreHeader
       }
     }
 
@@ -132,7 +133,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
 
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("thirdQuarter")} 2020"
+      val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("thirdQuarter")} 2020"
+
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -140,7 +142,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
-        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+        page.getElementById("cya-returnPeriod").text() mustEqual expectedPreHeader
       }
     }
 
@@ -151,7 +153,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         ).build()
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
 
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("fourthQuarter")} 2019"
+      val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("fourthQuarter")} 2019"
+
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -159,7 +162,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
-        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+        page.getElementById("cya-returnPeriod").text() mustEqual expectedPreHeader
       }
     }
 
@@ -906,7 +909,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
-      val expectedPreHeader = s"${aSubscription.orgName} - ${Messages("thirdQuarter")} 2018"
+      val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("thirdQuarter")} 2018"
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amountsZero))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -915,7 +918,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h1").text() mustEqual Messages("checkYourAnswers.title")
-        page.getElementById("pre-header-caption").text() mustEqual expectedPreHeader
+        page.getElementById("cya-returnPeriod").text() mustEqual expectedPreHeader
       }
     }
 
