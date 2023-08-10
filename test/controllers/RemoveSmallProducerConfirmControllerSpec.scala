@@ -65,7 +65,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
   val userAnswersWithTwoProducers: UserAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerListWithTwoProducers)
   val userAnswersWithOneProducer: UserAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerListOnlySuperCola)
 
-  lazy val removeSmallProducerConfirmRoute: String = routes.RemoveSmallProducerConfirmController.onPageLoad(s"$sdilReferenceParty").url
+  lazy val removeSmallProducerConfirmRoute: String = routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode, s"$sdilReferenceParty").url
 
   "RemoveSmallProducerConfirm Controller" - {
 

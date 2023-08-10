@@ -51,6 +51,8 @@ class SmallProducerDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
+      println(s"Loading Page In [onPageLoad] mode = $mode")
+
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
           val preparedForm = form
 

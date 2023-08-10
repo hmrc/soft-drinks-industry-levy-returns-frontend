@@ -35,7 +35,7 @@ class Navigator @Inject()() {
     case ReturnChangeRegistrationPage => _ => sdilReturnOpt => subscriptionOpt => _ => returnChangeRegistrationPageNavigation(sdilReturnOpt, subscriptionOpt)
     case RemoveWarehouseConfirmPage => userAnswers => _ => _ => _ => removeWarehouseConfirmPageNavigation (userAnswers)
     case RemovePackagingDetailsConfirmationPage => _ => _ => _ => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-    case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers)
+    case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers, NormalMode)
     case HowManyCreditsForExportPage => _ => _ => _ => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case HowManyCreditsForLostDamagedPage => _ => sdilReturnOpt => subscriptionOpt => _ =>
       howManyCreditsForLostDamagedPageNavigation(sdilReturnOpt, subscriptionOpt)
@@ -65,7 +65,7 @@ class Navigator @Inject()() {
     case SmallProducerDetailsPage => userAnswers => checkSmallProducerDetailsPageNavigation(userAnswers)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     case RemoveWarehouseConfirmPage =>  _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-    case RemoveSmallProducerConfirmPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case RemoveSmallProducerConfirmPage => userAnswers =>  removeSmallProducerConfirmPageNavigation(userAnswers, CheckMode)
     case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
     case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad
     case BroughtIntoUkFromSmallProducersPage => userAnswers => checkBroughtIntoUkFromSmallProducersPageNavigation(userAnswers)
@@ -78,7 +78,7 @@ class Navigator @Inject()() {
   }
 
   private val EditRouteMap: Page => UserAnswers => Call = {
-    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onSubmit(NormalMode)
+    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onSubmit(CheckMode)
     case _ => _ => sys.error("This case should never reach")
   }
 
@@ -151,11 +151,11 @@ class Navigator @Inject()() {
 
   }
 
-  private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers) = {
+  private def removeSmallProducerConfirmPageNavigation(userAnswers: UserAnswers, mode: Mode) = {
     if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
-      routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+      routes.ExemptionsForSmallProducersController.onPageLoad(mode)
     } else {
-      routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+      routes.SmallProducerDetailsController.onPageLoad(mode)
     }
   }
 

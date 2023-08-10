@@ -22,7 +22,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.AddASmallProducerFormProvider
 import helpers.LoggerHelper
-import models.{BlankMode, NormalMode, ReturnPeriod, UserAnswers}
+import models.{BlankMode, CheckMode, NormalMode, ReturnPeriod, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -53,7 +53,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
   val userAnswersWithTwoSmallProducers: UserAnswers = UserAnswers(sdilReference, Json.obj(), List(superCola, sparkyJuice))
 
   lazy val addASmallProducerRoute: String = routes.AddASmallProducerController.onPageLoad(NormalMode).url
-  lazy val addASmallProducerEditSubmitRoute: String = routes.AddASmallProducerController.onEditPageSubmit(superCola.sdilRef).url
+  lazy val addASmallProducerEditSubmitRoute: String = routes.AddASmallProducerController.onEditPageSubmit(CheckMode, superCola.sdilRef).url
 
   "AddASmallProducer Controller onPageLoad" - {
 
@@ -159,7 +159,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
     "must return OK(200) when page is loaded in edit mode for a single small producer" in {
 
-      lazy val addASmallProducerEditRoute = routes.AddASmallProducerController.onEditPageLoad(sdilReference = superCola.sdilRef).url
+      lazy val addASmallProducerEditRoute = routes.AddASmallProducerController.onEditPageLoad(CheckMode, sdilReference = superCola.sdilRef).url
 
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
@@ -183,7 +183,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
     "must return 500 when small producer the user being edited does not exist on the list of small producers" in {
 
-      lazy val addASmallProducerEditRoute = routes.AddASmallProducerController.onEditPageLoad(sdilReference = sparkyJuice.sdilRef).url
+      lazy val addASmallProducerEditRoute = routes.AddASmallProducerController.onEditPageLoad(CheckMode, sdilReference = sparkyJuice.sdilRef).url
 
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))

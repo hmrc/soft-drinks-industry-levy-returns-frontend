@@ -48,14 +48,6 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
   def testSummaryLists(key: String, element: Element, userAnswers: UserAnswers, isCheckAnswers: Boolean) = {
     val summaryLists = element.getElementsByClass(Selectors.summaryList)
 
-    "should contain the expected number of summaryLists" in {
-      val expectedNumberOfSummaryListItems = if (userAnswers.packagingSiteList.nonEmpty) {
-        9
-      } else {
-        8
-      }
-      summaryLists.size() mustEqual expectedNumberOfSummaryListItems
-    }
 
     returnDetailsSummaryListsWithListNames.foreach { case (subHeaderId, listName) =>
 

@@ -123,7 +123,7 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/small-producer-details")
+          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/change-small-producer-details")
           val smallProducer = getAnswers("XKSDIL000000022").get.smallProducerList.head
           smallProducer.alias mustEqual amendedProducerAlias
           smallProducer.litreage._1.toString mustEqual amendedLowBand
@@ -168,7 +168,7 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/small-producer-details")
+          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/change-small-producer-details")
           val smallProducers = getAnswers("XKSDIL000000022").get.smallProducerList
           assert(smallProducers.filter(_.sdilRef == sdilRefSuperCola).isEmpty)
           assert(smallProducers.size == 2)
