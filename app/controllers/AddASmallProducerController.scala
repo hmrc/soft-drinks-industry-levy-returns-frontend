@@ -55,7 +55,6 @@ class AddASmallProducerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
-      println(s"mode = $mode")
       val userAnswers = request.userAnswers
 
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
@@ -107,7 +106,6 @@ class AddASmallProducerController @Inject()(
   def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] =
     (identify andThen getData andThen requireData) {
       implicit request: DataRequest[AnyContent] =>
-        println(s"[onEditPageLoad] mode = $mode")
 
         val userAnswers = request.userAnswers
         val form = formProvider(userAnswers)
@@ -127,7 +125,6 @@ class AddASmallProducerController @Inject()(
   def onEditPageSubmit(mode: Mode, sdilReference: String): Action[AnyContent] =
     (identify andThen getData andThen requireData).async {
       implicit request =>
-        println(s"[onEditPageSubmit] mode = $mode")
 
         val userAnswers = request.userAnswers
         val returnPeriod = request.returnPeriod
