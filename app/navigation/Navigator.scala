@@ -78,7 +78,7 @@ class Navigator @Inject()() {
   }
 
   private val EditRouteMap: Page => UserAnswers => Call = {
-    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onSubmit(CheckMode)
+    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onSubmit(NormalMode)
     case _ => _ => sys.error("This case should never reach")
   }
 

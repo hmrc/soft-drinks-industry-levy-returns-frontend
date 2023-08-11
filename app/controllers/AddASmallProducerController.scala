@@ -92,11 +92,10 @@ class AddASmallProducerController @Inject()(
                   Future.successful(
                     BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
                   )
-                case _ => {
+                case _ =>
                   updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
                     Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
                   )
-                }
               }
           }
         }
