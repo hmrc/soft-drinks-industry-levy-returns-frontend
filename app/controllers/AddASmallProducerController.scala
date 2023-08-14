@@ -55,7 +55,6 @@ class AddASmallProducerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
-
       val userAnswers = request.userAnswers
 
       val form: Form[AddASmallProducer] = formProvider(userAnswers)
@@ -93,11 +92,10 @@ class AddASmallProducerController @Inject()(
                   Future.successful(
                     BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
                   )
-                case _ => {
+                case _ =>
                   updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
                     Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
                   )
-                }
               }
           }
         }

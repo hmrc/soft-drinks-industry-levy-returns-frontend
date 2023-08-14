@@ -38,7 +38,7 @@
 
         <h1 class="govuk-heading-l">@messages("smallProducerDetails.title", smallProducerList.length, if(smallProducerList.length == 1) "" else "s")</h1>
 
-        @govukSummaryList(SmallProducerDetailsSummary.producerList(smallProducerList))
+        @govukSummaryList(SmallProducerDetailsSummary.producerList(mode, smallProducerList))
 
         @govukRadios(
             RadiosViewModel.yesNo(

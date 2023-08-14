@@ -814,13 +814,6 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true), smallProducerListOnlySuperCola)
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
-
-        "Should navigate to add a small producer page when yes is selected AND the small producer list is empty" in {
-          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode,
-            UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true), smallProducerList = List.empty)
-          ) mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
-        }
-
       }
 
 
@@ -956,17 +949,24 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
       "Remove a small producer " - {
 
-        "Should navigate to small producer details controller when yes is selected" in {
+        "Should navigate to change exemptions for small producers  when yes is selected with no small producers" in {
           navigator.nextPage(RemoveSmallProducerConfirmPage,
             CheckMode,
             UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> true), smallProducerList = List())
+          ) mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to small producer details controller when yes is selected" in {
+          navigator.nextPage(RemoveSmallProducerConfirmPage,
+            CheckMode,
+            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> true), smallProducerList = List(SmallProducer("foo", "bar", (1,1))))
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
 
         "Should navigate to small producer details controller when no is selected" in {
           navigator.nextPage(RemoveSmallProducerConfirmPage,
             CheckMode,
-            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> false), smallProducerList = List())
+            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> false), smallProducerList = List(SmallProducer("foo", "bar", (1,1))))
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
       }

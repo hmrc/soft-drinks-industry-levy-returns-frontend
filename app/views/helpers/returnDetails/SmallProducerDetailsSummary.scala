@@ -17,7 +17,7 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, SmallProducer}
+import models.{CheckMode, EditMode, Mode, NormalMode, SmallProducer}
 import pages.{QuestionPage, SmallProducerDetailsPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -40,7 +40,7 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
   override val hiddenText: String = "smallProducerDetails"
   override val hasZeroLevy: Boolean = true
 
-  def producerList(smallProducersList: List[SmallProducer])(implicit messages: Messages): SummaryList = {
+  def producerList(mode: Mode, smallProducersList: List[SmallProducer])(implicit messages: Messages): SummaryList = {
     val rows = smallProducersList.map {
     smallProducer =>
       val value = ValueViewModel(
@@ -52,9 +52,9 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
         key     = smallProducer.sdilRef,
         value   = value,
         actions = Seq(
-          ActionItemViewModel("site.edit", routes.AddASmallProducerController.onEditPageLoad(smallProducer.sdilRef).url)
+          ActionItemViewModel("site.edit", routes.AddASmallProducerController.onEditPageLoad( if (mode == NormalMode) {EditMode} else CheckMode, smallProducer.sdilRef).url)
             .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")),
-          ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(smallProducer.sdilRef).url)
+          ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(mode, smallProducer.sdilRef).url)
             .withVisuallyHiddenText(messages("smallProducerDetails.remove.hidden"))
         )
       )
