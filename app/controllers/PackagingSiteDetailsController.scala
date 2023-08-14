@@ -76,27 +76,28 @@ class PackagingSiteDetailsController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
-            onwardUrl:String      <- if(value){
-              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
+            onwardUrl:String <-
+              if(value){
+                updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
                 addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
-            } else {
-              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
-              (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
-                case (Some(sdilReturn), Some(subscription)) =>
-                  if (UserTypeCheck.isNewImporter (sdilReturn, subscription) ) {
-                   Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
-                  } else {
-                    Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
-                  }
-                case (_, Some(subscription)) =>
-                  genericLogger.logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
-                  Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
-                case _ =>
-                  genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
-                  Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
-                }
-              )
-            }
+              } else {
+                updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
+                  (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
+                    case (Some(sdilReturn), Some(subscription)) =>
+                      if (UserTypeCheck.isNewImporter (sdilReturn, subscription) ) {
+                        Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
+                      } else {
+                        Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
+                      }
+                    case (_, Some(subscription)) =>
+                      genericLogger.logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
+                      Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                    case _ =>
+                      genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
+                      Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                    }
+                )
+              }
           } yield {
             Redirect(onwardUrl)
           }

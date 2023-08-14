@@ -847,8 +847,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must return OK and contain registered UK sites section header when packaging site present" in {
-
+    "must show packaging site section if the user selected the default packaging site we presented to them during the journey" in {
       val userAnswersData = Json.obj("packAtBusinessAddress" -> true)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
@@ -866,8 +865,60 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must return OK and contain registered UK sites section header when warehouse site present" in {
+    "must show packaging site section if the user changed the default packaging site we presented to them during the journey" in {
+      val userAnswersData = Json.obj("packAtBusinessAddress" -> false)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
 
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("registeredUkSites").text mustEqual Messages("registeredUkSites")
+        page.getElementsByTag("dt").text() must include(Messages("You have 1 packaging site"))
+      }
+    }
+
+    "must show correct number of packaging sites if multiple packaging sites present" in {
+      val userAnswers = UserAnswers(sdilNumber, Json.obj(), packagingSiteList = packagingSiteListWith2)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("registeredUkSites").text mustEqual Messages("registeredUkSites")
+        page.getElementsByTag("dt").text() must include(Messages("You have 2 packaging sites"))
+      }
+    }
+
+    "must show correct number of warehouses if multiple are present" in {
+      val userAnswersData = Json.obj("askSecondaryWarehouseInReturn" -> true)
+      val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1, warehouseList = warhouseSiteListWith2)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("registeredUkSites").text mustEqual Messages("registeredUkSites")
+        page.getElementsByTag("dt").text() must include(Messages("You have 2 warehouses"))
+      }
+    }
+
+    "must return OK and contain registered UK sites section header when warehouse site present" in {
       val userAnswersData = Json.obj("askSecondaryWarehouseInReturn" -> true)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, warehouseList = warhouseSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(

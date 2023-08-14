@@ -134,7 +134,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends ControllerITTestHel
           "packAtBusinessAddress" -> true
         ))
 
-      val expectedPackingSiteListDB = Some(Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)))
+      val testSite = Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)
 
       setUpData(emptyUserAnswers)
       given
@@ -153,7 +153,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends ControllerITTestHel
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/packaging-site-details")
           getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
-          getAnswers(sdilNumber).map(userAnswers => userAnswers.packagingSiteList) mustBe expectedPackingSiteListDB
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.packagingSiteList).get.values must contain(testSite)
         }
       }
     }

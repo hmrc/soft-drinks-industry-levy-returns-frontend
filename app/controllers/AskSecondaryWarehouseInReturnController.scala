@@ -56,7 +56,7 @@ class AskSecondaryWarehouseInReturnController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-    val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
+      val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
           case None => form
           case Some(value) => form.fill(value)
     }

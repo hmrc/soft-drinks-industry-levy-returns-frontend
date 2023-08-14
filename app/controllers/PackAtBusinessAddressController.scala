@@ -27,7 +27,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails}
-import utilitlies.GenericLogger
+import utilitlies.{AddressHelper, GenericLogger}
 import views.html.PackAtBusinessAddressView
 
 import javax.inject.Inject
@@ -48,7 +48,7 @@ class PackAtBusinessAddressController @Inject()(
                                          formProvider: PackAtBusinessAddressFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: PackAtBusinessAddressView
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                 )(implicit ec: ExecutionContext) extends ControllerHelper with AddressHelper {
 
   private val form = formProvider()
 
@@ -76,20 +76,23 @@ class PackAtBusinessAddressController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            onwardUrl              <- if(value){
-              updateDatabaseWithoutRedirect(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
-                Site(
-                  address = businessAddress,
-                  ref = None,
-                  tradingName = Some(businessName),
-                  closureDate = None
-                )
-              )), PackAtBusinessAddressPage).flatMap(_ =>
-                Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
-            } else {
-              updateDatabaseWithoutRedirect(updatedAnswers, PackAtBusinessAddressPage).flatMap(_ =>
-                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
-            }
+            onwardUrl <-
+              if(value){
+                updateDatabaseWithoutRedirect(updatedAnswers.copy(
+                  packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
+                    generateId ->
+                      Site(
+                        address = businessAddress,
+                        ref = None,
+                        tradingName = Some(businessName),
+                        closureDate = None
+                      )
+                )), PackAtBusinessAddressPage).flatMap(_ =>
+                  Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
+              } else {
+                updateDatabaseWithoutRedirect(updatedAnswers, PackAtBusinessAddressPage).flatMap(_ =>
+                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+              }
           } yield {
             Redirect(onwardUrl)
           }

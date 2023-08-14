@@ -182,9 +182,10 @@ object ReturnsTestData {
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"))
 
   lazy val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
-
+  lazy val packagingSiteListWith2 = Map(("78941132", PackagingSite1), ("78941131", PackagingSite1))
 
   lazy val warhouseSiteListWith1 = Map(("78941132", WarehouseSite1))
+  lazy val warhouseSiteListWith2 = Map(("78941132", WarehouseSite1), ("78941131", WarehouseSite1))
 
   val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
