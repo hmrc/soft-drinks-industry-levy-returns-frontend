@@ -30,7 +30,7 @@ object PackAtBusinessAddressSummary {
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                           (implicit messages: Messages): Option[SummaryList] = {
     userAnswers.get(PackAtBusinessAddressPage) match {
-      case Some(a) =>
+      case Some(true) =>
         Some(
           SummaryListViewModel(
           rows = Seq(SummaryListRowViewModel(
