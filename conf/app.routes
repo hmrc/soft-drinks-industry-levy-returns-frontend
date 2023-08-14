@@ -131,13 +131,14 @@ POST       /change-packaging-site-details                       controllers.Pack
 GET        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn  controllers.ReturnsController.onPageLoad(year: Int, quarter: Int, nilReturn: Boolean)
 GET        /return-sent                                         controllers.ReturnSentController.onPageLoad
 
-
 GET        /remove-warehouse-details/:index                     controllers.RemoveWarehouseConfirmController.onPageLoad(mode: Mode = NormalMode, index: String)
 POST       /remove-warehouse-details/:index                     controllers.RemoveWarehouseConfirmController.onSubmit(mode: Mode = NormalMode, index: String)
 
 GET        /remove-packaging-site-details/:ref                  controllers.RemovePackagingDetailsConfirmationController.onPageLoad(mode: Mode = NormalMode, ref: String)
 POST       /remove-packaging-site-details/:ref                  controllers.RemovePackagingDetailsConfirmationController.onSubmit(mode: Mode = NormalMode, ref: String)
-
+GET        /change-remove-packaging-site-details/:ref           controllers.RemovePackagingDetailsConfirmationController.onPageLoad(mode: Mode = CheckMode, ref: String)
+POST       /change-remove-packaging-site-details/:ref           controllers.RemovePackagingDetailsConfirmationController.onSubmit(mode: Mode = CheckMode, ref: String)
 
 GET       /off-ramp/secondary-warehouses/:sdilId                controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String)
-GET       /off-ramp/packing-site-details/:sdilId                controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String)
+GET       /off-ramp/packing-site-details/:sdilId                controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String, mode: Mode = NormalMode)
+GET       /off-ramp/change-packing-site-details/:sdilId         controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String, mode: Mode = CheckMode)

@@ -79,12 +79,12 @@ class PackagingSiteDetailsController @Inject()(
             onwardUrl:String <-
               if(value){
                 updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
-                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
               } else {
                 updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
                   (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
                     case (Some(sdilReturn), Some(subscription)) =>
-                      if (UserTypeCheck.isNewImporter (sdilReturn, subscription) ) {
+                      if (UserTypeCheck.isNewImporter (sdilReturn, subscription) && mode == NormalMode) {
                         Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
                       } else {
                         Future.successful(routes.CheckYourAnswersController.onPageLoad.url)

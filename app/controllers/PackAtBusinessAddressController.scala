@@ -88,10 +88,10 @@ class PackAtBusinessAddressController @Inject()(
                         closureDate = None
                       )
                 )), PackAtBusinessAddressPage).flatMap(_ =>
-                  Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
+                  Future.successful(routes.PackagingSiteDetailsController.onPageLoad(mode).url))
               } else {
                 updateDatabaseWithoutRedirect(updatedAnswers, PackAtBusinessAddressPage).flatMap(_ =>
-                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
               }
           } yield {
             Redirect(onwardUrl)

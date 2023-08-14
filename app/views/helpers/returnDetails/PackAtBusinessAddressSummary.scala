@@ -46,7 +46,7 @@ object PackAtBusinessAddressSummary {
                 actions =
                   if (isCheckAnswers) {
                     Seq(
-                      ActionItemViewModel("site.change", routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)
+                      ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                         .withAttribute(("id", "change-packaging-sites"))
                         .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden"))
                     )

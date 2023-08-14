@@ -22,7 +22,7 @@ import errors.SessionDatabaseInsertError
 import forms.RemovePackagingDetailsConfirmationFormProvider
 import helpers.LoggerHelper
 import models.backend.{Site, UkAddress}
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -51,11 +51,11 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
   val form: Form[Boolean] = formProvider()
 
   "RemovePackagingDetailsConfirmation Controller" - {
-    def commonAssertionsForPageLoad(addressToBeDisplayed: Html, page: String, ref: String): Assertion = {
+    def commonAssertionsForPageLoad(addressToBeDisplayed: Html, page: String, ref: String, mode: Mode = NormalMode): Assertion = {
       val doc: Document = Jsoup.parse(page)
       doc.getElementById("value-hint").text() mustBe addressToBeDisplayed.toString()
       doc.getElementsByTag("h1").text() mustEqual "Are you sure you want to remove this packaging site?"
-      doc.getElementsByTag("form").attr("action") mustBe routes.RemovePackagingDetailsConfirmationController.onSubmit(ref).url
+      doc.getElementsByTag("form").attr("action") mustBe routes.RemovePackagingDetailsConfirmationController.onSubmit(mode, ref).url
     }
 
     Map(
@@ -94,7 +94,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
-          val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(ref).url)
+          val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
 
           val result = route(application, request).value
 
@@ -114,7 +114,20 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(ref).url)
+        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
+      }
+    }
+
+    "must redirect to returns sent page if return is already submitted in check mode" in {
+      val ref: String = "foo"
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(CheckMode, ref).url)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -128,7 +141,23 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onPageLoad(ref).url)
+          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
+      }
+    }
+
+    "must redirect to returns sent page if return is already submitted when hitting the submit in check mode" in {
+      val ref: String = "foo"
+      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onPageLoad(CheckMode, ref).url)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -145,10 +174,24 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(ref).url)
+        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).get mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to the main Packaging Details list page if user navigates to page without ref in user answers in check mode" in {
+      val ref: String = "foo"
+      val userAnswers = UserAnswers(sdilNumber, packagingSiteList = Map.empty)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(CheckMode, ref).url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).get mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
     }
 
@@ -168,13 +211,39 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(ref).url)
+          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, ref).url)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to the next page when valid data is submitted and no item exists in the list for ref in check mode" in {
+      val ref: String = "foo"
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(CheckMode, ref).url)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
     }
 
@@ -191,7 +260,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(ref).url)
+          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, ref).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
@@ -207,12 +276,55 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
       }
     }
 
+    "must return a Bad Request and errors when invalid data is submitted in check mode" in {
+      val ref: String = "foo"
+      val packagingSite: Map[String, Site] = Map(ref -> Site(
+        UkAddress(List("a", "b"), "c"),
+        None,
+        Some("trading"),
+        None))
+      val htmlExpectedInView = Html("trading<br>a, b, c")
+      val htmlExpectedAfterRender = Html("trading a, b, c")
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(packagingSiteList = packagingSite))).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(CheckMode, ref).url)
+            .withFormUrlEncodedBody(("value", ""))
+
+        val boundForm = form.bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        val contentOfResult: String = contentAsString(result)
+        contentOfResult mustEqual view(boundForm, CheckMode, ref, htmlExpectedInView)(request, messages(application)).toString
+        commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref, CheckMode)
+      }
+    }
+
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
       val ref: String = "foo"
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onSubmit(ref).url)
+        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, ref).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing data is found in check mode" in {
+      val ref: String = "foo"
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onSubmit(CheckMode, ref).url)
 
         val result = route(application, request).value
 
@@ -227,7 +339,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(ref).url)
+          FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, ref).url)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -260,7 +372,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(app) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request = FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(ref).url)
+          val request = FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, ref).url)
             .withFormUrlEncodedBody(("value", "true"))
           await(route(app, request).value)
           events.collectFirst {
