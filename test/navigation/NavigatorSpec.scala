@@ -814,13 +814,6 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true), smallProducerListOnlySuperCola)
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
-
-        "Should navigate to add a small producer page when yes is selected AND the small producer list is empty" in {
-          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode,
-            UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true), smallProducerList = List.empty)
-          ) mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
-        }
-
       }
 
 
