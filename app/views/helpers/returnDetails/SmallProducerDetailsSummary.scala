@@ -21,7 +21,7 @@ import models.{CheckMode, EditMode, Mode, NormalMode, SmallProducer}
 import pages.{QuestionPage, SmallProducerDetailsPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -44,7 +44,9 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
     val rows = smallProducersList.map {
     smallProducer =>
       val value = ValueViewModel(
-       smallProducer.alias
+        Text(
+          smallProducer.alias
+        )
       )
       SummaryListRowViewModel(
         key     = smallProducer.sdilRef,
