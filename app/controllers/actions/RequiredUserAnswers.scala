@@ -57,7 +57,7 @@ class RequiredUserAnswers @Inject()(genericLogger: GenericLogger)(implicit val e
             !previousPageAnswer.contains(previousPage.previousPageAnswerRequired)
         case (false, _) => false
         case _ => true
-        }
+      }
     }
   }
   private[controllers] def smallProducerCheck(subscription: RetrievedSubscription): List[RequiredPage[_, _,_]] = {
@@ -97,7 +97,7 @@ class RequiredUserAnswers @Inject()(genericLogger: GenericLogger)(implicit val e
   }
 
   private[controllers] val packingListReturnChange: DataRequest[_] => List[RequiredPage[_, _,_]] = { (request: DataRequest[_]) =>
-    if(UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription)) {
+    if(UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) && request.subscription.productionSites.isEmpty) {
       List(RequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
     } else {
       List.empty
