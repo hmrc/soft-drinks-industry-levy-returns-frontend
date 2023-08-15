@@ -44,9 +44,7 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
     val rows = smallProducersList.map {
     smallProducer =>
       val value = ValueViewModel(
-        HtmlContent(
-          HtmlFormat.escape(smallProducer.alias)
-        )
+       smallProducer.alias
       )
       SummaryListRowViewModel(
         key     = smallProducer.sdilRef,
