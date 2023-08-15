@@ -51,7 +51,7 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
       result.getElementsByClass("govuk-radios__item").last().text() mustBe "No"
       result.getElementsByTag("button").first().text() mustBe "Continue"
       result.getElementsByClass("govuk-back-link").text() mustBe "Back"
-      result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onSubmit("foo").url
+      result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode,"foo").url
     }
 
     "display correctly with form errors" in {
@@ -65,7 +65,7 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
       result.getElementsByClass("govuk-radios__item").last().text() mustBe "No"
       result.getElementsByTag("button").first().text() mustBe "Continue"
       result.getElementsByClass("govuk-back-link").text() mustBe "Back"
-      result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onSubmit("foo").url
+      result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, "foo").url
       result.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
       result.getElementById("value-error").text() mustBe "Error: Select yes if you want to remove this packaging site"
     }

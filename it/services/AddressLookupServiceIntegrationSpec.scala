@@ -2,6 +2,7 @@ package services
 
 import controllers.testSupport.helpers.ALFTestHelper
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import models.NormalMode
 import models.alf.init.{JourneyConfig, JourneyOptions}
 import models.alf.{AlfAddress, AlfResponse}
 import models.core.ErrorModel
@@ -78,7 +79,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     s"return ramp on url when success for $PackingDetails" in {
       val req = FakeRequest()
       val sdilId: String = "bar"
-      val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId)(req, messages)
+      val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId, NormalMode)(req, messages)
       given.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
 
       whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)) { result =>
@@ -89,7 +90,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     s"return ramp on url when success for $WarehouseDetails" in {
       val req = FakeRequest()
       val sdilId: String = "bar"
-      val journeyConfig = service.createJourneyConfig(WarehouseDetails, sdilId)(req, messages)
+      val journeyConfig = service.createJourneyConfig(WarehouseDetails, sdilId, NormalMode)(req, messages)
       given.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
 
       whenReady(service.initJourneyAndReturnOnRampUrl(WarehouseDetails)(implicitly,implicitly, messages, req)) { result =>
@@ -100,7 +101,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     "throw exception when fail" in {
       val req = FakeRequest()
       val sdilId: String = "bar"
-      val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId)(req, messages)
+      val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId, NormalMode)(req, messages)
       given.alf.getFailResponseFromALFInit(Status.INTERNAL_SERVER_ERROR)
 
       intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)))

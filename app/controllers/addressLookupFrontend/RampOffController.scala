@@ -17,7 +17,7 @@
 package controllers.addressLookupFrontend
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.NormalMode
+import models.{Mode, NormalMode}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails, WarehouseDetails}
@@ -45,14 +45,14 @@ class RampOffController @Inject()(           identify: IdentifierAction,
     }
   }
 
-  def packingSiteDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def packingSiteDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       for {
         alfResponse         <- addressLookupService.getAddress(alfId)
         updatedUserAnswers = addressLookupService.addAddressUserAnswers(PackingDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _                   <- sessionRepository.set(updatedUserAnswers)
       } yield {
-        Redirect(controllers.routes.PackagingSiteDetailsController.onPageLoad(NormalMode))
+        Redirect(controllers.routes.PackagingSiteDetailsController.onPageLoad(mode))
       }
   }
 }

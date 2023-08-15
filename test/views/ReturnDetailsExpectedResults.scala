@@ -61,7 +61,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "/change-brought-into-uk-from-small-producers",
     SummaryHeadingIds.exported -> "/change-claim-credits-for-exports",
     SummaryHeadingIds.lostOrDestroyed -> "/change-claim-credits-for-lost-damaged",
-    SummaryHeadingIds.registeredSites -> "/change-pack-at-business-address-in-return"
+    SummaryHeadingIds.registeredSites -> "/change-packaging-site-details",
   )
 
   val returnDetailsSummaryListsWithActionHrefsForLitres = Map(

@@ -74,6 +74,7 @@ class Navigator @Inject()() {
     case HowManyCreditsForExportPage => _ => routes.CheckYourAnswersController.onPageLoad
     case ClaimCreditsForLostDamagedPage => userAnswers => checkClaimCreditsForLostDamagedPageNavigation(userAnswers)
     case HowManyCreditsForLostDamagedPage => _ => routes.CheckYourAnswersController.onPageLoad
+    case RemovePackagingDetailsConfirmationPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.CheckYourAnswersController.onPageLoad
   }
 

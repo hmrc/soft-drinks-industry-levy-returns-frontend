@@ -22,7 +22,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.PackagingSiteDetailsFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -53,7 +53,11 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
   val form: Form[Boolean] = formProvider()
 
   lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+  lazy val checkPackagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
   lazy val userAnswersWith1PackagingSite: UserAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
+  lazy val newImporterAnswer : UserAnswers = UserAnswers(
+    sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty, packagingSiteListWith1
+  )
 
   "packagingSiteDetails Controller" - {
 
@@ -138,7 +142,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
-        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
         ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(onwardUrlForALF))
 
@@ -162,7 +166,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         redirectLocation(result).value mustEqual onwardUrlForALF
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
-          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
           ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
@@ -195,11 +199,38 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
+    "must redirect to check your answers when user does not match new importer when the data is submitted in check mode" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))
+
+      val application =
+        applicationBuilder(userAnswers = Some(newImporterAnswer))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, checkPackagingSiteDetailsRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad.url
+      }
+    }
+
     "must redirect to ask secondary warehouse when user does match new importer when the data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      lazy val newImporterAnswer : UserAnswers = UserAnswers(sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty, packagingSiteListWith1)
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(Some(aSubscription))

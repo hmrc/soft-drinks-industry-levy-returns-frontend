@@ -187,7 +187,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.successful(Right(true)))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId).url)
+        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId, NormalMode).url)
 
         val result = route(application, request).value
         status(result) mustBe SEE_OTHER
@@ -208,7 +208,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.failed(new Exception("woopsie")))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId).url)
+        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId, NormalMode).url)
 
         intercept[Exception](await(route(application, request).value))
       }
@@ -235,7 +235,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         .thenThrow(new RuntimeException("foo"))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId).url)
+        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId, NormalMode).url)
 
         intercept[Exception](await(route(application, request).value))
       }
@@ -265,7 +265,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.failed(new Exception("woopsie")))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId).url)
+        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId, NormalMode).url)
         intercept[Exception](await(route(application, request).value))
       }
     }

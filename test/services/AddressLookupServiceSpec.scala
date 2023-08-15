@@ -20,7 +20,7 @@ import base.ReturnsTestData._
 import base.SpecBase
 import connectors.AddressLookupConnector
 import controllers.routes
-import models.Warehouse
+import models.{NormalMode, Warehouse}
 import models.alf.AlfAddress
 import models.alf.init._
 import models.backend.{Site, UkAddress}
@@ -401,7 +401,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
     s"should return a journey config for $WarehouseDetails" in {
       val request = FakeRequest("foo","bar")
       val exampleSdilIdWeGenerate: String = "wizz"
-      val res = service.createJourneyConfig(WarehouseDetails, exampleSdilIdWeGenerate)(request, implicitly)
+      val res = service.createJourneyConfig(WarehouseDetails, exampleSdilIdWeGenerate, NormalMode)(request, implicitly)
       val expected =  JourneyConfig(
         version = 2,
         options = JourneyOptions(

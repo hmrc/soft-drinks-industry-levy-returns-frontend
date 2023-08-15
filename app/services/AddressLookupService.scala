@@ -23,7 +23,7 @@ import controllers.routes
 import models.alf.{AlfAddress, AlfResponse}
 import models.alf.init._
 import models.backend.{Site, UkAddress}
-import models.{UserAnswers, Warehouse}
+import models.{Mode, NormalMode, UserAnswers, Warehouse}
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.mvc.RequestHeader
@@ -79,20 +79,21 @@ class AddressLookupService @Inject()(
     addressLookupConnector.initJourney(journeyConfig)
   }
 
-  def initJourneyAndReturnOnRampUrl(state: AddressLookupState, sdilId: String = generateId)
+  def initJourneyAndReturnOnRampUrl(state: AddressLookupState, sdilId: String = generateId, mode: Mode = NormalMode)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
-    val journeyConfig: JourneyConfig = createJourneyConfig(state, sdilId)
+    val journeyConfig: JourneyConfig = createJourneyConfig(state, sdilId, mode: Mode)
     initJourney(journeyConfig).map {
       case Right(onRampUrl) => onRampUrl
       case Left(error) => throw new Exception(s"Failed to init ALF ${error.message} with status ${error.status} for ${hc.requestId}")
     }
   }
 
-  def createJourneyConfig(state: AddressLookupState, sdilId: String)(implicit requestHeader: RequestHeader, messages: Messages): JourneyConfig = {
+  def createJourneyConfig(state: AddressLookupState, sdilId: String, mode: Mode = NormalMode)
+                         (implicit requestHeader: RequestHeader, messages: Messages): JourneyConfig = {
     JourneyConfig(
       version = frontendAppConfig.AddressLookupConfig.version,
       options = JourneyOptions(
-        continueUrl = returnContinueUrl(state, sdilId),
+        continueUrl = returnContinueUrl(state, sdilId, mode: Mode),
         homeNavHref = None,
         signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
         accessibilityFooterUrl = None,
@@ -190,10 +191,10 @@ class AddressLookupService @Inject()(
     }
   }
 
-  private def returnContinueUrl(state: AddressLookupState, sdilId: String): String = {
+  private def returnContinueUrl(state: AddressLookupState, sdilId: String, mode: Mode): String = {
     state match {
       case WarehouseDetails => frontendAppConfig.AddressLookupConfig.WarehouseDetails.offRampUrl(sdilId)
-      case PackingDetails => frontendAppConfig.AddressLookupConfig.PackingDetails.offRampUrl(sdilId)
+      case PackingDetails => frontendAppConfig.AddressLookupConfig.PackingDetails.offRampUrl(sdilId, mode)
     }
   }
 }

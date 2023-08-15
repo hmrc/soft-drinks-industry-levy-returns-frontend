@@ -139,10 +139,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
       val mockAddressLookupService = mock[AddressLookupService]
       val onwardUrlForALF = "foobarwizz"
 
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
-        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
         ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(onwardUrlForALF))
 
@@ -166,7 +165,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         redirectLocation(result).value mustEqual onwardUrlForALF
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
-          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
           ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }

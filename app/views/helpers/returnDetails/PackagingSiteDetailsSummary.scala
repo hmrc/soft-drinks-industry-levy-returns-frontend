@@ -17,6 +17,7 @@
 package views.helpers.returnDetails
 
 import controllers.routes
+import models.{Mode, NormalMode}
 import models.backend.Site
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, SummaryList}
@@ -28,13 +29,13 @@ import viewmodels.implicits._
 
 object PackagingSiteDetailsSummary {
 
-  def summaryList(packagingSiteList: Map[String, Site])(implicit messages: Messages): SummaryList = {
+  def summaryList(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): SummaryList = {
     SummaryListViewModel(
-      rows = row2(packagingSiteList)
+      rows = row2(packagingSiteList, mode)
     )
   }
 
-  def row2(packagingSiteList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(packagingSiteList: Map[String, Site], mode: Mode = NormalMode)(implicit messages: Messages): List[SummaryListRow] = {
     packagingSiteList.map {
       site =>
         SummaryListRow(
@@ -45,7 +46,7 @@ object PackagingSiteDetailsSummary {
           ),
           actions = if (packagingSiteList.size > 1) {
             Some(Actions("", Seq(
-              ActionItemViewModel("site.remove", routes.RemovePackagingDetailsConfirmationController.onPageLoad(site._1).url)
+              ActionItemViewModel("site.remove", routes.RemovePackagingDetailsConfirmationController.onPageLoad(mode, site._1).url)
                 .withVisuallyHiddenText(messages("packagingSiteDetails.hidden"))
             )))
           } else {
