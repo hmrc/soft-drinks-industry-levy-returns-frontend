@@ -18,7 +18,6 @@ package views.helpers.returnDetails
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.PackAtBusinessAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
