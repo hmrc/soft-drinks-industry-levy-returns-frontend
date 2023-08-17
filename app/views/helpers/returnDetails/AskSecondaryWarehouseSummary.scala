@@ -18,7 +18,6 @@ package views.helpers.returnDetails
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
 import viewmodels.govuk.summarylist._
@@ -28,8 +27,9 @@ object AskSecondaryWarehouseSummary {
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                  (implicit messages: Messages): Option[SummaryList] = {
-    userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
-      case Some(true) =>
+
+    userAnswers.warehouseList.nonEmpty match{
+      case true =>
         Some(
           SummaryListViewModel(
             rows = Seq(SummaryListRowViewModel(
@@ -40,7 +40,7 @@ object AskSecondaryWarehouseSummary {
               value = Value(),
               actions = if (isCheckAnswers) {
                 Seq(
-                  ActionItemViewModel("site.change", routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url)
+                  ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
                     .withAttribute(("id", "change-packaging-sites"))
                     .withVisuallyHiddenText(messages("SecondaryWarehouse.change.hidden"))
                 )

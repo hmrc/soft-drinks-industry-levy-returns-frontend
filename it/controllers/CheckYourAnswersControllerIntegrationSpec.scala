@@ -3,7 +3,9 @@ package controllers
 import controllers.testSupport.helpers.ReturnSentTestHelper
 import models.retrieved.{OptSmallProducer, RetrievedActivity}
 import models.{AddASmallProducer, LitresInBands, NormalMode}
+import org.jsoup.Jsoup
 import pages._
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.Helpers.await
@@ -35,6 +37,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           }
         }
       }
+
       "Load when valid user answers present where all activities are set to true" in {
         val userAnswersStandardFlow = emptyUserAnswers
           .set(OwnBrandsPage, true).success.value
@@ -68,6 +71,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           }
         }
       }
+
       "Load when valid user answers present where all activities are set to false and user must see all pages in service" in {
         val userAnswersAllPages = emptyUserAnswers
           .set(OwnBrandsPage, true).success.value
@@ -105,7 +109,9 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           }
         }
       }
-      "Load when valid user answers present where all activities are set to false (apart fromsmall producer = true) and user must see all pages in service apart from own brands" in {
+
+      "Load when valid user answers present where all activities are set to false (apart from small producer = true) " +
+        "and user must see all pages in service apart from own brands" in {
         val userAnswersAllPages = emptyUserAnswers
           .set(PackagedContractPackerPage, true).success.value
           .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
@@ -140,6 +146,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           }
         }
       }
+
       "Load when minimum amount of pages answered, all activities true" in {
         val userAnswersAllPages = emptyUserAnswers
           .set(PackagedContractPackerPage, false).success.value
@@ -167,6 +174,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           }
         }
       }
+
       "Redirect to start page when missing answers and small producer = true" in {
         val userAnswerMissing = emptyUserAnswers
           .set(PackagedContractPackerPage, false).success.value
@@ -194,6 +202,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           }
         }
       }
+
       "Redirect to start page when missing answers and small producer = false" in {
         val userAnswerMissing = emptyUserAnswers
           .set(PackagedContractPackerPage, false).success.value
@@ -220,7 +229,160 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           }
         }
       }
+
+      "Contain packaging sites if changed answers mean user is a new packer" in {
+        val userAnswersStandardFlow = emptyUserAnswers
+          .set(OwnBrandsPage, true).success.value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
+          .set(PackagedContractPackerPage, true).success.value
+          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ExemptionsForSmallProducersPage, true).success.value
+          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
+          .set(BroughtIntoUKPage, true).success.value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
+          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ClaimCreditsForExportsPage, true).success.value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ClaimCreditsForLostDamagedPage, true).success.value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+
+        val userAnswers = userAnswersStandardFlow.copy(packagingSiteList = Map("x" -> PackagingSite1))
+
+        setUpData(userAnswers)
+
+        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, false, true, true)))
+        given.sdilBackend.balance(userAnswers.id, false)
+
+        WsTestClient.withClient { client =>
+          val result = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .get()
+
+          whenReady(result) { res =>
+            res.status mustBe 200
+            val doc = Jsoup.parse(res.body)
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.packagingSiteList).get mustBe Map("x" -> PackagingSite1)
+            doc.getElementsByTag("dt").text() must include(Messages("You have 1 packaging site"))
+          }
+        }
+      }
+
+      "Clear packaging sites if changed answers mean user is no longer a new packer" in {
+        val userAnswersStandardFlow = emptyUserAnswers
+          .set(OwnBrandsPage, true).success.value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
+          .set(PackagedContractPackerPage, false).success.value
+          .set(ExemptionsForSmallProducersPage, false).success.value
+          .set(BroughtIntoUKPage, true).success.value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
+          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ClaimCreditsForExportsPage, true).success.value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ClaimCreditsForLostDamagedPage, true).success.value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+
+        val userAnswers = userAnswersStandardFlow.copy(packagingSiteList = Map("x" -> PackagingSite1))
+
+        setUpData(userAnswers)
+
+        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, false, true, true)))
+        given.sdilBackend.balance(userAnswers.id, false)
+
+        WsTestClient.withClient { client =>
+          val result = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .get()
+
+          whenReady(result) { res =>
+            res.status mustBe 200
+            val doc = Jsoup.parse(res.body)
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.packagingSiteList).get mustBe Map.empty
+            doc.getElementsByTag("dt").text() mustNot include(Messages("You have 1 packaging site"))
+          }
+        }
+      }
+
+      "Contain warehouses if user has entered a new warehouse and user is a new importer" in {
+        val userAnswersStandardFlow = emptyUserAnswers
+          .set(OwnBrandsPage, true).success.value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
+          .set(PackagedContractPackerPage, true).success.value
+          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ExemptionsForSmallProducersPage, true).success.value
+          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
+          .set(BroughtIntoUKPage, true).success.value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
+          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ClaimCreditsForExportsPage, true).success.value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ClaimCreditsForLostDamagedPage, true).success.value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+          .set(AskSecondaryWarehouseInReturnPage, true).success.value
+
+        val userAnswers = userAnswersStandardFlow.copy(warehouseList = Map("x" -> warehouse))
+
+        setUpData(userAnswers)
+
+        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, false, true)))
+        given.sdilBackend.balance(userAnswers.id, false)
+
+        WsTestClient.withClient { client =>
+          val result = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .get()
+
+          whenReady(result) { res =>
+            res.status mustBe 200
+            val doc = Jsoup.parse(res.body)
+            doc.getElementsByTag("dt").text() must include(Messages("You have 1 warehouse"))
+          }
+        }
+      }
+
+      "Clear warehouses if changed answers mean user is no longer a new importer" in {
+        val userAnswersStandardFlow = emptyUserAnswers
+          .set(OwnBrandsPage, true).success.value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
+          .set(PackagedContractPackerPage, false).success.value
+          .set(ExemptionsForSmallProducersPage, false).success.value
+          .set(BroughtIntoUKPage, false).success.value
+          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+          .set(ClaimCreditsForExportsPage, true).success.value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
+          .set(ClaimCreditsForLostDamagedPage, true).success.value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+          .set(AskSecondaryWarehouseInReturnPage, true).success.value
+
+        val userAnswers = userAnswersStandardFlow.copy(warehouseList = Map("x" -> warehouse))
+
+        setUpData(userAnswers)
+
+        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, false, true)))
+        given.sdilBackend.balance(userAnswers.id, false)
+
+        WsTestClient.withClient { client =>
+          val result = client.url(s"$baseUrl/check-your-answers")
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .get()
+
+          whenReady(result) { res =>
+            res.status mustBe 200
+            val doc = Jsoup.parse(res.body)
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.warehouseList).get mustBe Map.empty
+            doc.getElementsByTag("dt").text() mustNot include(Messages("You have 1 warehouse"))
+          }
+        }
+      }
     }
+
+
 
     "POST" should {
       "Redirect to return sent when NIL return" in {

@@ -19,15 +19,15 @@ package controllers
 import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
 import handlers.ErrorHandler
-import models.{Mode, NormalMode}
 import models.backend.Site
+import models.{Mode, SdilReturn}
 import navigation.Navigator
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails}
-import utilitlies.{AddressHelper, GenericLogger}
+import utilitlies.{AddressHelper, GenericLogger, UserTypeCheck}
 import views.html.PackAtBusinessAddressView
 
 import javax.inject.Inject
@@ -56,11 +56,16 @@ class PackAtBusinessAddressController @Inject()(
     implicit request =>
 
       val businessName = request.subscription.orgName
-          val businessAddress = request.subscription.address
-          lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
+      val businessAddress = request.subscription.address
+      val newPacker = UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers),request.subscription)
+      val noExistingProductionSites = request.subscription.productionSites.isEmpty
+
+      lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
+        case None => form
+        case Some(_) if newPacker && noExistingProductionSites => form
+        case Some(value) => form.fill(value)
+      }
+
       Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
