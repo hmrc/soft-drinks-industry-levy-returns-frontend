@@ -591,7 +591,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               "when meets the pack conditions and import conditions for being a new packer and new importer" in {
                 val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
                   importer = false, voluntaryRegistration = false)
-                val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
+                val modifiedSubscription = aSubscription.copy(activity = sdilActivity, productionSites = List.empty)
                 val sdilReturn = SdilReturn((0L, 0L), (1L, 1L), List(SmallProducer("", "", (1L, 1L))), (1L, 1L), (1L, 1L), (0L, 0L), (0L, 0L))
                 val result = navigate(emptyUserAnswers, Some(sdilReturn), Some(modifiedSubscription))
                 result mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode)

@@ -283,7 +283,7 @@ class Navigator @Inject()() {
                                                      subscriptionOpt: Option[RetrievedSubscription]) = {
     (sdilReturnOpt, subscriptionOpt) match {
       case (Some(sdilReturn), Some(subscription)) =>
-        if (UserTypeCheck.isNewPacker(sdilReturn,subscription)) {
+        if (UserTypeCheck.isNewPacker(sdilReturn,subscription) && subscription.productionSites.isEmpty) {
           routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
         } else {
           routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)

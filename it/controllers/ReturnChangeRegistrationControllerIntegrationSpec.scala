@@ -1,8 +1,11 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import models.retrieved.RetrievedActivity
+import models.{DefaultUserAnswersData, NormalMode}
 import org.jsoup.Jsoup
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -32,7 +35,54 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
     }
   }
   "POST" should {
-    "take user to next destination successfully if user " in {
+
+    "take user to pack at business address only if new packer and there are no production sites in the retrieved subscription" in {
+      setUpData(newPackerPartialAnswers)
+      given
+        .commonPreconditionChangeSubscription(aSubscription.copy(productionSites = List.empty))
+
+      WsTestClient.withClient { client =>
+        val result = client.url(s"$baseUrl/return-change-registration")
+          .withFollowRedirects(false)
+          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+          .withFollowRedirects(false)
+          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+            "Csrf-Token" -> "nocheck")
+          .post("")
+
+        whenReady(result) { res =>
+          res.status mustBe SEE_OTHER
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
+        }
+      }
+    }
+
+    "take user to ask secondary warehouse if not new packer and there are no production sites in the retrieved subscription" in {
+      setUpData(newPackerPartialAnswers)
+
+      val activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true,
+        importer = false, voluntaryRegistration = false)
+
+      given
+        .commonPreconditionChangeSubscription(aSubscription.copy(activity = activity,productionSites = List.empty))
+
+      WsTestClient.withClient { client =>
+        val result = client.url(s"$baseUrl/return-change-registration")
+          .withFollowRedirects(false)
+          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+          .withFollowRedirects(false)
+          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+            "Csrf-Token" -> "nocheck")
+          .post("")
+
+        whenReady(result) { res =>
+          res.status mustBe SEE_OTHER
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
+        }
+      }
+    }
+
+    "take user to add warehouse if new packer and at least one production site exists in the retrieved subscription" in {
       setUpData(newPackerPartialAnswers)
       given
         .commonPreconditionChangeSubscription(aSubscription)
@@ -48,30 +98,11 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
         whenReady(result) { res =>
           res.status mustBe SEE_OTHER
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/pack-at-business-address-in-return")
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
         }
       }
     }
-    s"take user to next destination successfully if new packer is true" in {
-      setUpData(newPackerPartialAnswers)
-      given
-        .commonPreconditionChangeSubscription(aSubscription)
 
-      WsTestClient.withClient { client =>
-        val result = client.url(s"$baseUrl/return-change-registration")
-          .withFollowRedirects(false)
-          .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-          .withFollowRedirects(false)
-          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-            "Csrf-Token" -> "nocheck")
-          .post("")
-
-        whenReady(result) { res =>
-          res.status mustBe SEE_OTHER
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/pack-at-business-address-in-return")
-        }
-      }
-    }
     s"take user to next destination successfully if new packer is false and new importer is true" in {
       setUpData(newImporterAnswers)
       given
@@ -88,7 +119,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
         whenReady(result) { res =>
           res.status mustBe SEE_OTHER
-          res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/ask-secondary-warehouses-in-return")
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
         }
       }
     }
