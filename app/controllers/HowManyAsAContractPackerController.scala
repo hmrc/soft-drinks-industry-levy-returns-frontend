@@ -68,7 +68,7 @@ class HowManyAsAContractPackerController @Inject()(
           val updatedUserAnswers = request.userAnswers.set(
             HowManyAsAContractPackerPage, value)
 
-          updateDatabaseAndRedirect(updatedUserAnswers, HowManyAsAContractPackerPage, mode)
+          updateDatabaseAndRedirect(updatedUserAnswers, HowManyAsAContractPackerPage, mode, true, Some(request.subscription))
         }
       )
   }

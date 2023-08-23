@@ -66,7 +66,7 @@ class SmallProducerDetailsController @Inject()(
 
         value => {
           val updatedUserAnswers = request.userAnswers.set(SmallProducerDetailsPage, value)
-          updateDatabaseAndRedirect(updatedUserAnswers, SmallProducerDetailsPage, mode)
+          updateDatabaseAndRedirect(updatedUserAnswers, SmallProducerDetailsPage, mode, true, Some(request.subscription))
         }
       )
   }

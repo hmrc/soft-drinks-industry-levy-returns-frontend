@@ -67,8 +67,7 @@ class PackagedContractPackerController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(
-            PackagedContractPackerPage, HowManyAsAContractPackerPage, value)
+          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedContractPackerPage, HowManyAsAContractPackerPage, value)
           updateDatabaseAndRedirect(updatedUserAnswers, PackagedContractPackerPage, mode)
         }
       )

@@ -791,21 +791,28 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
           ) mustBe routes.HowManyAsAContractPackerController.onPageLoad(CheckMode)
         }
 
-        "Should navigate to Check Your Answers page when yes is selected and data present" in {
-          navigator.nextPage(HowManyAsAContractPackerPage,
+        "Should navigate to Check Your Answers page when yes is selected and not a new packer" in {
+          val answers = UserAnswers(id,
+            Json.obj(
+              "packagedContractPacker" -> true,
+              "howManyAsAContractPacker" -> Json.obj("lowBand" -> "100", "highBand" -> "100")))
+
+          navigator.nextPage(
+            HowManyAsAContractPackerPage,
             CheckMode,
-            UserAnswers(id, Json.obj("packagedContractPacker" -> true,
-              "howManyAsAContractPacker" ->
-                Json.obj("lowBand" -> "100", "highBand" -> "100")))
+            answers,
+            Some(SdilReturn.apply(answers)),
+            Some(aSubscription)
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
       }
 
-      "Exemption for small producer " - {
+      "Exemption for small producer" - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> false))
+          val answers = UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> false))
+          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, answers, Some(SdilReturn.apply(answers)),Some(aSubscription)
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
@@ -910,8 +917,30 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "Check small producer details" - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          navigator.nextPage(SmallProducerDetailsPage, CheckMode, UserAnswers(id, Json.obj("smallProducerDetails" -> false))
+          val answers = UserAnswers(id, Json.obj("smallProducerDetails" -> false))
+          navigator.nextPage(SmallProducerDetailsPage, CheckMode, answers, Some(SdilReturn.apply(answers)), Some(aSubscription)
           ) mustBe routes.CheckYourAnswersController.onPageLoad
+        }
+
+        "Should navigate to pack at business address page when no is selected but user is new packer" in {
+          val answers = UserAnswers(id, Json.obj(
+            "addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000"),
+            "smallProducerDetails" -> false),
+            List(superCola))
+          navigator.nextPage(
+            SmallProducerDetailsPage, CheckMode, answers, Some(SdilReturn.apply(answers)),
+            Some(aSubscription.copy(productionSites = List.empty))
+          ) mustBe routes.PackAtBusinessAddressController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to journey recovery page when no is selected but no return nor Subscription is available" in {
+          val answers = UserAnswers(id, Json.obj(
+            "addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000"),
+            "smallProducerDetails" -> false),
+            List(superCola))
+          navigator.nextPage(
+            SmallProducerDetailsPage, CheckMode, answers, None, None
+          ) mustBe routes.JourneyRecoveryController.onPageLoad()
         }
 
         "Should navigate to how many credits for lost or damaged page when yes is selected" in {

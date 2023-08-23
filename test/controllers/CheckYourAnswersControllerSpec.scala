@@ -318,7 +318,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        
+
       ).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
@@ -847,8 +847,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show packaging site section if the user selected the default packaging site we presented to them during the journey" in {
-      val userAnswersData = Json.obj("packAtBusinessAddress" -> true)
+    "must show packaging site section if the user is a new packer and " +
+      "selected the default packaging site we presented to them during the journey" in {
+      val userAnswersData = Json.obj(
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "packAtBusinessAddress" -> true)
+
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
@@ -866,7 +871,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show packaging site section if the user changed the default packaging site we presented to them during the journey" in {
-      val userAnswersData = Json.obj("packAtBusinessAddress" -> false)
+      val userAnswersData = Json.obj(
+        "packAtBusinessAddress" -> false,
+        "packAtBusinessAddress" -> false,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000))
+
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
@@ -884,7 +893,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show correct number of packaging sites if multiple packaging sites present" in {
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), packagingSiteList = packagingSiteListWith2)
+      val userAnswers = UserAnswers(sdilNumber,
+        Json.obj(
+        "packAtBusinessAddress" -> false,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000)),
+        packagingSiteList = packagingSiteListWith2)
+
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
@@ -901,7 +915,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show correct number of warehouses if multiple are present" in {
-      val userAnswersData = Json.obj("askSecondaryWarehouseInReturn" -> true)
+      val userAnswersData = Json.obj(
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000),
+        "askSecondaryWarehouseInReturn" -> true
+      )
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1, warehouseList = warhouseSiteListWith2)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
@@ -919,7 +937,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must return OK and contain registered UK sites section header when warehouse site present" in {
-      val userAnswersData = Json.obj("askSecondaryWarehouseInReturn" -> true)
+      val userAnswersData = Json.obj(
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000),
+        "askSecondaryWarehouseInReturn" -> true)
       val userAnswers = UserAnswers(sdilNumber, userAnswersData, warehouseList = warhouseSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)

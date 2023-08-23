@@ -56,26 +56,26 @@ class Navigator @Inject()() {
     case _ => _ => _ => _ => _ => routes.IndexController.onPageLoad()
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case OwnBrandsPage => userAnswers => checkOwnBrandPageNavigation(userAnswers)
-    case BrandsPackagedAtOwnSitesPage => _ => routes.CheckYourAnswersController.onPageLoad
-    case PackagedContractPackerPage => userAnswers => checkPackagedContractPackerPageNavigation(userAnswers)
-    case HowManyAsAContractPackerPage => _ => routes.CheckYourAnswersController.onPageLoad
-    case ExemptionsForSmallProducersPage => userAnswers => checkExemptionForSmallProducersPageNavigation(userAnswers)
-    case SmallProducerDetailsPage => userAnswers => checkSmallProducerDetailsPageNavigation(userAnswers)
-    case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
-    case RemoveWarehouseConfirmPage =>  _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-    case RemoveSmallProducerConfirmPage => userAnswers =>  removeSmallProducerConfirmPageNavigation(userAnswers, CheckMode)
-    case BroughtIntoUKPage => userAnswers => checkBroughtIntoUkPageNavigation(userAnswers)
-    case HowManyBroughtIntoUkPage => _ => routes.CheckYourAnswersController.onPageLoad
-    case BroughtIntoUkFromSmallProducersPage => userAnswers => checkBroughtIntoUkFromSmallProducersPageNavigation(userAnswers)
-    case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => routes.CheckYourAnswersController.onPageLoad
-    case ClaimCreditsForExportsPage => userAnswers => checkClaimCreditsForExportPageNavigation(userAnswers)
-    case HowManyCreditsForExportPage => _ => routes.CheckYourAnswersController.onPageLoad
-    case ClaimCreditsForLostDamagedPage => userAnswers => checkClaimCreditsForLostDamagedPageNavigation(userAnswers)
-    case HowManyCreditsForLostDamagedPage => _ => routes.CheckYourAnswersController.onPageLoad
-    case RemovePackagingDetailsConfirmationPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
-    case _ => _ => routes.CheckYourAnswersController.onPageLoad
+  private val checkRouteMap: Page => UserAnswers =>  Option[SdilReturn] => Option[RetrievedSubscription] => Call = {
+    case OwnBrandsPage => userAnswers => _ => _ => checkOwnBrandPageNavigation(userAnswers)
+    case BrandsPackagedAtOwnSitesPage => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad
+    case PackagedContractPackerPage => userAnswers => _ => _ => checkPackagedContractPackerPageNavigation(userAnswers)
+    case HowManyAsAContractPackerPage => _ => sdilReturn => subscription => nextPageBasedNewPackerStatus(sdilReturn, subscription)
+    case ExemptionsForSmallProducersPage => userAnswers => _ => _ => checkExemptionForSmallProducersPageNavigation(userAnswers)
+    case SmallProducerDetailsPage => userAnswers => sdilReturn => subscription => checkSmallProducerDetailsPageNavigation(userAnswers, sdilReturn, subscription)
+    case AddASmallProducerPage => _ => _ => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case RemoveWarehouseConfirmPage => _ =>  _ => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+    case RemoveSmallProducerConfirmPage => userAnswers => _ => _ => removeSmallProducerConfirmPageNavigation(userAnswers, CheckMode)
+    case BroughtIntoUKPage => userAnswers => _ => _ => checkBroughtIntoUkPageNavigation(userAnswers)
+    case HowManyBroughtIntoUkPage => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => _ => checkBroughtIntoUkFromSmallProducersPageNavigation(userAnswers)
+    case HowManyBroughtIntoTheUKFromSmallProducersPage => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad
+    case ClaimCreditsForExportsPage => userAnswers => _ => _ => checkClaimCreditsForExportPageNavigation(userAnswers)
+    case HowManyCreditsForExportPage => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad
+    case ClaimCreditsForLostDamagedPage => userAnswers => _ => _ => checkClaimCreditsForLostDamagedPageNavigation(userAnswers)
+    case HowManyCreditsForLostDamagedPage => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad
+    case RemovePackagingDetailsConfirmationPage => _ => _ => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
+    case _ => _ => _ => _ => routes.CheckYourAnswersController.onPageLoad
   }
 
   private val EditRouteMap: Page => UserAnswers => Call = {
@@ -91,7 +91,7 @@ class Navigator @Inject()() {
                smallProducerMissing: Option[Boolean] = None): Call =
     mode match {
       case NormalMode => normalRoutes(page)(userAnswers)(sdilReturn)(subscription)(smallProducerMissing)
-      case CheckMode => checkRouteMap(page)(userAnswers)
+      case CheckMode => checkRouteMap(page)(userAnswers)(sdilReturn)(subscription)
       case EditMode => EditRouteMap(page)(userAnswers)
       case _ => sys.error("Mode should be Normal, Check or Edit")
     }
@@ -271,11 +271,12 @@ class Navigator @Inject()() {
     }
   }
 
-  private def checkSmallProducerDetailsPageNavigation(userAnswers: UserAnswers) = {
+  private def checkSmallProducerDetailsPageNavigation(userAnswers: UserAnswers, sdilReturn: Option[SdilReturn],
+                                                      subscription: Option[RetrievedSubscription]) = {
     if (userAnswers.get(page = SmallProducerDetailsPage).contains(true)) {
       routes.AddASmallProducerController.onPageLoad(CheckMode)
     } else {
-      routes.CheckYourAnswersController.onPageLoad
+      nextPageBasedNewPackerStatus(sdilReturn, subscription)
     }
   }
 
@@ -283,7 +284,7 @@ class Navigator @Inject()() {
                                                      subscriptionOpt: Option[RetrievedSubscription]) = {
     (sdilReturnOpt, subscriptionOpt) match {
       case (Some(sdilReturn), Some(subscription)) =>
-        if (UserTypeCheck.isNewPacker(sdilReturn,subscription) && subscription.productionSites.isEmpty) {
+        if (newPackerWithNoExistingPackingSites(sdilReturn,subscription)) {
           routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
         } else {
           routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
@@ -296,4 +297,23 @@ class Navigator @Inject()() {
         routes.JourneyRecoveryController.onPageLoad()
     }
   }
+
+  private def nextPageBasedNewPackerStatus(sdilReturn: Option[SdilReturn], subscription: Option[RetrievedSubscription]) = {
+    (sdilReturn, subscription) match {
+      case (Some(sdilReturn), Some(subscription)) =>
+        if (newPackerWithNoExistingPackingSites(sdilReturn,subscription)) {
+          routes.PackAtBusinessAddressController.onPageLoad(CheckMode)
+        } else {
+          routes.CheckYourAnswersController.onPageLoad
+        }
+      case _ =>
+        logger.warn("SDIL return or subscription not provided for current unknown user")
+        routes.JourneyRecoveryController.onPageLoad()
+    }
+  }
+
+  private def newPackerWithNoExistingPackingSites(sdilReturn: SdilReturn, subscription: RetrievedSubscription) = {
+    UserTypeCheck.isNewPacker(sdilReturn,subscription) && subscription.productionSites.isEmpty
+  }
+
 }
