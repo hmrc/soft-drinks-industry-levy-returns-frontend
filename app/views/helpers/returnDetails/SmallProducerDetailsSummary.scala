@@ -52,10 +52,10 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
         key     = smallProducer.sdilRef,
         value   = value,
         actions = Seq(
-          ActionItemViewModel("site.edit", routes.AddASmallProducerController.onEditPageLoad( if (mode == NormalMode) {EditMode} else CheckMode, smallProducer.sdilRef).url)
-            .withVisuallyHiddenText(messages("smallProducerDetails.edit.hidden")),
+          ActionItemViewModel("site.edit", routes.AddASmallProducerController.onEditPageLoad(if (mode == NormalMode) EditMode else CheckMode, smallProducer.sdilRef).url)
+            .withVisuallyHiddenText(s"${smallProducer.alias} ${smallProducer.sdilRef}"),
           ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(mode, smallProducer.sdilRef).url)
-            .withVisuallyHiddenText(messages("smallProducerDetails.remove.hidden"))
+            .withVisuallyHiddenText(s"${smallProducer.alias} ${smallProducer.sdilRef}")
         )
       )
     }
