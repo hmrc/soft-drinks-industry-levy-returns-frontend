@@ -24,7 +24,7 @@ import repositories.SessionRepository
 import utilitlies.GenericLogger
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class KeepAliveController @Inject()(
                                      val controllerComponents: MessagesControllerComponents,
@@ -46,5 +46,4 @@ class KeepAliveController @Inject()(
           InternalServerError(errorHandler.internalServerErrorTemplate)
       }
   }
-  Future.successful(Ok)
 }
