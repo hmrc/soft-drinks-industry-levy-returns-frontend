@@ -217,8 +217,6 @@ smallProducerDetails.checkYourAnswersLabel = smallProducerDetails
 smallProducerDetails.producerList.checkYourAnswersLabel = Packaging sites
 smallProducerDetails.error.required = Select yes if you want to add another small producer
 smallProducerDetails.change.hidden = Do you want to add another small producer?
-smallProducerDetails.edit.hidden = small producer
-smallProducerDetails.remove.hidden = small producer
 
 
 returnChangeRegistration.title = You changed your soft drinks business activity
