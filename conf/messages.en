@@ -251,7 +251,7 @@ secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel = Warehouses
 secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
 secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.edit.hidden = UK warehouse
-secondaryWarehouseDetails.remove.hidden = {0} at {1}
+secondaryWarehouseDetails.remove.hidden = Warehouse {0} at {1}
 
 firstQuarter = January to March
 secondQuarter = April to June
@@ -365,7 +365,7 @@ packagingSiteDetails.checkYourAnswersLabel = PackagingSiteDetails
 packagingSiteDetails.addAnotherPackingSite = Do you want to add another UK packaging site?
 packagingSiteDetails.error.required = Select yes if you need to add another packaging site
 packagingSiteDetails.change.hidden = UK packaging site details
-packagingSiteDetails.hidden = {0} at {1}
+packagingSiteDetails.hidden = Packaging site {0} at {1}
 
 removeWarehouseConfirm.title = Are you sure you want to remove this warehouse?
 removeWarehouseConfirm.heading = Are you sure you want to remove this warehouse?
