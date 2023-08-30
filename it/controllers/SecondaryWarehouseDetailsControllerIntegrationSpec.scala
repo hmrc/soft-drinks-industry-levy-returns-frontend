@@ -62,7 +62,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends ControllerITTes
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
           serviceHref = Some(routes.IndexController.onPageLoad().url),
-          pageHeadingStyle = Some("govuk-heading-m")
+          pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
           JourneyLabels(
