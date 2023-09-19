@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *@
+@import config.FrontendAppConfig
 
 @this(
     layout: templates.Layout,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    appConfig: FrontendAppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
+
+@signInLink = {
+    @{appConfig.loginUrl}?continue=@{appConfig.sdilHomeUrl}
+}
 
 @layout(
     pageTitle    = titleNoForm(messages("signedOut.title")),
@@ -35,7 +41,7 @@
     <p class="govuk-body">
         @govukButton(
             ButtonViewModel(messages("site.signIn"))
-                .asLink(controllers.auth.routes.AuthController.signOutNoSurvey.url)
+                .asLink(signInLink.toString())
                 .preventingDoubleClick()
         )
     </p>
