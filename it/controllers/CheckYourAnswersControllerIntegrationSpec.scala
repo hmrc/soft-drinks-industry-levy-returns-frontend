@@ -2,7 +2,7 @@ package controllers
 
 import controllers.testSupport.helpers.ReturnSentTestHelper
 import models.retrieved.{OptSmallProducer, RetrievedActivity}
-import models.{AddASmallProducer, LitresInBands, NormalMode}
+import models.{AddASmallProducer, CheckMode, LitresInBands, NormalMode}
 import org.jsoup.Jsoup
 import pages._
 import play.api.i18n.Messages
@@ -175,7 +175,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         }
       }
 
-      "Redirect to start page when missing answers and small producer = true" in {
+      "Redirect to first missing page when missing answers and small producer = true" in {
         val userAnswerMissing = emptyUserAnswers
           .set(PackagedContractPackerPage, false).success.value
           .set(ExemptionsForSmallProducersPage, false).success.value
@@ -198,7 +198,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION).get mustBe controllers.routes.PackagedContractPackerController.onPageLoad(NormalMode).url
+            res.header(HeaderNames.LOCATION).get mustBe controllers.routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode).url
           }
         }
       }
@@ -555,7 +555,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         }
       }
 
-      "Redirect to start of journey when answers incomplete and small producer = true" in {
+      "Redirect to missing first missing page in the journey when answers incomplete and small producer = true" in {
         val userAnswerMissing = emptyUserAnswers
           .set(PackagedContractPackerPage, false).success.value
           .set(ExemptionsForSmallProducersPage, false).success.value
@@ -579,7 +579,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION).get mustBe controllers.routes.PackagedContractPackerController.onPageLoad(NormalMode).url
+            res.header(HeaderNames.LOCATION).get mustBe controllers.routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode).url
           }
         }
       }

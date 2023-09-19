@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class ClaimCreditsForExportsPageSpec extends PageBehaviours {
@@ -27,5 +29,15 @@ class ClaimCreditsForExportsPageSpec extends PageBehaviours {
     beSettable[Boolean](ClaimCreditsForExportsPage)
 
     beRemovable[Boolean](ClaimCreditsForExportsPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        ClaimCreditsForExportsPage.url(NormalMode) mustBe routes.ClaimCreditsForExportsController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        ClaimCreditsForExportsPage.url(CheckMode) mustBe routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

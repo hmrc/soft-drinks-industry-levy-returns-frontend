@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class PackAtBusinessAddressPageSpec extends PageBehaviours {
@@ -27,5 +29,15 @@ class PackAtBusinessAddressPageSpec extends PageBehaviours {
     beSettable[Boolean](PackAtBusinessAddressPage)
 
     beRemovable[Boolean](PackAtBusinessAddressPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        PackAtBusinessAddressPage.url(NormalMode) mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        PackAtBusinessAddressPage.url(CheckMode) mustBe routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

@@ -16,7 +16,8 @@
 
 package pages
 
-import models.LitresInBands
+import controllers.routes
+import models.{CheckMode, LitresInBands, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class HowManyCreditsForExportPageSpec extends PageBehaviours {
@@ -28,5 +29,15 @@ class HowManyCreditsForExportPageSpec extends PageBehaviours {
     beSettable[LitresInBands](HowManyCreditsForExportPage)
 
     beRemovable[LitresInBands](HowManyCreditsForExportPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        HowManyCreditsForExportPage.url(NormalMode) mustBe routes.HowManyCreditsForExportController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        HowManyCreditsForExportPage.url(CheckMode) mustBe routes.HowManyCreditsForExportController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

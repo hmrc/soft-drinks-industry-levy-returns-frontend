@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class BroughtIntoUKPageSpec extends PageBehaviours {
@@ -27,5 +29,15 @@ class BroughtIntoUKPageSpec extends PageBehaviours {
     beSettable[Boolean](BroughtIntoUKPage)
 
     beRemovable[Boolean](BroughtIntoUKPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        BroughtIntoUKPage.url(NormalMode) mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        BroughtIntoUKPage.url(CheckMode) mustBe routes.BroughtIntoUKController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

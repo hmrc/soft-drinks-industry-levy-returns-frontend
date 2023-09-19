@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class ExemptionsForSmallProducersPageSpec extends PageBehaviours {
@@ -27,5 +29,15 @@ class ExemptionsForSmallProducersPageSpec extends PageBehaviours {
     beSettable[Boolean](ExemptionsForSmallProducersPage)
 
     beRemovable[Boolean](ExemptionsForSmallProducersPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        ExemptionsForSmallProducersPage.url(NormalMode) mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        ExemptionsForSmallProducersPage.url(CheckMode) mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }
