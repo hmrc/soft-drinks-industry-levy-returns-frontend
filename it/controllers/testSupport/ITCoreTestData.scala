@@ -2,7 +2,7 @@ package controllers.testSupport
 
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{AddASmallProducer, Amounts, DefaultUserAnswersData, LitresInBands, SmallProducer, UserAnswers, Warehouse}
+import models.{AddASmallProducer, Amounts, DefaultUserAnswersData, LitresInBands, SmallProducer, UserAnswers}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
@@ -64,7 +64,7 @@ trait ITCoreTestData extends TryValues {
 
   val smallProducerListOnlySuperCola: List[SmallProducer] = List(SmallProducer(producerName.get, refNumber, (lowBand, highBand)))
 
-  val warehouse: Warehouse = Warehouse(None, UkAddress(List("34 Rhes Priordy", "East London"), "E73 2RP"))
+  val warehouse: Site = Site(UkAddress(List("34 Rhes Priordy", "East London"), "E73 2RP"), tradingName = None)
 
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())

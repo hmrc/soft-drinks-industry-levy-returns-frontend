@@ -21,8 +21,8 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.RemoveWarehouseConfirmFormProvider
 import helpers.LoggerHelper
-import models.backend.UkAddress
-import models.{NormalMode, UserAnswers, Warehouse}
+import models.backend.{Site, UkAddress}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +54,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
   val form: Form[Boolean] = formProvider()
   val testIndex = "1"
   val testUkAddress: Html = Html("Wild Lemonade Group<br>33, Rhes, Priordy, East London, E73 2RP")
-  val warehouseMap: Map[String, Warehouse] = Map(("1",Warehouse(
+  val warehouseMap: Map[String, Site] = Map(("1", Site(
     tradingName = Some("Wild Lemonade Group"),
     address = UkAddress(List("33","Rhes", "Priordy","East London"), "E73 2RP" ),
   )))

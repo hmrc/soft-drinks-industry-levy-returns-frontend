@@ -1,8 +1,8 @@
 package controllers.addressLookupFrontend
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
+import models.NormalMode
 import models.backend.{Site, UkAddress}
-import models.{NormalMode, Warehouse}
 import org.scalatest.TryValues
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.libs.ws.DefaultWSCookie
@@ -35,7 +35,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
             updatedUserAnswers.packagingSiteList mustBe emptyUserAnswers.packagingSiteList
             updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
-            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Warehouse(Some("soft drinks ltd"), UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))))
+            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), tradingName = Some("soft drinks ltd")))
 
             res.status mustBe SEE_OTHER
             res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
@@ -46,7 +46,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       "an address already exists in DB currently for SDILID provided" in {
         val sdilId: String = "foo"
         val alfId: String = "bar"
-        val userAnswersBefore = emptyUserAnswers.copy(warehouseList = Map(sdilId -> Warehouse(None, UkAddress(List.empty, "foo", Some("wizz")))))
+        val userAnswersBefore = emptyUserAnswers.copy(warehouseList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")), tradingName = None)))
         setUpData(userAnswersBefore)
         given
           .commonPreconditionChangeSubscription(aSubscription)
@@ -65,7 +65,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
             updatedUserAnswers.packagingSiteList mustBe emptyUserAnswers.packagingSiteList
             updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
-            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Warehouse(Some("soft drinks ltd"), UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))))
+            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), tradingName = Some("soft drinks ltd")))
 
             res.status mustBe SEE_OTHER
             res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)

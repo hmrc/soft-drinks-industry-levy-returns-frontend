@@ -1,10 +1,9 @@
 package controllers
 
 import controllers.testSupport.helpers.ReturnSentTestHelper
-import models.{Amounts, FinancialLineItem}
 import models.retrieved.OptSmallProducer
+import models.{Amounts, FinancialLineItem}
 import org.jsoup.Jsoup
-import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.Helpers.await
 import play.api.test.WsTestClient

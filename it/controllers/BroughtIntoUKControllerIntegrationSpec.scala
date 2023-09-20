@@ -35,7 +35,6 @@ class BroughtIntoUKControllerIntegrationSpec extends ControllerITTestHelper with
         given
           .commonPreconditionChangeSubscription(aSubscription)
 
-        val userAnswers: UserAnswers = broughtIntoUkFullAnswers.success.value
         val expectedResult: Some[JsObject] = Some(Json.obj("broughtIntoUK" ->  true))
         setUpData(emptyUserAnswers)
 

@@ -1,8 +1,7 @@
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
-import models.Warehouse
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import org.scalatest.TryValues
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -14,9 +13,9 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
   "RemovingWarehouseConfirmController" should {
     "Ask for if user wants to remove warehouses" in {
-      val twoWarehouses: Map[String, Warehouse] = Map(
-        "1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-        "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+      val twoWarehouses: Map[String, Site] = Map(
+        "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), tradingName = Some("ABC Ltd")),
+        "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
 
       setUpData(newPackerPartialAnswers.copy( warehouseList = twoWarehouses))
       given
@@ -39,9 +38,9 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
     "user selected yes to remove first warehouse" in {
 
-      val twoWarehouses: Map[String,Warehouse] = Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-        "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
-      val removedWarehouseMap: Map[String,Warehouse] = Map("2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+      val twoWarehouses: Map[String, Site] = Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), tradingName = Some("ABC Ltd")),
+        "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
+      val removedWarehouseMap: Map[String, Site] = Map("2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
       setUpData(newPackerPartialAnswers.copy(id = sdilNumber , warehouseList = twoWarehouses))
       given
         .commonPreconditionChangeSubscription(aSubscription)

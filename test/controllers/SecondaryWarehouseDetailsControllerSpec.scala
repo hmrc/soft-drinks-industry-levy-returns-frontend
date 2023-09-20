@@ -21,8 +21,8 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.SecondaryWarehouseDetailsFormProvider
 import helpers.LoggerHelper
-import models.backend.UkAddress
-import models.{NormalMode, UserAnswers, Warehouse}
+import models.backend.{Site, UkAddress}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -46,7 +46,6 @@ import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import viewmodels.govuk.SummaryListFluency
 import views.html.SecondaryWarehouseDetailsView
 
-import scala.collection.immutable.Map
 import scala.concurrent.Future
 
 class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency with LoggerHelper {
@@ -59,9 +58,9 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
   lazy val secondaryWarehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
 
-  val twoWarehouses: Map[String,Warehouse] = Map(
-    "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-    "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
+  val twoWarehouses: Map[String, Site] = Map(
+    "1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), tradingName = Some("ABC Ltd")),
+    "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd"))
   )
 
   val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,Json.obj(), List.empty,Map.empty,twoWarehouses)
@@ -105,9 +104,9 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
-        val WarhouseMap: Map[String,Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-            "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+        val WarhouseMap: Map[String, Site] =
+          Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), tradingName = Some("ABC Ltd")),
+            "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
           SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
@@ -157,7 +156,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
       val userAnswers = UserAnswers(
         sdilNumber,Json.obj(), List.empty,Map.empty,
-        Map("1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX")))
+        Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"), tradingName = Some("ABC Ltd")))
       )
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -201,9 +200,9 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val result = route(application, request).value
 
-        val warehouseMap: Map[String, Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-            "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+        val warehouseMap: Map[String, Site] =
+          Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), tradingName = Some("ABC Ltd")),
+            "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
           SecondaryWarehouseDetailsSummary.row2(warehouseMap)(messages(application))
@@ -330,9 +329,9 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val result = route(application, request).value
 
-        val WarhouseMap: Map[String,Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-               "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+        val WarhouseMap: Map[String, Site] =
+          Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), tradingName = Some("ABC Ltd")),
+               "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))

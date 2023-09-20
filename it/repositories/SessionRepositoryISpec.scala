@@ -1,7 +1,7 @@
 package repositories
 
 import models.backend.{Site, UkAddress}
-import models.{SmallProducer, UserAnswers, Warehouse}
+import models.{SmallProducer, UserAnswers}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -70,7 +70,7 @@ class SessionRepositoryISpec
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
-        Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
+        Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")), tradingName = Some("foo"))),
         false,
         false,
         Instant.ofEpochSecond(1))
@@ -90,7 +90,7 @@ class SessionRepositoryISpec
       }
       val warehouseListDecrypted = {
         val json = (resultParsedToJson \ "warehouseList").as[Map[String, EncryptedValue]]
-        json.map(warehouse => warehouse._1 -> Json.parse(encryption.crypto.decrypt(warehouse._2, userAnswersBefore.id)).as[Warehouse])
+        json.map(warehouse => warehouse._1 -> Json.parse(encryption.crypto.decrypt(warehouse._2, userAnswersBefore.id)).as[Site])
       }
 
       dataDecrypted mustBe userAnswersBefore.data

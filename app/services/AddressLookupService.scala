@@ -20,10 +20,10 @@ import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import controllers.routes
-import models.alf.{AlfAddress, AlfResponse}
 import models.alf.init._
+import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Site, UkAddress}
-import models.{Mode, NormalMode, UserAnswers, Warehouse}
+import models.{Mode, NormalMode, UserAnswers}
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.mvc.RequestHeader
@@ -71,7 +71,7 @@ class AddressLookupService @Inject()(
           userAnswers.packagingSiteList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Site(convertedAddress, None, address.organisation, None)))
       case WarehouseDetails =>
         userAnswers.copy(warehouseList =
-          userAnswers.warehouseList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Warehouse(address.organisation, convertedAddress)))
+          userAnswers.warehouseList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Site(convertedAddress, None, address.organisation, None)))
     }
   }
 

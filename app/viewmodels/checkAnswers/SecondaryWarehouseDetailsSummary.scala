@@ -17,7 +17,8 @@
 package viewmodels.checkAnswers
 
 import controllers.routes
-import models.{CheckMode, UserAnswers, Warehouse}
+import models.backend.Site
+import models.{CheckMode, UserAnswers}
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
@@ -51,7 +52,7 @@ object SecondaryWarehouseDetailsSummary  {
         )
     }
 
-  def row2(warehouseList: Map[String, Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(warehouseList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
         SummaryListRow(
