@@ -34,7 +34,7 @@ class ModelEncryptionSpec extends SpecBase {
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
-        Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
+        Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")), tradingName = Some("foo"))),
         false,
         false,
         Instant.ofEpochSecond(1))
@@ -45,7 +45,7 @@ class ModelEncryptionSpec extends SpecBase {
       Json.parse(encryption.crypto.decrypt(result._3, userAnswers.id)).as[List[SmallProducer]] mustBe userAnswers.smallProducerList
       Json.parse(encryption.crypto.decrypt(result._4.head._2, userAnswers.id)).as[Site] mustBe userAnswers.packagingSiteList.head._2
       result._4.head._1 mustBe userAnswers.packagingSiteList.head._1
-      Json.parse(encryption.crypto.decrypt(result._5.head._2, userAnswers.id)).as[Warehouse] mustBe userAnswers.warehouseList.head._2
+      Json.parse(encryption.crypto.decrypt(result._5.head._2, userAnswers.id)).as[Site] mustBe userAnswers.warehouseList.head._2
       result._5.head._1 mustBe userAnswers.warehouseList.head._1
       result._6 mustBe userAnswers.submitted
       result._7 mustBe userAnswers.isNilReturn
@@ -58,7 +58,7 @@ class ModelEncryptionSpec extends SpecBase {
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
-        Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
+        Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")), tradingName = Some("foo"))),
         false,
         false,
         Instant.ofEpochSecond(1))

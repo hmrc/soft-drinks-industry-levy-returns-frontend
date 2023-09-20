@@ -33,7 +33,7 @@ case class UserAnswers(
                         data: JsObject = Json.obj(),
                         smallProducerList: List[SmallProducer] = List.empty,
                         packagingSiteList: Map[String, Site] = Map.empty,
-                        warehouseList: Map[String, Warehouse] = Map.empty,
+                        warehouseList: Map[String, Site] = Map.empty,
                         submitted:Boolean = false,
                         isNilReturn: Boolean = false,
                         lastUpdated: Instant = Instant.now

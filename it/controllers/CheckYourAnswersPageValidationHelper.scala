@@ -56,7 +56,7 @@ trait CheckYourAnswersPageValidationHelper extends ReturnSummaryValidationHelper
     ppobAddress = aSubscription.address,
     importer = (true, ((populatedReturn.totalImported)).combineN(4)),
     packer = (true, ((populatedReturn.totalPacked)).combineN(4)),
-    warehouses = List(Site.fromWarehouse(warehouse)),
+    warehouses = List(warehouse),
     packingSites = List(PackagingSite1),
     phoneNumber = aSubscription.contact.phoneNumber,
     email = aSubscription.contact.email,

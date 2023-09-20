@@ -1,9 +1,8 @@
 package controllers
 
 import controllers.testSupport.helpers.ALFTestHelper
-import models.Warehouse
 import models.alf.init._
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
@@ -30,7 +29,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends ControllerI
     }
 
     "user selects yes and saves and continues updating the user answers and ramps onto ALF, also NOT wiping the warehouse list" in {
-      val warehouseToRemain = Map("foo" -> Warehouse(None, UkAddress(List.empty, "", None)))
+      val warehouseToRemain = Map("foo" -> Site(UkAddress(List.empty, "", None), tradingName = None))
       setUpData(emptyUserAnswers.copy(warehouseList = warehouseToRemain))
 
       val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
@@ -128,7 +127,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends ControllerI
       }
     }
     "user selects no and saves and continues, user is taken to check your answers, also wiping the warehouse list" in {
-      val warehouseToBeWiped = Map("foo" -> Warehouse(None, UkAddress(List.empty, "", None)))
+      val warehouseToBeWiped = Map("foo" -> Site(UkAddress(List.empty, "", None), tradingName = None))
       setUpData(emptyUserAnswers.copy(warehouseList = warehouseToBeWiped))
 
       given

@@ -19,7 +19,6 @@ package services
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.backend.Site
 import models.retrieved.RetrievedSubscription
 import models.{Amounts, ReturnPeriod, ReturnsVariation, SdilReturn, UserAnswers}
 import pages._
@@ -127,7 +126,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
       ppobAddress = subscription.address,
       importer = (isNewImporter, ((sdilReturn.totalImported)).combineN(4)),
       packer = (isNewPacker, (sdilReturn.totalPacked).combineN(4)),
-      warehouses = getWarehouseSites(userAnswers),
+      warehouses = userAnswers.warehouseList.values.toList,
       packingSites = userAnswers.packagingSiteList.values.toList,
       phoneNumber = subscription.contact.phoneNumber,
       email = subscription.contact.email,
@@ -175,12 +174,6 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
   private def wastageLitres(userAnswers: UserAnswers) = {
     (userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L))
-  }
-
-  private def getWarehouseSites(userAnswers: UserAnswers): List[Site] = {
-    userAnswers.warehouseList.map { case (id, warehouse) =>
-      Site.fromWarehouse(warehouse)
-    }.toList
   }
 
   private def taxEstimation(r: SdilReturn): BigDecimal = {

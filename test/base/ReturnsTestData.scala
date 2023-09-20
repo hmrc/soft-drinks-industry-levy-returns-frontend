@@ -19,7 +19,7 @@ package base
 import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{Amounts, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, UserAnswers, Warehouse}
+import models.{Amounts, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, UserAnswers}
 import play.api.libs.json.{JsObject, Json}
 
 import java.time.LocalDate
@@ -177,9 +177,9 @@ object ReturnsTestData {
     Some("Wild Lemonade Group"),
     None)
 
-    val WarehouseSite1 = Warehouse(
+    val WarehouseSite1 = Site(
     tradingName = Some("Wild Lemonade Group"),
-    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"))
+    address = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"))
 
   lazy val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
   lazy val packagingSiteListWith2 = Map(("78941132", PackagingSite1), ("78941131", PackagingSite1))

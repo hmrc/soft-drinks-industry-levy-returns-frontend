@@ -16,21 +16,17 @@
 
 package models.backend
 
-import models.Warehouse
+import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
-import play.api.libs.json.{Format, Json}
 
 case class Site(
                  address: UkAddress,
-                 ref: Option[String],
+                 ref: Option[String] = None,
                  tradingName: Option[String],
-                 closureDate: Option[LocalDate]
+                 closureDate: Option[LocalDate] = None
                )
 
 object Site {
   implicit val format: Format[Site] = Json.format[Site]
-
-  def fromWarehouse(warehouse: Warehouse): Site =
-    Site(warehouse.address, None, warehouse.tradingName, None)
 }

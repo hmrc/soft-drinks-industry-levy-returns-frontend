@@ -19,7 +19,8 @@ package controllers
 import controllers.actions.{CheckingSubmissionAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.RemoveWarehouseConfirmFormProvider
 import handlers.ErrorHandler
-import models.{Mode, Warehouse}
+import models.Mode
+import models.backend.Site
 import navigation.Navigator
 import pages.RemoveWarehouseConfirmPage
 import play.api.i18n.MessagesApi
@@ -66,8 +67,8 @@ class RemoveWarehouseConfirmController @Inject()(
   def onSubmit(mode: Mode, ref: String): Action[AnyContent] =
     (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
       implicit request =>
-        val warehouseList: Map[String, Warehouse] = request.userAnswers.warehouseList
-        val warehouseToRemove: Warehouse = warehouseList(ref)
+        val warehouseList: Map[String, Site] = request.userAnswers.warehouseList
+        val warehouseToRemove: Site = warehouseList(ref)
         val formattedAddress = AddressFormattingHelper.addressFormatting(warehouseToRemove.address, warehouseToRemove.tradingName)
 
         form.bindFromRequest().fold(
