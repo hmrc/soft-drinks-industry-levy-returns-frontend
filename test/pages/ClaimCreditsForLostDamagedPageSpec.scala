@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class ClaimCreditsForLostDamagedPageSpec extends PageBehaviours {
@@ -27,5 +29,15 @@ class ClaimCreditsForLostDamagedPageSpec extends PageBehaviours {
     beSettable[Boolean](ClaimCreditsForLostDamagedPage)
 
     beRemovable[Boolean](ClaimCreditsForLostDamagedPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        ClaimCreditsForLostDamagedPage.url(NormalMode) mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        ClaimCreditsForLostDamagedPage.url(CheckMode) mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

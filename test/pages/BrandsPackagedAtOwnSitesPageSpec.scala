@@ -16,7 +16,8 @@
 
 package pages
 
-import models.LitresInBands
+import controllers.routes
+import models.{CheckMode, LitresInBands, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class BrandsPackagedAtOwnSitesPageSpec extends PageBehaviours {
@@ -28,5 +29,15 @@ class BrandsPackagedAtOwnSitesPageSpec extends PageBehaviours {
     beSettable[LitresInBands](BrandsPackagedAtOwnSitesPage)
 
     beRemovable[LitresInBands](BrandsPackagedAtOwnSitesPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        BrandsPackagedAtOwnSitesPage.url(NormalMode) mustBe routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        BrandsPackagedAtOwnSitesPage.url(CheckMode) mustBe routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

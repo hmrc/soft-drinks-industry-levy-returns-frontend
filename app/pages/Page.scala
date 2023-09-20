@@ -16,9 +16,13 @@
 
 package pages
 
+import models.Mode
+
 import scala.language.implicitConversions
 
-trait Page
+trait Page {
+  val url: Mode => String
+}
 
 object Page {
 

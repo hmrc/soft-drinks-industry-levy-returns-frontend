@@ -18,10 +18,11 @@ package controllers.actions
 
 import models.requests.DataRequest
 import models.retrieved.RetrievedSubscription
-import models.{AddASmallProducer, LitresInBands, SdilReturn}
+import models.{AddASmallProducer, CheckMode, LitresInBands, NormalMode, SdilReturn}
 import pages._
 import play.api.libs.json.Reads
 import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
 import utilitlies.{GenericLogger, UserTypeCheck}
 
 import javax.inject.Inject
@@ -39,11 +40,16 @@ class RequiredUserAnswers @Inject()(genericLogger: GenericLogger)(implicit val e
 
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(mainRoute)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing")
-      Future.successful(redirectToStartOfJourney(request.subscription))
-    } else {
-      action
+    userAnswersMissing.headOption.map(_.pageRequired.asInstanceOf[Page]) match {
+      case Some(page) if List(PackAtBusinessAddressPage, PackagingSiteDetailsPage).contains(page) =>
+        genericLogger.logger.info(s"${request.userAnswers.id} now requires packaging sites")
+        Future.successful(Redirect(PackAtBusinessAddressPage.url(CheckMode)))
+      case Some(page) if page == SecondaryWarehouseDetailsPage =>
+        genericLogger.logger.info(s"${request.userAnswers.id} now has option to add warehouse")
+        Future.successful(Redirect(page.url(CheckMode)))
+      case Some(page) => genericLogger.logger.warn(s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing")
+        Future.successful(Redirect(page.url(NormalMode)))
+      case None => action
     }
   }
 
@@ -98,7 +104,8 @@ class RequiredUserAnswers @Inject()(genericLogger: GenericLogger)(implicit val e
 
   private[controllers] val packingListReturnChange: DataRequest[_] => List[RequiredPage[_, _,_]] = { (request: DataRequest[_]) =>
     if(UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) && request.subscription.productionSites.isEmpty) {
-      List(RequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
+      List(RequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]),
+        RequiredPage(PackagingSiteDetailsPage, None)(implicitly[Reads[Boolean]]))
     } else {
       List.empty
     }

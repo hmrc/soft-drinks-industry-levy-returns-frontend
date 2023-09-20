@@ -16,7 +16,8 @@
 
 package pages
 
-import models.LitresInBands
+import controllers.routes
+import models.{CheckMode, LitresInBands, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class HowManyBroughtIntoUkPageSpec extends PageBehaviours {
@@ -28,5 +29,15 @@ class HowManyBroughtIntoUkPageSpec extends PageBehaviours {
     beSettable[LitresInBands](HowManyBroughtIntoUkPage)
 
     beRemovable[LitresInBands](HowManyBroughtIntoUkPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        HowManyBroughtIntoUkPage.url(NormalMode) mustBe routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        HowManyBroughtIntoUkPage.url(CheckMode) mustBe routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

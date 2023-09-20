@@ -16,7 +16,8 @@
 
 package pages
 
-import models.LitresInBands
+import controllers.routes
+import models.{CheckMode, LitresInBands, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class HowManyCreditsForLostDamagedPageSpec extends PageBehaviours {
@@ -28,5 +29,15 @@ class HowManyCreditsForLostDamagedPageSpec extends PageBehaviours {
     beSettable[LitresInBands](HowManyCreditsForLostDamagedPage)
 
     beRemovable[LitresInBands](HowManyCreditsForLostDamagedPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        HowManyCreditsForLostDamagedPage.url(NormalMode) mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        HowManyCreditsForLostDamagedPage.url(CheckMode) mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

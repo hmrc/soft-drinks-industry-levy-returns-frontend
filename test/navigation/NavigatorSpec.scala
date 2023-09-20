@@ -35,7 +35,9 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
       "must go from a page that doesn't exist in the route map to Index" in {
 
-        case object UnknownPage extends Page
+        case object UnknownPage extends Page {
+          override val url: Mode => String = _ => ""
+        }
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers(id)) mustBe routes.IndexController.onPageLoad()
       }
 
@@ -752,7 +754,9 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" - {
 
-        case object UnknownPage extends Page
+        case object UnknownPage extends Page {
+          override val url: Mode => String = _ => ""
+        }
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad
       }
 

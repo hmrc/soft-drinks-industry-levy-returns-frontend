@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class RemoveSmallProducerConfirmPageSpec extends PageBehaviours {
@@ -27,5 +29,15 @@ class RemoveSmallProducerConfirmPageSpec extends PageBehaviours {
     beSettable[Boolean](RemoveSmallProducerConfirmPage)
 
     beRemovable[Boolean](RemoveSmallProducerConfirmPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        RemoveSmallProducerConfirmPage.url(NormalMode) mustBe routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode, "").url
+      }
+
+      "when in CheckMode" in {
+        RemoveSmallProducerConfirmPage.url(CheckMode) mustBe routes.RemoveSmallProducerConfirmController.onPageLoad(CheckMode, "").url
+      }
+    }
   }
 }

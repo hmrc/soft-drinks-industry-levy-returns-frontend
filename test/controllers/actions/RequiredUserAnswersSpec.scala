@@ -68,7 +68,8 @@ class RequiredUserAnswersSpec extends SpecBase {
     RequiredPage(BrandsPackagedAtOwnSitesPage,
       Some(PreviousPage(OwnBrandsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
 
-  val coPackerFalseJourney = List(RequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
+  val coPackerFalseJourney = List(RequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]),
+    RequiredPage(PackagingSiteDetailsPage, None)(implicitly[Reads[Boolean]]))
 
   "checkYourAnswersRequiredData" - {
 

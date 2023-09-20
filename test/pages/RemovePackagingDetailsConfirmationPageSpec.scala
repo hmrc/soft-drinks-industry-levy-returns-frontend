@@ -18,7 +18,7 @@ package pages
 
 
 import forms.RemovePackagingDetailsConfirmationFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -68,6 +68,17 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
       result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, "foo").url
       result.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
       result.getElementById("value-error").text() mustBe "Error: Select yes if you want to remove this packaging site"
+    }
+  }
+
+
+  "should contain the correct url" - {
+    "when in NormalMode" in {
+      RemovePackagingDetailsConfirmationPage.url(NormalMode) mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, "").url
+    }
+
+    "when in CheckMode" in {
+      RemovePackagingDetailsConfirmationPage.url(CheckMode) mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(CheckMode, "").url
     }
   }
 }

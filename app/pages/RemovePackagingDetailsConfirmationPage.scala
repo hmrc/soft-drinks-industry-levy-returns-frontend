@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.Mode
 import play.api.libs.json.JsPath
 
 case object RemovePackagingDetailsConfirmationPage extends QuestionPage[Boolean] {
@@ -23,4 +25,7 @@ case object RemovePackagingDetailsConfirmationPage extends QuestionPage[Boolean]
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "removePackagingDetailsConfirmation"
+
+  override val url: Mode => String = mode => routes.RemovePackagingDetailsConfirmationController.onPageLoad(mode, "").url
+
 }

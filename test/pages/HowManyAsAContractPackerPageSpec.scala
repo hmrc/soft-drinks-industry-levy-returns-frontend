@@ -16,7 +16,8 @@
 
 package pages
 
-import models.LitresInBands
+import controllers.routes
+import models.{CheckMode, LitresInBands, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class HowManyAsAContractPackerPageSpec extends PageBehaviours {
@@ -28,5 +29,15 @@ class HowManyAsAContractPackerPageSpec extends PageBehaviours {
     beSettable[LitresInBands](HowManyAsAContractPackerPage)
 
     beRemovable[LitresInBands](HowManyAsAContractPackerPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        HowManyAsAContractPackerPage.url(NormalMode) mustBe routes.HowManyAsAContractPackerController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        HowManyAsAContractPackerPage.url(CheckMode) mustBe routes.HowManyAsAContractPackerController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }
