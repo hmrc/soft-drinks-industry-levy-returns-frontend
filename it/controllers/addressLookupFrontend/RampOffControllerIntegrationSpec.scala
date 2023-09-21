@@ -15,7 +15,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
   s"ramp off $WarehouseDetails" should {
     "redirect to next page when request is valid and address is returned from ALF" when {
       "no address exists in DB currently for SDILID provided" in {
-        val sdilId: String = "foo"
+        val siteId: String = "foo"
         val alfId: String = "bar"
         setUpData(emptyUserAnswers)
         given
@@ -23,7 +23,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           .alf.getAddress(alfId)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/off-ramp/secondary-warehouses/$sdilId?id=$alfId")
+          val result = client.url(s"$baseUrl/off-ramp/secondary-warehouses/$siteId?id=$alfId")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -35,7 +35,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
             updatedUserAnswers.packagingSiteList mustBe emptyUserAnswers.packagingSiteList
             updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
-            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), tradingName = Some("soft drinks ltd")))
+            updatedUserAnswers.warehouseList mustBe Map(siteId -> Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), tradingName = Some("soft drinks ltd")))
 
             res.status mustBe SEE_OTHER
             res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
@@ -44,16 +44,16 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         }
       }
       "an address already exists in DB currently for SDILID provided" in {
-        val sdilId: String = "foo"
+        val siteId: String = "foo"
         val alfId: String = "bar"
-        val userAnswersBefore = emptyUserAnswers.copy(warehouseList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")), tradingName = None)))
+        val userAnswersBefore = emptyUserAnswers.copy(warehouseList = Map(siteId -> Site(UkAddress(List.empty, "foo", Some("wizz")), tradingName = None)))
         setUpData(userAnswersBefore)
         given
           .commonPreconditionChangeSubscription(aSubscription)
           .alf.getAddress(alfId)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/off-ramp/secondary-warehouses/$sdilId?id=$alfId")
+          val result = client.url(s"$baseUrl/off-ramp/secondary-warehouses/$siteId?id=$alfId")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -65,7 +65,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
             updatedUserAnswers.packagingSiteList mustBe emptyUserAnswers.packagingSiteList
             updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
-            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), tradingName = Some("soft drinks ltd")))
+            updatedUserAnswers.warehouseList mustBe Map(siteId -> Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), tradingName = Some("soft drinks ltd")))
 
             res.status mustBe SEE_OTHER
             res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
@@ -75,7 +75,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
     }
     s"return $INTERNAL_SERVER_ERROR" when {
       "alf returns error" in {
-        val sdilId: String = "foo"
+        val siteId: String = "foo"
         val alfId: String = "bar"
         setUpData(emptyUserAnswers)
         given
@@ -83,7 +83,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           .alf.getBadAddress(alfId)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/off-ramp/secondary-warehouses/$sdilId?id=$alfId")
+          val result = client.url(s"$baseUrl/off-ramp/secondary-warehouses/$siteId?id=$alfId")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -106,7 +106,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
   s"ramp off $PackingDetails" should {
     "redirect to next page when request is valid and address is returned from ALF" when {
       "no address exists in DB currently for SDILID provided" in {
-        val sdilId: String = "foo"
+        val siteId: String = "foo"
         val alfId: String = "bar"
         setUpData(emptyUserAnswers)
         given
@@ -114,7 +114,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           .alf.getAddress(alfId)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/off-ramp/packing-site-details/$sdilId?id=$alfId")
+          val result = client.url(s"$baseUrl/off-ramp/packing-site-details/$siteId?id=$alfId")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -123,7 +123,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
             val updatedUserAnswers = getAnswers(emptyUserAnswers.id).get
             updatedUserAnswers.id mustBe emptyUserAnswers.id
             updatedUserAnswers.data mustBe emptyUserAnswers.data
-            updatedUserAnswers.packagingSiteList mustBe Map(sdilId ->
+            updatedUserAnswers.packagingSiteList mustBe Map(siteId ->
               Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None))
             updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
@@ -136,16 +136,16 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         }
       }
       "an address already exists in DB currently for SDILID provided" in {
-        val sdilId: String = "foo"
+        val siteId: String = "foo"
         val alfId: String = "bar"
-        val userAnswersBefore = emptyUserAnswers.copy(packagingSiteList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
+        val userAnswersBefore = emptyUserAnswers.copy(packagingSiteList = Map(siteId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
         setUpData(userAnswersBefore)
         given
           .commonPreconditionChangeSubscription(aSubscription)
           .alf.getAddress(alfId)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/off-ramp/packing-site-details/$sdilId?id=$alfId")
+          val result = client.url(s"$baseUrl/off-ramp/packing-site-details/$siteId?id=$alfId")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -154,7 +154,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
             val updatedUserAnswers = getAnswers(emptyUserAnswers.id).get
             updatedUserAnswers.id mustBe emptyUserAnswers.id
             updatedUserAnswers.data mustBe emptyUserAnswers.data
-            updatedUserAnswers.packagingSiteList mustBe Map(sdilId ->
+            updatedUserAnswers.packagingSiteList mustBe Map(siteId ->
               Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None))
             updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
@@ -168,7 +168,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
     }
     s"return $INTERNAL_SERVER_ERROR" when {
       "alf returns error" in {
-        val sdilId: String = "foo"
+        val siteId: String = "foo"
         val alfId: String = "bar"
         setUpData(emptyUserAnswers)
         given
@@ -176,7 +176,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           .alf.getBadAddress(alfId)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/off-ramp/packing-site-details/$sdilId?id=$alfId")
+          val result = client.url(s"$baseUrl/off-ramp/packing-site-details/$siteId?id=$alfId")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()

@@ -34,22 +34,22 @@ class RampOffController @Inject()(           identify: IdentifierAction,
                                              val controllerComponents: MessagesControllerComponents)
                                  (implicit val ex: ExecutionContext) extends FrontendBaseController{
 
-  def secondaryWareHouseDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def secondaryWareHouseDetailsOffRamp(siteId: String, alfId: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
   implicit request =>
     for {
       alfResponse         <- addressLookupService.getAddress(alfId)
-      updatedUserAnswers = addressLookupService.addAddressUserAnswers(WarehouseDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
+      updatedUserAnswers = addressLookupService.addAddressUserAnswers(WarehouseDetails, alfResponse.address, request.userAnswers, siteId, alfId)
       _                   <- sessionRepository.set(updatedUserAnswers)
     } yield {
       Redirect(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
     }
   }
 
-  def packingSiteDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def packingSiteDetailsOffRamp(siteId: String, alfId: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       for {
         alfResponse         <- addressLookupService.getAddress(alfId)
-        updatedUserAnswers = addressLookupService.addAddressUserAnswers(PackingDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
+        updatedUserAnswers = addressLookupService.addAddressUserAnswers(PackingDetails, alfResponse.address, request.userAnswers, siteId, alfId)
         _                   <- sessionRepository.set(updatedUserAnswers)
       } yield {
         Redirect(controllers.routes.PackagingSiteDetailsController.onPageLoad(mode))
