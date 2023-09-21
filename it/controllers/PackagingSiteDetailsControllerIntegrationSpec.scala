@@ -49,7 +49,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
               timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
             )),
-            serviceHref = Some(routes.IndexController.onPageLoad().url),
+            serviceHref = Some(frontendAppConfig.accountFrontendHomeUrl),
             pageHeadingStyle = Some("govuk-heading-l")
           ),
           labels = Some(
