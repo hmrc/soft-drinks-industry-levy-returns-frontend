@@ -64,7 +64,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends ControllerITTestHel
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
-          serviceHref = Some(frontendAppConfig.accountFrontendHomeUrl),
+          serviceHref = Some(frontendAppConfig.sdilHomeUrl),
           pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(

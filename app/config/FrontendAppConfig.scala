@@ -42,9 +42,6 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val sdilBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy")
   val sdilHomeUrl: String = servicesConfig.getString("sdilHomeUrl")
 
-  val sdilAccountFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-account-frontend")
-  val accountFrontendHomeUrl: String = s"$sdilAccountFrontendBaseUrl/soft-drinks-industry-levy-account-frontend/home"
-
   val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
   val loginContinueUrl: String = sdilHomeUrl
   val signOutUrl: String       = s"$basGatewayBaseUrl/bas-gateway/sign-out-without-state"
