@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class AskSecondaryWarehouseInReturnPageSpec extends PageBehaviours {
@@ -27,5 +29,15 @@ class AskSecondaryWarehouseInReturnPageSpec extends PageBehaviours {
     beSettable[Boolean](AskSecondaryWarehouseInReturnPage)
 
     beRemovable[Boolean](AskSecondaryWarehouseInReturnPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        AskSecondaryWarehouseInReturnPage.url(NormalMode) mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        AskSecondaryWarehouseInReturnPage.url(CheckMode) mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

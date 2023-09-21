@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.Mode
 import play.api.libs.json.JsPath
 
 case object RemoveSmallProducerConfirmPage extends QuestionPage[Boolean] {
@@ -23,4 +25,7 @@ case object RemoveSmallProducerConfirmPage extends QuestionPage[Boolean] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "removeSmallProducerConfirm"
+
+  override val url: Mode => String = mode => routes.RemoveSmallProducerConfirmController.onPageLoad(mode, "").url
+
 }

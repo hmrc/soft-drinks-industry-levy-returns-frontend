@@ -16,7 +16,8 @@
 
 package pages
 
-import models.LitresInBands
+import controllers.routes
+import models.{LitresInBands, Mode}
 import play.api.libs.json.JsPath
 
 case object HowManyCreditsForExportPage extends QuestionPage[LitresInBands] {
@@ -24,4 +25,7 @@ case object HowManyCreditsForExportPage extends QuestionPage[LitresInBands] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "howManyCreditsForExport"
+
+  override val url: Mode => String = mode => routes.HowManyCreditsForExportController.onPageLoad(mode).url
+
 }

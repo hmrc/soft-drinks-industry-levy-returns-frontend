@@ -16,7 +16,8 @@
 
 package pages
 
-import models.AddASmallProducer
+import controllers.routes
+import models.{AddASmallProducer, Mode}
 import play.api.libs.json.JsPath
 
 case object AddASmallProducerPage extends QuestionPage[AddASmallProducer] {
@@ -24,4 +25,6 @@ case object AddASmallProducerPage extends QuestionPage[AddASmallProducer] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "addASmallProducer"
+
+  override val url: Mode => String = mode => routes.AddASmallProducerController.onPageLoad(mode).url
 }

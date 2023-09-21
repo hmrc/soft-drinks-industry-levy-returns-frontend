@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.Mode
 import play.api.libs.json.JsPath
 
 object ReturnChangeRegistrationPage extends QuestionPage[String] {
@@ -23,4 +25,7 @@ object ReturnChangeRegistrationPage extends QuestionPage[String] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "returnChangeRegistration"
+
+  override val url: Mode => String = _ => routes.ReturnChangeRegistrationController.onPageLoad.url
+
 }

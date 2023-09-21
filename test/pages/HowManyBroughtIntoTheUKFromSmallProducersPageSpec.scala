@@ -16,7 +16,8 @@
 
 package pages
 
-import models.LitresInBands
+import controllers.routes
+import models.{CheckMode, LitresInBands, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class HowManyBroughtIntoTheUKFromSmallProducersPageSpec extends PageBehaviours {
@@ -28,5 +29,15 @@ class HowManyBroughtIntoTheUKFromSmallProducersPageSpec extends PageBehaviours {
     beSettable[LitresInBands](HowManyBroughtIntoTheUKFromSmallProducersPage)
 
     beRemovable[LitresInBands](HowManyBroughtIntoTheUKFromSmallProducersPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        HowManyBroughtIntoTheUKFromSmallProducersPage.url(NormalMode) mustBe routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        HowManyBroughtIntoTheUKFromSmallProducersPage.url(CheckMode) mustBe routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }

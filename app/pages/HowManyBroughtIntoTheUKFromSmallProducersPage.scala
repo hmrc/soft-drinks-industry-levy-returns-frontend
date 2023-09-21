@@ -16,7 +16,8 @@
 
 package pages
 
-import models.LitresInBands
+import controllers.routes
+import models.{LitresInBands, Mode}
 import play.api.libs.json.JsPath
 
 case object HowManyBroughtIntoTheUKFromSmallProducersPage extends QuestionPage[LitresInBands] {
@@ -24,4 +25,7 @@ case object HowManyBroughtIntoTheUKFromSmallProducersPage extends QuestionPage[L
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "howManyBroughtIntoTheUKFromSmallProducers"
+
+  override val url: Mode => String = mode => routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(mode).url
+
 }

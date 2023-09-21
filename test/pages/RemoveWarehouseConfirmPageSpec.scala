@@ -16,9 +16,10 @@
 
 package pages
 
+import controllers.routes
 import forms.RemoveWarehouseConfirmFormProvider
 import messages.RemoveWarehouseConfirmMessages
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.behaviours.PageBehaviours
@@ -28,7 +29,7 @@ import play.twirl.api.Html
 import views.ViewSpecHelper
 import views.html.RemoveWarehouseConfirmView
 
-class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours  {
+class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours {
 
   lazy val view: RemoveWarehouseConfirmView = application.injector.instanceOf[RemoveWarehouseConfirmView]
 
@@ -65,7 +66,7 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
     beSettable[Boolean](RemoveWarehouseConfirmPage)
 
     beRemovable[Boolean](RemoveWarehouseConfirmPage)
-  }
+
     "the form is not prepopulated and has no error" - {
       val popForm = form.apply()
       val html =
@@ -97,7 +98,7 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
         Map("select-continue" -> "")
       )
       val html =
-        view(formWithErrors,NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
+        view(formWithErrors, NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
       val document = doc(html)
 
       "have a page title containing error" in {
@@ -114,4 +115,16 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
         errorSummary.text() shouldBe RemoveWarehouseConfirmMessages.errorMessage
       }
     }
+
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        RemoveWarehouseConfirmPage.url(NormalMode) mustBe routes.RemoveWarehouseConfirmController.onPageLoad("").url
+      }
+
+      "when in CheckMode" in {
+        RemoveWarehouseConfirmPage.url(CheckMode) mustBe routes.RemoveWarehouseConfirmController.onPageLoad("").url
+      }
+    }
   }
+}

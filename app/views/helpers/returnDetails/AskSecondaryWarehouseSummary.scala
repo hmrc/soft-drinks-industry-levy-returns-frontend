@@ -42,7 +42,7 @@ object AskSecondaryWarehouseSummary {
                 Seq(
                   ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
                     .withAttribute(("id", "change-packaging-sites"))
-                    .withVisuallyHiddenText(messages("SecondaryWarehouse.change.hidden"))
+                    .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden"))
                 )
               } else {
                 Seq.empty

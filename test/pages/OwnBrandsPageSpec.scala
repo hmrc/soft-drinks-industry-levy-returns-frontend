@@ -16,6 +16,8 @@
 
 package pages
 
+import controllers.routes
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 
 class OwnBrandsPageSpec extends PageBehaviours {
@@ -27,5 +29,15 @@ class OwnBrandsPageSpec extends PageBehaviours {
     beSettable[Boolean](OwnBrandsPage)
 
     beRemovable[Boolean](OwnBrandsPage)
+
+    "should contain the correct url" - {
+      "when in NormalMode" in {
+        OwnBrandsPage.url(NormalMode) mustBe routes.OwnBrandsController.onPageLoad(NormalMode).url
+      }
+
+      "when in CheckMode" in {
+        OwnBrandsPage.url(CheckMode) mustBe routes.OwnBrandsController.onPageLoad(CheckMode).url
+      }
+    }
   }
 }
