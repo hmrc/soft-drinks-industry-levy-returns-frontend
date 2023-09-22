@@ -67,20 +67,7 @@ case class UserAnswers(
     }
   }
 
-  def addPackagingSite(site: Site, siteId: String): UserAnswers = {
-    copy(
-      packagingSiteList = packagingSiteList.filterNot(_._1 == siteId) ++ Map(siteId -> site)
-    )
-  }
-
-  def addWarehouse(site: Site, siteId: String): UserAnswers = {
-    copy(
-      warehouseList = warehouseList.filterNot(_._1 == siteId) ++ Map(siteId -> site)
-    )
-  }
-
-
-    def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)
+  def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)
                              (implicit writes: Writes[Boolean]): Try[UserAnswers] = {
     set(page, value).map { updatedAnswers =>
       if (value) {
