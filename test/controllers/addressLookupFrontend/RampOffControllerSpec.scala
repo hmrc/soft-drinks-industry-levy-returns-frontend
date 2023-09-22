@@ -78,7 +78,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.successful(Right(true)))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, alfId).url)
+        val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, alfId, NormalMode).url)
 
         val result = route(application, request).value
         status(result) mustBe SEE_OTHER
@@ -92,14 +92,14 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      val sdilId: String = "foo"
+      val siteId: String = "foo"
       val alfId: String = "bar"
 
       when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.failed(new Exception("woopsie")))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, alfId).url)
+        val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(siteId, alfId, NormalMode).url)
 
         intercept[Exception](await(route(application, request).value))
       }
@@ -111,7 +111,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      val sdilId: String = "foo"
+      val siteId: String = "foo"
       val alfId: String = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
 
@@ -121,12 +121,12 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         ArgumentMatchers.eq(WarehouseDetails),
         ArgumentMatchers.eq(responseFromGetAddress.address),
         ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(sdilId),
+        ArgumentMatchers.eq(siteId),
         ArgumentMatchers.eq(alfId)))
         .thenThrow(new RuntimeException("foo"))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, alfId).url)
+        val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(siteId, alfId, NormalMode).url)
 
         intercept[Exception](await(route(application, request).value))
       }
@@ -138,7 +138,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      val sdilId: String = "foo"
+      val siteId: String = "foo"
       val alfId: String = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
       val updatedUserAnswers: UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
@@ -149,14 +149,14 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         ArgumentMatchers.eq(WarehouseDetails),
         ArgumentMatchers.eq(responseFromGetAddress.address),
         ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(sdilId),
+        ArgumentMatchers.eq(siteId),
         ArgumentMatchers.eq(alfId)))
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
         .thenReturn(Future.failed(new Exception("woopsie")))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, alfId).url)
+        val request = FakeRequest(GET, routes.RampOffController.secondaryWareHouseDetailsOffRamp(siteId, alfId, NormalMode).url)
         intercept[Exception](await(route(application, request).value))
       }
     }
@@ -169,7 +169,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      val sdilId: String = "foo"
+      val siteId: String = "foo"
       val alfId: String = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
       val updatedUserAnswers: UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
@@ -180,14 +180,14 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         ArgumentMatchers.eq(PackingDetails),
         ArgumentMatchers.eq(responseFromGetAddress.address),
         ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(sdilId),
+        ArgumentMatchers.eq(siteId),
         ArgumentMatchers.eq(alfId)))
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
         .thenReturn(Future.successful(Right(true)))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId, NormalMode).url)
+        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(siteId, alfId, NormalMode).url)
 
         val result = route(application, request).value
         status(result) mustBe SEE_OTHER
@@ -201,14 +201,14 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      val sdilId: String = "foo"
+      val siteId: String = "foo"
       val alfId: String = "bar"
 
       when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.failed(new Exception("woopsie")))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId, NormalMode).url)
+        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(siteId, alfId, NormalMode).url)
 
         intercept[Exception](await(route(application, request).value))
       }
@@ -220,7 +220,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      val sdilId: String = "foo"
+      val siteId: String = "foo"
       val alfId: String = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
 
@@ -230,12 +230,12 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         ArgumentMatchers.eq(PackingDetails),
         ArgumentMatchers.eq(responseFromGetAddress.address),
         ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(sdilId),
+        ArgumentMatchers.eq(siteId),
         ArgumentMatchers.eq(alfId)))
         .thenThrow(new RuntimeException("foo"))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId, NormalMode).url)
+        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(siteId, alfId, NormalMode).url)
 
         intercept[Exception](await(route(application, request).value))
       }
@@ -247,7 +247,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      val sdilId: String = "foo"
+      val siteId: String = "foo"
       val alfId: String = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
       val updatedUserAnswers: UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
@@ -258,14 +258,14 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
         ArgumentMatchers.eq(PackingDetails),
         ArgumentMatchers.eq(responseFromGetAddress.address),
         ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(sdilId),
+        ArgumentMatchers.eq(siteId),
         ArgumentMatchers.eq(alfId)))
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
         .thenReturn(Future.failed(new Exception("woopsie")))
 
       running(application) {
-        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(sdilId, alfId, NormalMode).url)
+        val request = FakeRequest(GET, routes.RampOffController.packingSiteDetailsOffRamp(siteId, alfId, NormalMode).url)
         intercept[Exception](await(route(application, request).value))
       }
     }

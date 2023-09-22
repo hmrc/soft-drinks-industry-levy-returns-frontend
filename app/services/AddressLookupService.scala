@@ -40,7 +40,7 @@ class AddressLookupService @Inject()(
 
   val logger: Logger = Logger(this.getClass)
 
-  private def addressChecker(address: AlfAddress, alfId: String): UkAddress = {
+  def addressChecker(address: AlfAddress, alfId: String): UkAddress = {
     val ukAddress: UkAddress = UkAddress(address.lines, address.postcode.getOrElse(""), alfId = Some(alfId))
 
     if (ukAddress.lines.isEmpty && ukAddress.postCode == "" && address.organisation.isEmpty) {
@@ -60,18 +60,17 @@ class AddressLookupService @Inject()(
   def addAddressUserAnswers(addressLookupState: AddressLookupState,
                             address: AlfAddress,
                             userAnswers: UserAnswers,
-                            sdilId: String,
+                            siteId: String,
                             alfId: String): UserAnswers = {
 
     val convertedAddress: UkAddress = addressChecker(address, alfId)
+    val site = Site(convertedAddress, tradingName = address.organisation)
 
     addressLookupState match {
       case PackingDetails =>
-        userAnswers.copy(packagingSiteList =
-          userAnswers.packagingSiteList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Site(convertedAddress, None, address.organisation, None)))
+        userAnswers.addPackagingSite(site, siteId)
       case WarehouseDetails =>
-        userAnswers.copy(warehouseList =
-          userAnswers.warehouseList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Site(convertedAddress, None, address.organisation, None)))
+        userAnswers.addWarehouse(site, siteId)
     }
   }
 
@@ -79,21 +78,21 @@ class AddressLookupService @Inject()(
     addressLookupConnector.initJourney(journeyConfig)
   }
 
-  def initJourneyAndReturnOnRampUrl(state: AddressLookupState, sdilId: String = generateId, mode: Mode = NormalMode)
+  def initJourneyAndReturnOnRampUrl(state: AddressLookupState, siteId: String = generateId, mode: Mode = NormalMode)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
-    val journeyConfig: JourneyConfig = createJourneyConfig(state, sdilId, mode: Mode)
+    val journeyConfig: JourneyConfig = createJourneyConfig(state, siteId, mode: Mode)
     initJourney(journeyConfig).map {
       case Right(onRampUrl) => onRampUrl
       case Left(error) => throw new Exception(s"Failed to init ALF ${error.message} with status ${error.status} for ${hc.requestId}")
     }
   }
 
-  def createJourneyConfig(state: AddressLookupState, sdilId: String, mode: Mode = NormalMode)
+  def createJourneyConfig(state: AddressLookupState, siteId: String, mode: Mode = NormalMode)
                          (implicit requestHeader: RequestHeader, messages: Messages): JourneyConfig = {
     JourneyConfig(
       version = frontendAppConfig.AddressLookupConfig.version,
       options = JourneyOptions(
-        continueUrl = returnContinueUrl(state, sdilId, mode: Mode),
+        continueUrl = returnContinueUrl(state, siteId, mode: Mode),
         homeNavHref = None,
         signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
         accessibilityFooterUrl = None,
@@ -121,7 +120,7 @@ class AddressLookupService @Inject()(
           timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
           timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
         )),
-        serviceHref = Some(routes.IndexController.onPageLoad().url),
+        serviceHref = Some(frontendAppConfig.sdilHomeUrl),
         pageHeadingStyle = Some("govuk-heading-l")
       ),
       labels = returnJourneyLabels(state),
@@ -191,10 +190,10 @@ class AddressLookupService @Inject()(
     }
   }
 
-  private def returnContinueUrl(state: AddressLookupState, sdilId: String, mode: Mode): String = {
+  private def returnContinueUrl(state: AddressLookupState, siteId: String, mode: Mode): String = {
     state match {
-      case WarehouseDetails => frontendAppConfig.AddressLookupConfig.WarehouseDetails.offRampUrl(sdilId)
-      case PackingDetails => frontendAppConfig.AddressLookupConfig.PackingDetails.offRampUrl(sdilId, mode)
+      case WarehouseDetails => frontendAppConfig.AddressLookupConfig.WarehouseDetails.offRampUrl(siteId, mode)
+      case PackingDetails => frontendAppConfig.AddressLookupConfig.PackingDetails.offRampUrl(siteId, mode)
     }
   }
 }

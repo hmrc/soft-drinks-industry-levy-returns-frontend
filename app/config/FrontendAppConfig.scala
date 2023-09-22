@@ -76,14 +76,14 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
 
     object WarehouseDetails {
 
-      def offRampUrl(sdilId: String): String = {
-        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+      def offRampUrl(siteId: String, mode: Mode): String = {
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(siteId, "", mode).url.replace("?id=", "")}"
       }
     }
 
     object PackingDetails {
-      def offRampUrl(sdilId: String, mode: Mode): String = {
-        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "", mode).url.replace("?id=", "")}"
+      def offRampUrl(siteId: String, mode: Mode): String = {
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(siteId, "", mode).url.replace("?id=", "")}"
       }
     }
   }

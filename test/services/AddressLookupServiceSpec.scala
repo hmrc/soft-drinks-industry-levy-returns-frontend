@@ -67,7 +67,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
         address = customerAddressMax.address,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
-        sdilId = sdilId,
+        siteId = sdilId,
         alfId = alfId)
 
       res.warehouseList mustBe addedWarehouse
@@ -84,7 +84,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
         address = customerAddressMax.address,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
-        sdilId = sdilId,
+        siteId = sdilId,
         alfId = alfId)
 
       res.warehouseList mustBe updatedWarehouseMap
@@ -108,7 +108,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
-        sdilId = sdilId,
+        siteId = sdilId,
         alfId = alfId)
 
       res.warehouseList mustBe addedWarehouseMissingLines
@@ -128,7 +128,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         ),
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         alfId = alfId,
-        sdilId = sdilId)
+        siteId = sdilId)
 
       res.warehouseList mustBe Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("super cola"), None),
         sdilId -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)), None, Some(organisation), None))
@@ -152,7 +152,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(packagingSiteList = packingMap),
         alfId = alfId,
-        sdilId = sdilId)
+        siteId = sdilId)
 
       res.packagingSiteList mustBe addedPackingSiteMissingLines
     }
@@ -176,7 +176,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(packagingSiteList = packingMap),
         alfId = alfId,
-        sdilId =  sdilId)
+        siteId =  sdilId)
 
       res.packagingSiteList mustBe addedPackingSite
     }
@@ -199,7 +199,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(packagingSiteList = packingMap),
         alfId = alfId,
-        sdilId =  sdilId)
+        siteId =  sdilId)
 
       res.packagingSiteList mustBe addedPackingSite
     }
@@ -217,7 +217,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         address = customerAddressMissingLinesAndName,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         alfId = "foo",
-        sdilId = "bar")
+        siteId = "bar")
 
       val errorMessage = "Not Found (Alf has returned an empty address and organisation name)"
 
@@ -273,7 +273,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
-          serviceHref = Some(routes.IndexController.onPageLoad().url),
+          serviceHref = Some(frontendAppConfig.sdilHomeUrl),
           pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
@@ -346,7 +346,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
-          serviceHref = Some(routes.IndexController.onPageLoad().url),
+          serviceHref = Some(frontendAppConfig.sdilHomeUrl),
           pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
@@ -431,7 +431,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
-          serviceHref = Some(routes.IndexController.onPageLoad().url),
+          serviceHref = Some(frontendAppConfig.sdilHomeUrl),
           pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
@@ -503,7 +503,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
-          serviceHref = Some(routes.IndexController.onPageLoad().url),
+          serviceHref = Some(frontendAppConfig.sdilHomeUrl),
           pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
