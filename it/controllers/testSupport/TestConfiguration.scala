@@ -71,6 +71,7 @@ trait TestConfiguration
   implicit lazy val messagesAPI = app.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   def requestReturnPeriod = ReturnPeriod(2018, 1)
+  def diffReturnPeriod = ReturnPeriod(2021, 1)
 
   def setUpData(userAnswers: UserAnswers, returnPeriod: Option[ReturnPeriod] = Some(requestReturnPeriod)): Unit  ={
     val res = mongo.set(userAnswers).flatMap(_ => returnPeriod match {

@@ -9,182 +9,183 @@ import play.mvc.Http.HeaderNames
 class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
   def url(nilReturn: Boolean) = s"/submit-return/year/2018/quarter/1/nil-return/$nilReturn"
 
-  s"GET ${url(true)}" when {
-    val nilReturnUrl = s"$baseUrl${url(true)}"
-    "the return period is pending" should {
-      "setup default/override user answers with no for all pages and redirect to cya" when {
-        "there is no useranswers in the database" in {
+  val urlsForNilReturnValues = Map(true -> s"${url(true)}",
+    false -> s"${url(false)}")
+
+  urlsForNilReturnValues.foreach { case (isNilReturn, path) =>
+    s"GET $path" should {
+      val expectedLocation = if (isNilReturn) {
+        routes.CheckYourAnswersController.onPageLoad.url
+      } else {
+        routes.OwnBrandsController.onPageLoad(NormalMode).url
+      }
+      s"setup default/override user answers with no for all pages and redirect to $expectedLocation" when {
+        "there is no return period in the cache, the return period is pending and there are no user answers in the database" in {
           given
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(nilReturnUrl)
+            val result1 = client.url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION).value mustBe routes.CheckYourAnswersController.onPageLoad.url
+              res.header(HeaderNames.LOCATION).value mustBe expectedLocation
               val userAnswers = getAnswers(sdilNumber)
-              userAnswers.get.data mustBe Json.toJson(new DefaultUserAnswersData(aSubscription))
+              val expectedData = if (isNilReturn) {
+                Json.toJson(new DefaultUserAnswersData(aSubscription))
+              } else {
+                Json.obj()
+              }
+              userAnswers.get.data mustBe expectedData
             }
           }
         }
-
-        "there is useranswers already in the database" in {
-
-          setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value)
+        "there is no return period in the cache, the return period is pending and there are user answers in the database" in {
+          setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value, None)
           given
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(nilReturnUrl)
+            val result1 = client.url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION).value mustBe routes.CheckYourAnswersController.onPageLoad.url
+              res.header(HeaderNames.LOCATION).value mustBe expectedLocation
               val userAnswers = getAnswers(sdilNumber).get
               userAnswers.data mustNot equal(broughtIntoUkFromSmallProducersFullAnswers.success.value.data)
-              userAnswers.data mustBe Json.toJson(new DefaultUserAnswersData(aSubscription))
+              val expectedData = if (isNilReturn) {
+                Json.toJson(new DefaultUserAnswersData(aSubscription))
+              } else {
+                Json.obj()
+              }
+              userAnswers.data mustBe expectedData
             }
           }
         }
-      }
-    }
-    "the return period is not pending" should {
-      "redirect to sdil frontend" in {
-        given
-          .authorisedWithNoPendingReturns(aSubscription)
 
-        WsTestClient.withClient { client =>
-          val result1 = client.url(nilReturnUrl)
-            .withFollowRedirects(false)
-            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .get()
-
-          whenReady(result1) { res =>
-            res.status mustBe 303
-            res.header(HeaderNames.LOCATION).value mustBe "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
-            getAnswers(sdilNumber).isEmpty mustBe true
-          }
-        }
-      }
-    }
-    testUnauthorisedUser(nilReturnUrl)
-  }
-
-  s"GET ${url(false)}" when {
-    val returnUrl = s"$baseUrl${url(false)}"
-    "the return period is pending" should {
-      "setup/override user answers with empty data and redirect to ownbrands" when {
-        "there is no useranswers in the database and the user is not a small producer" in {
+        "there is a return period in the cache that doesn't match the request return period which is pending and there are user answers in the database" in {
+          setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value, Some(diffReturnPeriod))
           given
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(returnUrl)
+            val result1 = client.url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION).value mustBe routes.OwnBrandsController.onPageLoad(NormalMode).url
+              res.header(HeaderNames.LOCATION).value mustBe expectedLocation
               val userAnswers = getAnswers(sdilNumber)
-              userAnswers.get.data mustBe Json.obj()
+              val expectedData = if (isNilReturn) {
+                Json.toJson(new DefaultUserAnswersData(aSubscription))
+              } else {
+                Json.obj()
+              }
+              userAnswers.get.data mustBe expectedData
             }
           }
         }
 
-        "there is user answers already in the database" in {
+        "there is a return period in the cache that matches the request return period which is pending and there are user answers in the database that has a nilReturn missmatch" in {
+          val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(isNilReturn = !isNilReturn)
 
-          setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value)
+          setUpData(userAnswers, Some(diffReturnPeriod))
           given
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(returnUrl)
+            val result1 = client.url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION).value mustBe routes.OwnBrandsController.onPageLoad(NormalMode).url
-              val userAnswers = getAnswers(sdilNumber).get
-              userAnswers.data mustNot equal(broughtIntoUkFromSmallProducersFullAnswers.success.value.data)
-              userAnswers.data mustBe Json.obj()
+              res.header(HeaderNames.LOCATION).value mustBe expectedLocation
+              val updatedUA = getAnswers(sdilNumber)
+              val expectedData = if (isNilReturn) {
+                Json.toJson(new DefaultUserAnswersData(aSubscription))
+              } else {
+                Json.obj()
+              }
+              updatedUA.get.data mustBe expectedData
             }
           }
         }
       }
 
-      "setup/override user answers with empty data and redirect to packaged contract packer" when {
-        "there is no useranswers in the database and the user is a small producer" in {
-          given
-            .commonPreconditionChangeSubscription(aSubscription.copy(activity = aSubscription.activity.copy(smallProducer = true)))
+      s"not update user answers and redirect to $expectedLocation" when {
+        "there is a return period in the cache matching the return period request and the user answers in the database are not submitted and have same nilReturn" in {
+          val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(isNilReturn = isNilReturn, submitted = false)
 
-          WsTestClient.withClient { client =>
-            val result1 = client.url(returnUrl)
-              .withFollowRedirects(false)
-              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-              .get()
-
-            whenReady(result1) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION).value mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode).url
-              val userAnswers = getAnswers(sdilNumber)
-              userAnswers.get.data mustBe Json.obj()
-            }
-          }
-        }
-
-        "there is user answers already in the database" in {
-
-          setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value)
+          setUpData(userAnswers)
           given
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(returnUrl)
+            val result1 = client.url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION).value mustBe routes.OwnBrandsController.onPageLoad(NormalMode).url
-              val userAnswers = getAnswers(sdilNumber).get
-              userAnswers.data mustNot equal(broughtIntoUkFromSmallProducersFullAnswers.success.value.data)
-              userAnswers.data mustBe Json.obj()
+              res.header(HeaderNames.LOCATION).value mustBe expectedLocation
+              val updatedUA = getAnswers(sdilNumber)
+              updatedUA.get.data mustBe userAnswers.data
             }
           }
         }
       }
-    }
-    "the return period is not pending" should {
-      "redirect to sdil frontend" in {
-        given
-          .authorisedWithNoPendingReturns(aSubscription)
 
-        WsTestClient.withClient { client =>
-          val result1 = client.url(returnUrl)
-            .withFollowRedirects(false)
-            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .get()
+      "should redirect to sdilHome" when {
+        "there is no return period in cache and the return period is not pending" in {
+          given
+            .authorisedWithNoPendingReturns(aSubscription)
 
-          whenReady(result1) { res =>
-            res.status mustBe 303
-            res.header(HeaderNames.LOCATION).value mustBe "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
-            getAnswers(sdilNumber).isEmpty mustBe true
+          WsTestClient.withClient { client =>
+            val result1 = client.url(s"$baseUrl$path")
+              .withFollowRedirects(false)
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .get()
+
+            whenReady(result1) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION).value mustBe "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
+              getAnswers(sdilNumber).isEmpty mustBe true
+            }
+          }
+        }
+
+        "there is a returnPeriod in cache matching the request period and userAnswers that have been submitted" in {
+          val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(submitted = true)
+
+          setUpData(userAnswers)
+          given
+            .commonPreconditionChangeSubscription(aSubscription)
+
+          WsTestClient.withClient { client =>
+            val result1 = client.url(s"$baseUrl$path")
+              .withFollowRedirects(false)
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .get()
+
+            whenReady(result1) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION).value mustBe "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
+            }
           }
         }
       }
+      testUnauthorisedUser(s"$baseUrl$path")
     }
-    testUnauthorisedUser(returnUrl)
   }
 }

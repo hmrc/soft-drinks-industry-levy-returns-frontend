@@ -32,13 +32,14 @@ class ReturnsController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
                                    override val messagesApi: MessagesApi,
                                   config: FrontendAppConfig,
                                    identify: IdentifierAction,
+                                  dataRetrievalAction: DataRetrievalAction,
                                    val controllerComponents: MessagesControllerComponents
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(year: Int, quarter: Int, nilReturn: Boolean): Action[AnyContent] = identify.async {
+  def onPageLoad(year: Int, quarter: Int, nilReturn: Boolean): Action[AnyContent] = (identify andThen dataRetrievalAction).async {
     implicit request =>
 
-      returnsOrchestrator.setupNewReturn(year, quarter, nilReturn).value.map {
+      returnsOrchestrator.handleReturnRequest(year, quarter, nilReturn).value.map {
         case Right(_) if nilReturn =>
           Redirect(routes.CheckYourAnswersController.onPageLoad)
         case Right(_) if request.subscription.activity.smallProducer =>

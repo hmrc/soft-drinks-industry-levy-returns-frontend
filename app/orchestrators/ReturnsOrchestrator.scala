@@ -20,9 +20,8 @@ import cats.data.EitherT
 import cats.implicits._
 import com.google.inject.{Inject, Singleton}
 import errors.NoPendingReturnForGivenPeriod
-import models.requests.{DataRequest, IdentifierRequest}
+import models.requests.{DataRequest, OptionalDataRequest}
 import models.retrieved.RetrievedSubscription
-
 import models.{Amounts, ReturnPeriod, UserAnswers}
 import play.api.mvc.AnyContent
 import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
@@ -37,8 +36,26 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
                                     sdilSessionCache: SDILSessionCache,
                                     sessionRepository: SessionRepository) {
 
+  def handleReturnRequest(year: Int, quarter: Int, nilReturn: Boolean)
+                         (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = EitherT{
+
+    val requestStartedForReturnPeriod: Boolean = request.returnPeriod.fold(false) {
+      returnPeriod => returnPeriod.year == year && returnPeriod.quarter == quarter
+    }
+    requestStartedForReturnPeriod match {
+      case true if request.userAnswers.fold(false)(_.submitted) =>
+        Future.successful(Left(NoPendingReturnForGivenPeriod))
+      case true if request.userAnswers.fold(false)(_.isNilReturn == nilReturn) =>
+        Future.successful(Right((): Unit))
+      case _ =>
+        setupNewReturn(year, quarter, nilReturn).value
+    }
+  }
+
+
+
   def setupNewReturn(year: Int, quarter: Int, nilReturn: Boolean)
-                    (implicit request: IdentifierRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
+                    (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
     for {
       _ <- getAndSaveValidReturnPeriod(year, quarter)
       _ <- setupUserAnswers(request.subscription, nilReturn)
@@ -46,9 +63,10 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
   }
 
   def getAndSaveValidReturnPeriod(year: Int, quarter: Int)
-                 (implicit request: IdentifierRequest[AnyContent],
+                 (implicit request: OptionalDataRequest[AnyContent],
                   hc: HeaderCarrier,
-                  ec: ExecutionContext): ReturnResult[ReturnPeriod] = EitherT{
+                  ec: ExecutionContext): ReturnResult[ReturnPeriod] = EitherT {
+
     returnService.getPendingReturns(request.subscription.utr).flatMap { pendingReturns =>
       val returnPeriod = ReturnPeriod(year, quarter)
       if(pendingReturns.contains(returnPeriod)) {
@@ -62,7 +80,7 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
   }
 
   def setupUserAnswers(subscription: RetrievedSubscription, nilReturn: Boolean): ReturnResult[Boolean] = EitherT {
-    val defaultUserAnswers = new UserAnswers(subscription, nilReturn)
+    lazy val defaultUserAnswers = new UserAnswers(subscription, nilReturn)
     sessionRepository.set(defaultUserAnswers)
   }
 
@@ -95,7 +113,5 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
       case None => calculateAmounts(sdilRef, userAnswers, returnPeriod)
     }
   }
-
-
 
 }
