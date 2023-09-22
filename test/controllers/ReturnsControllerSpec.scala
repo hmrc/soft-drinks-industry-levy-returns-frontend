@@ -45,7 +45,7 @@ class ReturnsControllerSpec extends SpecBase {
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false).url)
-              when(mockReturnsOrchestrator.setupNewReturn(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
                 .thenReturn(createSuccessReturnResult((): Unit))
               val result = route(application, request).value
 
@@ -62,7 +62,7 @@ class ReturnsControllerSpec extends SpecBase {
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, true).url)
-              when(mockReturnsOrchestrator.setupNewReturn(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
                 .thenReturn(createSuccessReturnResult((): Unit))
               val result = route(application, request).value
 
@@ -79,7 +79,7 @@ class ReturnsControllerSpec extends SpecBase {
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false).url)
-              when(mockReturnsOrchestrator.setupNewReturn(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
                 .thenReturn(createFailureReturnResult(NoPendingReturnForGivenPeriod))
               val result = route(application, request).value
               val config = application.injector.instanceOf[FrontendAppConfig]
@@ -99,7 +99,7 @@ class ReturnsControllerSpec extends SpecBase {
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false).url)
-              when(mockReturnsOrchestrator.setupNewReturn(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
                 .thenReturn(createSuccessReturnResult((): Unit))
               val result = route(application, request).value
 
@@ -116,7 +116,7 @@ class ReturnsControllerSpec extends SpecBase {
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, true).url)
-              when(mockReturnsOrchestrator.setupNewReturn(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
                 .thenReturn(createSuccessReturnResult((): Unit))
               val result = route(application, request).value
 
@@ -133,7 +133,7 @@ class ReturnsControllerSpec extends SpecBase {
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false).url)
-              when(mockReturnsOrchestrator.setupNewReturn(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
                 .thenReturn(createFailureReturnResult(NoPendingReturnForGivenPeriod))
               val result = route(application, request).value
               val config = application.injector.instanceOf[FrontendAppConfig]
