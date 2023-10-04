@@ -62,6 +62,11 @@ trait FieldsetFluency {
         .copy(isPageHeading = true)
         .withCssClass(size.toString)
 
+    def asPageSubHeading(size: LegendSize = LegendSize.Medium): Legend =
+      legend
+        .copy(isPageHeading = false)
+        .withCssClass(size.toString)
+
     def withCssClass(newClass: String): Legend =
       legend copy (classes = s"${legend.classes} $newClass")
   }
