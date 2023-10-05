@@ -29,7 +29,7 @@ object AddressFormattingHelper {
       } else {
         HtmlFormat.escape(line).toString() + "<br/>"
       }).mkString +
-      s"""<span class="nowrap" style="white-space: nowrap;">${ukAddress.postCode}</span>""")
+      HtmlFormat.escape(ukAddress.postCode).toString())
   }
 
   def addressFormatting(address: UkAddress, tradingName: Option[String]): Html = {
