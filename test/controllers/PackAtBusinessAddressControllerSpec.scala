@@ -58,7 +58,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
   var usersRetrievedSubscription: RetrievedSubscription = aSubscription
   val businessName: String = usersRetrievedSubscription.orgName
   val businessAddress: UkAddress = usersRetrievedSubscription.address
-  val formattedAddress = "Super Lemonade Plc<br/>63 Clifton Roundabout<br/>Worcester<br/><span class=\"nowrap\" style=\"white-space: nowrap;\">WR53 7CX</span>"
+  val formattedAddress = "Super Lemonade Plc<br/>63 Clifton Roundabout<br/>Worcester<br/>WR53 7CX"
 
   lazy val packAtBusinessAddressRoute: String = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
