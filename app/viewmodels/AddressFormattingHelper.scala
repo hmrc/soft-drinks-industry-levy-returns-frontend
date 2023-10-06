@@ -23,13 +23,10 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 object AddressFormattingHelper {
 
   def formatBusinessAddress(ukAddress: UkAddress, tradingName: Option[String]): HtmlContent = {
-    HtmlContent(tradingName.fold("")(tradingName => tradingName + "<br/>") +
-      ukAddress.lines.map(line => if (line.isEmpty) {
-        ""
-      } else {
-        HtmlFormat.escape(line).toString() + "<br/>"
-      }).mkString +
-      HtmlFormat.escape(ukAddress.postCode).toString())
+    val fullContent: String = tradingName.map(_ + "<br/>").getOrElse("") +
+      ukAddress.lines.filterNot(_.isEmpty).map(HtmlFormat.escape(_).toString() + "<br/>").mkString +
+      HtmlFormat.escape(ukAddress.postCode).toString()
+    HtmlContent(fullContent)
   }
 
   def addressFormatting(address: UkAddress, tradingName: Option[String]): Html = {
