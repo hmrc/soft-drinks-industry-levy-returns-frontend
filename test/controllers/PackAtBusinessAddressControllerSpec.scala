@@ -41,6 +41,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
 
@@ -57,7 +58,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
   var usersRetrievedSubscription: RetrievedSubscription = aSubscription
   val businessName: String = usersRetrievedSubscription.orgName
   val businessAddress: UkAddress = usersRetrievedSubscription.address
-
+  val formattedAddress = "Super Lemonade Plc<br/>63 Clifton Roundabout<br/>Worcester<br/>WR53 7CX"
 
   lazy val packAtBusinessAddressRoute: String = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
@@ -126,7 +127,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), businessName, businessAddress, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), HtmlContent(formattedAddress), NormalMode)(request, messages(application)).toString
         page.title() must include(Messages("packAtBusinessAddress.title"))
         page.getElementsByTag("h1").text() mustEqual Messages("packAtBusinessAddress.title")
         //noinspection ComparingUnrelatedTypes
@@ -188,7 +189,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, businessName, businessAddress, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, HtmlContent(formattedAddress), NormalMode)(request, messages(application)).toString
 
         //noinspection ComparingUnrelatedTypes
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
