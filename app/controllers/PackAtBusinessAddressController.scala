@@ -27,7 +27,9 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import utilitlies.{AddressHelper, GenericLogger, UserTypeCheck}
+import viewmodels.AddressFormattingHelper
 import views.html.PackAtBusinessAddressView
 
 import javax.inject.Inject
@@ -54,9 +56,7 @@ class PackAtBusinessAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
-
-      val businessName = request.subscription.orgName
-      val businessAddress = request.subscription.address
+      val formattedAddress: HtmlContent = AddressFormattingHelper.formatBusinessAddress(request.subscription.address, Some(request.subscription.orgName))
       val newPacker = UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers),request.subscription)
       val noExistingProductionSites = request.subscription.productionSites.isEmpty
 
@@ -66,17 +66,16 @@ class PackAtBusinessAddressController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, businessName, businessAddress, mode))
+      Ok(view(preparedForm, formattedAddress, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      val businessName = request.subscription.orgName
-      val businessAddress = request.subscription.address
+      val formattedAddress: HtmlContent = AddressFormattingHelper.formatBusinessAddress(request.subscription.address, Some(request.subscription.orgName))
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
+          Future.successful(BadRequest(view(formWithErrors, formattedAddress, mode))),
 
         value =>
           for {
@@ -87,9 +86,9 @@ class PackAtBusinessAddressController @Inject()(
                   packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
                     generateId ->
                       Site(
-                        address = businessAddress,
+                        address = request.subscription.address,
                         ref = None,
-                        tradingName = Some(businessName),
+                        tradingName = Some(request.subscription.orgName),
                         closureDate = None
                       )
                 )), PackAtBusinessAddressPage).flatMap(_ =>
