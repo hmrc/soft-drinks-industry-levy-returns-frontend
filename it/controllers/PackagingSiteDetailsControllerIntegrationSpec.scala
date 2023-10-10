@@ -89,7 +89,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
         )
         val alfOnRampURL: String = "http://onramp.com"
 
-        setUpData(UserAnswers(sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty))
+        setUpData(UserAnswers(sdilNumber, requestReturnPeriod, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty))
         given
           .commonPreconditionChangeSubscription(aSubscription)
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)

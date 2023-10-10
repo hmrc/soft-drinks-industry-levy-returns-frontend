@@ -20,9 +20,11 @@ import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import models.{Amounts, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, UserAnswers}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, Json, Writes}
+import queries.Settable
 
 import java.time.LocalDate
+import scala.util.{Failure, Try}
 
 object ReturnsTestData {
 
@@ -163,9 +165,17 @@ object ReturnsTestData {
     )
   )
 
-  lazy val emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
-  lazy val submittedAnswers = UserAnswers(sdilNumber, Json.obj(), submitted = true)
-  lazy val completedUserAnswers = UserAnswers(sdilNumber, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
+  lazy val emptyUserAnswers = UserAnswers(sdilNumber, defaultReturnsPeriod, Json.obj())
+  val warehouseMap: Map[String, Site] = Map(("1", Site(
+    tradingName = Some("Wild Lemonade Group"),
+    address = UkAddress(List("33", "Rhes", "Priordy", "East London"), "E73 2RP"),
+  )))
+  lazy val failingUserAnswers: UserAnswers = new UserAnswers("sdilId", defaultReturnsPeriod, smallProducerList = smallProducerList,
+    packagingSiteList = packagingSiteListWith2, warehouseList = warehouseMap) {
+    override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+  }
+  lazy val submittedAnswers = UserAnswers(sdilNumber, defaultReturnsPeriod, Json.obj(), submitted = true)
+  lazy val completedUserAnswers = UserAnswers(sdilNumber, defaultReturnsPeriod, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
     true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
     "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj(
       "lowBand" -> 259, "highBand" -> 923), "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports"

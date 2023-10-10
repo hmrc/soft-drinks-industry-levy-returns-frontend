@@ -17,7 +17,7 @@
 package base
 
 import models.backend.{Site, UkAddress}
-import models.{LitresInBands, SmallProducer, UserAnswers}
+import models.{LitresInBands, ReturnPeriod, SmallProducer, UserAnswers}
 import play.api.libs.json.{JsBoolean, JsObject, Json}
 
 import java.time.Instant
@@ -28,6 +28,7 @@ object UserAnswersTestData {
   val litresInBandsOnlyLow = LitresInBands(1000, 0)
   val litresInBandsOnlyHigh = LitresInBands(0, 1000)
   val litresInBandsAll0 = LitresInBands(0, 0)
+  val defaultReturnPeriod = ReturnPeriod(2020,1)
 
   val sdilRef = "XKSDIL000000022"
 
@@ -213,6 +214,7 @@ object UserAnswersTestData {
   private def create(data: JsObject, smallProducerList: List[SmallProducer] = List.empty, withPackagingSite: Boolean = false): UserAnswers = {
     UserAnswers(
       id = sdilRef,
+      defaultReturnPeriod,
       data = data,
       smallProducerList = smallProducerList,
       packagingSiteList = if (withPackagingSite) {
@@ -227,6 +229,7 @@ object UserAnswersTestData {
     private def createSmallProducer(data: JsObject, smallProducerList: List[SmallProducer] = List.empty, withPackagingSite: Boolean = false): UserAnswers = {
       UserAnswers(
         id = "XGSDIL000001611",
+        defaultReturnPeriod,
         data = data,
         smallProducerList = smallProducerList,
         packagingSiteList = if (withPackagingSite) {

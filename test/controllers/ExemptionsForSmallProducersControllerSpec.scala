@@ -21,7 +21,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.ExemptionsForSmallProducersFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -94,7 +94,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set(ExemptionsForSmallProducersPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(ExemptionsForSmallProducersPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

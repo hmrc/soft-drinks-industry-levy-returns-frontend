@@ -16,13 +16,11 @@
 
 package controllers.actions
 
-import models.ReturnPeriod
-
-import javax.inject.Inject
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
-import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
+import repositories.{SDILSessionCache, SessionRepository}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject()(
@@ -31,10 +29,9 @@ class DataRetrievalActionImpl @Inject()(
                                        )(implicit val executionContext: ExecutionContext) extends DataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
-    for {
-      userAnsOps <- sessionRepository.get(request.sdilEnrolment)
-      optReturnPeriod <- sdilSessionCache.fetchEntry[ReturnPeriod](request.sdilEnrolment, SDILSessionKeys.RETURN_PERIOD)
-    } yield OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps, optReturnPeriod)
+    sessionRepository.get(request.sdilEnrolment).map { userAnsOps =>
+      OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps)
+    }
   }
 }
 

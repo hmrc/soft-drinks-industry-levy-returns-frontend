@@ -86,7 +86,7 @@ class RequiredUserAnswersSpec extends SpecBase {
       redirectLocation(res).get mustBe controllers.routes.OwnBrandsController.onPageLoad(NormalMode).url
     }
     "should allow user to continue if all user answers are filled in and user is NOT newImporter && NOT co packer && NOT small producer" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj("ownBrands" -> false,
           "packagedContractPacker" -> true,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
@@ -94,8 +94,7 @@ class RequiredUserAnswersSpec extends SpecBase {
           "broughtIntoUK" -> false,
           "broughtIntoUkFromSmallProducers" -> false,
           "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false),
-        List.empty, Map.empty)
+          "claimCreditsForLostDamaged" -> false))
       val res = requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
       status(res) mustBe OK
     }
@@ -126,7 +125,7 @@ class RequiredUserAnswersSpec extends SpecBase {
     }
 
     s"should check for $CheckYourAnswersPage and allow the user to continue when all answers are complete" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj("ownBrands" -> false,
           "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
@@ -135,8 +134,7 @@ class RequiredUserAnswersSpec extends SpecBase {
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
         "broughtIntoUkFromSmallProducers" -> false,
         "claimCreditsForExports" -> false,
-        "claimCreditsForLostDamaged" -> false),
-        List.empty, Map.empty)
+        "claimCreditsForLostDamaged" -> false))
       val res = requiredUserAnswers.requireData(CheckYourAnswersPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
       status(res) mustBe OK
     }
@@ -154,15 +152,14 @@ class RequiredUserAnswersSpec extends SpecBase {
         RequiredPage(ClaimCreditsForLostDamagedPage, None)(implicitly[Reads[Boolean]]))
     }
     "should return SOME missing answers when SOME answers are populated" in {
-      val someAnswersCompleted = UserAnswers("foo",
+      val someAnswersCompleted = emptyUserAnswers.copy(data =
         Json.obj("ownBrands" -> false,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
           "exemptionsForSmallProducers" -> false,
           "broughtIntoUK" -> false,
           "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
           "broughtIntoUkFromSmallProducers" -> false,
-          "claimCreditsForLostDamaged" -> false),
-        List.empty, Map.empty)
+          "claimCreditsForLostDamaged" -> false))
 
       implicit val req = basicRequestWithEmptyAnswers.copy(userAnswers = someAnswersCompleted)
       val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.mainRoute)
@@ -174,11 +171,10 @@ class RequiredUserAnswersSpec extends SpecBase {
   "mainRoute" - {
 
     "should return all correct answers if user is newImporter && newCopacker && small producer true" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj(
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)),
-        List.empty, Map.empty)
+          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, false, contractPacker =false, importer = false,false),LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
@@ -187,11 +183,10 @@ class RequiredUserAnswersSpec extends SpecBase {
       res mustBe basicJourney ++ coPackerFalseJourney ++ importerFalseJourney
     }
     "should return all correct answers if user is newImporter && NOT newCopacker && small producer true" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj(
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)),
-        List.empty, Map.empty)
+          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true,true, contractPacker =true,importer = false,true),LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
@@ -201,11 +196,10 @@ class RequiredUserAnswersSpec extends SpecBase {
       res mustBe basicJourney ++ importerFalseJourney
     }
     "should return all correct answers if user is NOT newImporter && newCopacker && small producer true" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj(
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)),
-        List.empty, Map.empty)
+          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, true, contractPacker = false, importer = true,true),LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
@@ -215,11 +209,10 @@ class RequiredUserAnswersSpec extends SpecBase {
       res mustBe basicJourney ++ coPackerFalseJourney
     }
     "should return all correct answers if user is NOT newImporter && NOT newcopacker &&  small producer true" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj(
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)),
-        List.empty, Map.empty)
+          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, true, contractPacker = true, importer = true,true),LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
@@ -229,11 +222,10 @@ class RequiredUserAnswersSpec extends SpecBase {
       res mustBe basicJourney
     }
     "should return all correct answers if user is newImporter && newcopacker && small producer false" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj(
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)),
-        List.empty, Map.empty)
+          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = false, true, contractPacker = false, importer = false,true),LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
@@ -243,7 +235,7 @@ class RequiredUserAnswersSpec extends SpecBase {
       res mustBe smallProducerFalseJourney ++ basicJourney ++ coPackerFalseJourney ++ importerFalseJourney
     }
     "should return all correct answers if user is NOT newImporter && NOT new co packer && NOT small producer" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj("ownBrands" -> false,
           "packagedContractPacker" -> true,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
@@ -252,8 +244,7 @@ class RequiredUserAnswersSpec extends SpecBase {
           "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
           "broughtIntoUkFromSmallProducers" -> false,
           "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false),
-        List.empty, Map.empty)
+          "claimCreditsForLostDamaged" -> false))
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = false, true, contractPacker = true,importer = true,true),LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
@@ -273,7 +264,7 @@ class RequiredUserAnswersSpec extends SpecBase {
       res mustBe List.empty
     }
     "should be correct if user is a new packer" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj("ownBrands" -> false,
           "packagedContractPacker" -> true,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
@@ -282,8 +273,7 @@ class RequiredUserAnswersSpec extends SpecBase {
           "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
           "broughtIntoUkFromSmallProducers" -> false,
           "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false),
-        List.empty, Map.empty)
+          "claimCreditsForLostDamaged" -> false))
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(true,true, contractPacker = false,true,true),LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
@@ -301,7 +291,7 @@ class RequiredUserAnswersSpec extends SpecBase {
       res mustBe List.empty
     }
     "should be correct if user is a new importer" in {
-      val completedUserAnswers = UserAnswers("foo",
+      val completedUserAnswers = emptyUserAnswers.copy(data =
         Json.obj("ownBrands" -> false,
           "packagedContractPacker" -> true,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
@@ -310,8 +300,7 @@ class RequiredUserAnswersSpec extends SpecBase {
           "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
           "broughtIntoUkFromSmallProducers" -> false,
           "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false),
-        List.empty, Map.empty)
+          "claimCreditsForLostDamaged" -> false))
 
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),

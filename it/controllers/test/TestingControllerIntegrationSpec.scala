@@ -11,8 +11,8 @@ import java.time.Instant
 class TestingControllerIntegrationSpec extends
   Specifications with TestConfiguration with ITCoreTestData {
 
-  private val userAnswers = UserAnswers("id", Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
-  private val userAnswers2 = UserAnswers("id2", Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
+  private val userAnswers = UserAnswers("id", requestReturnPeriod, Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
+  private val userAnswers2 = UserAnswers("id2", requestReturnPeriod, Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
 
   ".resetUserAnswers" should {
 

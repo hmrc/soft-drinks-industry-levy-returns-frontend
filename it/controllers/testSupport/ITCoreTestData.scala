@@ -2,7 +2,7 @@ package controllers.testSupport
 
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{AddASmallProducer, Amounts, DefaultUserAnswersData, LitresInBands, SmallProducer, UserAnswers}
+import models.{AddASmallProducer, Amounts, DefaultUserAnswersData, LitresInBands, ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.TryValues
 import pages._
 import play.api.libs.json.Json
@@ -10,6 +10,8 @@ import play.api.libs.json.Json
 import java.time.LocalDate
 import scala.concurrent.duration.DurationInt
 import scala.util.Failure
+
+object ITCoreTestData extends ITCoreTestData
 
 trait ITCoreTestData extends TryValues {
   val lowBand = 1000L
@@ -67,9 +69,12 @@ trait ITCoreTestData extends TryValues {
   val warehouse: Site = Site(UkAddress(List("34 Rhes Priordy", "East London"), "E73 2RP"), tradingName = None)
 
   implicit val duration = 5.seconds
-  def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
-  def defaultNilReturnUserAnswers = UserAnswers(sdilNumber, Json.toJsObject(new DefaultUserAnswersData(aSubscription)), isNilReturn = true)
-  def submittedAnswers = UserAnswers(sdilNumber, Json.obj(), submitted = true)
+
+  def requestReturnPeriod = ReturnPeriod(2018, 1)
+  def diffReturnPeriod = ReturnPeriod(2021, 1)
+  def emptyUserAnswers = UserAnswers(sdilNumber, requestReturnPeriod, Json.obj())
+  def defaultNilReturnUserAnswers = UserAnswers(sdilNumber, requestReturnPeriod, Json.toJsObject(new DefaultUserAnswersData(aSubscription)), isNilReturn = true)
+  def submittedAnswers = UserAnswers(sdilNumber, requestReturnPeriod, Json.obj(), submitted = true)
 
   def failedUserAnswers = Failure(new Exception(""))
 

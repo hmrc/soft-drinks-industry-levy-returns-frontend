@@ -63,7 +63,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
     "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd"))
   )
 
-  val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,Json.obj(), List.empty,Map.empty,twoWarehouses)
+  val userAnswerTwoWarehouses : UserAnswers = emptyUserAnswers.copy(warehouseList = twoWarehouses)
 
   "SecondaryWarehouseDetails Controller" - {
 
@@ -138,7 +138,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
     "must return OK and contain correct header when 0 warehouses available" in {
 
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, Map.empty)
+      val userAnswers = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -154,8 +154,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
     "must return OK and contain correct header when 1 warehouse available" in {
 
-      val userAnswers = UserAnswers(
-        sdilNumber,Json.obj(), List.empty,Map.empty,
+      val userAnswers = emptyUserAnswers.copy(warehouseList =
         Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"), tradingName = Some("ABC Ltd")))
       )
 
@@ -188,7 +187,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers : UserAnswers = UserAnswers(sdilNumber,Json.obj(), List.empty,Map.empty,twoWarehouses)
+      val userAnswers : UserAnswers = emptyUserAnswers.copy(warehouseList = twoWarehouses)
         .set(SecondaryWarehouseDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

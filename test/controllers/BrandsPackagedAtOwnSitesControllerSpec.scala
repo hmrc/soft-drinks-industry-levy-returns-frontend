@@ -20,11 +20,8 @@ import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.BrandsPackagedAtOwnSitesFormProvider
-
 import helpers.LoggerHelper
-
-
-import models.{LitresInBands, NormalMode, UserAnswers}
+import models.{LitresInBands, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -32,17 +29,15 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.BrandsPackagedAtOwnSitesPage
 import play.api.inject.bind
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.BrandsPackagedAtOwnSitesView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
@@ -59,8 +54,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
 
   lazy val brandsPackagedAtOwnSitesRoute = routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode).url
 
-  val userAnswers = UserAnswers(
-    sdilNumber,
+  val userAnswers = emptyUserAnswers.copy(data =
     Json.obj(
       BrandsPackagedAtOwnSitesPage.toString -> Json.obj(
         "lowBand" -> value1,
@@ -212,11 +206,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         val request =
@@ -234,11 +224,8 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>

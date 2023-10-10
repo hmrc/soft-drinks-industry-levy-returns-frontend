@@ -22,9 +22,9 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.PackAtBusinessAddressFormProvider
 import helpers.LoggerHelper
+import models.NormalMode
 import models.backend.UkAddress
 import models.retrieved.RetrievedSubscription
-import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -111,7 +111,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set(PackAtBusinessAddressPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(PackAtBusinessAddressPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

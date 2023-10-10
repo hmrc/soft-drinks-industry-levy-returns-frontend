@@ -26,7 +26,7 @@ import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
 import java.time.{Clock, ZoneOffset}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._
 
 trait TestConfiguration
@@ -73,27 +73,19 @@ trait TestConfiguration
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit lazy val messagesAPI = app.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
-  def requestReturnPeriod = ReturnPeriod(2018, 1)
-  def diffReturnPeriod = ReturnPeriod(2021, 1)
 
-  def setUpData(userAnswers: UserAnswers, returnPeriod: Option[ReturnPeriod] = Some(requestReturnPeriod)): Unit  ={
-    val res = mongo.set(userAnswers).flatMap(_ => returnPeriod match {
-      case Some(rt) => sdilSessionCache.save[ReturnPeriod](userAnswers.id, SDILSessionKeys.RETURN_PERIOD, rt)
-        .map(_ => ())
-      case None => Future.successful(())
-    })
+  def setUpData(userAnswers: UserAnswers): Unit  ={
+    val res = mongo.set(userAnswers)
     await(res)
   }
 
   def setUpDataWithBackendCallsForAmountsCached(userAnswers: UserAnswers,
                                                 isSmallProducer: Option[Boolean] = None,
                                                 balance: BigDecimal = BigDecimal(-100)): Unit  = {
-    val returnPeriod = ReturnPeriod(2018, 1)
     val cacheMap = CacheMap(userAnswers.id,
       Map(
-        SDILSessionKeys.RETURN_PERIOD -> Json.toJson(returnPeriod),
         SDILSessionKeys.balance(false) -> Json.toJson(balance),
-        SDILSessionKeys.smallProducerForPeriod(returnPeriod) -> Json.toJson(OptSmallProducer(isSmallProducer))
+        SDILSessionKeys.smallProducerForPeriod(ITCoreTestData.requestReturnPeriod) -> Json.toJson(OptSmallProducer(isSmallProducer))
       )
     )
     val res = for {

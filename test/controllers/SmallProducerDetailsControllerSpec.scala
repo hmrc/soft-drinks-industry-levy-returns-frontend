@@ -21,7 +21,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.SmallProducerDetailsFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -30,18 +30,15 @@ import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.SmallProducerDetailsView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency with LoggerHelper {
 
@@ -203,7 +200,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
     "must include added small producer SDIL reference on the row" in {
 
-      val userAnswers = UserAnswers(sdilNumber, Json.obj(), List(superCola))
+      val userAnswers = emptyUserAnswers.copy(smallProducerList = List(superCola))
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
       val producerList = List(superCola)
@@ -219,7 +216,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
     "must include all added small producer SDIL references on the page in rows" in {
 
-      val actualUserAnswers = UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))
+      val actualUserAnswers = emptyUserAnswers.copy(smallProducerList =  List(superCola, sparkyJuice))
       val application = applicationBuilder(userAnswers = Some(actualUserAnswers)).build()
 
       val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
@@ -239,11 +236,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         val request =
@@ -261,11 +254,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>

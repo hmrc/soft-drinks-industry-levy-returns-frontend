@@ -31,17 +31,15 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.HowManyBroughtIntoUkPage
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.HowManyBoughtIntoUkView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with LoggerHelper{
 
@@ -58,8 +56,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
   lazy val howManyBoughtIntoUkRoute: String = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
 
-  val userAnswers: UserAnswers = UserAnswers(
-    sdilNumber,
+  val userAnswers: UserAnswers = emptyUserAnswers.copy(data =
     Json.obj(
       HowManyBroughtIntoUkPage.toString -> Json.obj(
         "lowBand" -> value1,
@@ -210,11 +207,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         val request =
@@ -232,11 +225,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>

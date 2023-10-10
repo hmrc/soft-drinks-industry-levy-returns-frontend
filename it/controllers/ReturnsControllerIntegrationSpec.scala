@@ -43,34 +43,9 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             }
           }
         }
-        "there is no return period in the cache, the return period is pending and there are user answers in the database" in {
-          setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value, None)
-          given
-            .commonPreconditionChangeSubscription(aSubscription)
-
-          WsTestClient.withClient { client =>
-            val result1 = client.url(s"$baseUrl$path")
-              .withFollowRedirects(false)
-              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-              .get()
-
-            whenReady(result1) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION).value mustBe expectedLocation
-              val userAnswers = getAnswers(sdilNumber).get
-              userAnswers.data mustNot equal(broughtIntoUkFromSmallProducersFullAnswers.success.value.data)
-              val expectedData = if (isNilReturn) {
-                Json.toJson(new DefaultUserAnswersData(aSubscription))
-              } else {
-                Json.obj()
-              }
-              userAnswers.data mustBe expectedData
-            }
-          }
-        }
 
         "there is a return period in the cache that doesn't match the request return period which is pending and there are user answers in the database" in {
-          setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value, Some(diffReturnPeriod))
+          setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(returnPeriod = diffReturnPeriod))
           given
             .commonPreconditionChangeSubscription(aSubscription)
 
@@ -97,7 +72,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
         "there is a return period in the cache that matches the request return period which is pending and there are user answers in the database that has a nilReturn missmatch" in {
           val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(isNilReturn = !isNilReturn)
 
-          setUpData(userAnswers, Some(diffReturnPeriod))
+          setUpData(userAnswers.copy(returnPeriod = diffReturnPeriod))
           given
             .commonPreconditionChangeSubscription(aSubscription)
 

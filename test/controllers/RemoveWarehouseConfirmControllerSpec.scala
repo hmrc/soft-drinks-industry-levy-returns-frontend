@@ -33,18 +33,16 @@ import pages.RemoveWarehouseConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.RemoveWarehouseConfirmView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
@@ -54,10 +52,6 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
   val form: Form[Boolean] = formProvider()
   val testIndex = "1"
   val testUkAddress: Html = Html("Wild Lemonade Group<br>33, Rhes, Priordy, East London, E73 2RP")
-  val warehouseMap: Map[String, Site] = Map(("1", Site(
-    tradingName = Some("Wild Lemonade Group"),
-    address = UkAddress(List("33","Rhes", "Priordy","East London"), "E73 2RP" ),
-  )))
 
   val userAnswersData: JsObject = Json.obj(
     RemoveWarehouseConfirmPage.toString -> Json.obj(
@@ -66,7 +60,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
     )
   )
 
-  val userAnswers: UserAnswers = UserAnswers(sdilNumber, userAnswersData, List.empty, Map.empty, warehouseMap)
+  val userAnswers: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, warehouseList = warehouseMap)
 
   lazy val removePackingSiteRoute: String = routes.RemoveWarehouseConfirmController.onPageLoad(s"$testIndex").url
 
@@ -123,7 +117,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap)))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -149,7 +143,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap)))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -170,7 +164,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap))).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap))).build()
 
       running(application) {
         val request =
@@ -223,12 +217,8 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
-      val userAnswersWithWarehouseMapFailed: UserAnswers = new UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap) {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
       val application =
-        applicationBuilder(Some(userAnswersWithWarehouseMapFailed))
+        applicationBuilder(Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -252,12 +242,8 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
-      val userAnswersWithWarehouseMapFailed: UserAnswers = new UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap) {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
       val application =
-        applicationBuilder(Some(userAnswersWithWarehouseMapFailed))
+        applicationBuilder(Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -284,7 +270,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
 
       val application =
-        applicationBuilder(userAnswers = Some(UserAnswers(sdilNumber, Json.obj(), List.empty, Map.empty, warehouseMap)))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)

@@ -1,6 +1,5 @@
 package controllers
 
-import models.UserAnswers
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie

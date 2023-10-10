@@ -169,7 +169,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
     "must redirect to the main Packaging Details list page if user navigates to page without ref in user answers" in {
       val ref: String = "foo"
-      val userAnswers = UserAnswers(sdilNumber, packagingSiteList = Map.empty)
+      val userAnswers = emptyUserAnswers
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -183,7 +183,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
     "must redirect to the main Packaging Details list page if user navigates to page without ref in user answers in check mode" in {
       val ref: String = "foo"
-      val userAnswers = UserAnswers(sdilNumber, packagingSiteList = Map.empty)
+      val userAnswers = emptyUserAnswers
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

@@ -33,17 +33,15 @@ import pages.RemoveSmallProducerConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.RemoveSmallProducerConfirmView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 
 class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
@@ -61,9 +59,9 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       "highBand" -> litres
     )
   )
-  val userAnswers: UserAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerList)
-  val userAnswersWithTwoProducers: UserAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerListWithTwoProducers)
-  val userAnswersWithOneProducer: UserAnswers = UserAnswers(sdilNumber, userAnswersData, smallProducerListOnlySuperCola)
+  val userAnswers: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerList)
+  val userAnswersWithTwoProducers: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerListWithTwoProducers)
+  val userAnswersWithOneProducer: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerListOnlySuperCola)
 
   lazy val removeSmallProducerConfirmRoute: String = routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode, s"$sdilReferenceParty").url
 
@@ -114,7 +112,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must return OK and the correct view for a GET when yes or no was already answered on previous visits to the page" in {
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, false).success.value
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerList).set(RemoveSmallProducerConfirmPage, false).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -142,7 +140,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       val application =
@@ -163,7 +161,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must return to small producer details page when no is selected and there are two producers on the list" in {
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerListWithTwoProducers).set(RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
@@ -184,7 +182,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must return to small producer details page when yes is selected and it is not the last producer being removed" in {
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerListWithTwoProducers).set(
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerListWithTwoProducers).set(
         RemoveSmallProducerConfirmPage, true).success.value
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
@@ -205,7 +203,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers = UserAnswers(sdilReference, userAnswersData, smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -247,15 +245,11 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId", Json.obj(), smallProducerList) {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -278,11 +272,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId", Json.obj(), smallProducerList) {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
@@ -302,7 +292,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val app =
-        applicationBuilder(Some(UserAnswers("sdilId", Json.obj(), smallProducerList)))
+        applicationBuilder(Some(emptyUserAnswers.copy(smallProducerList = smallProducerList)))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 

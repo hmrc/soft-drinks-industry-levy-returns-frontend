@@ -1,7 +1,7 @@
 package repositories
 
 import models.backend.{Site, UkAddress}
-import models.{SmallProducer, UserAnswers}
+import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -28,6 +28,7 @@ class SessionRepositoryISpec
   val repository: SessionRepository = app.injector.instanceOf[SessionRepository]
   val encryption: Encryption = app.injector.instanceOf[Encryption]
   implicit val cryptEncryptedValueFormats: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
+  val returnPeriod = ReturnPeriod(2022, 1)
 
   override def beforeEach(): Unit = {
     await(repository.collection.deleteMany(BsonDocument()).toFuture())
@@ -47,7 +48,7 @@ class SessionRepositoryISpec
 
   ".set" - {
     "must set the last updated time on the supplied user answers to `now`, and save them" in {
-      val userAnswersBefore = UserAnswers("id", Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
+      val userAnswersBefore = UserAnswers("id", returnPeriod, Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
       val timeBeforeTest = Instant.now()
       val setResult     = await(repository.set(userAnswersBefore))
       val updatedRecord = await(repository.get(userAnswersBefore.id)).get
@@ -66,7 +67,7 @@ class SessionRepositoryISpec
       }
 
     "correctly encrypt the records data" in {
-      val userAnswersBefore = UserAnswers("id",
+      val userAnswersBefore = UserAnswers("id", returnPeriod,
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
@@ -106,7 +107,7 @@ class SessionRepositoryISpec
     "when there is a record for this id" - {
 
       "must update the lastUpdated time and get the record" in {
-        val userAnswersBefore = UserAnswers("id", Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
+        val userAnswersBefore = UserAnswers("id", returnPeriod, Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
         await(repository.set(userAnswersBefore))
 
         val timeBeforeTest = Instant.now()
@@ -137,7 +138,7 @@ class SessionRepositoryISpec
   ".clear" - {
 
     "must remove a record" in {
-      val userAnswersBefore = UserAnswers("id", Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
+      val userAnswersBefore = UserAnswers("id", returnPeriod, Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
       repository.set(userAnswersBefore).futureValue
 
       val result = repository.clear(userAnswersBefore.id).futureValue
@@ -158,7 +159,7 @@ class SessionRepositoryISpec
     "when there is a record for this id" - {
 
       "must update its lastUpdated to `now` and return true" in {
-        val userAnswersBefore = UserAnswers("id", Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
+        val userAnswersBefore = UserAnswers("id", returnPeriod, Json.obj("foo" -> "bar"), List(), lastUpdated = Instant.ofEpochSecond(1))
         await(repository.set(userAnswersBefore))
         val timeBeforeTest = Instant.now()
         val result = await(repository.keepAlive(userAnswersBefore.id))
