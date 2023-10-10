@@ -39,48 +39,50 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
   def handleReturnRequest(year: Int, quarter: Int, nilReturn: Boolean)
                          (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = EitherT{
 
-    val requestStartedForReturnPeriod: Boolean = request.returnPeriod.fold(false) {
-      returnPeriod => returnPeriod.year == year && returnPeriod.quarter == quarter
+    val requestReturnPeriod = ReturnPeriod(year, quarter)
+    val userAnswersForReturnPeriod = {
+      request.userAnswers.fold[Option[UserAnswers]](None) {userAnswers =>
+        if(userAnswers.returnPeriod == requestReturnPeriod) {
+          Some(userAnswers)
+        } else {
+          None
+        }
+      }
     }
-    requestStartedForReturnPeriod match {
-      case true if request.userAnswers.fold(false)(_.submitted) =>
-        Future.successful(Left(NoPendingReturnForGivenPeriod))
-      case true if request.userAnswers.fold(false)(_.isNilReturn == nilReturn) =>
+    userAnswersForReturnPeriod match {
+      case Some(userAnswers) if userAnswers.submitted => Future.successful(Left(NoPendingReturnForGivenPeriod))
+      case Some(userAnswers) if userAnswers.isNilReturn == nilReturn =>
         Future.successful(Right((): Unit))
-      case _ =>
-        setupNewReturn(year, quarter, nilReturn).value
+      case _ => setupNewReturn(requestReturnPeriod, nilReturn).value
     }
   }
 
 
 
-  def setupNewReturn(year: Int, quarter: Int, nilReturn: Boolean)
+  def setupNewReturn(returnPeriod: ReturnPeriod, nilReturn: Boolean)
                     (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
     for {
-      _ <- getAndSaveValidReturnPeriod(year, quarter)
-      _ <- setupUserAnswers(request.subscription, nilReturn)
+      _ <- checkIfValidReturnPeriod(returnPeriod)
+      _ <- setupUserAnswers(request.subscription, returnPeriod, nilReturn)
     } yield ((): Unit)
   }
 
-  def getAndSaveValidReturnPeriod(year: Int, quarter: Int)
-                 (implicit request: OptionalDataRequest[AnyContent],
+  def checkIfValidReturnPeriod(returnPeriod: ReturnPeriod)
+                              (implicit request: OptionalDataRequest[AnyContent],
                   hc: HeaderCarrier,
                   ec: ExecutionContext): ReturnResult[ReturnPeriod] = EitherT {
 
-    returnService.getPendingReturns(request.subscription.utr).flatMap { pendingReturns =>
-      val returnPeriod = ReturnPeriod(year, quarter)
+    returnService.getPendingReturns(request.subscription.utr).map { pendingReturns =>
       if(pendingReturns.contains(returnPeriod)) {
-        sdilSessionCache.save[ReturnPeriod](request.sdilEnrolment, SDILSessionKeys.RETURN_PERIOD, returnPeriod).map(
-          _ => Right(returnPeriod)
-        )
+         Right(returnPeriod)
       } else {
-        Future.successful(Left(NoPendingReturnForGivenPeriod))
+        Left(NoPendingReturnForGivenPeriod)
       }
     }
   }
 
-  def setupUserAnswers(subscription: RetrievedSubscription, nilReturn: Boolean): ReturnResult[Boolean] = EitherT {
-    lazy val defaultUserAnswers = new UserAnswers(subscription, nilReturn)
+  def setupUserAnswers(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, nilReturn: Boolean): ReturnResult[Boolean] = EitherT {
+    lazy val defaultUserAnswers = new UserAnswers(subscription, returnPeriod, nilReturn)
     sessionRepository.set(defaultUserAnswers)
   }
 

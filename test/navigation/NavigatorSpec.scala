@@ -38,7 +38,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
         case object UnknownPage extends Page {
           override val url: Mode => String = _ => ""
         }
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers(id)) mustBe routes.IndexController.onPageLoad()
+        navigator.nextPage(UnknownPage, NormalMode, emptyUserAnswers) mustBe routes.IndexController.onPageLoad()
       }
 
       "navigate to correct page " - {
@@ -49,7 +49,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
              def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(OwnBrandsPage,
                mode,
-              UserAnswers(id, Json.obj("ownBrands" -> value)))
+               emptyUserAnswers.copy(data = Json.obj("ownBrands" -> value)))
 
             "select Yes to navigate to How Many own brands packaged at own sites page" in {
               val result = navigate(value = true)
@@ -65,12 +65,12 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
           "Remove Packaging details confirmation if" - {
             "Yes is selected go to Packing details page" in {
               val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode,
-                UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> true)))
+                emptyUserAnswers.copy(data = Json.obj("removePackagingDetailsConfirmation" -> true)))
               result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
             }
             "No is selected go to Packing details page" in {
               val result = navigator.nextPage(RemovePackagingDetailsConfirmationPage, NormalMode,
-                UserAnswers(id,Json.obj("removePackagingDetailsConfirmation" -> false)))
+                emptyUserAnswers.copy(data = Json.obj("removePackagingDetailsConfirmation" -> false)))
               result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
             }
           }
@@ -80,13 +80,13 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             "Should navigate to secondary warehouse details controller when yes is selected" in {
               navigator.nextPage(RemoveWarehouseConfirmPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("removeWarehouse" -> true))
+                emptyUserAnswers.copy(data = Json.obj("removeWarehouse" -> true))
               ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
             }
             "Should navigate to secondary warehouse details controller when no is selected" in {
               navigator.nextPage(RemoveWarehouseConfirmPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("removeWarehouse" -> false))
+                emptyUserAnswers.copy(data = Json.obj("removeWarehouse" -> false))
               ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
             }
           }
@@ -96,7 +96,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             "select save and continue to navigate to packaged as contract packer page" in {
               val result = navigator.nextPage(BrandsPackagedAtOwnSitesPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("ownBrands" -> true,
+                emptyUserAnswers.copy(data = Json.obj("ownBrands" -> true,
                   "brandsPackagedAtOwnSites" ->
                     Json.obj("lowBand" -> "100", "highBand" -> "100"))))
               result mustBe routes.PackagedContractPackerController.onPageLoad(NormalMode)
@@ -108,7 +108,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(PackagedContractPackerPage,
               mode,
-              UserAnswers(id, Json.obj("packagedContractPacker" -> value)))
+              emptyUserAnswers.copy(data = Json.obj("packagedContractPacker" -> value)))
 
             "select Yes to navigate to How Many packaged as contract packer" in {
               val result = navigate(value = true)
@@ -132,7 +132,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             "select save and continue to navigate to exemptions for small producers page" in {
               val result = navigator.nextPage(HowManyAsAContractPackerPage,
                 NormalMode,
-                UserAnswers(sdilNumber, Json.obj("ownBrands" -> true,
+                emptyUserAnswers.copy(data = Json.obj("ownBrands" -> true,
                   "howManyAsAContractPacker" ->
                     Json.obj("lowBand" -> "100", "highBand" -> "100"))))
               result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
@@ -144,7 +144,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(ExemptionsForSmallProducersPage,
               mode,
-              UserAnswers(sdilNumber, Json.obj("exemptionsForSmallProducers" -> value)))
+              emptyUserAnswers.copy(data = Json.obj("exemptionsForSmallProducers" -> value)))
 
             "select Yes to navigate to Add small producer pager" in {
               val result = navigate(value = true)
@@ -154,7 +154,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             "should navigate to small producer details page when yes is selected and there are is greater than 0 small producers" in {
               val result = navigator.nextPage(ExemptionsForSmallProducersPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true),
+                emptyUserAnswers.copy(data = Json.obj("exemptionsForSmallProducers" -> true),
                   smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage)))
               )
 
@@ -177,7 +177,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(BroughtIntoUKPage,
               mode,
-              UserAnswers(sdilNumber, Json.obj("broughtIntoUK" -> value)))
+              emptyUserAnswers.copy(data = Json.obj("broughtIntoUK" -> value)))
 
             "select Yes to navigate to How many brought into UK pager" in {
               val result = navigate(value = true)
@@ -201,7 +201,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             "select save and continue to navigate to small producer details page" in {
               val result = navigator.nextPage(AddASmallProducerPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("ownBrands" -> true,
+                emptyUserAnswers.copy(data = Json.obj("ownBrands" -> true,
                   "addASmallProducer" ->
                     Json.obj("producerName" -> superColaProducerAlias, "referenceNumber" -> referenceNumber1, "lowBand" -> "100", "highBand" -> "100"))))
               result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
@@ -213,7 +213,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(BroughtIntoUkFromSmallProducersPage,
               mode,
-              UserAnswers(sdilNumber, Json.obj("broughtIntoUkFromSmallProducers" -> value)))
+              emptyUserAnswers.copy(data = Json.obj("broughtIntoUkFromSmallProducers" -> value)))
 
             "select Yes to navigate to How many brought into UK pager" in {
               val result = navigate(value = true)
@@ -236,7 +236,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             "select save and continue to navigate to claim-credits-for-exports" in {
               val result = navigator.nextPage(HowManyBroughtIntoTheUKFromSmallProducersPage,
                 NormalMode,
-                UserAnswers(sdilNumber, Json.obj("broughtIntoUkFromSmallProducers" -> true,
+                emptyUserAnswers.copy(data = Json.obj("broughtIntoUkFromSmallProducers" -> true,
                   "howManyBroughtIntoTheUKFromSmallProducers" ->
                     Json.obj("lowBand" -> "100", "highBand" -> "100"))))
               result mustBe routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
@@ -247,7 +247,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(ClaimCreditsForExportsPage,
               mode,
-              UserAnswers(sdilNumber, Json.obj("claimCreditsForExports" -> value)))
+              emptyUserAnswers.copy(data = Json.obj("claimCreditsForExports" -> value)))
 
             "select Yes to navigate to How many credits for export page" in {
               val result = navigate(value = true)
@@ -270,7 +270,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             "select save and continue to navigate to claim credits for lost damaged page" in {
               val result = navigator.nextPage(ClaimCreditsForExportsPage,
                 NormalMode,
-                UserAnswers(sdilNumber, Json.obj("ownBrands" -> true,
+                emptyUserAnswers.copy(data = Json.obj("ownBrands" -> true,
                   "claimCreditsForExports" ->
                     Json.obj("lowBand" -> "100", "highBand" -> "100"))))
               result mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
@@ -287,7 +287,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             }
 
             "select Yes to navigate to How many credits for lost damaged page" in {
-              def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+              def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                 Json.obj("claimCreditsForLostDamaged" -> value))
               val result = navigator.nextPage(ClaimCreditsForLostDamagedPage,
                 NormalMode,
@@ -298,7 +298,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "select No to navigate to check your answers controller page " - {
               "when user is a not a new Importer" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
                 val sdilReturn = SdilReturn((0L,0L),(0L, 0L),List.empty,(0L, 0L),(0L,0L),(0L,0L),(0L,0L))
@@ -309,7 +309,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "select No to navigate to return change registration controller page " - {
               "when user is a new Importer" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
@@ -321,7 +321,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "select No to navigate to return change registration controller page " - {
               "when user is a new packer" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
@@ -333,7 +333,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "select No to navigate to Index controller page " - {
               "when user is a new importer and subscription activity is importer" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
@@ -353,7 +353,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "select No to navigate to Check your answers controller page " - {
               "when user is a new packer and subscription activity is packer" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
@@ -373,7 +373,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "select No to navigate to Check your answers controller page " - {
               "when no subscription is available" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
@@ -385,7 +385,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "select No to navigate to Check your answers controller page " - {
               "when no return is available" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
@@ -396,7 +396,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "select No to navigate to Check your answers controller page " - {
               "when no return nor subscription is available" in {
-                def userAnswers(value: Boolean) = UserAnswers(sdilNumber,
+                def userAnswers(value: Boolean) = emptyUserAnswers.copy(data =
                   Json.obj(
                     "claimCreditsForLostDamaged" -> value))
 
@@ -583,7 +583,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
                 importer = false, voluntaryRegistration = false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
-              val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
+              val userAnswers = emptyUserAnswers.copy(data = Json.obj("returnChangeRegistration" -> ""))
               val result = navigate(userAnswers, Some(sdilReturn), Some(modifiedSubscription))
                 result mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
               }
@@ -602,7 +602,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
             "should redirect to journey recovery when no subscription is found" in {
               val sdilReturn = SdilReturn((0L, 0L), (0L, 0L), List.empty, (1L, 1L), (0L, 0L), (0L, 0L), (0L, 0L))
-              val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
+              val userAnswers = emptyUserAnswers.copy(data = Json.obj("returnChangeRegistration" -> ""))
               val result = navigate(userAnswers, Some(sdilReturn), None)
               result mustBe routes.JourneyRecoveryController.onPageLoad()
             }
@@ -611,7 +611,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val sdilActivity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false,
                 importer = false, voluntaryRegistration = false)
               val modifiedSubscription = aSubscription.copy(activity = sdilActivity)
-              val userAnswers = UserAnswers(id, Json.obj("returnChangeRegistration" -> ""))
+              val userAnswers = emptyUserAnswers.copy(data = Json.obj("returnChangeRegistration" -> ""))
               val result = navigate(userAnswers, None,Some(modifiedSubscription))
               result mustBe routes.JourneyRecoveryController.onPageLoad()
             }
@@ -624,7 +624,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
               val result = navigator.nextPage(SmallProducerDetailsPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("smallProducerDetails" -> true)))
+                emptyUserAnswers.copy(data = Json.obj("smallProducerDetails" -> true)))
 
               result mustBe routes.AddASmallProducerController.onPageLoad(BlankMode)
 
@@ -634,7 +634,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
               val result = navigator.nextPage(SmallProducerDetailsPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("smallProducerDetails" -> false),List()))
+                emptyUserAnswers.copy(data = Json.obj("smallProducerDetails" -> false)))
 
               result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
 
@@ -644,7 +644,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
               val result = navigator.nextPage(SmallProducerDetailsPage,
                 NormalMode,
-                UserAnswers(id, Json.obj("smallProducerDetails" -> false),
+                emptyUserAnswers.copy(data = Json.obj("smallProducerDetails" -> false),
                 smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))))
 
               result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
@@ -661,8 +661,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val result = navigator.nextPage(
                 RemoveSmallProducerConfirmPage,
                 NormalMode,
-                UserAnswers(
-                  id,
+                emptyUserAnswers.copy(data =
                   Json.obj("removeSmallProducerConfirm" -> true),
                   smallProducerList = List()
                 ))
@@ -675,8 +674,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val result = navigator.nextPage(
                 RemoveSmallProducerConfirmPage,
                 NormalMode,
-                UserAnswers(
-                  id,
+                emptyUserAnswers.copy(data =
                   Json.obj("removeSmallProducerConfirm" -> true),
                   smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))
                 ))
@@ -689,8 +687,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val result = navigator.nextPage(
                 RemoveSmallProducerConfirmPage,
                 NormalMode,
-                UserAnswers(
-                  id,
+                emptyUserAnswers.copy(data =
                   Json.obj("removeSmallProducerConfirm" -> true),
                   smallProducerList = List(
                     SmallProducer(superColaProducerAlias, referenceNumber1, litreage),
@@ -705,8 +702,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val result = navigator.nextPage(
                 RemoveSmallProducerConfirmPage,
                 NormalMode,
-                UserAnswers(
-                  id,
+                emptyUserAnswers.copy(data =
                   Json.obj("removeSmallProducerConfirm" -> false),
                   smallProducerList = List()
                 ))
@@ -719,8 +715,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val result = navigator.nextPage(
                 RemoveSmallProducerConfirmPage,
                 NormalMode,
-                UserAnswers(
-                  id,
+                emptyUserAnswers.copy(data =
                   Json.obj("removeSmallProducerConfirm" -> false),
                   smallProducerList = List(SmallProducer(superColaProducerAlias, referenceNumber1, litreage))
                 ))
@@ -733,8 +728,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
               val result = navigator.nextPage(
                 RemoveSmallProducerConfirmPage,
                 NormalMode,
-                UserAnswers(
-                  id,
+                emptyUserAnswers.copy(data =
                   Json.obj("removeSmallProducerConfirm" -> false),
                   smallProducerList = List(
                     SmallProducer(superColaProducerAlias, referenceNumber1, litreage),
@@ -757,26 +751,26 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
         case object UnknownPage extends Page {
           override val url: Mode => String = _ => ""
         }
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers(id)) mustBe routes.CheckYourAnswersController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, emptyUserAnswers) mustBe routes.CheckYourAnswersController.onPageLoad
       }
 
 
       "Own brands" - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          navigator.nextPage(OwnBrandsPage, CheckMode, UserAnswers(id, Json.obj("ownBrands" -> false))
+          navigator.nextPage(OwnBrandsPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("ownBrands" -> false))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many packed at your own own site page when yes is selected" in {
-          navigator.nextPage(OwnBrandsPage, CheckMode, UserAnswers(id, Json.obj("ownBrands" -> true))
+          navigator.nextPage(OwnBrandsPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("ownBrands" -> true))
           ) mustBe routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode)
         }
 
         "Should navigate to Check Your Answers page when yes is selected and data present" in {
           navigator.nextPage(BrandsPackagedAtOwnSitesPage,
             CheckMode,
-            UserAnswers(id, Json.obj("ownBrands" -> true,
+            emptyUserAnswers.copy(data = Json.obj("ownBrands" -> true,
               "brandsPackagedAtOwnSites" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
@@ -786,17 +780,17 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "Contract packer" - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          navigator.nextPage(PackagedContractPackerPage, CheckMode, UserAnswers(id, Json.obj("packagedContractPacker" -> false))
+          navigator.nextPage(PackagedContractPackerPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("packagedContractPacker" -> false))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many packed at your as contract packer page when yes is selected" in {
-          navigator.nextPage(PackagedContractPackerPage, CheckMode, UserAnswers(id, Json.obj("packagedContractPacker" -> true))
+          navigator.nextPage(PackagedContractPackerPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("packagedContractPacker" -> true))
           ) mustBe routes.HowManyAsAContractPackerController.onPageLoad(CheckMode)
         }
 
         "Should navigate to Check Your Answers page when yes is selected and not a new packer" in {
-          val answers = UserAnswers(id,
+          val answers = emptyUserAnswers.copy(data =
             Json.obj(
               "packagedContractPacker" -> true,
               "howManyAsAContractPacker" -> Json.obj("lowBand" -> "100", "highBand" -> "100")))
@@ -815,14 +809,14 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "Exemption for small producer" - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          val answers = UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> false))
+          val answers = emptyUserAnswers.copy(data = Json.obj("exemptionsForSmallProducers" -> false))
           navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode, answers, Some(SdilReturn.apply(answers)),Some(aSubscription)
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to small producer details page when yes is selected AND there is at least 1 small producer in the list" in {
           navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode,
-            UserAnswers(id, Json.obj("exemptionsForSmallProducers" -> true), smallProducerListOnlySuperCola)
+            emptyUserAnswers.copy(data = Json.obj("exemptionsForSmallProducers" -> true), smallProducerList = smallProducerListOnlySuperCola)
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
       }
@@ -831,19 +825,19 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "Brought into UK " - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          navigator.nextPage(BroughtIntoUKPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUK" -> false))
+          navigator.nextPage(BroughtIntoUKPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("broughtIntoUK" -> false))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many brought into UK page when yes is selected" in {
-          navigator.nextPage(BroughtIntoUKPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUK" -> true))
+          navigator.nextPage(BroughtIntoUKPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("broughtIntoUK" -> true))
           ) mustBe routes.HowManyBroughtIntoUkController.onPageLoad(CheckMode)
         }
 
         "Should navigate to Check Your Answers page when yes is selected and data present" in {
           navigator.nextPage(HowManyBroughtIntoUkPage,
             CheckMode,
-            UserAnswers(id, Json.obj("broughtIntoUK" -> true,
+            emptyUserAnswers.copy(data = Json.obj("broughtIntoUK" -> true,
               "HowManyBroughtIntoUk" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
@@ -854,19 +848,19 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "Brought into from small producers UK " - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> false))
+          navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("broughtIntoUkFromSmallProducers" -> false))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many brought into uk from small producers page when yes is selected" in {
-          navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> true))
+          navigator.nextPage(BroughtIntoUkFromSmallProducersPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("broughtIntoUkFromSmallProducers" -> true))
           ) mustBe routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode)
         }
 
         "Should navigate to Check Your Answers page when yes is selected and data present" in {
           navigator.nextPage(HowManyBroughtIntoTheUKFromSmallProducersPage,
             CheckMode,
-            UserAnswers(id, Json.obj("broughtIntoUkFromSmallProducers" -> true,
+            emptyUserAnswers.copy(data = Json.obj("broughtIntoUkFromSmallProducers" -> true,
               "howManyBroughtIntoTheUKFromSmallProducers" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
@@ -877,19 +871,19 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "Claim credits for exports " - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForExports" -> false))
+          navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("claimCreditsForExports" -> false))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many credits for exports page when yes is selected" in {
-          navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForExports" -> true))
+          navigator.nextPage(ClaimCreditsForExportsPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("claimCreditsForExports" -> true))
           ) mustBe routes.HowManyCreditsForExportController.onPageLoad(CheckMode)
         }
 
         "Should navigate to Check Your Answers page when yes is selected and data present" in {
           navigator.nextPage(HowManyCreditsForExportPage,
             CheckMode,
-            UserAnswers(id, Json.obj("claimCreditsForExports" -> true,
+            emptyUserAnswers.copy(data = Json.obj("claimCreditsForExports" -> true,
               "howManyCreditsForExport" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
@@ -899,19 +893,19 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "Claim credits for lost or damaged " - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> false))
+          navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("claimCreditsForLostDamaged" -> false))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to how many credits for lost or damaged page when yes is selected" in {
-          navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true))
+          navigator.nextPage(ClaimCreditsForLostDamagedPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("claimCreditsForLostDamaged" -> true))
           ) mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
         }
 
         "Should navigate to Check Your Answers page when yes is selected and data present" in {
           navigator.nextPage(HowManyCreditsForLostDamagedPage,
             CheckMode,
-            UserAnswers(id, Json.obj("claimCreditsForLostDamaged" -> true,
+            emptyUserAnswers.copy(data = Json.obj("claimCreditsForLostDamaged" -> true,
               "howManyCreditsForLostDamaged" ->
                 Json.obj("lowBand" -> "100", "highBand" -> "100")))
           ) mustBe routes.CheckYourAnswersController.onPageLoad
@@ -921,16 +915,16 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
       "Check small producer details" - {
 
         "Should navigate to Check Your Answers page when no is selected" in {
-          val answers = UserAnswers(id, Json.obj("smallProducerDetails" -> false))
+          val answers = emptyUserAnswers.copy(data = Json.obj("smallProducerDetails" -> false))
           navigator.nextPage(SmallProducerDetailsPage, CheckMode, answers, Some(SdilReturn.apply(answers)), Some(aSubscription)
           ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
 
         "Should navigate to pack at business address page when no is selected but user is new packer" in {
-          val answers = UserAnswers(id, Json.obj(
+          val answers = emptyUserAnswers.copy(data = Json.obj(
             "addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000"),
             "smallProducerDetails" -> false),
-            List(superCola))
+            smallProducerList = List(superCola))
           navigator.nextPage(
             SmallProducerDetailsPage, CheckMode, answers, Some(SdilReturn.apply(answers)),
             Some(aSubscription.copy(productionSites = List.empty))
@@ -938,17 +932,17 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
         }
 
         "Should navigate to journey recovery page when no is selected but no return nor Subscription is available" in {
-          val answers = UserAnswers(id, Json.obj(
+          val answers = emptyUserAnswers.copy(data = Json.obj(
             "addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000"),
             "smallProducerDetails" -> false),
-            List(superCola))
+            smallProducerList = List(superCola))
           navigator.nextPage(
             SmallProducerDetailsPage, CheckMode, answers, None, None
           ) mustBe routes.JourneyRecoveryController.onPageLoad()
         }
 
         "Should navigate to how many credits for lost or damaged page when yes is selected" in {
-          navigator.nextPage(SmallProducerDetailsPage, CheckMode, UserAnswers(id, Json.obj("smallProducerDetails" -> true))
+          navigator.nextPage(SmallProducerDetailsPage, CheckMode, emptyUserAnswers.copy(data = Json.obj("smallProducerDetails" -> true))
           ) mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
         }
 
@@ -959,7 +953,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
         "Should navigate to small producer details controller when data is entered" in {
           navigator.nextPage(AddASmallProducerPage,
             CheckMode,
-            UserAnswers(id, Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
+            emptyUserAnswers.copy(data = Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
       }
@@ -969,13 +963,13 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
         "Should navigate to secondary warehouse details controller when yes is selected" in {
           navigator.nextPage(RemoveWarehouseConfirmPage,
             CheckMode,
-            UserAnswers(id, Json.obj("removeWarehouse" -> true))
+            emptyUserAnswers.copy(data = Json.obj("removeWarehouse" -> true))
           ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         }
         "Should navigate to secondary warehouse details controller when no is selected" in {
           navigator.nextPage(RemoveWarehouseConfirmPage,
             CheckMode,
-            UserAnswers(id, Json.obj("removeWarehouse" -> false))
+            emptyUserAnswers.copy(data = Json.obj("removeWarehouse" -> false))
           ) mustBe  routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         }
       }
@@ -985,21 +979,21 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
         "Should navigate to change exemptions for small producers  when yes is selected with no small producers" in {
           navigator.nextPage(RemoveSmallProducerConfirmPage,
             CheckMode,
-            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> true), smallProducerList = List())
+            emptyUserAnswers.copy(data = Json.obj("removeSmallProducerConfirm" -> true), smallProducerList = List())
           ) mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode)
         }
 
         "Should navigate to small producer details controller when yes is selected" in {
           navigator.nextPage(RemoveSmallProducerConfirmPage,
             CheckMode,
-            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> true), smallProducerList = List(SmallProducer("foo", "bar", (1,1))))
+            emptyUserAnswers.copy(data = Json.obj("removeSmallProducerConfirm" -> true), smallProducerList = List(SmallProducer("foo", "bar", (1,1))))
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
 
         "Should navigate to small producer details controller when no is selected" in {
           navigator.nextPage(RemoveSmallProducerConfirmPage,
             CheckMode,
-            UserAnswers(id, Json.obj("removeSmallProducerConfirm" -> false), smallProducerList = List(SmallProducer("foo", "bar", (1,1))))
+            emptyUserAnswers.copy(data = Json.obj("removeSmallProducerConfirm" -> false), smallProducerList = List(SmallProducer("foo", "bar", (1,1))))
           ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
       }

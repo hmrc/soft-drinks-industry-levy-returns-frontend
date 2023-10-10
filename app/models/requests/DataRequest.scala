@@ -23,8 +23,7 @@ import models.{ReturnPeriod, UserAnswers}
 case class OptionalDataRequest[A] (request: Request[A],
                                    sdilEnrolment: String,
                                    subscription: RetrievedSubscription,
-                                   userAnswers: Option[UserAnswers],
-                                   returnPeriod: Option[ReturnPeriod]) extends WrappedRequest[A](request)
+                                   userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
 
 case class DataRequest[A] (request: Request[A],
                            sdilEnrolment: String,

@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions.RequiredUserAnswers
 import helpers.LoggerHelper
 import models.requests.DataRequest
-import models.{Amounts, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{Amounts, ReturnPeriod, SmallProducer}
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -45,7 +45,6 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter with LoggerHelper {
 
-  val bareBoneUserAnswers: UserAnswers = UserAnswers(sdilNumber, Json.obj(), List())
   val mockOrchestrator: ReturnsOrchestrator = mock[ReturnsOrchestrator]
   val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
@@ -83,7 +82,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain company alias and return correct description for period 0 in grey pre header" in {
 
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 0))))
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers.copy(returnPeriod = ReturnPeriod(year = 2022, quarter = 0))), Some(ReturnPeriod(year = 2022, quarter = 0))))
         .overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
 
@@ -106,7 +105,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain company alias and return correct description for period 1 in grey pre header" in {
       val application = withRequiredAnswersComplete(
-        applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2021, quarter = 1)))).overrides(
+        applicationBuilder(Some(emptyUserAnswers.copy(returnPeriod = ReturnPeriod(year = 2021, quarter = 1))), Some(ReturnPeriod(year = 2021, quarter = 1)))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
 
@@ -127,7 +126,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain company alias and return correct description for period 2 in grey pre header" in {
 
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2020, quarter = 2)))).overrides(
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers.copy(returnPeriod = ReturnPeriod(year = 2020, quarter = 2))), Some(ReturnPeriod(year = 2020, quarter = 2)))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
 
@@ -148,7 +147,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain company alias and return correct description for period 3 in grey pre header" in {
 
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers), Some(ReturnPeriod(year = 2019, quarter = 3)))).overrides(
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers.copy(returnPeriod = ReturnPeriod(year = 2019, quarter = 3))), Some(ReturnPeriod(year = 2019, quarter = 3)))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
@@ -168,7 +167,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must redirect to journey recovery when no return period" in {
 
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers), None)).overrides(
+      val application = withRequiredAnswersComplete(applicationBuilder(None, None)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
       val result = running(application) {
@@ -181,7 +180,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must not show own brands packaged when user is a small producer" in {
 
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers),
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers),
         Some(ReturnPeriod(year = 2019, quarter = 3)),Some(subscriptionWithSmallProducerActivity))).overrides(
           bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
@@ -202,7 +201,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show own brands packaged at own site row when no selected" in {
 
       val userAnswersData = Json.obj("ownBrands" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -229,7 +228,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -269,7 +268,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -292,7 +291,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show packaged contract packer row when present and answer is no" in {
 
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -315,7 +314,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
 
@@ -351,7 +350,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show exemption for small producers row when present and answer is no" in {
 
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -381,7 +380,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
 
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -416,7 +415,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show brought into the UK row when present and answer is no" in {
 
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -439,7 +438,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -474,7 +473,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show brought into the UK from small producers row when present and answer is no" in {
 
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -497,7 +496,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "broughtIntoUkFromSmallProducers" -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -532,7 +531,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show claim credits for exports row when present and answer is no" in {
 
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -555,7 +554,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -590,7 +589,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must show show lost or damaged row when present and answer is no" in {
 
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -613,7 +612,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "claimCreditsForLostDamaged" -> true,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -666,7 +665,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       )
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (1000L, 2000L))
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
@@ -695,7 +694,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "claimCreditsForLostDamaged" -> true,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0)
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -736,7 +735,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       )
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L,0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L,0L))
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -779,7 +778,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       )
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
@@ -825,7 +824,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       )
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
@@ -854,7 +853,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
         "packAtBusinessAddress" -> true)
 
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, packagingSiteList = packagingSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -876,7 +875,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "packAtBusinessAddress" -> false,
         "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000))
 
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, packagingSiteList = packagingSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
@@ -893,8 +892,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show correct number of packaging sites if multiple packaging sites present" in {
-      val userAnswers = UserAnswers(sdilNumber,
-        Json.obj(
+      val userAnswers = emptyUserAnswers.copy(data = Json.obj(
         "packAtBusinessAddress" -> false,
         "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000)),
         packagingSiteList = packagingSiteListWith2)
@@ -920,7 +918,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000),
         "askSecondaryWarehouseInReturn" -> true
       )
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, packagingSiteList = packagingSiteListWith1, warehouseList = warhouseSiteListWith2)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, packagingSiteList = packagingSiteListWith1, warehouseList = warhouseSiteListWith2)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
@@ -941,7 +939,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000),
         "askSecondaryWarehouseInReturn" -> true)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, warehouseList = warhouseSiteListWith1)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, warehouseList = warhouseSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
       ).build()
@@ -959,7 +957,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain registered UK sites section header when packaging site not present" in {
       val userAnswersData = Json.obj("packAtBusinessAddress" -> false)
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -977,7 +975,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must return OK and contain company alias with 0 total when there is no activity to report (nilReturn)" in {
 
-      val userAnswers = bareBoneUserAnswers.copy(isNilReturn = true)
+      val userAnswers = emptyUserAnswers.copy(isNilReturn = true)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
@@ -995,7 +993,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must log error and redirect to journey recovery when fails to get the amounts calculated" in {
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(bareBoneUserAnswers))).overrides(
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
         ).build()
 
@@ -1016,7 +1014,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   "Check your Answers Controller onSubmit" - {
     "should submit return and redirect to return sent" in {
       val userAnswersData = Json.obj()
-      val userAnswers = UserAnswers(sdilNumber, userAnswersData, List())
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers), Some(defaultReturnsPeriod))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {

@@ -22,7 +22,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.ClaimCreditsForLostDamagedFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -31,17 +31,15 @@ import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ClaimCreditsForLostDamagedPage
 import play.api.inject.bind
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.ClaimCreditsForLostDamagedView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
@@ -99,7 +97,7 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set(ClaimCreditsForLostDamagedPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(ClaimCreditsForLostDamagedPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -195,10 +193,10 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must redirect to the next page removing litres data from user answers, when valid data is submitted" in {
-      lazy val completedUserAnswersWithCreditLostDamaged = UserAnswers(sdilNumber, Json.obj("ownBrands" -> false, "packagedContractPacker" ->
+      lazy val completedUserAnswersWithCreditLostDamaged = emptyUserAnswers.copy(data = Json.obj("ownBrands" -> false, "packagedContractPacker" ->
         false, "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> false, "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports" ->
           false, "claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj("lowBand" ->89032484,
-          "highBand" -> 87291372)), List.empty, Map.empty)
+          "highBand" -> 87291372)))
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
@@ -226,12 +224,8 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
       when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn Future.successful(None)
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -256,12 +250,8 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),

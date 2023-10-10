@@ -22,7 +22,6 @@ object SDILSessionKeys {
 
   val SUBSCRIPTION = "SUBSCRIPTION"
   val AMOUNTS = "AMOUNTS"
-  val RETURN_PERIOD = "RETURN_PERIOD"
 
   def balanceHistory(withAssessment: Boolean) = if(withAssessment) {
     "BALANCE_HISTORY_WITH_ASSESSMENT"

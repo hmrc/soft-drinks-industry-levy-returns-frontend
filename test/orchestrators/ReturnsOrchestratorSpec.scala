@@ -39,7 +39,7 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
   val year = 2018
   val quarter = 1
   val requestReturnPeriod = ReturnPeriod(year, quarter)
-  val optDataRequestNoData: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest(), sdilReference, aSubscription, None, None)
+  val optDataRequestNoData: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest(), sdilReference, aSubscription, None)
   val dataRequest: DataRequest[AnyContent] = DataRequest(FakeRequest(), sdilReference, aSubscription, emptyUserAnswers, requestReturnPeriod)
 
 
@@ -50,7 +50,6 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
       "and the return period is valid" - {
         "should save the return period to cache, setup user answers and return unit" in {
           when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
-          when(mockSdilCache.save[ReturnPeriod](sdilReference, SDILSessionKeys.RETURN_PERIOD, requestReturnPeriod)).thenReturn(Future.successful(true))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = orchestrator.handleReturnRequest(year, quarter, false)(optDataRequestNoData, hc, ec)
@@ -92,8 +91,8 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
       "that is for the same period requested" - {
         val returnPeriod = ReturnPeriod(year, quarter)
         "and there are useranswers for a nil return that haven't been submitted" - {
-          val userAnswers = emptyUserAnswers.copy(submitted = false, isNilReturn = true)
-          val request = optDataRequestNoData.copy(returnPeriod = Some(returnPeriod), userAnswers = Some(userAnswers))
+          val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = false, isNilReturn = true)
+          val request = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
           "should not update anything and return unit when a nil return was requested" in {
 
             val res = orchestrator.handleReturnRequest(year, quarter, true)(request, hc, ec)
@@ -105,7 +104,6 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
           "should check the return period and generate new useranswers when a non nil return selected" in {
             when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
-            when(mockSdilCache.save[ReturnPeriod](sdilReference, SDILSessionKeys.RETURN_PERIOD, requestReturnPeriod)).thenReturn(Future.successful(true))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
             val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
@@ -117,8 +115,8 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
         }
 
         "and there are useranswers for a non nil return that haven't been submitted" - {
-          val userAnswers = emptyUserAnswers.copy(submitted = false, isNilReturn = false)
-          val request = optDataRequestNoData.copy(returnPeriod = Some(returnPeriod), userAnswers = Some(userAnswers))
+          val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = false, isNilReturn = false)
+          val request = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
           "should not update anything and return unit when a non nil return was requested" in {
 
             val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
@@ -130,7 +128,6 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
           "should check the return period and generate new useranswers when a nil return selected" in {
             when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
-            when(mockSdilCache.save[ReturnPeriod](sdilReference, SDILSessionKeys.RETURN_PERIOD, requestReturnPeriod)).thenReturn(Future.successful(true))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
             val res = orchestrator.handleReturnRequest(year, quarter, true)(request, hc, ec)
@@ -142,8 +139,8 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
         }
 
         "and there are useranswers for a return that has been submitted" - {
-          val userAnswers = emptyUserAnswers.copy(submitted = true)
-          val request = optDataRequestNoData.copy(returnPeriod = Some(returnPeriod), userAnswers = Some(userAnswers))
+          val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = true)
+          val request = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
           "should return a NoPendingReturnForGivenPeriod" in {
             val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
 
@@ -156,11 +153,10 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
       "for the a different return period" - {
         val returnPeriod = ReturnPeriod(year, quarter).next
-        val userAnswers = emptyUserAnswers.copy(submitted = true)
-        val request = optDataRequestNoData.copy(returnPeriod = Some(returnPeriod), userAnswers = Some(userAnswers))
+        val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = true)
+        val request = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
         "should check the return period and generate new useranswers" in {
           when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
-          when(mockSdilCache.save[ReturnPeriod](sdilReference, SDILSessionKeys.RETURN_PERIOD, requestReturnPeriod)).thenReturn(Future.successful(true))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
@@ -168,22 +164,6 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
           whenReady(res.value) { result =>
             result mustBe Right((): Unit)
           }
-        }
-      }
-    }
-
-    "when there is no return period in the cache but useranswers exist" - {
-      val userAnswers = emptyUserAnswers.copy(submitted = true)
-      val request = optDataRequestNoData.copy(returnPeriod = None, userAnswers = Some(userAnswers))
-      "should check the return period and generate new useranswers" in {
-        when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
-        when(mockSdilCache.save[ReturnPeriod](sdilReference, SDILSessionKeys.RETURN_PERIOD, requestReturnPeriod)).thenReturn(Future.successful(true))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
-
-        val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
-
-        whenReady(res.value) { result =>
-          result mustBe Right((): Unit)
         }
       }
     }

@@ -19,11 +19,10 @@ package controllers.actions
 import base.ReturnsTestData._
 import base.SpecBase
 import models.requests.{IdentifierRequest, OptionalDataRequest}
-import models.{ReturnPeriod, UserAnswers}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
-import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
+import repositories.{SDILSessionCache, SessionRepository}
 
 import scala.concurrent.Future
 
@@ -42,7 +41,6 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         val sessionRepository = mock[SessionRepository]
         val sdilSessionCache = mock[SDILSessionCache]
         when(sessionRepository.get("id")) thenReturn Future(None)
-        when(sdilSessionCache.fetchEntry[ReturnPeriod]("id", SDILSessionKeys.RETURN_PERIOD)) thenReturn Future(Some(returnPeriod))
         val action = new Harness(sessionRepository, sdilSessionCache)
 
         val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
@@ -57,8 +55,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
         val sessionRepository = mock[SessionRepository]
         val sdilSessionCache = mock[SDILSessionCache]
-        when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
-        when(sdilSessionCache.fetchEntry[ReturnPeriod]("id", SDILSessionKeys.RETURN_PERIOD)) thenReturn Future(Some(returnPeriod))
+        when(sessionRepository.get("id")) thenReturn Future(Some(emptyUserAnswers))
         val action = new Harness(sessionRepository, sdilSessionCache)
 
         val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue

@@ -30,6 +30,7 @@ import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
                         id: String,
+                        returnPeriod: ReturnPeriod,
                         data: JsObject = Json.obj(),
                         smallProducerList: List[SmallProducer] = List.empty,
                         packagingSiteList: Map[String, Site] = Map.empty,
@@ -39,8 +40,9 @@ case class UserAnswers(
                         lastUpdated: Instant = Instant.now
                       ) {
 
-  def this(subscription: RetrievedSubscription, nilReturn: Boolean) = this(
+  def this(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, nilReturn: Boolean) = this(
     id = subscription.sdilRef,
+    returnPeriod = returnPeriod,
     data = if(nilReturn) {
       Json.toJsObject(new DefaultUserAnswersData(subscription))
     } else {
@@ -128,6 +130,7 @@ case class UserAnswers(
       def reads(implicit encryption: Encryption): Reads[UserAnswers] = {
         (
           (__ \ "_id").read[String] and
+            (__ \ "returnPeriod").read[ReturnPeriod] and
             (__ \ "data").read[EncryptedValue] and
             (__ \ "smallProducerList").read[EncryptedValue] and
             (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
@@ -140,18 +143,20 @@ case class UserAnswers(
 
       def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
         override def writes(userAnswers: UserAnswers): JsObject = {
-          val encryptedValue: (String, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
+          val encryptedValue: (String, ReturnPeriod, EncryptedValue, EncryptedValue, Map[String, EncryptedValue],
+            Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
             ModelEncryption.encryptUserAnswers(userAnswers)
           }
           Json.obj(
             "id" -> encryptedValue._1,
-            "data" -> encryptedValue._2,
-            "smallProducerList" -> encryptedValue._3,
-            "packagingSiteList" -> encryptedValue._4,
-            "warehouseList" -> encryptedValue._5,
-            "submitted" -> encryptedValue._6,
-            "isNilReturn" -> encryptedValue._7,
-            "lastUpdated" -> encryptedValue._8
+            "returnPeriod" -> encryptedValue._2,
+            "data" -> encryptedValue._3,
+            "smallProducerList" -> encryptedValue._4,
+            "packagingSiteList" -> encryptedValue._5,
+            "warehouseList" -> encryptedValue._6,
+            "submitted" -> encryptedValue._7,
+            "isNilReturn" -> encryptedValue._8,
+            "lastUpdated" -> encryptedValue._9
           )
         }
       }

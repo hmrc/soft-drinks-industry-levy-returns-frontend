@@ -54,9 +54,8 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
   lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
   lazy val checkPackagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
-  lazy val userAnswersWith1PackagingSite: UserAnswers = UserAnswers(sdilNumber, Json.obj(), List.empty, packagingSiteListWith1)
-  lazy val newImporterAnswer : UserAnswers = UserAnswers(
-    sdilNumber, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty, packagingSiteListWith1
+  lazy val userAnswersWith1PackagingSite: UserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSiteListWith1)
+  lazy val newImporterAnswer : UserAnswers = emptyUserAnswers.copy(data = Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), packagingSiteList = packagingSiteListWith1
   )
 
   "packagingSiteDetails Controller" - {

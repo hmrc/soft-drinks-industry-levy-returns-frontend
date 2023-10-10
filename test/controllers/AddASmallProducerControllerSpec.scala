@@ -50,7 +50,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
   val bandMax = 100000000000000L
   val litres = 20L
 
-  val userAnswersWithTwoSmallProducers: UserAnswers = UserAnswers(sdilReference, Json.obj(), List(superCola, sparkyJuice))
+  val userAnswersWithTwoSmallProducers: UserAnswers = emptyUserAnswers.copy(smallProducerList = List(superCola, sparkyJuice))
 
   lazy val addASmallProducerRoute: String = routes.AddASmallProducerController.onPageLoad(NormalMode).url
   lazy val addASmallProducerEditSubmitRoute: String = routes.AddASmallProducerController.onEditPageSubmit(CheckMode, superCola.sdilRef).url
@@ -165,7 +165,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))))
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
@@ -189,7 +189,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola))))
+        applicationBuilder(Some(emptyUserAnswers.copy(smallProducerList = List(superCola))))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       val res = running(application) {
@@ -225,7 +225,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
       //noinspection ScalaStyle
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(year = 2022, quarter = 3)))
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(year = 2022, quarter = 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -255,19 +255,9 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
 
-      val sessionData =
-        Json.obj(
-          AddASmallProducerPage.toString -> Json.obj(
-            "producerName" -> superCola.alias,
-            "referenceNumber" -> superCola.sdilRef,
-            "lowBand" -> superCola.litreage._1,
-            "highBand" -> superCola.litreage._2
-          )
-        )
-
       //noinspection ScalaStyle
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, sessionData, List(superCola, sparkyJuice))), Some(ReturnPeriod(year = 2022, quarter = 3)))
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(year = 2022, quarter = 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -300,7 +290,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
       //noinspection ScalaStyle
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))), Some(ReturnPeriod(year = 2022, quarter = 3)))
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(year = 2022, quarter = 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -333,7 +323,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
       //noinspection ScalaStyle
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))),
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers),
           Some(ReturnPeriod(year = 2022, quarter = 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -369,7 +359,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       //noinspection ScalaStyle
       val application =
         applicationBuilder(
-          Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))),
+          Some(userAnswersWithTwoSmallProducers),
           Some(ReturnPeriod(2022, 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -405,7 +395,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       //noinspection ScalaStyle
       val application =
         applicationBuilder(
-          Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))),
+          Some(userAnswersWithTwoSmallProducers),
           Some(ReturnPeriod(2022, 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -443,7 +433,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       //noinspection ScalaStyle
       val application =
         applicationBuilder(
-          Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))),
+          Some(userAnswersWithTwoSmallProducers),
           Some(ReturnPeriod(2022, 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -565,7 +555,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))))
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
@@ -593,7 +583,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))))
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
@@ -632,7 +622,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       //noinspection ScalaStyle
       val application =
         applicationBuilder(
-          Some(UserAnswers(sdilNumber, Json.obj(), List(superCola, sparkyJuice))),
+          Some(userAnswersWithTwoSmallProducers),
           Some(ReturnPeriod(2022, 3)))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),

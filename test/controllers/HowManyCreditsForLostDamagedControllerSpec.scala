@@ -31,16 +31,14 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages._
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
@@ -57,8 +55,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
 
   lazy val howManyCreditsForLostDamagedRoute: String = routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
 
-  val userAnswers: UserAnswers = UserAnswers(
-    sdilNumber,
+  val userAnswers: UserAnswers = emptyUserAnswers.copy(data =
     Json.obj(
       HowManyCreditsForLostDamagedPage.toString -> Json.obj(
         "lowBand" -> value1,
@@ -101,12 +98,8 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val failedTryUserAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
       val application =
-        applicationBuilder(Some(failedTryUserAnswers))
+        applicationBuilder(Some(failingUserAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -126,12 +119,8 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
-      val failedTryUserAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
       val application =
-        applicationBuilder(userAnswers = Some(failedTryUserAnswers))
+        applicationBuilder(userAnswers = Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),

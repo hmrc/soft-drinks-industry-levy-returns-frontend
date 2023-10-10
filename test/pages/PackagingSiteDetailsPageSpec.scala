@@ -19,14 +19,13 @@ package pages
 import base.ReturnsTestData._
 import base.SpecBase
 import forms.PackagingSiteDetailsFormProvider
-import models.{CheckMode, NormalMode}
 import models.backend.{Site, UkAddress}
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import pages.behaviours.PageBehaviours
-import play.api.routing.Router.empty.routes
 import play.api.test.FakeRequest
 import play.test.Helpers.contentAsString
 import play.twirl.api.Html

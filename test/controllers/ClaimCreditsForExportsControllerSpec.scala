@@ -21,13 +21,15 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.ClaimCreditsForExportsFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ClaimCreditsForExportsPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -35,13 +37,8 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.ClaimCreditsForExportsView
-import org.mockito.MockitoSugar.{times, verify}
-import play.api.data.Form
-import queries.Settable
-import play.api.libs.json.Writes
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
@@ -99,7 +96,7 @@ class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar wi
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set(ClaimCreditsForExportsPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(ClaimCreditsForExportsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -217,11 +214,7 @@ class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar wi
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         val request =
@@ -239,11 +232,7 @@ class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar wi
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
 
-      val userAnswers: UserAnswers = new UserAnswers("sdilId") {
-        override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-      }
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>

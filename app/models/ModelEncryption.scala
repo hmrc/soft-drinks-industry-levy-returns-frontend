@@ -43,8 +43,9 @@ object ModelEncryption {
   }
 
   def encryptUserAnswers(userAnswers: UserAnswers)(implicit encryption: Encryption):
-  (String, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
+  (String, ReturnPeriod, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
     ( userAnswers.id,
+      userAnswers.returnPeriod,
       encryption.crypto.encrypt(userAnswers.data.toString(), userAnswers.id),
       encryption.crypto.encrypt(Json.toJson(userAnswers.smallProducerList).toString(), userAnswers.id),
       userAnswers.packagingSiteList.map(site => site._1 -> encryption.crypto.encrypt(Json.toJson(site._2).toString(), userAnswers.id)),
@@ -54,6 +55,7 @@ object ModelEncryption {
   }
 
   def decryptUserAnswers(id: String,
+                         returnPeriod: ReturnPeriod,
                          data: EncryptedValue,
                          smallProducerList: EncryptedValue,
                          packagingSiteList: Map[String, EncryptedValue],
@@ -63,6 +65,7 @@ object ModelEncryption {
                          lastUpdated: Instant)(implicit encryption: Encryption): UserAnswers = {
     UserAnswers(
       id = id,
+      returnPeriod = returnPeriod,
       data = Json.parse(encryption.crypto.decrypt(data, id)).as[JsObject],
       smallProducerList = Json.parse(encryption.crypto.decrypt(smallProducerList, id)).as[List[SmallProducer]],
       packagingSiteList = packagingSiteList.map(site => site._1 -> Json.parse(encryption.crypto.decrypt(site._2, id)).as[Site]),

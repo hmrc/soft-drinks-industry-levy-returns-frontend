@@ -44,7 +44,7 @@ class SDILSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
           IndexOptions()
             .name("sdil-session-cache-expiry")
             .expireAfter(
-              3600,
+              appConfig.sdilCacheTTL,
               TimeUnit.SECONDS
             )
         ),

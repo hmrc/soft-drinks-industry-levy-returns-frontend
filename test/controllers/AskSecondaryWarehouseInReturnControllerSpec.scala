@@ -19,7 +19,7 @@ package controllers
 import base.ReturnsTestData._
 import base.SpecBase
 import forms.AskSecondaryWarehouseInReturnFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -92,7 +92,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set(AskSecondaryWarehouseInReturnPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(AskSecondaryWarehouseInReturnPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
