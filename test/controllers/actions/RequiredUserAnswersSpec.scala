@@ -21,7 +21,7 @@ import base.SpecBase
 import models.backend.{Contact, UkAddress}
 import models.requests.DataRequest
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{AddASmallProducer, LitresInBands, NormalMode, UserAnswers}
+import models.{AddASmallProducer, LitresInBands, NormalMode}
 import pages._
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.Results.Ok

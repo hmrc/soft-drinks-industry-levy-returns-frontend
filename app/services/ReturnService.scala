@@ -26,7 +26,7 @@ import play.api.Logger
 import play.api.http.Status.{NO_CONTENT, OK}
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.ReturnsHelper.{extractTotal, listItemsWithTotal}
-import utilitlies.{ReturnsHelper, TotalForQuarter, UserTypeCheck}
+import utilitlies.{TotalForQuarter, UserTypeCheck}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,24 +42,9 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
 
   def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.getPendingReturnPeriods(utr)
 
-  def sendReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers, nilReturn: Boolean)
+  def sendReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)
                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-
-    if(nilReturn) {
-      submitNilReturnAndVariation(subscription, returnPeriod, userAnswers)
-    } else {
       submitReturnAndVariation(subscription, returnPeriod, userAnswers)
-    }
-  }
-
-  def submitNilReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val sdilReturn = ReturnsHelper.emptyReturn
-    val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
-    for {
-      _ <- submitReturn(subscription, returnPeriod, sdilReturn)
-      variation <- submitReturnVariation(subscription.sdilRef, sdilVariation)
-    } yield variation
   }
 
   def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)

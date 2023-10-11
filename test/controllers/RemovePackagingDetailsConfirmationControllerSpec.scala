@@ -22,7 +22,7 @@ import errors.SessionDatabaseInsertError
 import forms.RemovePackagingDetailsConfirmationFormProvider
 import helpers.LoggerHelper
 import models.backend.{Site, UkAddress}
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

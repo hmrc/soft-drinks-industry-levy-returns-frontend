@@ -185,7 +185,7 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
       "when successful" in {
         when(mockReturnService.calculateAmounts(aSubscription.sdilRef, emptyUserAnswers, requestReturnPeriod)(hc, ec)).thenReturn(Future.successful(amounts))
         when(mockSdilCache.save[Amounts](aSubscription.sdilRef, SDILSessionKeys.AMOUNTS, amounts)).thenReturn(Future.successful(true))
-        when(mockReturnService.sendReturn(aSubscription, requestReturnPeriod, emptyUserAnswers, false)(hc, ec)).thenReturn(Future.successful((): Unit))
+        when(mockReturnService.sendReturn(aSubscription, requestReturnPeriod, emptyUserAnswers)(hc, ec)).thenReturn(Future.successful((): Unit))
         when(mockSessionRepository.set(emptyUserAnswers.copy(submitted = true))).thenReturn(Future.successful(Right(true)))
         val res = orchestrator.completeReturnAndUpdateUserAnswers()(dataRequest, hc, ec)
 

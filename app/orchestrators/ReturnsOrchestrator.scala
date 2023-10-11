@@ -101,7 +101,7 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
     for {
       amounts <- returnService.calculateAmounts(subscription.sdilRef, userAnswers, returnPeriod)
       _ <- sdilSessionCache.save[Amounts](subscription.sdilRef, SDILSessionKeys.AMOUNTS, amounts)
-      sr <- returnService.sendReturn(subscription, returnPeriod, userAnswers, amounts.totalForQuarter == 0)
+      sr <- returnService.sendReturn(subscription, returnPeriod, userAnswers)
       _ <- sessionRepository.set(request.userAnswers.copy(submitted = true))
     } yield sr
   }
