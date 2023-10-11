@@ -27,10 +27,8 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AddASmallProducerPage
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -212,16 +210,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
-
-      val sessionData =
-        Json.obj(
-          AddASmallProducerPage.toString -> Json.obj(
-            "producerName" -> superCola.alias,
-            "referenceNumber" -> superCola.sdilRef,
-            "lowBand" -> superCola.litreage._1,
-            "highBand" -> superCola.litreage._2
-          )
-        )
 
       //noinspection ScalaStyle
       val application =

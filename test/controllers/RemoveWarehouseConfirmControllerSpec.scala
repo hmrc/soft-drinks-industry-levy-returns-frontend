@@ -21,7 +21,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.RemoveWarehouseConfirmFormProvider
 import helpers.LoggerHelper
-import models.backend.{Site, UkAddress}
+import models.backend.UkAddress
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup

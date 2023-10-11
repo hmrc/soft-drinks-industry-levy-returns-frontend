@@ -31,17 +31,15 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.HowManyCreditsForExportPage
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import queries.Settable
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.HowManyCreditsForExportView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Try}
 
 class HowManyCreditsForExportControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 

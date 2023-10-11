@@ -16,11 +16,9 @@
 
 package utilitlies
 
-import models.{FinancialLineItem, SdilReturn}
+import models.FinancialLineItem
 
 object ReturnsHelper {
-  def emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
-
   def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
     items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
       (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
