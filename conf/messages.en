@@ -60,7 +60,7 @@ journeyRecovery.guidance = [Add content to explain how to proceed.]
 signedOut.title = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
 
-unauthorised.title = You can’t access this service with this account
+unauthorised.title = You cannot access this service with this account
 
 packAtBusinessAddress.title = Your business address
 packAtBusinessAddress.legend = Is this address a UK packaging site you operate to produce liable drinks?
@@ -156,7 +156,7 @@ claimCreditsForLostDamaged.detailsContent3 = destroyed
 claimCreditsForLostDamaged.detailsContent4 = disposed of as waste
 claimCreditsForLostDamaged.detailsContent5 = reprocessed
 claimCreditsForLostDamaged.detailsContent6 = lost
-claimCreditsForLostDamaged.detailsContent7 = spilled and can’t be used
+claimCreditsForLostDamaged.detailsContent7 = spilled and cannot be used
 claimCreditsForLostDamaged.detailsContent8 = To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.
 claimCreditsForLostDamaged.error.required = Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed
 claimCreditsForLostDamaged.change.hidden = whether you want to claim credits for lost or destroyed liable drinks
