@@ -35,7 +35,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  val amounts = Amounts(1000, 100, 1100)
+  val amounts: Amounts = Amounts(1000, 100, 1100)
 
   val amountsLists: Map[String, Amounts] = Map(
     "total owed for this quarter is positive" -> amounts,
@@ -158,7 +158,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
       "that has a details section" - {
         "that has the expected details text" in {
           val details = document.getElementsByClass(Selectors.details).get(0)
-          details.getElementsByClass(Selectors.detailsText).text() mustEqual "Details of your return"
+          details.getElementsByClass(Selectors.detailsText).text() mustEqual "View the details of your return"
         }
         "has contains the expected content" - {
           UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
