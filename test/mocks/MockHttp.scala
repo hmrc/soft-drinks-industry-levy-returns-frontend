@@ -17,10 +17,10 @@
 package mocks
 
 import org.mockito.ArgumentMatchers
-import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.freespec.AnyFreeSpec
 import org.mockito.MockitoSugar
+import org.mockito.stubbing.ScalaOngoingStubbing
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.{ HttpClient, HttpReads }
 
@@ -35,13 +35,13 @@ trait MockHttp extends AnyFreeSpec with MockitoSugar with BeforeAndAfterEach {
     reset(mockHttp)
   }
 
-  def setupMockHttpGet[T](url: String)(response: T): OngoingStubbing[Future[T]] =
+  def setupMockHttpGet[T](url: String)(response: T): ScalaOngoingStubbing[Future[T]] =
     when(mockHttp.GET[T](ArgumentMatchers.eq(url), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def setupMockHttpPost[I, O](url: String)(response: O): OngoingStubbing[Future[O]] =
+  def setupMockHttpPost[I, O](url: String)(response: O): ScalaOngoingStubbing[Future[O]] =
     when(mockHttp.POST[I, O](ArgumentMatchers.eq(url), ArgumentMatchers.any[I](), ArgumentMatchers.any())(ArgumentMatchers.any[Writes[I]](), ArgumentMatchers.any[HttpReads[O]](), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def setupMockHttpPut[I, O](url: String)(response: O): OngoingStubbing[Future[O]] =
+  def setupMockHttpPut[I, O](url: String)(response: O): ScalaOngoingStubbing[Future[O]] =
     when(mockHttp.PUT[I, O](ArgumentMatchers.eq(url), ArgumentMatchers.any[I](), ArgumentMatchers.any())(ArgumentMatchers.any[Writes[I]](), ArgumentMatchers.any[HttpReads[O]](), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
 }
