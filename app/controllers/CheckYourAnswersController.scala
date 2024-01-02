@@ -21,34 +21,33 @@ import config.FrontendAppConfig
 import controllers.actions._
 import handlers.ErrorHandler
 import models.retrieved.RetrievedSubscription
-import models.{SdilReturn, UserAnswers}
+import models.{ SdilReturn, UserAnswers }
 import navigation.Navigator
 import orchestrators.ReturnsOrchestrator
 import pages.CheckYourAnswersPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, Call, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilitlies.{GenericLogger, UserTypeCheck}
+import utilitlies.{ GenericLogger, UserTypeCheck }
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class CheckYourAnswersController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            val config: FrontendAppConfig,
-                                            val sessionRepository: SessionRepository,
-                                            val navigator: Navigator,
-                                            val errorHandler: ErrorHandler,
-                                            val genericLogger: GenericLogger,
-                                            identify: IdentifierAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                            requiredUserAnswers: RequiredUserAnswers,
-                                            checkReturnSubmission: CheckingSubmissionAction,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            checkYourAnswersView: CheckYourAnswersView,
-                                            returnsOrchestrator: ReturnsOrchestrator
-                                          ) (implicit ec: ExecutionContext) extends ControllerHelper {
+class CheckYourAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
+  val config: FrontendAppConfig,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  requiredUserAnswers: RequiredUserAnswers,
+  checkReturnSubmission: CheckingSubmissionAction,
+  val controllerComponents: MessagesControllerComponents,
+  checkYourAnswersView: CheckYourAnswersView,
+  returnsOrchestrator: ReturnsOrchestrator)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
@@ -60,13 +59,13 @@ class CheckYourAnswersController @Inject()(
         sanitiseUserAnswers(request.userAnswers, request.subscription).flatMap { userAnswers =>
           returnsOrchestrator.calculateAmounts(sdilRef, userAnswers, returnPeriod).map { amounts =>
             val submitUrl: Call = routes.CheckYourAnswersController.onSubmit
-            Ok(checkYourAnswersView(request.subscription.orgName,
+            Ok(checkYourAnswersView(
+              request.subscription.orgName,
               returnPeriod,
               userAnswers,
               amounts,
               submitUrl,
-              isSmallProducer
-            )(implicitly, implicitly, config))
+              isSmallProducer)(implicitly, implicitly, config))
           }.recoverWith {
             case t: Throwable =>
               genericLogger.logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
@@ -89,7 +88,7 @@ class CheckYourAnswersController @Inject()(
     val sanitisedPackingSitesUserAnswers = sanitisePackingSitesInAnswers(answers, subscription)
     val sanitisedAnswers = sanitiseWarehousesInAnswers(sanitisedPackingSitesUserAnswers, subscription)
 
-    updateDatabaseWithoutRedirect(sanitisedAnswers,CheckYourAnswersPage).map { _ =>
+    updateDatabaseWithoutRedirect(sanitisedAnswers, CheckYourAnswersPage).map { _ =>
       sanitisedAnswers
     }
   }

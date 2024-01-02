@@ -24,7 +24,7 @@ class AddressHelperSpec extends SpecBase with AddressHelper {
   "Address Helper" - {
     "generate a unique id" in {
 
-      val result:List[String] = List(generateId , generateId)
+      val result: List[String] = List(generateId, generateId)
 
       result.size mustBe 2
       result.foreach(eachUUID => eachUUID.length mustBe 36)

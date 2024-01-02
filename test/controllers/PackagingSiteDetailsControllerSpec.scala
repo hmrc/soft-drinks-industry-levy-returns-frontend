@@ -22,14 +22,11 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.PackagingSiteDetailsFormProvider
 import helpers.LoggerHelper
-import models.{CheckMode, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{ CheckMode, NormalMode, UserAnswers }
+import navigation.{ FakeNavigator, Navigator }
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
@@ -38,7 +35,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{AddressLookupService, PackingDetails}
+import services.{ AddressLookupService, PackingDetails }
 import utilitlies.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.PackagingSiteDetailsView
@@ -55,8 +52,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
   lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
   lazy val checkPackagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
   lazy val userAnswersWith1PackagingSite: UserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSiteListWith1)
-  lazy val newImporterAnswer : UserAnswers = emptyUserAnswers.copy(data = Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), packagingSiteList = packagingSiteListWith1
-  )
+  lazy val newImporterAnswer: UserAnswers = emptyUserAnswers.copy(data = Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), packagingSiteList = packagingSiteListWith1)
 
   "packagingSiteDetails Controller" - {
 
@@ -96,8 +92,8 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         val packagingSiteList = userAnswersWith1PackagingSite.packagingSiteList
 
-       val result = route(application, request).value
-       val view = application.injector.instanceOf[PackagingSiteDetailsView]
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -142,7 +138,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
         ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-        ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(onwardUrlForALF))
 
       val application =
@@ -150,8 +146,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
-          )
+            bind[AddressLookupService].toInstance(mockAddressLookupService))
           .build()
 
       running(application) {
@@ -166,7 +161,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
+            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -182,8 +177,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         applicationBuilder(userAnswers = Some(userAnswersWith1PackagingSite))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
           .build()
 
       running(application) {
@@ -210,8 +204,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         applicationBuilder(userAnswers = Some(newImporterAnswer))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
           .build()
 
       running(application) {
@@ -238,8 +231,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         applicationBuilder(userAnswers = Some(newImporterAnswer))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
           .build()
 
       running(application) {
@@ -266,8 +258,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         applicationBuilder(userAnswers = None)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
           .build()
 
       running(application) {
@@ -294,8 +285,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         applicationBuilder(userAnswers = None)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
           .build()
 
       running(application) {

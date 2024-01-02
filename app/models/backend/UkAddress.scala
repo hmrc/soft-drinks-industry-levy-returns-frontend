@@ -16,12 +16,12 @@
 
 package models.backend
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
-
-case class UkAddress(lines: List[String],
-                     postCode: String,
-                     alfId: Option[String] = None)
+case class UkAddress(
+  lines: List[String],
+  postCode: String,
+  alfId: Option[String] = None)
 
 object UkAddress {
   implicit val ukAddressFormat: Format[UkAddress] = Json.format[UkAddress]

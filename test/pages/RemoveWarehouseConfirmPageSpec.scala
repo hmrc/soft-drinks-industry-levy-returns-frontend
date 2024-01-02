@@ -19,11 +19,11 @@ package pages
 import controllers.routes
 import forms.RemoveWarehouseConfirmFormProvider
 import messages.RemoveWarehouseConfirmMessages
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.behaviours.PageBehaviours
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{ Messages, MessagesApi }
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import views.ViewSpecHelper
@@ -95,8 +95,7 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
 
     "the form is not prepopulated and has no error" - {
       val formWithErrors = form.apply().bind(
-        Map("select-continue" -> "")
-      )
+        Map("select-continue" -> ""))
       val html =
         view(formWithErrors, NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
       val document = doc(html)
@@ -115,7 +114,6 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
         errorSummary.text() shouldBe RemoveWarehouseConfirmMessages.errorMessage
       }
     }
-
 
     "should contain the correct url" - {
       "when in NormalMode" in {

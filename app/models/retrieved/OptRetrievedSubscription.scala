@@ -16,7 +16,7 @@
 
 package models.retrieved
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
 case class OptRetrievedSubscription(optRetrievedSubscription: Option[RetrievedSubscription])
 

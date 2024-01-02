@@ -20,38 +20,36 @@ import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import forms.AddASmallProducerFormProvider
 import handlers.ErrorHandler
-import models.errors.{AlreadyExists, NotASmallProducer, SDILReferenceErrors}
+import models.errors.{ AlreadyExists, NotASmallProducer, SDILReferenceErrors }
 import models.requests.DataRequest
-import models.{AddASmallProducer, BlankMode, Mode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers}
+import models.{ AddASmallProducer, BlankMode, Mode, NormalMode, ReturnPeriod, SmallProducer, UserAnswers }
 import navigation.Navigator
 import pages.AddASmallProducerPage
-import play.api.data.{Form, FormError}
+import play.api.data.{ Form, FormError }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.GenericLogger
 import views.html.AddASmallProducerView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class AddASmallProducerController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      val sessionRepository: SessionRepository,
-                                      val navigator: Navigator,
-                                      val errorHandler: ErrorHandler,
-                                      val genericLogger: GenericLogger,
-                                      sdilConnector: SoftDrinksIndustryLevyConnector,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      checkReturnSubmission: CheckingSubmissionAction,
-                                      formProvider: AddASmallProducerFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      view: AddASmallProducerView
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
-
+class AddASmallProducerController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: AddASmallProducerFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: AddASmallProducerView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
@@ -63,7 +61,7 @@ class AddASmallProducerController @Inject()(
           Ok(view(form, NormalMode))
         case _ =>
           Ok(view(form, mode))
-    }
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
@@ -83,23 +81,19 @@ class AddASmallProducerController @Inject()(
             case Some(_) =>
               val preparedForm = form.fill(value)
               Future.successful(
-                BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode))
-              )
+                BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode)))
             case _ =>
               val preparedForm = form.fill(value)
               sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod).flatMap {
                 case Some(false) =>
                   Future.successful(
-                    BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
-                  )
+                    BadRequest(view(preparedForm.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")), mode)))
                 case _ =>
                   updateDatabase(value, userAnswers).map(updatedAnswersFinal =>
-                    Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal))
-                  )
+                    Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
               }
           }
-        }
-      )
+        })
   }
 
   def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] =
@@ -131,25 +125,24 @@ class AddASmallProducerController @Inject()(
 
         form.bindFromRequest().fold(
           formWithErrors => {
-            Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))) },
+            Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference))))
+          },
           formData => {
             val smallProducerList = request.userAnswers.smallProducerList
             isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, returnPeriod).flatMap({
               case Left(AlreadyExists) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
-                )
+                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference))))
               case Left(NotASmallProducer) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")),
-                    mode, Some(sdilReference)))
-                )
+                  BadRequest(view(
+                    form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")),
+                    mode, Some(sdilReference))))
               case Right(_) =>
                 updateSmallProducerList(formData, userAnswers, sdilReference).map(updatedAnswersFinal =>
                   Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
             })
-          }
-        )
+          })
     }
 
   private def updateDatabase(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
@@ -167,8 +160,7 @@ class AddASmallProducerController @Inject()(
   }
 
   private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String,
-                             smallProducerList: Seq[SmallProducer], returnPeriod: ReturnPeriod)
-                            (implicit hc: HeaderCarrier): Future[Either[SDILReferenceErrors, Unit]] = {
+    smallProducerList: Seq[SmallProducer], returnPeriod: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Either[SDILReferenceErrors, Unit]] = {
     if (currentSDILRef == addASmallProducerSDILRef) {
       Future.successful(Right(()))
     } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {

@@ -19,17 +19,17 @@ package controllers.actions
 import controllers.routes
 import models.requests.DataRequest
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ ActionRefiner, Result }
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class CheckingSubmission @Inject()(implicit val executionContext: ExecutionContext) extends CheckingSubmissionAction {
+class CheckingSubmission @Inject() (implicit val executionContext: ExecutionContext) extends CheckingSubmissionAction {
 
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
     request.userAnswers.submitted match {
       case true =>
-       Future(Left(Redirect(routes.ReturnSentController.onPageLoad)))
+        Future(Left(Redirect(routes.ReturnSentController.onPageLoad)))
       case false =>
         Future.successful(Right(request))
     }

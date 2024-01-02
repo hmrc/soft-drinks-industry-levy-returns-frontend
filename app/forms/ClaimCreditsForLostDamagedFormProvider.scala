@@ -25,6 +25,5 @@ class ClaimCreditsForLostDamagedFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("claimCreditsForLostDamaged.error.required")
-    )
+      "value" -> boolean("claimCreditsForLostDamaged.error.required"))
 }

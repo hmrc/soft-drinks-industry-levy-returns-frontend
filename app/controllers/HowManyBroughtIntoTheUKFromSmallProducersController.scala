@@ -23,28 +23,27 @@ import models.Mode
 import navigation.Navigator
 import pages.HowManyBroughtIntoTheUKFromSmallProducersPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.HowManyBroughtIntoTheUKFromSmallProducersView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      val sessionRepository: SessionRepository,
-                                      val navigator: Navigator,
-                                      val errorHandler: ErrorHandler,
-                                      val genericLogger: GenericLogger,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      checkReturnSubmission: CheckingSubmissionAction,
-                                      formProvider: HowManyBroughtIntoTheUKFromSmallProducersFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      view: HowManyBroughtIntoTheUKFromSmallProducersView
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+class HowManyBroughtIntoTheUKFromSmallProducersController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: HowManyBroughtIntoTheUKFromSmallProducersFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: HowManyBroughtIntoTheUKFromSmallProducersView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
@@ -52,8 +51,8 @@ class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
+        case None => form
+        case Some(value) => form.fill(value)
       }
 
       Ok(view(preparedForm, mode))
@@ -70,7 +69,6 @@ class HowManyBroughtIntoTheUKFromSmallProducersController @Inject()(
             HowManyBroughtIntoTheUKFromSmallProducersPage, value)
 
           updateDatabaseAndRedirect(updatedUserAnswers, HowManyBroughtIntoTheUKFromSmallProducersPage, mode)
-        }
-      )
+        })
   }
 }

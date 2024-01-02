@@ -17,16 +17,18 @@
 package models.requests
 
 import models.retrieved.RetrievedSubscription
-import play.api.mvc.{Request, WrappedRequest}
-import models.{ReturnPeriod, UserAnswers}
+import play.api.mvc.{ Request, WrappedRequest }
+import models.{ ReturnPeriod, UserAnswers }
 
-case class OptionalDataRequest[A] (request: Request[A],
-                                   sdilEnrolment: String,
-                                   subscription: RetrievedSubscription,
-                                   userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+case class OptionalDataRequest[A](
+  request: Request[A],
+  sdilEnrolment: String,
+  subscription: RetrievedSubscription,
+  userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
 
-case class DataRequest[A] (request: Request[A],
-                           sdilEnrolment: String,
-                           subscription: RetrievedSubscription,
-                           userAnswers: UserAnswers,
-                           returnPeriod: ReturnPeriod) extends WrappedRequest[A](request)
+case class DataRequest[A](
+  request: Request[A],
+  sdilEnrolment: String,
+  subscription: RetrievedSubscription,
+  userAnswers: UserAnswers,
+  returnPeriod: ReturnPeriod) extends WrappedRequest[A](request)

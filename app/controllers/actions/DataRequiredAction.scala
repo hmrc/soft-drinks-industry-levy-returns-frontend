@@ -18,19 +18,19 @@ package controllers.actions
 
 import javax.inject.Inject
 import controllers.routes
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.{ DataRequest, OptionalDataRequest }
 import play.api.Logger
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ ActionRefiner, Result }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class DataRequiredActionImpl @Inject()(implicit val executionContext: ExecutionContext) extends DataRequiredAction {
+class DataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends DataRequiredAction {
 
   val logger: Logger = Logger(this.getClass())
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
     request.userAnswers match {
-      case Some(data)=>
+      case Some(data) =>
         Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data, data.returnPeriod)))
       case _ =>
         logger.warn("[DataRequiredActionImpl][refine] - no user answers in session")

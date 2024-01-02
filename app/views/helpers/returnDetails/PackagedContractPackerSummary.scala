@@ -17,10 +17,10 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage, QuestionPage}
+import models.{ CheckMode, LitresInBands }
+import pages.{ HowManyAsAContractPackerPage, PackagedContractPackerPage, QuestionPage }
 
-object PackagedContractPackerSummary extends ReturnDetailsSummaryListWithLitres  {
+object PackagedContractPackerSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = PackagedContractPackerPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyAsAContractPackerPage)

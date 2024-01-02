@@ -17,7 +17,7 @@
 package pages
 
 import controllers.routes
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{ CheckMode, LitresInBands, NormalMode }
 import pages.behaviours.PageBehaviours
 
 class HowManyAsAContractPackerPageSpec extends PageBehaviours {

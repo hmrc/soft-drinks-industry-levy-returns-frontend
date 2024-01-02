@@ -23,9 +23,8 @@ object ViewUtils {
 
   def title(form: Form[_], title: String, section: Option[String] = None)(implicit messages: Messages): String =
     titleNoForm(
-      title   = s"${errorPrefix(form)} ${messages(title)}",
-      section = section
-    )
+      title = s"${errorPrefix(form)} ${messages(title)}",
+      section = section)
 
   def titleNoForm(title: String, section: Option[String] = None)(implicit messages: Messages): String =
     s"${messages(title)} - ${section.fold("")(messages(_) + " - ")}${messages("service.name")} - ${messages("site.govuk")}"

@@ -25,6 +25,5 @@ class PackAtBusinessAddressFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("packAtBusinessAddress.error.required")
-    )
+      "value" -> boolean("packAtBusinessAddress.error.required"))
 }

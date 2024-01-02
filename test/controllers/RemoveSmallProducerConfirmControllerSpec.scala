@@ -21,19 +21,16 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.RemoveSmallProducerConfirmFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{ NormalMode, UserAnswers }
+import navigation.{ FakeNavigator, Navigator }
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.RemoveSmallProducerConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -42,7 +39,6 @@ import utilitlies.GenericLogger
 import views.html.RemoveSmallProducerConfirmView
 
 import scala.concurrent.Future
-
 
 class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
@@ -56,9 +52,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       "producerName" -> producerName,
       "referenceNumber" -> sdilReference,
       "lowBand" -> litres,
-      "highBand" -> litres
-    )
-  )
+      "highBand" -> litres))
   val userAnswers: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerList)
   val userAnswersWithTwoProducers: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerListWithTwoProducers)
   val userAnswersWithOneProducer: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerListOnlySuperCola)
@@ -129,15 +123,15 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     "must redirect to small producer details page when more than one producer present and the small producer is not in" +
       "the SmallProducerList (i.e. user clicked back button/browser back after confirming remove" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithOneProducer)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithOneProducer)).build()
 
-      running(application) {
-        val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
-        val result = route(application, request).value
+        running(application) {
+          val request = FakeRequest(GET, removeSmallProducerConfirmRoute)
+          val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
+        }
       }
-    }
 
     "must redirect to the next page when valid data is submitted" in {
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = smallProducerList).set(RemoveSmallProducerConfirmPage, true).success.value
@@ -147,8 +141,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -168,8 +161,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -189,8 +181,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -252,8 +243,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         applicationBuilder(userAnswers = Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {

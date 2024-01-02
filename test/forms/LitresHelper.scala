@@ -20,5 +20,4 @@ import forms.behaviours.LongFieldBehaviour
 
 trait LitresHelper extends LongFieldBehaviour {
 
-
 }

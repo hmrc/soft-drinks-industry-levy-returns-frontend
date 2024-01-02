@@ -19,17 +19,17 @@ package viewmodels
 import base.ReturnsTestData._
 import base.SpecBase
 import models.NormalMode
-import models.backend.{Site, UkAddress}
+import models.backend.{ Site, UkAddress }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import views.helpers.returnDetails.PackagingSiteDetailsSummary
 
 class PackagingSiteDetailsSummarySpec extends SpecBase {
 
   val addressWith3AddressLines = Site(
-      UkAddress(List("The house", "The Road", "ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg"), "NW88 8II"),
-      None,
-      Some("Test trading name 1"),
-      None)
+    UkAddress(List("The house", "The Road", "ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg"), "NW88 8II"),
+    None,
+    Some("Test trading name 1"),
+    None)
 
   val address44Characters = Site(
     UkAddress(List("29 Station Rd", "The Railyard", "Cambridge"), "CB1 2FP"),
@@ -102,11 +102,11 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
       val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map("ref1" -> site1, "ref2" -> site2))
       packagingSiteSummaryRowList.head.key.content.asHtml.toString() mustBe "trade2<br>foo2, bar2, wizz2"
       packagingSiteSummaryRowList.head.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
-      packagingSiteSummaryRowList.head.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode,"ref1").url
+      packagingSiteSummaryRowList.head.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, "ref1").url
 
       packagingSiteSummaryRowList.last.key.content.asHtml.toString() mustBe "trade<br>foo, bar, wizz"
       packagingSiteSummaryRowList.last.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
-      packagingSiteSummaryRowList.last.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode,"ref2").url
+      packagingSiteSummaryRowList.last.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, "ref2").url
     }
   }
 
@@ -144,19 +144,19 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
       packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
     }
     "should autowrap and place a break before the post code if the address line and post code length is between 98 & 103 characters" in {
-    val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map(("45641351", PackagingSiteEvenLongerAddressNoTradeName)))
-    val expectedAddressContent = HtmlContent("29 Station Rd, This address will auto wrap but not in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
+      val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map(("45641351", PackagingSiteEvenLongerAddressNoTradeName)))
+      val expectedAddressContent = HtmlContent("29 Station Rd, This address will auto wrap but not in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
 
-    packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
+      packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
     }
 
     "should place a break after a trading name AND autowrap and place a break before the post code if the address line " +
       "and post code length is between 98 & 103 characters" in {
-      val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map(("56458678", PackagingSiteEvenLongerAddressWithTradeName)))
-      val expectedAddressContent = HtmlContent("Test Trading Name Inc<br>29 Station Rd, This address will auto wrap but not " +
-        "in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
+        val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map(("56458678", PackagingSiteEvenLongerAddressWithTradeName)))
+        val expectedAddressContent = HtmlContent("Test Trading Name Inc<br>29 Station Rd, This address will auto wrap but not " +
+          "in postcode, it is 4 lines 103 char, Cambridge, <br>CB1 2FP")
 
-      packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
-    }
+        packagingSiteSummaryRowList.head.key.content mustBe expectedAddressContent
+      }
   }
 }

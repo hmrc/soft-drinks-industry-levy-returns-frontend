@@ -20,13 +20,13 @@ import models.NormalMode
 import models.retrieved.RetrievedSubscription
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import uk.gov.hmrc.auth.core.{EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.{ EnrolmentIdentifier, Enrolments }
 
 trait ActionHelpers {
   protected def getSdilEnrolment(enrolments: Enrolments): Option[EnrolmentIdentifier] = {
     val sdil = for {
       enrolment <- enrolments.enrolments if enrolment.key.equalsIgnoreCase("HMRC-OBTDS-ORG")
-      sdil      <- enrolment.getIdentifier("EtmpRegistrationNumber") if sdil.value.slice(2, 4) == "SD"
+      sdil <- enrolment.getIdentifier("EtmpRegistrationNumber") if sdil.value.slice(2, 4) == "SD"
     } yield {
       sdil
     }
@@ -40,9 +40,8 @@ trait ActionHelpers {
       .orElse(enrolments.getEnrolment("IR-SA"))
       .flatMap(_.getIdentifier("UTR").map(_.value))
 
-
   protected def redirectToStartOfJourney(subscription: RetrievedSubscription): Result = {
-    if(subscription.activity.smallProducer) {
+    if (subscription.activity.smallProducer) {
       Redirect(controllers.routes.PackagedContractPackerController.onPageLoad(NormalMode))
     } else {
       Redirect(controllers.routes.OwnBrandsController.onPageLoad(NormalMode))

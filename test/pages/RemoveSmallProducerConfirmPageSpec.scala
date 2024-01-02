@@ -17,7 +17,7 @@
 package pages
 
 import controllers.routes
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import pages.behaviours.PageBehaviours
 
 class RemoveSmallProducerConfirmPageSpec extends PageBehaviours {

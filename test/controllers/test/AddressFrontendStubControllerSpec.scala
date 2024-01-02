@@ -27,8 +27,8 @@ class AddressFrontendStubControllerSpec extends SpecBase {
 
   "initialise" - {
     "should return Accepted with the correct location header using the body posted" in {
-      val res = controller.initialise().apply(FakeRequest("","").withBody(
-        Json.obj("options"  -> Json.obj("continueUrl" -> "foobar"))))
+      val res = controller.initialise().apply(FakeRequest("", "").withBody(
+        Json.obj("options" -> Json.obj("continueUrl" -> "foobar"))))
       status(res) mustEqual 202
       headers(res).get(LOCATION) mustEqual Some("foobar?id=foobarwizzbang")
     }

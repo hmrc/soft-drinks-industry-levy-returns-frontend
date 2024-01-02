@@ -20,7 +20,7 @@ import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl
-import views.html.{JourneyRecoveryContinueView, JourneyRecoveryStartAgainView}
+import views.html.{ JourneyRecoveryContinueView, JourneyRecoveryStartAgainView }
 
 class JourneyRecoveryControllerSpec extends SpecBase {
 
@@ -34,7 +34,7 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
         running(application) {
           val continueUrl = RedirectUrl("/foo")
-          val request     = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(Some(continueUrl)).url)
+          val request = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(Some(continueUrl)).url)
 
           val result = route(application, request).value
 
@@ -54,7 +54,7 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
         running(application) {
           val continueUrl = RedirectUrl("https://foo.com")
-          val request     = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(Some(continueUrl)).url)
+          val request = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(Some(continueUrl)).url)
 
           val result = route(application, request).value
 

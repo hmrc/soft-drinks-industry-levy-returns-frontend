@@ -19,14 +19,14 @@ package orchestrators
 import base.ReturnsTestData._
 import base.SpecBase
 import errors.NoPendingReturnForGivenPeriod
-import models.requests.{DataRequest, OptionalDataRequest}
-import models.{Amounts, ReturnPeriod}
+import models.requests.{ DataRequest, OptionalDataRequest }
+import models.{ Amounts, ReturnPeriod }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+
+import org.mockito.MockitoSugar
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
-import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
+import repositories.{ SDILSessionCache, SDILSessionKeys, SessionRepository }
 import services.ReturnService
 
 import scala.concurrent.Future
@@ -41,7 +41,6 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
   val requestReturnPeriod = ReturnPeriod(year, quarter)
   val optDataRequestNoData: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest(), sdilReference, aSubscription, None)
   val dataRequest: DataRequest[AnyContent] = DataRequest(FakeRequest(), sdilReference, aSubscription, emptyUserAnswers, requestReturnPeriod)
-
 
   val orchestrator = new ReturnsOrchestrator(mockReturnService, mockSdilCache, mockSessionRepository)
 

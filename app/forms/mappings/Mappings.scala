@@ -17,39 +17,42 @@
 package forms.mappings
 
 import java.time.LocalDate
-import play.api.data.{FieldMapping, Mapping}
+import play.api.data.{ FieldMapping, Mapping }
 import play.api.data.Forms.of
 import models.Enumerable
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.validation.{ Constraint, Invalid, Valid }
 
 trait Mappings extends Formatters with Constraints {
 
   protected def text(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
 
-  protected def int(requiredKey: String = "error.required",
-                    wholeNumberKey: String = "error.wholeNumber",
-                    nonNumericKey: String = "error.nonNumeric",
-                    args: Seq[String] = Seq.empty): FieldMapping[Int] =
+  protected def int(
+    requiredKey: String = "error.required",
+    wholeNumberKey: String = "error.wholeNumber",
+    nonNumericKey: String = "error.nonNumeric",
+    args: Seq[String] = Seq.empty): FieldMapping[Int] =
     of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, args))
 
+  protected def long(
+    requiredKey: String = "error.required",
+    negativeNumber: String = "error.negative",
+    nonNumericKey: String = "error.nonNumeric",
+    wholeNumberKey: String = "error.wholeNumber",
+    outOfRangeKey: String = "error.outOfMaxVal",
+    args: Seq[String] = Seq.empty): FieldMapping[Long] =
+    of(longFormatter(requiredKey, negativeNumber, nonNumericKey, wholeNumberKey, outOfRangeKey, args))
 
-  protected def long(requiredKey: String = "error.required",
-                     negativeNumber: String = "error.negative",
-                     nonNumericKey: String = "error.nonNumeric",
-                     wholeNumberKey: String = "error.wholeNumber",
-                     outOfRangeKey: String = "error.outOfMaxVal",
-                     args: Seq[String] = Seq.empty): FieldMapping[Long] =
-    of(longFormatter(requiredKey, negativeNumber, nonNumericKey, wholeNumberKey,outOfRangeKey, args))
-
-  protected def litres(band: String,
-                       args: Seq[String] = Seq.empty): Mapping[Long] =
+  protected def litres(
+    band: String,
+    args: Seq[String] = Seq.empty): Mapping[Long] =
     of(litresFormatter(band, args))
       .verifying(maximumValueNotEqual(100000000000000L, s"litres.error.$band.outOfMaxVal"))
 
-  protected def sdilReference(requiredKey: String = "error.required",
-                              userAnswersId: String,
-                              args: Seq[String] = Seq.empty): Mapping[String] = {
+  protected def sdilReference(
+    requiredKey: String = "error.required",
+    userAnswersId: String,
+    args: Seq[String] = Seq.empty): Mapping[String] = {
     def checkSDILReference(): Constraint[String] = {
 
       val validFormatPattern = "^X[A-Z]SDIL000[0-9]{6}$"
@@ -67,22 +70,23 @@ trait Mappings extends Formatters with Constraints {
     of(sdilReferenceFormatter(requiredKey, args)).verifying(checkSDILReference())
   }
 
-  protected def boolean(requiredKey: String = "error.required",
-                        invalidKey: String = "error.boolean",
-                        args: Seq[String] = Seq.empty): FieldMapping[Boolean] =
+  protected def boolean(
+    requiredKey: String = "error.required",
+    invalidKey: String = "error.boolean",
+    args: Seq[String] = Seq.empty): FieldMapping[Boolean] =
     of(booleanFormatter(requiredKey, invalidKey, args))
 
-
-  protected def enumerable[A](requiredKey: String = "error.required",
-                              invalidKey: String = "error.invalid",
-                              args: Seq[String] = Seq.empty)(implicit ev: Enumerable[A]): FieldMapping[A] =
+  protected def enumerable[A](
+    requiredKey: String = "error.required",
+    invalidKey: String = "error.invalid",
+    args: Seq[String] = Seq.empty)(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey, args))
 
   protected def localDate(
-                           invalidKey: String,
-                           allRequiredKey: String,
-                           twoRequiredKey: String,
-                           requiredKey: String,
-                           args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
+    invalidKey: String,
+    allRequiredKey: String,
+    twoRequiredKey: String,
+    requiredKey: String,
+    args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, args))
 }

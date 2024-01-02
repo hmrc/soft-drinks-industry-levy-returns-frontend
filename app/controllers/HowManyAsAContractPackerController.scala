@@ -23,28 +23,27 @@ import models.Mode
 import navigation.Navigator
 import pages.HowManyAsAContractPackerPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.HowManyAsAContractPackerView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class HowManyAsAContractPackerController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      val sessionRepository: SessionRepository,
-                                      val navigator: Navigator,
-                                      val errorHandler: ErrorHandler,
-                                      val genericLogger: GenericLogger,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      checkReturnSubmission: CheckingSubmissionAction,
-                                      formProvider: HowManyAsAContractPackerFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      view: HowManyAsAContractPackerView
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+class HowManyAsAContractPackerController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: HowManyAsAContractPackerFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: HowManyAsAContractPackerView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
@@ -52,10 +51,10 @@ class HowManyAsAContractPackerController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(HowManyAsAContractPackerPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-          Ok(view(preparedForm, mode))
+        case None => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
@@ -69,7 +68,6 @@ class HowManyAsAContractPackerController @Inject()(
             HowManyAsAContractPackerPage, value)
 
           updateDatabaseAndRedirect(updatedUserAnswers, HowManyAsAContractPackerPage, mode, true, Some(request.subscription))
-        }
-      )
+        })
   }
 }

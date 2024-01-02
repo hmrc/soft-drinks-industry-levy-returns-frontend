@@ -33,17 +33,17 @@
 package controllers.addressLookupFrontend
 import base.ReturnsTestData._
 import base.SpecBase
-import models.alf.{AlfAddress, AlfResponse}
-import models.{NormalMode, UserAnswers}
+import models.alf.{ AlfAddress, AlfResponse }
+import models.{ NormalMode, UserAnswers }
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+
+import org.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{AddressLookupService, PackingDetails, WarehouseDetails}
+import services.{ AddressLookupService, PackingDetails, WarehouseDetails }
 
 import scala.concurrent.Future
 
@@ -57,8 +57,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+          bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val sdilId: String = "foo"
       val alfId: String = "bar"
@@ -89,8 +88,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+          bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
       val alfId: String = "bar"
@@ -108,8 +106,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+          bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
       val alfId: String = "bar"
@@ -135,8 +132,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+          bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
       val alfId: String = "bar"
@@ -166,8 +162,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+          bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
       val alfId: String = "bar"
@@ -198,8 +193,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+          bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
       val alfId: String = "bar"
@@ -217,8 +211,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+          bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
       val alfId: String = "bar"
@@ -244,8 +237,7 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
+          bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
       val alfId: String = "bar"

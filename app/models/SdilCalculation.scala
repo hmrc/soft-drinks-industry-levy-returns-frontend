@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{ Json, Reads, Writes }
 
 case class SdilCalculation(lowBandLevy: Double, highBandLevy: Double)
 

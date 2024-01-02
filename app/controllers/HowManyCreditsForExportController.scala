@@ -23,40 +23,39 @@ import models.Mode
 import navigation.Navigator
 import pages.HowManyCreditsForExportPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.HowManyCreditsForExportView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class HowManyCreditsForExportController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      val sessionRepository: SessionRepository,
-                                      val navigator: Navigator,
-                                      val errorHandler: ErrorHandler,
-                                      val genericLogger: GenericLogger,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      checkReturnSubmission: CheckingSubmissionAction,
-                                      formProvider: HowManyCreditsForExportFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      view: HowManyCreditsForExportView
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+class HowManyCreditsForExportController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: HowManyCreditsForExportFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: HowManyCreditsForExportView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-    val preparedForm = request.userAnswers.get(HowManyCreditsForExportPage) match {
-      case None => form
-      case Some(value) => form.fill(value)
-    }
+      val preparedForm = request.userAnswers.get(HowManyCreditsForExportPage) match {
+        case None => form
+        case Some(value) => form.fill(value)
+      }
 
-    Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode))
 
   }
 
@@ -72,7 +71,6 @@ class HowManyCreditsForExportController @Inject()(
             HowManyCreditsForExportPage, value)
 
           updateDatabaseAndRedirect(updatedUserAnswers, HowManyCreditsForExportPage, mode)
-        }
-      )
+        })
   }
 }

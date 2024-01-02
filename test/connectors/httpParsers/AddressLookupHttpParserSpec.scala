@@ -18,13 +18,13 @@ package connectors.httpParsers
 
 import base.ReturnsTestData._
 import base.SpecBase
-import connectors.httpParsers.AddressLookupHttpParser.{AddressLookupGetAddressReads, AddressLookupInitJourneyReads}
+import connectors.httpParsers.AddressLookupHttpParser.{ AddressLookupGetAddressReads, AddressLookupInitJourneyReads }
 import models.core.ErrorModel
 import play.api.http.Status
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.http.HttpResponse
 
-class AddressLookupHttpParserSpec extends SpecBase{
+class AddressLookupHttpParserSpec extends SpecBase {
 
   val errorModel: ErrorModel = ErrorModel(Status.BAD_REQUEST, "Error Message")
 
@@ -43,7 +43,7 @@ class AddressLookupHttpParserSpec extends SpecBase{
       "return an ErrorModel" in {
         AddressLookupGetAddressReads.read("", "",
           HttpResponse(Status.OK, customerAddressJsonError, Map.empty[String, Seq[String]])) mustBe
-          Left(ErrorModel(Status.INTERNAL_SERVER_ERROR,"Invalid Json returned from Address Lookup"))
+          Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from Address Lookup"))
       }
     }
 
@@ -52,7 +52,7 @@ class AddressLookupHttpParserSpec extends SpecBase{
       "return an ErrorModel" in {
         AddressLookupGetAddressReads.read("", "",
           HttpResponse(Status.BAD_REQUEST, "")) mustBe
-          Left(ErrorModel(Status.BAD_REQUEST,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
+          Left(ErrorModel(Status.BAD_REQUEST, "Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
       }
     }
 
@@ -61,7 +61,7 @@ class AddressLookupHttpParserSpec extends SpecBase{
       "return an ErrorModel" in {
         AddressLookupGetAddressReads.read("", "",
           HttpResponse(Status.SEE_OTHER, "")) mustBe
-          Left(ErrorModel(Status.SEE_OTHER,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
+          Left(ErrorModel(Status.SEE_OTHER, "Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
       }
     }
   }

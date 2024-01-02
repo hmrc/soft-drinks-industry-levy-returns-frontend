@@ -18,31 +18,31 @@ package orchestrators
 
 import cats.data.EitherT
 import cats.implicits._
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.{ Inject, Singleton }
 import errors.NoPendingReturnForGivenPeriod
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.{ DataRequest, OptionalDataRequest }
 import models.retrieved.RetrievedSubscription
-import models.{Amounts, ReturnPeriod, UserAnswers}
+import models.{ Amounts, ReturnPeriod, UserAnswers }
 import play.api.mvc.AnyContent
-import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
+import repositories.{ SDILSessionCache, SDILSessionKeys, SessionRepository }
 import service.ReturnResult
 import services.ReturnService
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class ReturnsOrchestrator @Inject()(returnService: ReturnService,
-                                    sdilSessionCache: SDILSessionCache,
-                                    sessionRepository: SessionRepository) {
+class ReturnsOrchestrator @Inject() (
+  returnService: ReturnService,
+  sdilSessionCache: SDILSessionCache,
+  sessionRepository: SessionRepository) {
 
-  def handleReturnRequest(year: Int, quarter: Int, nilReturn: Boolean)
-                         (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = EitherT{
+  def handleReturnRequest(year: Int, quarter: Int, nilReturn: Boolean)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = EitherT {
 
     val requestReturnPeriod = ReturnPeriod(year, quarter)
     val userAnswersForReturnPeriod = {
-      request.userAnswers.fold[Option[UserAnswers]](None) {userAnswers =>
-        if(userAnswers.returnPeriod == requestReturnPeriod) {
+      request.userAnswers.fold[Option[UserAnswers]](None) { userAnswers =>
+        if (userAnswers.returnPeriod == requestReturnPeriod) {
           Some(userAnswers)
         } else {
           None
@@ -57,24 +57,21 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
     }
   }
 
-
-
-  def setupNewReturn(returnPeriod: ReturnPeriod, nilReturn: Boolean)
-                    (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
+  def setupNewReturn(returnPeriod: ReturnPeriod, nilReturn: Boolean)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = {
     for {
       _ <- checkIfValidReturnPeriod(returnPeriod)
       _ <- setupUserAnswers(request.subscription, returnPeriod, nilReturn)
     } yield ((): Unit)
   }
 
-  def checkIfValidReturnPeriod(returnPeriod: ReturnPeriod)
-                              (implicit request: OptionalDataRequest[AnyContent],
-                  hc: HeaderCarrier,
-                  ec: ExecutionContext): ReturnResult[ReturnPeriod] = EitherT {
+  def checkIfValidReturnPeriod(returnPeriod: ReturnPeriod)(implicit
+    request: OptionalDataRequest[AnyContent],
+    hc: HeaderCarrier,
+    ec: ExecutionContext): ReturnResult[ReturnPeriod] = EitherT {
 
     returnService.getPendingReturns(request.subscription.utr).map { pendingReturns =>
-      if(pendingReturns.contains(returnPeriod)) {
-         Right(returnPeriod)
+      if (pendingReturns.contains(returnPeriod)) {
+        Right(returnPeriod)
       } else {
         Left(NoPendingReturnForGivenPeriod)
       }
@@ -86,15 +83,14 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
     sessionRepository.set(defaultUserAnswers)
   }
 
-  def calculateAmounts(sdilRef: String,
-                       userAnswers: UserAnswers,
-                       returnPeriod: ReturnPeriod)
-                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Amounts] = {
+  def calculateAmounts(
+    sdilRef: String,
+    userAnswers: UserAnswers,
+    returnPeriod: ReturnPeriod)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Amounts] = {
     returnService.calculateAmounts(sdilRef, userAnswers, returnPeriod)
   }
 
-  def completeReturnAndUpdateUserAnswers()
-                                        (implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  def completeReturnAndUpdateUserAnswers()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val subscription = request.subscription
     val returnPeriod = request.returnPeriod
     val userAnswers = request.userAnswers
@@ -106,10 +102,10 @@ class ReturnsOrchestrator @Inject()(returnService: ReturnService,
     } yield sr
   }
 
-
-  def getCalculatedAmountsForReturnSent(sdilRef: String,
-                           userAnswers: UserAnswers,
-                           returnPeriod: ReturnPeriod)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Amounts] = {
+  def getCalculatedAmountsForReturnSent(
+    sdilRef: String,
+    userAnswers: UserAnswers,
+    returnPeriod: ReturnPeriod)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Amounts] = {
     sdilSessionCache.fetchEntry[Amounts](sdilRef, SDILSessionKeys.AMOUNTS).flatMap {
       case Some(amounts) => Future.successful(amounts)
       case None => calculateAmounts(sdilRef, userAnswers, returnPeriod)

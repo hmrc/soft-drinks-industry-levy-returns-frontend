@@ -25,6 +25,5 @@ class SmallProducerDetailsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("smallProducerDetails.error.required")
-    )
+      "value" -> boolean("smallProducerDetails.error.required"))
 }

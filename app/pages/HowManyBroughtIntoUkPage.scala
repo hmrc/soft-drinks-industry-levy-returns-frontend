@@ -17,7 +17,7 @@
 package pages
 
 import controllers.routes
-import models.{LitresInBands, Mode}
+import models.{ LitresInBands, Mode }
 import play.api.libs.json.JsPath
 
 case object HowManyBroughtIntoUkPage extends QuestionPage[LitresInBands] {

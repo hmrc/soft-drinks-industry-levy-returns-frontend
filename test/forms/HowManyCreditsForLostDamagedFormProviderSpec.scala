@@ -37,29 +37,25 @@ class HowManyCreditsForLostDamagedFormProviderSpec extends LongFieldBehaviour {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validDataGenerator
-    )
+      validDataGenerator)
 
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, numberKey),
+      nonNumericError = FormError(fieldName, numberKey),
       negativeNumberError = FormError(fieldName, negativeNumberKey),
-      wholeNumberError = FormError(fieldName, wholeNumberKey)
-    )
+      wholeNumberError = FormError(fieldName, wholeNumberKey))
 
     behave like longFieldWithMaximum(
       form,
       fieldName,
       maxValue,
-      FormError(fieldName, maxValueKey, Seq(maxValue))
-    )
+      FormError(fieldName, maxValueKey, Seq(maxValue)))
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      requiredError = FormError(fieldName, requiredKey))
   }
 
   ".highBand" - {
@@ -76,28 +72,24 @@ class HowManyCreditsForLostDamagedFormProviderSpec extends LongFieldBehaviour {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validDataGenerator
-    )
+      validDataGenerator)
 
     behave like longField(
       form,
       fieldName,
-      nonNumericError  = FormError(fieldName, numberKey),
+      nonNumericError = FormError(fieldName, numberKey),
       negativeNumberError = FormError(fieldName, negativeNumberKey),
-      wholeNumberError = FormError(fieldName, wholeNumberKey)
-    )
+      wholeNumberError = FormError(fieldName, wholeNumberKey))
 
     behave like longFieldWithMaximum(
       form,
       fieldName,
       maxValue,
-      FormError(fieldName, maxValueKey, Seq(maxValue))
-    )
+      FormError(fieldName, maxValueKey, Seq(maxValue)))
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      requiredError = FormError(fieldName, requiredKey))
   }
 }

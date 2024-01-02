@@ -19,10 +19,10 @@ package controllers
 import base.ReturnsTestData._
 import base.SpecBase
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+
+import org.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -110,8 +110,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {

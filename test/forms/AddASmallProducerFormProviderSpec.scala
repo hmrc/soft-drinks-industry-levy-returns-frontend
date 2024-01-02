@@ -19,10 +19,10 @@ package forms
 import base.ReturnsTestData._
 import base.SpecBase
 import controllers.routes
-import forms.behaviours.{LongFieldBehaviour, SDILReferenceFieldBehaviours, StringFieldBehaviours}
+import forms.behaviours.{ LongFieldBehaviour, SDILReferenceFieldBehaviours, StringFieldBehaviours }
 import models.NormalMode
 
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.FormError
 
 class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SDILReferenceFieldBehaviours with SpecBase with MockitoSugar {
@@ -39,15 +39,13 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
-    )
+      stringsWithMaxLength(maxLength))
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)))
 
   }
 
@@ -59,14 +57,12 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      requiredError = FormError(fieldName, requiredKey))
 
     behave like invalidRefNumber(
       form,
       fieldName,
-      requiredError = FormError(fieldName, invalidSDILRefNumber)
-    )
+      requiredError = FormError(fieldName, invalidSDILRefNumber))
 
   }
 
@@ -84,29 +80,25 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validDataGenerator
-    )
+      validDataGenerator)
 
     behave like longField(
       form,
       fieldName,
       nonNumericError = FormError(fieldName, numberKey),
       negativeNumberError = FormError(fieldName, negativeNumberKey),
-      wholeNumberError = FormError(fieldName, wholeNumberKey)
-    )
+      wholeNumberError = FormError(fieldName, wholeNumberKey))
 
     behave like longFieldWithMaximum(
       form,
       fieldName,
       maxValue,
-      FormError(fieldName, maxValueKey, Seq(maxValue))
-    )
+      FormError(fieldName, maxValueKey, Seq(maxValue)))
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      requiredError = FormError(fieldName, requiredKey))
   }
 
   ".highBand" - {
@@ -123,28 +115,24 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validDataGenerator
-    )
+      validDataGenerator)
 
     behave like longField(
       form,
       fieldName,
       nonNumericError = FormError(fieldName, numberKey),
       negativeNumberError = FormError(fieldName, negativeNumberKey),
-      wholeNumberError = FormError(fieldName, wholeNumberKey)
-    )
+      wholeNumberError = FormError(fieldName, wholeNumberKey))
 
     behave like longFieldWithMaximum(
       form,
       fieldName,
       maxValue,
-      FormError(fieldName, maxValueKey, Seq(maxValue))
-    )
+      FormError(fieldName, maxValueKey, Seq(maxValue)))
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      requiredError = FormError(fieldName, requiredKey))
   }
 }

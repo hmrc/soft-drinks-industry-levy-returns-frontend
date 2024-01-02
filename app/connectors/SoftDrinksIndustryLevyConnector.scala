@@ -17,27 +17,25 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.retrieved.{OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription}
-import models.{FinancialLineItem, ReturnPeriod, ReturnsVariation, SdilReturn}
-import repositories.{SDILSessionCache, SDILSessionKeys}
+import models.retrieved.{ OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription }
+import models.{ FinancialLineItem, ReturnPeriod, ReturnsVariation, SdilReturn }
+import repositories.{ SDILSessionCache, SDILSessionKeys }
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, HttpResponse }
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class SoftDrinksIndustryLevyConnector @Inject()(
-    val http: HttpClient,
-    frontendAppConfig: FrontendAppConfig,
-    sdilSessionCache: SDILSessionCache
-  )(implicit ec: ExecutionContext) {
+class SoftDrinksIndustryLevyConnector @Inject() (
+  val http: HttpClient,
+  frontendAppConfig: FrontendAppConfig,
+  sdilSessionCache: SDILSessionCache)(implicit ec: ExecutionContext) {
 
   lazy val sdilUrl: String = frontendAppConfig.sdilBaseUrl
 
-  private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
+  private def getSubscriptionUrl(sdilNumber: String, identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
-  def retrieveSubscription(identifierValue: String, identifierType: String)
-                          (implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
+  def retrieveSubscription(identifierValue: String, identifierType: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
     sdilSessionCache.fetchEntry[OptRetrievedSubscription](identifierValue, SDILSessionKeys.SUBSCRIPTION).flatMap {
       case Some(optSubscription) => Future.successful(optSubscription.optRetrievedSubscription)
       case None =>
@@ -49,7 +47,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
   }
 
-  private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
+  private def smallProducerUrl(sdilRef: String, period: ReturnPeriod): String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
 
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     sdilSessionCache.fetchEntry[OptSmallProducer](sdilRef, SDILSessionKeys.smallProducerForPeriod(period)).flatMap {
@@ -63,13 +61,12 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
 
   def getPendingReturnPeriods(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
-   http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
   }
 
   def balance(
-               sdilRef: String,
-               withAssessment: Boolean
-             )(implicit hc: HeaderCarrier): Future[BigDecimal] = {
+    sdilRef: String,
+    withAssessment: Boolean)(implicit hc: HeaderCarrier): Future[BigDecimal] = {
     sdilSessionCache.fetchEntry[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment)).flatMap {
       case Some(b) => Future.successful(b)
       case None =>
@@ -82,17 +79,17 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def balanceHistory(
-                      sdilRef: String,
-                      withAssessment: Boolean
-                    )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+    sdilRef: String,
+    withAssessment: Boolean)(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
     import FinancialLineItem.formatter
     sdilSessionCache.fetchEntry[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment)).flatMap {
       case Some(fli) => Future.successful(fli)
       case None =>
         http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
-          .flatMap{ fli => sdilSessionCache.save[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment), fli)
-            .map(_ => fli)
-      }
+          .flatMap { fli =>
+            sdilSessionCache.save[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment), fli)
+              .map(_ => fli)
+          }
     }
   }
 

@@ -25,13 +25,10 @@ import helpers.LoggerHelper
 import models.NormalMode
 import models.backend.UkAddress
 import models.retrieved.RetrievedSubscription
-import navigation.{FakeNavigator, Navigator}
+import navigation.{ FakeNavigator, Navigator }
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.{ any, anyString, eq => matching }
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.PackAtBusinessAddressPage
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -40,7 +37,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{AddressLookupService, PackingDetails}
+import services.{ AddressLookupService, PackingDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import utilitlies.GenericLogger
 import views.html.PackAtBusinessAddressView
@@ -143,7 +140,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
         ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-        ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(onwardUrlForALF))
 
       val application =
@@ -151,8 +148,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
-          )
+            bind[AddressLookupService].toInstance(mockAddressLookupService))
           .build()
 
       running(application) {
@@ -167,38 +163,38 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
     "must return a Bad Request, continue to have the correct information on the page, and answer required error " +
       "when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, packAtBusinessAddressRoute)
-            .withFormUrlEncodedBody(("value", ""))
+        running(application) {
+          val request =
+            FakeRequest(POST, packAtBusinessAddressRoute)
+              .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+          val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[PackAtBusinessAddressView]
+          val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
-        val result = route(application, request).value
-        val page = Jsoup.parse(contentAsString(result))
+          val result = route(application, request).value
+          val page = Jsoup.parse(contentAsString(result))
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, HtmlContent(formattedAddress), NormalMode)(request, messages(application)).toString
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(boundForm, HtmlContent(formattedAddress), NormalMode)(request, messages(application)).toString
 
-        //noinspection ComparingUnrelatedTypes
-        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
-        //noinspection ComparingUnrelatedTypes
-        page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
-        page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.error.required"))
+          //noinspection ComparingUnrelatedTypes
+          page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+          //noinspection ComparingUnrelatedTypes
+          page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
+          page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.error.required"))
 
+        }
       }
-    }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
@@ -230,7 +226,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-
     "must redirect to the next page removing litre data from user answers, when valid data is submitted (true)" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -241,8 +236,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
         val request = FakeRequest(POST, packAtBusinessAddressRoute).withFormUrlEncodedBody(("value", "true"))

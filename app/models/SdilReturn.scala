@@ -19,22 +19,20 @@ package models
 import cats.implicits._
 import models.SdilReturn._
 import pages._
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{Format, JsPath, Json, OFormat}
+import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
+import play.api.libs.json.{ Format, JsPath, Json, OFormat }
 
 import java.time.Instant
 
-
 case class SdilReturn(
-                       ownBrand: (Long, Long),
-                       packLarge: (Long, Long),
-                       packSmall: List[SmallProducer],
-                       importLarge: (Long, Long),
-                       importSmall: (Long, Long),
-                       `export`: (Long, Long),
-                       wastage: (Long, Long),
-                       submittedOn: Option[Instant] = None
-                     ) {
+  ownBrand: (Long, Long),
+  packLarge: (Long, Long),
+  packSmall: List[SmallProducer],
+  importLarge: (Long, Long),
+  importSmall: (Long, Long),
+  `export`: (Long, Long),
+  wastage: (Long, Long),
+  submittedOn: Option[Instant] = None) {
 
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
@@ -58,10 +56,9 @@ object SdilReturn {
 
   implicit val longTupleFormatter: Format[(Long, Long)] = (
     (JsPath \ "lower").format[Long] and
-      (JsPath \ "higher").format[Long]
-    )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
-    Tuple2.unapply(x)
-  }))
+    (JsPath \ "higher").format[Long])((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
+      Tuple2.unapply(x)
+    }))
 
   implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
   implicit val returnsFormat = Json.format[SdilReturn]
@@ -91,8 +88,7 @@ object SdilReturn {
       importLarge = (lowImportLarge, highImportLarge),
       importSmall = (lowImportSmall, highImportSmall),
       export = (lowExports, highExports),
-      wastage = (lowWastage, highWastage)
-    )
+      wastage = (lowWastage, highWastage))
 
   }
 

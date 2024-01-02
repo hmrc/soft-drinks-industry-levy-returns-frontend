@@ -38,8 +38,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers",
     SummaryHeadingIds.exported -> "claimingCreditForExportedLiableDrinks",
     SummaryHeadingIds.lostOrDestroyed -> "claimingCreditForLostOrDestroyedLiableDrinks",
-    SummaryHeadingIds.registeredSites -> "You have 1 packaging site"
-  )
+    SummaryHeadingIds.registeredSites -> "You have 1 packaging site")
 
   val returnDetailsSummaryListsWithListNames = Map(
     SummaryHeadingIds.ownBrands -> "own brands",
@@ -50,8 +49,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.exported -> "exported",
     SummaryHeadingIds.lostOrDestroyed -> "lost or destroyed",
     SummaryHeadingIds.amountToPay -> "amount to pay",
-    SummaryHeadingIds.registeredSites -> "registered sites"
-  )
+    SummaryHeadingIds.registeredSites -> "registered sites")
 
   val returnDetailsSummaryListsWithActionHrefsForQuestion = Map(
     SummaryHeadingIds.ownBrands -> "/change-own-brands-packaged-at-own-sites",
@@ -61,8 +59,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "/change-brought-into-uk-from-small-producers",
     SummaryHeadingIds.exported -> "/change-claim-credits-for-exports",
     SummaryHeadingIds.lostOrDestroyed -> "/change-claim-credits-for-lost-damaged",
-    SummaryHeadingIds.registeredSites -> "/change-packaging-site-details",
-  )
+    SummaryHeadingIds.registeredSites -> "/change-packaging-site-details")
 
   val returnDetailsSummaryListsWithActionHrefsForLitres = Map(
     SummaryHeadingIds.ownBrands -> "/change-how-many-own-brands-packaged-at-own-sites",
@@ -71,8 +68,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoUK -> "/change-how-many-brought-into-uk",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "/change-how-many-into-uk-small-producers",
     SummaryHeadingIds.exported -> "/change-how-many-credits-for-exports",
-    SummaryHeadingIds.lostOrDestroyed -> "/change-how-many-credits-for-lost-damaged"
-  )
+    SummaryHeadingIds.lostOrDestroyed -> "/change-how-many-credits-for-lost-damaged")
 
   val returnDetailsSummaryListsWithActionIds = Map(
     SummaryHeadingIds.ownBrands -> "change-own-brands",
@@ -82,8 +78,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "change-brought-into-uk-small-producers",
     SummaryHeadingIds.exported -> "change-exports",
     SummaryHeadingIds.lostOrDestroyed -> "change-credits-lost-damaged",
-    SummaryHeadingIds.registeredSites -> "change-packaging-sites"
-  )
+    SummaryHeadingIds.registeredSites -> "change-packaging-sites")
 
   val returnDetailsSummaryListsWithActionHiddenKey = Map(
     SummaryHeadingIds.ownBrands -> "ownBrands",
@@ -93,8 +88,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "broughtIntoUkFromSmallProducers",
     SummaryHeadingIds.exported -> "claimCreditsForExports",
     SummaryHeadingIds.lostOrDestroyed -> "claimCreditsForLostDamaged",
-    SummaryHeadingIds.registeredSites -> "checkYourAnswers.sites.packing"
-  )
+    SummaryHeadingIds.registeredSites -> "checkYourAnswers.sites.packing")
 
   val returnDetailsSummaryListsWithLitresActionId = Map(
     SummaryHeadingIds.ownBrands -> "own-site",
@@ -103,8 +97,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoUK -> "brought-into-uk",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "brought-into-uk-small-producers",
     SummaryHeadingIds.exported -> "export-credits",
-    SummaryHeadingIds.lostOrDestroyed -> "lost-destroyed"
-  )
+    SummaryHeadingIds.lostOrDestroyed -> "lost-destroyed")
 
   val returnDetailsSummaryListsWithLitresHiddenKey = Map(
     SummaryHeadingIds.ownBrands -> "ownBrandsPackagedAtYourOwnSite",
@@ -113,8 +106,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.broughtIntoUK -> "broughtIntoUK",
     SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "broughtIntoTheUKFromSmallProducers",
     SummaryHeadingIds.exported -> "exported",
-    SummaryHeadingIds.lostOrDestroyed -> "lostOrDestroyed"
-  )
+    SummaryHeadingIds.lostOrDestroyed -> "lostOrDestroyed")
 
   val returnDetailsSummaryListsWithArrayElement = Map(
     SummaryHeadingIds.ownBrands -> 0,
@@ -125,8 +117,7 @@ trait ReturnDetailsExpectedResults {
     SummaryHeadingIds.exported -> 5,
     SummaryHeadingIds.lostOrDestroyed -> 6,
     SummaryHeadingIds.amountToPay -> 7,
-    SummaryHeadingIds.registeredSites -> 8
-  )
+    SummaryHeadingIds.registeredSites -> 8)
 
   def isNegativeLevy(summaryHeadingIds: String): Boolean =
     List(SummaryHeadingIds.exported, SummaryHeadingIds.lostOrDestroyed)

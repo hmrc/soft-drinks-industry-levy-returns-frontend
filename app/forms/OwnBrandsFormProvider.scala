@@ -25,6 +25,5 @@ class OwnBrandsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("ownBrands.error.required")
-    )
+      "value" -> boolean("ownBrands.error.required"))
 }

@@ -17,8 +17,8 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, QuestionPage}
+import models.{ CheckMode, LitresInBands }
+import pages.{ ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, QuestionPage }
 
 object ClaimCreditsForLostDamagedSummary extends ReturnDetailsSummaryListWithLitres {
 

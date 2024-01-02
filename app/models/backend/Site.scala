@@ -16,16 +16,15 @@
 
 package models.backend
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
 import java.time.LocalDate
 
 case class Site(
-                 address: UkAddress,
-                 ref: Option[String] = None,
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate] = None
-               )
+  address: UkAddress,
+  ref: Option[String] = None,
+  tradingName: Option[String],
+  closureDate: Option[LocalDate] = None)
 
 object Site {
   implicit val format: Format[Site] = Json.format[Site]

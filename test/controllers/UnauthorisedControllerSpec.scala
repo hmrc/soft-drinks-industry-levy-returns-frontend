@@ -22,7 +22,6 @@ import play.api.test.Helpers._
 import views.html.UnauthorisedView
 import base.ReturnsTestData._
 
-
 class UnauthorisedControllerSpec extends SpecBase {
 
   "Unauthorised Controller" - {

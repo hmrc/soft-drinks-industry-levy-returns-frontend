@@ -29,40 +29,39 @@ object ModelEncryption {
     (
       datedCacheMap.id,
       datedCacheMap.data.map(item => item._1 -> encryption.crypto.encrypt(item._2.toString(), datedCacheMap.id)),
-      datedCacheMap.lastUpdated
-    )
+      datedCacheMap.lastUpdated)
   }
-  def decryptDatedCacheMap(id: String,
-                           data: Map[String, EncryptedValue],
-                           lastUpdated: Instant)(implicit encryption: Encryption): DatedCacheMap = {
+  def decryptDatedCacheMap(
+    id: String,
+    data: Map[String, EncryptedValue],
+    lastUpdated: Instant)(implicit encryption: Encryption): DatedCacheMap = {
     DatedCacheMap(
       id = id,
       data = data.map(item => item._1 -> Json.parse(encryption.crypto.decrypt(item._2, id))),
-      lastUpdated = lastUpdated
-    )
+      lastUpdated = lastUpdated)
   }
 
-  def encryptUserAnswers(userAnswers: UserAnswers)(implicit encryption: Encryption):
-  (String, ReturnPeriod, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
-    ( userAnswers.id,
+  def encryptUserAnswers(userAnswers: UserAnswers)(implicit encryption: Encryption): (String, ReturnPeriod, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
+    (
+      userAnswers.id,
       userAnswers.returnPeriod,
       encryption.crypto.encrypt(userAnswers.data.toString(), userAnswers.id),
       encryption.crypto.encrypt(Json.toJson(userAnswers.smallProducerList).toString(), userAnswers.id),
       userAnswers.packagingSiteList.map(site => site._1 -> encryption.crypto.encrypt(Json.toJson(site._2).toString(), userAnswers.id)),
       userAnswers.warehouseList.map(warehouse => warehouse._1 -> encryption.crypto.encrypt(Json.toJson(warehouse._2).toString(), userAnswers.id)),
-      userAnswers.submitted, userAnswers.isNilReturn, userAnswers.lastUpdated
-    )
+      userAnswers.submitted, userAnswers.isNilReturn, userAnswers.lastUpdated)
   }
 
-  def decryptUserAnswers(id: String,
-                         returnPeriod: ReturnPeriod,
-                         data: EncryptedValue,
-                         smallProducerList: EncryptedValue,
-                         packagingSiteList: Map[String, EncryptedValue],
-                         warehouseList: Map[String, EncryptedValue],
-                         submitted: Boolean,
-                         isNilReturn: Boolean,
-                         lastUpdated: Instant)(implicit encryption: Encryption): UserAnswers = {
+  def decryptUserAnswers(
+    id: String,
+    returnPeriod: ReturnPeriod,
+    data: EncryptedValue,
+    smallProducerList: EncryptedValue,
+    packagingSiteList: Map[String, EncryptedValue],
+    warehouseList: Map[String, EncryptedValue],
+    submitted: Boolean,
+    isNilReturn: Boolean,
+    lastUpdated: Instant)(implicit encryption: Encryption): UserAnswers = {
     UserAnswers(
       id = id,
       returnPeriod = returnPeriod,
@@ -72,8 +71,7 @@ object ModelEncryption {
       warehouseList = warehouseList.map(warehouse => warehouse._1 -> Json.parse(encryption.crypto.decrypt(warehouse._2, id)).as[Site]),
       submitted = submitted,
       isNilReturn = isNilReturn,
-      lastUpdated = lastUpdated
-    )
+      lastUpdated = lastUpdated)
   }
 
 }

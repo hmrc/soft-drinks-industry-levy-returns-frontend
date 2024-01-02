@@ -17,8 +17,8 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoTheUKFromSmallProducersPage, QuestionPage}
+import models.{ CheckMode, LitresInBands }
+import pages.{ BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoTheUKFromSmallProducersPage, QuestionPage }
 
 object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 

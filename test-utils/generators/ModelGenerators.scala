@@ -20,17 +20,16 @@ import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
 
-
 trait ModelGenerators {
 
   implicit lazy val arbitraryAddASmallProducer: Arbitrary[AddASmallProducer] =
     Arbitrary {
       for {
-        producerName <- arbitrary [Option[String]]
+        producerName <- arbitrary[Option[String]]
         referenceNumber <- arbitrary[String]
         lowBand <- arbitrary[Long]
         highBand <- arbitrary[Long]
-      } yield AddASmallProducer(producerName,referenceNumber,lowBand, highBand)
+      } yield AddASmallProducer(producerName, referenceNumber, lowBand, highBand)
     }
 
   implicit lazy val arbitraryLitresInBands: Arbitrary[LitresInBands] =

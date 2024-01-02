@@ -16,14 +16,15 @@
 
 package forms.behaviours
 
-import play.api.data.{Form, FormError}
+import play.api.data.{ Form, FormError }
 
 class LongFieldBehaviour extends FieldBehaviours {
-  def longField(form: Form[_],
-                fieldName: String,
-                nonNumericError: FormError,
-                negativeNumberError: FormError,
-                wholeNumberError: FormError): Unit = {
+  def longField(
+    form: Form[_],
+    fieldName: String,
+    nonNumericError: FormError,
+    negativeNumberError: FormError,
+    wholeNumberError: FormError): Unit = {
     "not bind non-numeric numbers" in {
 
       forAll(nonNumerics -> "nonNumeric") {
@@ -33,10 +34,9 @@ class LongFieldBehaviour extends FieldBehaviours {
       }
     }
 
-
     "not bind negative numbers" in {
-          val result = form.bind(Map(fieldName -> (-35878697979L).toString)).apply(fieldName)
-          result.errors must contain only negativeNumberError
+      val result = form.bind(Map(fieldName -> (-35878697979L).toString)).apply(fieldName)
+      result.errors must contain only negativeNumberError
     }
 
     "not bind decimals" in {
@@ -45,10 +45,11 @@ class LongFieldBehaviour extends FieldBehaviours {
     }
   }
 
-  def longFieldWithMaximum(form: Form[_],
-                          fieldName: String,
-                          maximum: Long,
-                          expectedError: FormError): Unit = {
+  def longFieldWithMaximum(
+    form: Form[_],
+    fieldName: String,
+    maximum: Long,
+    expectedError: FormError): Unit = {
 
     s"not bind long above $maximum" in {
 
@@ -60,15 +61,15 @@ class LongFieldBehaviour extends FieldBehaviours {
     }
     s"not bind long above $maximum when value entered is more then Long range" in {
 
-          val result = form.bind(Map(fieldName -> "9223372036854775808")).apply(fieldName)
-          result.errors.head.key mustBe  expectedError.key
+      val result = form.bind(Map(fieldName -> "9223372036854775808")).apply(fieldName)
+      result.errors.head.key mustBe expectedError.key
 
     }
 
     s"not bind long above $maximum when value entered is more then Long range and decimal" in {
 
       val result = form.bind(Map(fieldName -> "92233720368547758089.6767")).apply(fieldName)
-      result.errors.head.key mustBe  expectedError.key
+      result.errors.head.key mustBe expectedError.key
 
     }
   }

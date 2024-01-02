@@ -16,8 +16,7 @@
 
 package config
 
-
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.{ Inject, Singleton }
 import com.typesafe.config.Config
 import models.Mode
 import play.api.Configuration
@@ -42,15 +41,14 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val sdilBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy")
   val sdilHomeUrl: String = servicesConfig.getString("sdilHomeUrl")
 
-  val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
+  val loginUrl: String = s"$basGatewayBaseUrl/bas-gateway/sign-in"
   val loginContinueUrl: String = sdilHomeUrl
-  val signOutUrl: String       = s"$basGatewayBaseUrl/bas-gateway/sign-out-without-state"
-
+  val signOutUrl: String = s"$basGatewayBaseUrl/bas-gateway/sign-out-without-state"
 
   private val exitSurveyBaseUrl: String = servicesConfig.baseUrl("feedback-frontend")
   val exitSurveyUrl: String = s"$exitSurveyBaseUrl/feedback/soft-drinks-industry-levy-returns-frontend"
 
-  val timeout: Int   = servicesConfig.getInt("timeout-dialog.timeout")
+  val timeout: Int = servicesConfig.getInt("timeout-dialog.timeout")
   val countdown: Int = servicesConfig.getInt("timeout-dialog.countdown")
 
   val cacheTtl: Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
@@ -61,8 +59,8 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
 
   val balanceAllEnabled: Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
-  val addressLookupService: String  = servicesConfig.baseUrl("address-lookup-frontend")
-  val addressLookupOffRampUrl: String  = servicesConfig.getString("addressLookupOffRampUrl")
+  val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
+  val addressLookupOffRampUrl: String = servicesConfig.getString("addressLookupOffRampUrl")
 
   object AddressLookupConfig {
 

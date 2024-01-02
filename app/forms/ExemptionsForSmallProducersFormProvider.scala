@@ -25,6 +25,5 @@ class ExemptionsForSmallProducersFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("exemptionsForSmallProducers.error.required")
-    )
+      "value" -> boolean("exemptionsForSmallProducers.error.required"))
 }

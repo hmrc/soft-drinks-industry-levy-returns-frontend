@@ -25,12 +25,10 @@ import javax.inject.Inject
 
 class HowManyAsAContractPackerFormProvider @Inject() extends Mappings {
 
-   def apply(): Form[LitresInBands] = Form(
-     mapping(
-       "lowBand" -> litres(
-         "lowBand"),
-       "highBand" -> litres(
-         "highBand")
-     )(LitresInBands.apply)(LitresInBands.unapply)
-   )
- }
+  def apply(): Form[LitresInBands] = Form(
+    mapping(
+      "lowBand" -> litres(
+        "lowBand"),
+      "highBand" -> litres(
+        "highBand"))(LitresInBands.apply)(LitresInBands.unapply))
+}

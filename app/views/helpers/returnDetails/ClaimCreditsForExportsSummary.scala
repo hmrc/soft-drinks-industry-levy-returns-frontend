@@ -17,8 +17,8 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{ClaimCreditsForExportsPage, HowManyCreditsForExportPage, QuestionPage}
+import models.{ CheckMode, LitresInBands }
+import pages.{ ClaimCreditsForExportsPage, HowManyCreditsForExportPage, QuestionPage }
 
 object ClaimCreditsForExportsSummary extends ReturnDetailsSummaryListWithLitres {
 

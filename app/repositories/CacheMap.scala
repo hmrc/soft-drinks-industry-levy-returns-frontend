@@ -16,10 +16,11 @@
 
 package repositories
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 
-case class CacheMap(id: String,
-                    data: Map[String, JsValue])
+case class CacheMap(
+  id: String,
+  data: Map[String, JsValue])
 
 object CacheMap {
   implicit val formats = Json.format[CacheMap]

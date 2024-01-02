@@ -17,21 +17,19 @@
 package helpers
 
 import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.classic.{Level, Logger => LogbackLogger}
+import ch.qos.logback.classic.{ Level, Logger => LogbackLogger }
 import ch.qos.logback.core.read.ListAppender
 import play.api.LoggerLike
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 trait LoggerHelper {
   protected def withCaptureOfLoggingFrom(
-                                          logger: LoggerLike
-                                        )(body: (=> List[ILoggingEvent]) => Unit): Unit = {
+    logger: LoggerLike)(body: (=> List[ILoggingEvent]) => Unit): Unit = {
     withCaptureOfLoggingFrom(logger.logger.asInstanceOf[LogbackLogger])(body)
   }
 
   def withCaptureOfLoggingFrom(
-                                logger: LogbackLogger
-                              )(body: (=> List[ILoggingEvent]) => Unit): Unit = {
+    logger: LogbackLogger)(body: (=> List[ILoggingEvent]) => Unit): Unit = {
     val appender = new ListAppender[ILoggingEvent]()
     appender.setContext(logger.getLoggerContext)
     appender.start()

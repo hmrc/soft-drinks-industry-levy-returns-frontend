@@ -22,15 +22,12 @@ import errors.SessionDatabaseInsertError
 import forms.SmallProducerDetailsFormProvider
 import helpers.LoggerHelper
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.mvc.{AnyContentAsEmpty, Call}
+import play.api.mvc.{ AnyContentAsEmpty, Call }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
@@ -55,7 +52,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET,  smallProducerDetailsRoute)
+        val request = FakeRequest(GET, smallProducerDetailsRoute)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -104,8 +101,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -123,29 +119,27 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
     "If user selects no on the small producer details page with 0 producers, " +
       "navigation takes them back to exemption question page" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, smallProducerDetailsRoute)
-            .withFormUrlEncodedBody(("value", "false"))
+        running(application) {
+          val request =
+            FakeRequest(POST, smallProducerDetailsRoute)
+              .withFormUrlEncodedBody(("value", "false"))
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers"
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers"
+        }
       }
-    }
-
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
@@ -216,7 +210,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
     "must include all added small producer SDIL references on the page in rows" in {
 
-      val actualUserAnswers = emptyUserAnswers.copy(smallProducerList =  List(superCola, sparkyJuice))
+      val actualUserAnswers = emptyUserAnswers.copy(smallProducerList = List(superCola, sparkyJuice))
       val application = applicationBuilder(userAnswers = Some(actualUserAnswers)).build()
 
       val expectedView = application.injector.instanceOf[SmallProducerDetailsView]

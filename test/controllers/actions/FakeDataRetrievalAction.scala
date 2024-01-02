@@ -16,10 +16,10 @@
 
 package controllers.actions
 
-import models.{ReturnPeriod, UserAnswers}
-import models.requests.{IdentifierRequest, OptionalDataRequest}
+import models.{ ReturnPeriod, UserAnswers }
+import models.requests.{ IdentifierRequest, OptionalDataRequest }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 class FakeDataRetrievalAction(userAnswers: Option[UserAnswers], returnPeriod: Option[ReturnPeriod]) extends DataRetrievalAction {
 

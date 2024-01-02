@@ -23,28 +23,27 @@ import models.Mode
 import navigation.Navigator
 import pages.HowManyCreditsForLostDamagedPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.HowManyCreditsForLostDamagedView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class HowManyCreditsForLostDamagedController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      val sessionRepository: SessionRepository,
-                                      val navigator: Navigator,
-                                      val errorHandler: ErrorHandler,
-                                      val genericLogger: GenericLogger,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      checkReturnSubmission: CheckingSubmissionAction,
-                                      formProvider: HowManyCreditsForLostDamagedFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      view: HowManyCreditsForLostDamagedView
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+class HowManyCreditsForLostDamagedController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: HowManyCreditsForLostDamagedFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: HowManyCreditsForLostDamagedView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
@@ -52,9 +51,9 @@ class HowManyCreditsForLostDamagedController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(HowManyCreditsForLostDamagedPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
+        case None => form
+        case Some(value) => form.fill(value)
+      }
 
       Ok(view(preparedForm, mode))
 
@@ -70,7 +69,6 @@ class HowManyCreditsForLostDamagedController @Inject()(
           val updatedUserAnswers = request.userAnswers.set(
             HowManyCreditsForLostDamagedPage, value)
           updateDatabaseAndRedirect(updatedUserAnswers, HowManyCreditsForLostDamagedPage, mode, withSdilReturn = true, Some(request.subscription))
-        }
-      )
+        })
   }
 }

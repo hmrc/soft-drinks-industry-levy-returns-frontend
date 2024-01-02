@@ -19,40 +19,39 @@ package controllers
 import controllers.actions._
 import forms.ExemptionsForSmallProducersFormProvider
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers}
+import models.{ Mode, UserAnswers }
 import navigation.Navigator
 import pages.ExemptionsForSmallProducersPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.ExemptionsForSmallProducersView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class ExemptionsForSmallProducersController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionRepository: SessionRepository,
-                                         val navigator: Navigator,
-                                         val errorHandler: ErrorHandler,
-                                         val genericLogger: GenericLogger,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         checkReturnSubmission: CheckingSubmissionAction,
-                                         formProvider: ExemptionsForSmallProducersFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: ExemptionsForSmallProducersView
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+class ExemptionsForSmallProducersController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: ExemptionsForSmallProducersFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: ExemptionsForSmallProducersView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
-private val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
       val preparedForm = request.userAnswers.get(ExemptionsForSmallProducersPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
+        case None => form
+        case Some(value) => form.fill(value)
       }
       Ok(view(preparedForm, mode))
   }
@@ -72,18 +71,17 @@ private val form = formProvider()
             val updatedUserAnswers = request.userAnswers.set(ExemptionsForSmallProducersPage, value)
             updateDatabaseAndRedirect(updatedUserAnswers, ExemptionsForSmallProducersPage, mode)
           }
-        }
-      )
+        })
   }
 
-      private def updateSmallProducerList(userAnswers: UserAnswers): Future[UserAnswers] = {
-        for {
-          updatedAnswers <- Future.fromTry(userAnswers.set(ExemptionsForSmallProducersPage, false))
-          updatedAnswersFinal = updatedAnswers.copy(smallProducerList = List.empty)
-          _ <- updateDatabaseWithoutRedirect(updatedAnswersFinal, ExemptionsForSmallProducersPage)
-        } yield {
-          updatedAnswersFinal
-        }
-      }
+  private def updateSmallProducerList(userAnswers: UserAnswers): Future[UserAnswers] = {
+    for {
+      updatedAnswers <- Future.fromTry(userAnswers.set(ExemptionsForSmallProducersPage, false))
+      updatedAnswersFinal = updatedAnswers.copy(smallProducerList = List.empty)
+      _ <- updateDatabaseWithoutRedirect(updatedAnswersFinal, ExemptionsForSmallProducersPage)
+    } yield {
+      updatedAnswersFinal
+    }
+  }
 
 }

@@ -21,23 +21,24 @@ import connectors.httpParsers.AddressLookupHttpParser._
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import models.alf.AlfResponse
 import models.alf.init.JourneyConfig
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient }
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class AddressLookupConnector @Inject()(val http: HttpClient,
-                                       implicit val config: FrontendAppConfig) {
+class AddressLookupConnector @Inject() (
+  val http: HttpClient,
+  implicit val config: FrontendAppConfig) {
   private[connectors] def getAddressUrl(id: String, addressLookupFrontendTestEnabled: Boolean): String = {
-    if(addressLookupFrontendTestEnabled) {
+    if (addressLookupFrontendTestEnabled) {
       s"${config.returnsFrontendBaseUrl}${controllers.test.routes.AddressFrontendStubController.addresses(id).url}"
     } else {
       s"${config.addressLookupService}/api/confirmed?id=$id"
     }
   }
   private[connectors] def initJourneyUrl(addressLookupFrontendTestEnabled: Boolean): String = {
-    if(addressLookupFrontendTestEnabled) {
+    if (addressLookupFrontendTestEnabled) {
       s"${config.returnsFrontendBaseUrl}${controllers.test.routes.AddressFrontendStubController.initialise().url}"
     } else {
       s"${config.addressLookupService}/api/init"
@@ -45,12 +46,13 @@ class AddressLookupConnector @Inject()(val http: HttpClient,
 
   }
 
-  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] ={
+  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = {
     http.GET[HttpResult[AlfResponse]](getAddressUrl(id, config.addressLookUpFrontendTestEnabled))(AddressLookupGetAddressReads, hc, ec)
   }
 
   def initJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[String]] = {
-    http.POST[JourneyConfig, HttpResult[String]](initJourneyUrl(config.addressLookUpFrontendTestEnabled),
+    http.POST[JourneyConfig, HttpResult[String]](
+      initJourneyUrl(config.addressLookUpFrontendTestEnabled),
       journeyConfig)(JourneyConfig.format, AddressLookupInitJourneyReads, hc, ec)
   }
 }
