@@ -20,15 +20,13 @@ import base.SpecBase
 import models.ReturnPeriod
 import models.requests.DataRequest
 import org.scalatest.Inside.inside
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 
-
 import scala.concurrent.Future
 import base.ReturnsTestData._
-
 
 class CheckSubmissionSpec extends SpecBase with MockitoSugar {
 
@@ -43,12 +41,13 @@ class CheckSubmissionSpec extends SpecBase with MockitoSugar {
       "must redirect the user to returns sent page" in {
 
         val action = new Harness()
-        val result = action.callRefine(new DataRequest(FakeRequest(), "id", aSubscription, submittedAnswers, ReturnPeriod(2023,1))).futureValue
+        val result = action.callRefine(new DataRequest(FakeRequest(), "id", aSubscription, submittedAnswers, ReturnPeriod(2023, 1))).futureValue
 
-        result must matchPattern{case Left(_) =>}
+        result must matchPattern { case Left(_) => }
 
-        inside(result) { case Left(res) =>
-          res.header.status mustEqual SEE_OTHER
+        inside(result) {
+          case Left(res) =>
+            res.header.status mustEqual SEE_OTHER
         }
 
       }
@@ -62,8 +61,9 @@ class CheckSubmissionSpec extends SpecBase with MockitoSugar {
 
         result must matchPattern { case Right(_) => }
 
-        inside(result) { case Right(res) =>
-          res.userAnswers mustEqual(completedUserAnswers)
+        inside(result) {
+          case Right(res) =>
+            res.userAnswers mustEqual (completedUserAnswers)
         }
       }
     }

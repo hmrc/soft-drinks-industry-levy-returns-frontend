@@ -17,8 +17,8 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{ExemptionsForSmallProducersPage, QuestionPage}
+import models.{ CheckMode, LitresInBands }
+import pages.{ ExemptionsForSmallProducersPage, QuestionPage }
 
 object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 

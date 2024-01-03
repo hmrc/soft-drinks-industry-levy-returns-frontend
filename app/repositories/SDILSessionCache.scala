@@ -17,22 +17,22 @@
 package repositories
 
 import play.api.libs.json.Format
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class SDILSessionCache @Inject()(sdilSessionCacheRepository: SDILSessionCacheRepository,
-                                 cascadeUpsert: CascadeUpsert) (implicit val ec: ExecutionContext) {
+class SDILSessionCache @Inject() (
+  sdilSessionCacheRepository: SDILSessionCacheRepository,
+  cascadeUpsert: CascadeUpsert)(implicit val ec: ExecutionContext) {
 
   def save[A](sdilEnrolment: String, key: String, value: A)(
-    implicit fmt: Format[A]
-  ): Future[Boolean] = {
+    implicit
+    fmt: Format[A]): Future[Boolean] = {
     sdilSessionCacheRepository.get(sdilEnrolment).flatMap { optionalCacheMap =>
       val updatedCacheMap = cascadeUpsert(
         key,
         value,
-        optionalCacheMap.getOrElse(CacheMap(sdilEnrolment, Map()))
-      )
+        optionalCacheMap.getOrElse(CacheMap(sdilEnrolment, Map())))
       sdilSessionCacheRepository.upsert(updatedCacheMap).map { _ =>
         true
       }
@@ -55,8 +55,7 @@ class SDILSessionCache @Inject()(sdilSessionCacheRepository: SDILSessionCacheRep
   def fetch(sdilEnrolment: String): Future[Option[CacheMap]] =
     sdilSessionCacheRepository.get(sdilEnrolment)
 
-  def fetchEntry[T](sdilEnrolment: String, key: String)
-                   (implicit fmt: Format[T]): Future[Option[T]] = {
+  def fetchEntry[T](sdilEnrolment: String, key: String)(implicit fmt: Format[T]): Future[Option[T]] = {
     fetch(sdilEnrolment).map(optCacheMap =>
       optCacheMap.fold[Option[T]](None)(cachedMap =>
         cachedMap.data.get(key)

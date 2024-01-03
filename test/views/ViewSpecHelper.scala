@@ -16,7 +16,6 @@
 
 package views
 
-
 import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,7 +26,7 @@ import play.api.test.Helpers._
 
 import scala.jdk.CollectionConverters._
 
-trait ViewSpecHelper extends SpecBase{
+trait ViewSpecHelper extends SpecBase {
 
   def doc(result: Html): Document = Jsoup.parse(contentAsString(result))
 
@@ -75,8 +74,7 @@ trait ViewSpecHelper extends SpecBase{
         assert(
           technicalHelpLink
             .attr("href")
-            .contains("/contact/report-technical-problem")
-        )
+            .contains("/contact/report-technical-problem"))
       }
     }
   }

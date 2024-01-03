@@ -20,7 +20,7 @@ import base.ReturnsTestData._
 import base.SpecBase
 import config.FrontendAppConfig
 import errors.NoPendingReturnForGivenPeriod
-import models.{Amounts, NormalMode}
+import models.{ Amounts, NormalMode }
 import orchestrators.ReturnsOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

@@ -21,10 +21,10 @@ import base.UserAnswersTestData
 import base.UserAnswersTestData.userIsSmallProducer
 import config.FrontendAppConfig
 import controllers.routes
-import models.{Amounts, ReturnPeriod}
+import models.{ Amounts, ReturnPeriod }
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
-import play.api.mvc.{Call, Request}
+import play.api.mvc.{ Call, Request }
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import utilitlies.CurrencyFormatter
@@ -66,7 +66,7 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
         s"when in return period is in quarter $quarter" in {
           val returnPeriodString = ReturnPeriodQuarter.formatted(returnPeriodWithQuater)
-          document1.getElementById("cya-returnPeriod").text()  mustEqual s"This return is for $baseAlias for $returnPeriodString"
+          document1.getElementById("cya-returnPeriod").text() mustEqual s"This return is for $baseAlias for $returnPeriodString"
         }
       })
     }
@@ -117,13 +117,14 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       }
     }
 
-    UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
-      s"when the $key" - {
-        val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, userAnswers, amounts, call, isSmallProducer)
-        val document1: Document = doc(html1)
-        testSummaryLists(key, document1, userAnswers, isCheckAnswers = true)
-      }
+    UserAnswersTestData.userAnswersModels.foreach {
+      case (key, userAnswers) =>
+        s"when the $key" - {
+          val html1: HtmlFormat.Appendable =
+            checkYourAnswersView(baseAlias, returnPeriod, userAnswers, amounts, call, isSmallProducer)
+          val document1: Document = doc(html1)
+          testSummaryLists(key, document1, userAnswers, isCheckAnswers = true)
+        }
     }
 
     "should have the sendYourReturn sub heading" in {

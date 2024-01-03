@@ -17,7 +17,7 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, UserAnswers}
+import models.{ CheckMode, UserAnswers }
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -26,8 +26,7 @@ import viewmodels.implicits._
 
 object PackAtBusinessAddressSummary {
 
-  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
-                          (implicit messages: Messages): Option[SummaryList] = {
+  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryList] = {
 
     userAnswers.packagingSiteList.nonEmpty match {
       case true =>
@@ -36,8 +35,8 @@ object PackAtBusinessAddressSummary {
             rows = Seq(
               SummaryListRowViewModel(
                 key =
-                  if(userAnswers.packagingSiteList.size > 1){
-                    messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple",  {userAnswers.packagingSiteList.size.toString})
+                  if (userAnswers.packagingSiteList.size > 1) {
+                    messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", { userAnswers.packagingSiteList.size.toString })
                   } else {
                     messages("checkYourAnswers.packing.checkYourAnswersLabel.one")
                   },
@@ -47,15 +46,10 @@ object PackAtBusinessAddressSummary {
                     Seq(
                       ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                         .withAttribute(("id", "change-packaging-sites"))
-                        .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden"))
-                    )
+                        .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden")))
                   } else {
                     Seq.empty
-                  }
-              )
-            )
-          )
-        )
+                  }))))
       case _ => None
     }
   }

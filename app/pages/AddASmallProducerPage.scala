@@ -17,7 +17,7 @@
 package pages
 
 import controllers.routes
-import models.{AddASmallProducer, Mode}
+import models.{ AddASmallProducer, Mode }
 import play.api.libs.json.JsPath
 
 case object AddASmallProducerPage extends QuestionPage[AddASmallProducer] {

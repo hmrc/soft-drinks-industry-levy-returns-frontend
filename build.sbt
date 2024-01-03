@@ -14,7 +14,7 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0, libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always) // libraryDependencySchemes added to get around the scoverage compile errors for scala 2.13.10
   .settings(ThisBuild / useSuperShell := false)
   .settings(
-    scalaVersion := "2.13.10",
+    scalaVersion := "2.13.12",
     name := appName,
     RoutesKeys.routesImport ++= Seq(
       "models._",

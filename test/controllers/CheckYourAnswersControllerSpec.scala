@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions.RequiredUserAnswers
 import helpers.LoggerHelper
 import models.requests.DataRequest
-import models.{Amounts, ReturnPeriod, SmallProducer}
+import models.{ Amounts, ReturnPeriod, SmallProducer }
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -41,7 +41,6 @@ import utilitlies.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
-
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter with LoggerHelper {
 
@@ -84,11 +83,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers.copy(returnPeriod = ReturnPeriod(year = 2022, quarter = 0))), Some(ReturnPeriod(year = 2022, quarter = 0))))
         .overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
+          bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      ).build()
-
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
 
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("firstQuarter")} 2022"
 
@@ -106,10 +103,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must return OK and contain company alias and return correct description for period 1 in grey pre header" in {
       val application = withRequiredAnswersComplete(
         applicationBuilder(Some(emptyUserAnswers.copy(returnPeriod = ReturnPeriod(year = 2021, quarter = 1))), Some(ReturnPeriod(year = 2021, quarter = 1)))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+          bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
 
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("secondQuarter")} 2021"
 
@@ -127,10 +123,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must return OK and contain company alias and return correct description for period 2 in grey pre header" in {
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers.copy(returnPeriod = ReturnPeriod(year = 2020, quarter = 2))), Some(ReturnPeriod(year = 2020, quarter = 2)))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
 
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("thirdQuarter")} 2020"
 
@@ -148,9 +143,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must return OK and contain company alias and return correct description for period 3 in grey pre header" in {
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers.copy(returnPeriod = ReturnPeriod(year = 2019, quarter = 3))), Some(ReturnPeriod(year = 2019, quarter = 3)))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
-      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
 
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("fourthQuarter")} 2019"
 
@@ -168,8 +162,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     "must redirect to journey recovery when no return period" in {
 
       val application = withRequiredAnswersComplete(applicationBuilder(None, None)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       val result = running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         route(application, request).value
@@ -180,10 +173,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must not show own brands packaged when user is a small producer" in {
 
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers),
-        Some(ReturnPeriod(year = 2019, quarter = 3)),Some(subscriptionWithSmallProducerActivity))).overrides(
-          bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = withRequiredAnswersComplete(applicationBuilder(
+        Some(emptyUserAnswers),
+        Some(ReturnPeriod(year = 2019, quarter = 3)), Some(subscriptionWithSmallProducerActivity))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
 
       running(application) {
@@ -203,10 +196,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj("ownBrands" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
 
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
@@ -226,15 +218,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
-      )
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -266,15 +256,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3)
-      )
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -293,10 +281,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -312,15 +299,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand"-> 10000 , "highBand"-> 20000)
-      )
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-
-      ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -352,10 +336,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -374,18 +357,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
-      )
+        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
 
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
 
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -417,10 +398,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -436,14 +416,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "broughtIntoUK" -> true,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
-      )
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -475,10 +453,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -494,14 +471,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers" -> true,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
-      )
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -533,10 +508,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -552,14 +526,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
-      )
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -591,10 +563,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -610,14 +581,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
-      )
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -661,17 +630,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 100, "highBand" -> 200),
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 100, "highBand" -> 200),
-      )
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 100, "highBand" -> 200))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (1000L, 2000L))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -692,14 +659,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0)
-      )
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -731,16 +696,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-      )
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L,0L))
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L,0L))
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amountsZero))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amountsZero))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -774,17 +737,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-      )
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts1))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts1))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -820,15 +781,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-      )
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts1))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -848,26 +807,25 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show packaging site section if the user is a new packer and " +
       "selected the default packaging site we presented to them during the journey" in {
-      val userAnswersData = Json.obj(
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        "packAtBusinessAddress" -> true)
+        val userAnswersData = Json.obj(
+          "packagedContractPacker" -> true,
+          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+          "packAtBusinessAddress" -> true)
 
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, packagingSiteList = packagingSiteListWith1)
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
-      running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-        val result = route(application, request).value
+        val userAnswers = emptyUserAnswers.copy(data = userAnswersData, packagingSiteList = packagingSiteListWith1)
+        val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+          bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+        running(application) {
+          when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("registeredUkSites").text mustEqual Messages("registeredUkSites")
-        page.getElementsByTag("dt").text() must include(Messages("You have 1 packaging site"))
+          status(result) mustEqual OK
+          val page = Jsoup.parse(contentAsString(result))
+          page.getElementById("registeredUkSites").text mustEqual Messages("registeredUkSites")
+          page.getElementsByTag("dt").text() must include(Messages("You have 1 packaging site"))
+        }
       }
-    }
 
     "must show packaging site section if the user changed the default packaging site we presented to them during the journey" in {
       val userAnswersData = Json.obj(
@@ -877,8 +835,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, packagingSiteList = packagingSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -892,14 +849,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "must show correct number of packaging sites if multiple packaging sites present" in {
-      val userAnswers = emptyUserAnswers.copy(data = Json.obj(
-        "packAtBusinessAddress" -> false,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000)),
+      val userAnswers = emptyUserAnswers.copy(
+        data = Json.obj(
+          "packAtBusinessAddress" -> false,
+          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000)),
         packagingSiteList = packagingSiteListWith2)
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -916,12 +873,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj(
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000),
-        "askSecondaryWarehouseInReturn" -> true
-      )
+        "askSecondaryWarehouseInReturn" -> true)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, packagingSiteList = packagingSiteListWith1, warehouseList = warhouseSiteListWith2)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -941,10 +896,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "askSecondaryWarehouseInReturn" -> true)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, warehouseList = warhouseSiteListWith1)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -959,10 +913,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val userAnswersData = Json.obj("packAtBusinessAddress" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -977,11 +930,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val userAnswers = emptyUserAnswers.copy(isNilReturn = true)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("thirdQuarter")} 2018"
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn(Future.successful(amountsZero))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amountsZero))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -994,8 +946,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must log error and redirect to journey recovery when fails to get the amounts calculated" in {
       val application = withRequiredAnswersComplete(applicationBuilder(Some(emptyUserAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>

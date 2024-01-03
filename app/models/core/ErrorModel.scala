@@ -16,7 +16,7 @@
 
 package models.core
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
 sealed trait Error
 

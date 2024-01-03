@@ -24,24 +24,21 @@ import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.data.{Form, FormError}
+import play.api.data.{ Form, FormError }
 
 class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators with OptionValues
   with Mappings {
 
   val form = Form(
     "value" -> localDate(
-      requiredKey    = "error.required",
+      requiredKey = "error.required",
       allRequiredKey = "error.required.all",
       twoRequiredKey = "error.required.two",
-      invalidKey     = "error.invalid"
-    )
-  )
+      invalidKey = "error.invalid"))
 
   val validData = datesBetween(
     min = LocalDate.of(2000, 1, 1),
-    max = LocalDate.of(3000, 1, 1)
-  )
+    max = LocalDate.of(3000, 1, 1))
 
   val invalidField: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
 
@@ -55,8 +52,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val data = Map(
           "value.day" -> date.getDayOfMonth.toString,
           "value.month" -> date.getMonthValue.toString,
-          "value.year" -> date.getYear.toString
-        )
+          "value.year" -> date.getYear.toString)
 
         val result = form.bind(data)
 
@@ -78,8 +74,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val initialData = Map(
           "value.month" -> date.getMonthValue.toString,
-          "value.year" -> date.getYear.toString
-        )
+          "value.year" -> date.getYear.toString)
 
         val data = field.fold(initialData) {
           value =>
@@ -100,14 +95,12 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val data = Map(
           "value.day" -> field,
           "value.month" -> date.getMonthValue.toString,
-          "value.year" -> date.getYear.toString
-        )
+          "value.year" -> date.getYear.toString)
 
         val result = form.bind(data)
 
         result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
-        )
+          FormError("value", "error.invalid", List.empty))
     }
   }
 
@@ -118,8 +111,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val initialData = Map(
           "value.day" -> date.getDayOfMonth.toString,
-          "value.year" -> date.getYear.toString
-        )
+          "value.year" -> date.getYear.toString)
 
         val data = field.fold(initialData) {
           value =>
@@ -140,14 +132,12 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val data = Map(
           "value.day" -> date.getDayOfMonth.toString,
           "value.month" -> field,
-          "value.year" -> date.getYear.toString
-        )
+          "value.year" -> date.getYear.toString)
 
         val result = form.bind(data)
 
         result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
-        )
+          FormError("value", "error.invalid", List.empty))
     }
   }
 
@@ -158,8 +148,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val initialData = Map(
           "value.day" -> date.getDayOfMonth.toString,
-          "value.month" -> date.getMonthValue.toString
-        )
+          "value.month" -> date.getMonthValue.toString)
 
         val data = field.fold(initialData) {
           value =>
@@ -180,14 +169,12 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val data = Map(
           "value.day" -> date.getDayOfMonth.toString,
           "value.month" -> date.getMonthValue.toString,
-          "value.year" -> field
-        )
+          "value.year" -> field)
 
         val result = form.bind(data)
 
         result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
-        )
+          FormError("value", "error.invalid", List.empty))
     }
   }
 
@@ -207,8 +194,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         }
 
         val data: Map[String, String] = Map(
-          "value.year" -> date.getYear.toString
-        ) ++ day ++ month
+          "value.year" -> date.getYear.toString) ++ day ++ month
 
         val result = form.bind(data)
 
@@ -232,8 +218,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         }
 
         val data: Map[String, String] = Map(
-          "value.month" -> date.getMonthValue.toString
-        ) ++ day ++ year
+          "value.month" -> date.getMonthValue.toString) ++ day ++ year
 
         val result = form.bind(data)
 
@@ -257,8 +242,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         }
 
         val data: Map[String, String] = Map(
-          "value.day" -> date.getDayOfMonth.toString
-        ) ++ month ++ year
+          "value.day" -> date.getDayOfMonth.toString) ++ month ++ year
 
         val result = form.bind(data)
 
@@ -274,8 +258,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val data = Map(
           "value.day" -> day,
           "value.month" -> month,
-          "value.year" -> date.getYear.toString
-        )
+          "value.year" -> date.getYear.toString)
 
         val result = form.bind(data)
 
@@ -291,8 +274,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val data = Map(
           "value.day" -> day,
           "value.month" -> date.getMonthValue.toString,
-          "value.year" -> year
-        )
+          "value.year" -> year)
 
         val result = form.bind(data)
 
@@ -308,8 +290,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val data = Map(
           "value.day" -> date.getDayOfMonth.toString,
           "value.month" -> month,
-          "value.year" -> year
-        )
+          "value.year" -> year)
 
         val result = form.bind(data)
 
@@ -325,8 +306,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val data = Map(
           "value.day" -> day,
           "value.month" -> month,
-          "value.year" -> year
-        )
+          "value.year" -> year)
 
         val result = form.bind(data)
 
@@ -339,14 +319,12 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     val data = Map(
       "value.day" -> "30",
       "value.month" -> "2",
-      "value.year" -> "2018"
-    )
+      "value.year" -> "2018")
 
     val result = form.bind(data)
 
     result.errors must contain(
-      FormError("value", "error.invalid", List.empty)
-    )
+      FormError("value", "error.invalid", List.empty))
   }
 
   "must unbind a date" in {

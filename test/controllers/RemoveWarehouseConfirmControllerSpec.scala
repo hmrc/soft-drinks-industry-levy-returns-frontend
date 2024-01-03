@@ -22,18 +22,16 @@ import errors.SessionDatabaseInsertError
 import forms.RemoveWarehouseConfirmFormProvider
 import helpers.LoggerHelper
 import models.backend.UkAddress
-import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{ NormalMode, UserAnswers }
+import navigation.{ FakeNavigator, Navigator }
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import pages.RemoveWarehouseConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -56,9 +54,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
   val userAnswersData: JsObject = Json.obj(
     RemoveWarehouseConfirmPage.toString -> Json.obj(
       "tradingName" -> "Wild Lemonade Group",
-      "address" -> UkAddress(List("33","Rhes","Priordy","East London"), "E73 2RP")
-    )
-  )
+      "address" -> UkAddress(List("33", "Rhes", "Priordy", "East London"), "E73 2RP")))
 
   val userAnswers: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, warehouseList = warehouseMap)
 
@@ -106,7 +102,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
         val page = Jsoup.parse(contentAsString(result))
         page.title() must include(Messages("removeWarehouseConfirm.title"))
         page.getElementsByTag("h1").text() must include(Messages("removeWarehouseConfirm.title"))
-        contentAsString(result) mustEqual view(form, NormalMode , testUkAddress, testIndex)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, testUkAddress, testIndex)(request, messages(application)).toString
       }
     }
 
@@ -120,8 +116,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
         applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -146,8 +141,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
         applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -221,8 +215,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
         applicationBuilder(Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -246,11 +239,10 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
         applicationBuilder(Some(failingUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
-        running(application) {
+      running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, removePackingSiteRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(application, request).value)
@@ -268,16 +260,14 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
-
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
-        running(application) {
+      running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, removePackingSiteRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(application, request).value)

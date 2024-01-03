@@ -34,3 +34,4 @@ bin
 /.classpath
 *.iws
 *.bsp/*
+.java-version

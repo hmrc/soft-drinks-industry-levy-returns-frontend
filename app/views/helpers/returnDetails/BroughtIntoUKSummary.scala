@@ -17,10 +17,10 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage, QuestionPage}
+import models.{ CheckMode, LitresInBands }
+import pages.{ BroughtIntoUKPage, HowManyBroughtIntoUkPage, QuestionPage }
 
-object BroughtIntoUKSummary extends ReturnDetailsSummaryListWithLitres  {
+object BroughtIntoUKSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = BroughtIntoUKPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoUkPage)

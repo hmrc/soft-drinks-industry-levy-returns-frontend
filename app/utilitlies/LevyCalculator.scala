@@ -18,12 +18,12 @@ package utilitlies
 
 import cats.implicits.catsSyntaxSemigroup
 import config.FrontendAppConfig
-import models.{SdilCalculation, UserAnswers}
+import models.{ SdilCalculation, UserAnswers }
 import pages._
 
 import javax.inject.Inject
 
-class LevyCalculator @Inject()(config:FrontendAppConfig) {
+class LevyCalculator @Inject() (config: FrontendAppConfig) {
 
   val lowBandRate = config.lowerBandCostPerLitre
   val highBandRate = config.higherBandCostPerLitre
@@ -36,8 +36,7 @@ class LevyCalculator @Inject()(config:FrontendAppConfig) {
       HowManyBroughtIntoUkPage.toString -> howManyBroughtIntoUKCalculation(answers),
       HowManyBroughtIntoTheUKFromSmallProducersPage.toString -> howManyBroughtIntoUKFromSmallProducersCalculation(answers),
       HowManyCreditsForExportPage.toString -> howManyCreditsForExportsCalculation(answers),
-      HowManyCreditsForLostDamagedPage.toString -> howManyCreditsForLostOrDamagedCalculation(answers)
-    )
+      HowManyCreditsForLostDamagedPage.toString -> howManyCreditsForLostOrDamagedCalculation(answers))
   }
 
   private def brandsPackagedAtOwnSitesCalculation(answers: UserAnswers) = {

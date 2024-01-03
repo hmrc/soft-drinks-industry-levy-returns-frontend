@@ -17,41 +17,40 @@
 package generators
 
 import models.UserAnswers
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.{ Arbitrary, Gen }
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.TryValues
 import pages._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] = {
     arbitrary[(RemoveWarehouseConfirmPage.type, JsValue)] ::
-    arbitrary[(RemovePackagingDetailsConfirmationPage.type, JsValue)] ::
-    arbitrary[(PackagingSiteDetailsPage.type, JsValue)] ::
-    arbitrary[(PackAtBusinessAddressPage.type, JsValue)] ::
-    arbitrary[(SecondaryWarehouseDetailsPage.type, JsValue)] ::
-    arbitrary[(RemoveSmallProducerConfirmPage.type, JsValue)] ::
-    arbitrary[(SmallProducerDetailsPage.type, JsValue)] ::
-    arbitrary[(AddASmallProducerPage.type, JsValue)] ::
-    arbitrary[(ClaimCreditsForExportsPage.type, JsValue)] ::
-    arbitrary[(BroughtIntoUkFromSmallProducersPage.type, JsValue)] ::
-    arbitrary[(AskSecondaryWarehouseInReturnPage.type, JsValue)] ::
-    arbitrary[(HowManyCreditsForLostDamagedPage.type, JsValue)] ::
-    arbitrary[(HowManyCreditsForExportPage.type, JsValue)] ::
-    arbitrary[(BroughtIntoUKPage.type, JsValue)] ::
-    arbitrary[(ClaimCreditsForLostDamagedPage.type, JsValue)] ::
-    arbitrary[(HowManyBroughtIntoTheUKFromSmallProducersPage.type, JsValue)] ::
-    arbitrary[(HowManyAsAContractPackerPage.type, JsValue)] ::
-    arbitrary[(HowManyBroughtIntoUkPage.type, JsValue)] ::
-    arbitrary[(PackagedContractPackerPage.type, JsValue)] ::
-    arbitrary[(OwnBrandsPage.type, JsValue)] ::
-    arbitrary[(BrandsPackagedAtOwnSitesPage.type, JsValue)] ::
-    arbitrary[(ExemptionsForSmallProducersPage.type, JsValue)] ::
-    Nil
+      arbitrary[(RemovePackagingDetailsConfirmationPage.type, JsValue)] ::
+      arbitrary[(PackagingSiteDetailsPage.type, JsValue)] ::
+      arbitrary[(PackAtBusinessAddressPage.type, JsValue)] ::
+      arbitrary[(SecondaryWarehouseDetailsPage.type, JsValue)] ::
+      arbitrary[(RemoveSmallProducerConfirmPage.type, JsValue)] ::
+      arbitrary[(SmallProducerDetailsPage.type, JsValue)] ::
+      arbitrary[(AddASmallProducerPage.type, JsValue)] ::
+      arbitrary[(ClaimCreditsForExportsPage.type, JsValue)] ::
+      arbitrary[(BroughtIntoUkFromSmallProducersPage.type, JsValue)] ::
+      arbitrary[(AskSecondaryWarehouseInReturnPage.type, JsValue)] ::
+      arbitrary[(HowManyCreditsForLostDamagedPage.type, JsValue)] ::
+      arbitrary[(HowManyCreditsForExportPage.type, JsValue)] ::
+      arbitrary[(BroughtIntoUKPage.type, JsValue)] ::
+      arbitrary[(ClaimCreditsForLostDamagedPage.type, JsValue)] ::
+      arbitrary[(HowManyBroughtIntoTheUKFromSmallProducersPage.type, JsValue)] ::
+      arbitrary[(HowManyAsAContractPackerPage.type, JsValue)] ::
+      arbitrary[(HowManyBroughtIntoUkPage.type, JsValue)] ::
+      arbitrary[(PackagedContractPackerPage.type, JsValue)] ::
+      arbitrary[(OwnBrandsPage.type, JsValue)] ::
+      arbitrary[(BrandsPackagedAtOwnSitesPage.type, JsValue)] ::
+      arbitrary[(ExemptionsForSmallProducersPage.type, JsValue)] ::
+      Nil
   }
-
 
   implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] = {
 
@@ -59,19 +58,18 @@ trait UserAnswersGenerator extends TryValues {
 
     Arbitrary {
       for {
-        id      <- nonEmptyString
-        data    <- generators match {
+        id <- nonEmptyString
+        data <- generators match {
           case Nil => Gen.const(Map[QuestionPage[_], JsValue]())
-          case _   => Gen.mapOf(oneOf(generators))
+          case _ => Gen.mapOf(oneOf(generators))
         }
-      } yield UserAnswers (
+      } yield UserAnswers(
         id = id,
         ReturnPeriod(2022, 1),
         data = data.foldLeft(Json.obj()) {
           case (obj, (path, value)) =>
             obj.setObject(path.path, value).get
-        }
-      )
+        })
     }
   }
 }

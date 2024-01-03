@@ -32,7 +32,7 @@ trait ReturnDetailsSummaryRowHelper {
   val hiddenText: String
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val value = if(answers.get(page).contains(true)) {
+    val value = if (answers.get(page).contains(true)) {
       "site.yes"
     } else {
       "site.no"
@@ -45,13 +45,10 @@ trait ReturnDetailsSummaryRowHelper {
           Seq(
             ActionItemViewModel("site.change", action)
               .withAttribute(("id", actionId))
-              .withVisuallyHiddenText(messages(s"$hiddenText.change.hidden"))
-          )
+              .withVisuallyHiddenText(messages(s"$hiddenText.change.hidden")))
         } else {
           Seq.empty
-        }
-      )
-    )
+        }))
   }
 
 }

@@ -49,34 +49,34 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
   def testSummaryLists(key: String, element: Element, userAnswers: UserAnswers, isCheckAnswers: Boolean) = {
     val summaryLists = element.getElementsByClass(Selectors.summaryList)
 
+    returnDetailsSummaryListsWithListNames.foreach {
+      case (subHeaderId, listName) =>
 
-    returnDetailsSummaryListsWithListNames.foreach { case (subHeaderId, listName) =>
+        if (!(subHeaderId == SummaryHeadingIds.registeredSites && userAnswers.packagingSiteList.isEmpty)) {
 
-      if (!(subHeaderId == SummaryHeadingIds.registeredSites && userAnswers.packagingSiteList.isEmpty)) {
-
-        val arrayElementNumber = returnDetailsSummaryListsWithArrayElement(subHeaderId)
-        val summaryList: Element = summaryLists.get(arrayElementNumber)
-        s"should include an $listName section" - {
-          testSummaryHeading(subHeaderId, element)
-          if (subHeaderId == SummaryHeadingIds.registeredSites) {
-            testRegisteredSites(subHeaderId, summaryList, isCheckAnswers)
-          } else if(subHeaderId == SummaryHeadingIds.amountToPay) {
-            testAmountToPay(summaryList)
-          } else if (UserAnswersTestData.questionFieldsAllTrue(key) && UserAnswersTestData.includesNoLitres(key)) {
-            testSummaryListWithYesNoAndNoLitres(subHeaderId, summaryList, "Yes", isCheckAnswers)
-          } else if (UserAnswersTestData.questionFieldsAllTrue(key)) {
-            testSummaryListWithYesNoAndLitres(subHeaderId, key, summaryList, userAnswers, isCheckAnswers)
-          } else {
-            testSummaryListWithYesNoAndNoLitres(subHeaderId, summaryList, "No", isCheckAnswers)
+          val arrayElementNumber = returnDetailsSummaryListsWithArrayElement(subHeaderId)
+          val summaryList: Element = summaryLists.get(arrayElementNumber)
+          s"should include an $listName section" - {
+            testSummaryHeading(subHeaderId, element)
+            if (subHeaderId == SummaryHeadingIds.registeredSites) {
+              testRegisteredSites(subHeaderId, summaryList, isCheckAnswers)
+            } else if (subHeaderId == SummaryHeadingIds.amountToPay) {
+              testAmountToPay(summaryList)
+            } else if (UserAnswersTestData.questionFieldsAllTrue(key) && UserAnswersTestData.includesNoLitres(key)) {
+              testSummaryListWithYesNoAndNoLitres(subHeaderId, summaryList, "Yes", isCheckAnswers)
+            } else if (UserAnswersTestData.questionFieldsAllTrue(key)) {
+              testSummaryListWithYesNoAndLitres(subHeaderId, key, summaryList, userAnswers, isCheckAnswers)
+            } else {
+              testSummaryListWithYesNoAndNoLitres(subHeaderId, summaryList, "No", isCheckAnswers)
+            }
           }
         }
-      }
     }
   }
 
   def testSummaryHeading(subHeadingId: String, element: Element) = {
     "that has the correct subheading" in {
-      val expectedHeading = if(subHeadingId == SummaryHeadingIds.amountToPay) {
+      val expectedHeading = if (subHeadingId == SummaryHeadingIds.amountToPay) {
         "summary"
       } else {
         subHeadingId
@@ -122,7 +122,6 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
       }
     }
   }
-
 
   def testRegisteredSites(summarySubHeaderId: String, summaryList: Element, isCheckAnswers: Boolean) = {
     val summaryRows = summaryList.getElementsByClass(Selectors.summaryListRow)
@@ -217,11 +216,11 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     }
   }
 
-  private def testSummaryRowBooleanSection(summarySubHeaderId: String,
-                                         summaryRow: Element,
-                                         expectedValue: String,
-                                         isCheckAnswers: Boolean
-                                        ) = {
+  private def testSummaryRowBooleanSection(
+    summarySubHeaderId: String,
+    summaryRow: Element,
+    expectedValue: String,
+    isCheckAnswers: Boolean) = {
     s"which includes a summary row for ${returnDetailsSummaryListsWithListNames(summarySubHeaderId)}" - {
       "that has the correct key" in {
         summaryRow.getElementsByClass(Selectors.summaryListKey).text() mustEqual Messages(returnDetailsSummaryListsWithQuestionKey(summarySubHeaderId))
@@ -267,9 +266,10 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
 
   private def lowLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
     if (UserAnswersTestData.litresDefaultToZero(key, "lowband") ||
-      List(SummaryHeadingIds.broughtIntoTheUKFromSmallProducers,
+      List(
+        SummaryHeadingIds.broughtIntoTheUKFromSmallProducers,
         SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
-        .contains(summaryId)) {
+      .contains(summaryId)) {
       "£0.00"
     } else if (isNegativeLevy(summaryId)) {
       "−£180.00"
@@ -286,13 +286,14 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
 
   private def highLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
     if (UserAnswersTestData.litresDefaultToZero(key, "highband") ||
-      List(SummaryHeadingIds.broughtIntoTheUKFromSmallProducers,
+      List(
+        SummaryHeadingIds.broughtIntoTheUKFromSmallProducers,
         SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
-        .contains(summaryId)) {
+      .contains(summaryId)) {
       "£0.00"
     } else if (isNegativeLevy(summaryId)) {
       "−£240.00"
-    } else if(summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers) {
+    } else if (summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers) {
       userAnswers.smallProducerList.map(_.litreage._2).sum match {
         case 0 => "£0.00"
         case 2000 => "£480.00"

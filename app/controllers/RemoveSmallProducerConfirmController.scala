@@ -21,31 +21,29 @@ import forms._
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
-import pages.{RemoveSmallProducerConfirmPage, SmallProducerDetailsPage}
+import pages.{ RemoveSmallProducerConfirmPage, SmallProducerDetailsPage }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.RemoveSmallProducerConfirmView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-
-class RemoveSmallProducerConfirmController @Inject()(
-                                                     override val messagesApi: MessagesApi,
-                                                     val sessionRepository: SessionRepository,
-                                                     val navigator: Navigator,
-                                                     val errorHandler: ErrorHandler,
-                                                     val genericLogger: GenericLogger,
-                                                     identify: IdentifierAction,
-                                                     getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction,
-                                                     checkReturnSubmission: CheckingSubmissionAction,
-                                                     formProvider: RemoveSmallProducerConfirmFormProvider,
-                                                     val controllerComponents: MessagesControllerComponents,
-                                                     view: RemoveSmallProducerConfirmView
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+class RemoveSmallProducerConfirmController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: RemoveSmallProducerConfirmFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: RemoveSmallProducerConfirmView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
@@ -60,9 +58,9 @@ class RemoveSmallProducerConfirmController @Inject()(
       val smallProducerList = request.userAnswers.smallProducerList
       val smallProducerMissing = !smallProducerList.exists(producer => producer.sdilRef == sdil)
 
-      if(smallProducerMissing && smallProducerList.nonEmpty){
+      if (smallProducerMissing && smallProducerList.nonEmpty) {
         Redirect(navigator.nextPage(SmallProducerDetailsPage, mode, request.userAnswers, smallProducerMissing = Some(smallProducerMissing)))
-      }else{
+      } else {
         val smallProducerName = smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
         Ok(view(preparedForm, mode, sdil, smallProducerName))
       }
@@ -75,8 +73,8 @@ class RemoveSmallProducerConfirmController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, sdil, smallProducerName))),
-        formData =>{
-          if(formData) {
+        formData => {
+          if (formData) {
             val updatedAnswers = request.userAnswers.set(RemoveSmallProducerConfirmPage, formData)
             val modifiedProducerList = request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
             val updatedAnswersFinal = updatedAnswers.get.copy(smallProducerList = modifiedProducerList)
@@ -85,8 +83,7 @@ class RemoveSmallProducerConfirmController @Inject()(
             val updatedAnswers = request.userAnswers.set(RemoveSmallProducerConfirmPage, formData)
             updateDatabaseAndRedirect(updatedAnswers, RemoveSmallProducerConfirmPage, mode)
           }
-        }
-      )
+        })
   }
 }
 

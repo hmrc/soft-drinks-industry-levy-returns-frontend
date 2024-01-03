@@ -40,8 +40,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
   val amountsLists: Map[String, Amounts] = Map(
     "total owed for this quarter is positive" -> amounts,
     "total owed for this quarter is 0" -> amounts.copy(total = 0),
-    "total owed for this quarter is negative" -> amounts.copy(total = -1000)
-  )
+    "total owed for this quarter is negative" -> amounts.copy(total = -1000))
 
   val amountOwed = "£100"
 
@@ -68,52 +67,53 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
       link.attr("href") mustEqual "javascript:window.print()"
     }
 
-    amountsLists.foreach { case (key, amount) =>
-      val html1: HtmlFormat.Appendable =
-        returnSentView(returnPeriod, emptyUserAnswers, amount, aSubscription, amountOwed)
-      val document1: Document = doc(html1)
-      s"when the $key" - {
-        "should include a what to do next section" - {
-          "that has the expected heading" in {
-            val subHeading = document1.getElementById("whatNextHeader")
-            subHeading.text() mustEqual Messages("returnSent.headerOne")
-          }
-          "that has the expected body" - {
-            val body = document1.getElementById("whatNextText")
-            "which has the expectedText" in {
-              val expectedText = if (amount.total > 0) {
-                "You need to pay £100 by 30 July 2022." +
-                  " Make sure you include your Soft Drinks Industry Levy reference." +
-                  " XKSDIL000000022 when making a payment." +
-                  " See how to pay the levy (opens in a new tab)" +
-                  " Your next return will be for July to September 2022." +
-                  " You must send this return and make any payments by 30 October 2022."
-              } else if (amount.total < 0) {
-                "You do not need to do anything else." +
-                  " We will take the payment from your Soft Drinks Industry Levy account shortly." +
-                  " Your next return will be for July to September 2022." +
-                  " You must send this return and make any payments by 30 October 2022."
-              } else {
-                "You do not need to do anything else." +
-                  " Your next return will be for July to September 2022." +
-                  " You must send this return and make any payments by 30 October 2022."
-              }
-              body.text() mustEqual expectedText
+    amountsLists.foreach {
+      case (key, amount) =>
+        val html1: HtmlFormat.Appendable =
+          returnSentView(returnPeriod, emptyUserAnswers, amount, aSubscription, amountOwed)
+        val document1: Document = doc(html1)
+        s"when the $key" - {
+          "should include a what to do next section" - {
+            "that has the expected heading" in {
+              val subHeading = document1.getElementById("whatNextHeader")
+              subHeading.text() mustEqual Messages("returnSent.headerOne")
             }
-            if(amount.total > 0) {
-              "which has the sdil number in bold" in {
-                body.getElementsByTag("strong").text() mustBe aSubscription.sdilRef
+            "that has the expected body" - {
+              val body = document1.getElementById("whatNextText")
+              "which has the expectedText" in {
+                val expectedText = if (amount.total > 0) {
+                  "You need to pay £100 by 30 July 2022." +
+                    " Make sure you include your Soft Drinks Industry Levy reference." +
+                    " XKSDIL000000022 when making a payment." +
+                    " See how to pay the levy (opens in a new tab)" +
+                    " Your next return will be for July to September 2022." +
+                    " You must send this return and make any payments by 30 October 2022."
+                } else if (amount.total < 0) {
+                  "You do not need to do anything else." +
+                    " We will take the payment from your Soft Drinks Industry Levy account shortly." +
+                    " Your next return will be for July to September 2022." +
+                    " You must send this return and make any payments by 30 October 2022."
+                } else {
+                  "You do not need to do anything else." +
+                    " Your next return will be for July to September 2022." +
+                    " You must send this return and make any payments by 30 October 2022."
+                }
+                body.text() mustEqual expectedText
               }
+              if (amount.total > 0) {
+                "which has the sdil number in bold" in {
+                  body.getElementsByTag("strong").text() mustBe aSubscription.sdilRef
+                }
 
-              "which has the expected link" in {
-                val link = body.getElementsByClass(Selectors.link)
-                link.text() mustEqual "See how to pay the levy (opens in a new tab)"
-                link.attr("href") mustEqual "https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5"
+                "which has the expected link" in {
+                  val link = body.getElementsByClass(Selectors.link)
+                  link.text() mustEqual "See how to pay the levy (opens in a new tab)"
+                  link.attr("href") mustEqual "https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5"
+                }
               }
             }
           }
         }
-      }
     }
 
     "should include a help with this service section" - {
@@ -138,11 +138,9 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
           Messages("returnSent.list1"),
           Messages("returnSent.list2"),
           Messages("returnSent.list3"),
-          Messages("returnSent.list4")
-        )
+          Messages("returnSent.list4"))
         expectedList.foreach(listItem =>
-          bulletList must contain(listItem)
-        )
+          bulletList must contain(listItem))
       }
     }
 
@@ -161,14 +159,15 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
           details.getElementsByClass(Selectors.detailsText).text() mustEqual "View the details of your return"
         }
         "has contains the expected content" - {
-          UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
-            s"when the $key" - {
-              val html1: HtmlFormat.Appendable =
-                returnSentView(returnPeriod, userAnswers, amounts, aSubscription, amountOwed)
-              val document1: Document = doc(html1)
-              val details = document1.getElementsByClass(Selectors.details).get(0)
-              testSummaryLists(key, details, userAnswers, false)
-            }
+          UserAnswersTestData.userAnswersModels.foreach {
+            case (key, userAnswers) =>
+              s"when the $key" - {
+                val html1: HtmlFormat.Appendable =
+                  returnSentView(returnPeriod, userAnswers, amounts, aSubscription, amountOwed)
+                val document1: Document = doc(html1)
+                val details = document1.getElementsByClass(Selectors.details).get(0)
+                testSummaryLists(key, details, userAnswers, false)
+              }
           }
         }
       }

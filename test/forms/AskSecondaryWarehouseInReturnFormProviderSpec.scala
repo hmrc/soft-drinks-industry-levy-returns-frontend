@@ -33,13 +33,11 @@ class AskSecondaryWarehouseInReturnFormProviderSpec extends BooleanFieldBehaviou
     behave like booleanField(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
+      invalidError = FormError(fieldName, invalidKey))
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      requiredError = FormError(fieldName, requiredKey))
   }
 }

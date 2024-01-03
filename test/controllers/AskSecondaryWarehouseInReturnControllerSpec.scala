@@ -20,18 +20,16 @@ import base.ReturnsTestData._
 import base.SpecBase
 import forms.AskSecondaryWarehouseInReturnFormProvider
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.AskSecondaryWarehouseInReturnPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{AddressLookupService, WarehouseDetails}
+import services.{ AddressLookupService, WarehouseDetails }
 import views.html.AskSecondaryWarehouseInReturnView
 
 import scala.concurrent.Future
@@ -114,11 +112,10 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
       val mockAddressLookupService = mock[AddressLookupService]
       val onwardUrlForALF = "foobarwizz"
 
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
         ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-        ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(onwardUrlForALF))
 
       val application =
@@ -126,8 +123,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
-          )
+            bind[AddressLookupService].toInstance(mockAddressLookupService))
           .build()
 
       running(application) {
@@ -142,7 +138,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
+            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
     "must redirect to alf on ramp when valid data is submitted (false), verifying ALF is not called" in {
@@ -154,7 +150,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
         ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-        ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(onwardUrlForALF))
 
       val application =
@@ -162,9 +158,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
-
-          )
+            bind[AddressLookupService].toInstance(mockAddressLookupService))
           .build()
 
       running(application) {
@@ -179,7 +173,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
 
         verify(mockAddressLookupService, times(0)).initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
+            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
     "must return error if ALF on ramp call returns error" in {
@@ -189,7 +183,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
 
       when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
         ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-        ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.failed(new Exception("uh oh spaghetio")))
 
       val application =
@@ -197,8 +191,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
-          )
+            bind[AddressLookupService].toInstance(mockAddressLookupService))
           .build()
 
       running(application) {
@@ -208,10 +201,9 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
 
         intercept[Exception](await(route(application, request).value))
 
-
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any())
+            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 

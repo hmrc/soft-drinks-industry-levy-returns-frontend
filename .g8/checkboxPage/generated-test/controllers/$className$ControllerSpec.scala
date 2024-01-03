@@ -5,8 +5,8 @@ import forms.$className$FormProvider
 import models.{NormalMode, $className$, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+
+import org.mockito.MockitoSugar
 import pages.$className$Page
 import play.api.inject.bind
 import play.api.mvc.Call

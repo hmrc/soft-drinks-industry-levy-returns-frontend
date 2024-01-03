@@ -19,11 +19,11 @@ package controllers
 import controllers.actions._
 import forms.RemovePackagingDetailsConfirmationFormProvider
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers}
+import models.{ Mode, UserAnswers }
 import navigation.Navigator
 import pages.RemovePackagingDetailsConfirmationPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import play.twirl.api.Html
 import repositories.SessionRepository
 import utilitlies.GenericLogger
@@ -31,22 +31,21 @@ import viewmodels.AddressFormattingHelper
 import views.html.RemovePackagingDetailsConfirmationView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class RemovePackagingDetailsConfirmationController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionRepository: SessionRepository,
-                                         val navigator: Navigator,
-                                         val errorHandler: ErrorHandler,
-                                         val genericLogger: GenericLogger,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         checkReturnSubmission: CheckingSubmissionAction,
-                                         formProvider: RemovePackagingDetailsConfirmationFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: RemovePackagingDetailsConfirmationView
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+class RemovePackagingDetailsConfirmationController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: RemovePackagingDetailsConfirmationFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: RemovePackagingDetailsConfirmationView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
@@ -67,7 +66,6 @@ class RemovePackagingDetailsConfirmationController @Inject()(
         case Some(packagingSiteDetails) => Ok(view(form, mode, ref, packagingSiteDetails))
       }
   }
-
 
   def onSubmit(mode: Mode, ref: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
@@ -91,8 +89,7 @@ class RemovePackagingDetailsConfirmationController @Inject()(
             value => {
               val updatedAnswersAfterUserAnswer = removePackagingDetailsFromUserAnswers(value, request.userAnswers, ref)
               setAndRedirect(updatedAnswersAfterUserAnswer, RemovePackagingDetailsConfirmationPage, mode)
-            }
-         )
+            })
       }
   }
 }

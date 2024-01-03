@@ -20,20 +20,21 @@ import cats.implicits._
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedSubscription
-import models.{Amounts, ReturnPeriod, ReturnsVariation, SdilReturn, UserAnswers}
+import models.{ Amounts, ReturnPeriod, ReturnsVariation, SdilReturn, UserAnswers }
 import pages._
 import play.api.Logger
-import play.api.http.Status.{NO_CONTENT, OK}
+import play.api.http.Status.{ NO_CONTENT, OK }
 import uk.gov.hmrc.http.HeaderCarrier
-import utilitlies.ReturnsHelper.{extractTotal, listItemsWithTotal}
-import utilitlies.{TotalForQuarter, UserTypeCheck}
+import utilitlies.ReturnsHelper.{ extractTotal, listItemsWithTotal }
+import utilitlies.{ TotalForQuarter, UserTypeCheck }
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
-                              config: FrontendAppConfig) {
+class ReturnService @Inject() (
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  config: FrontendAppConfig) {
 
   val logger: Logger = Logger(this.getClass())
 
@@ -42,13 +43,11 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
 
   def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.getPendingReturnPeriods(utr)
 
-  def sendReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)
-                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-      submitReturnAndVariation(subscription, returnPeriod, userAnswers)
+  def sendReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    submitReturnAndVariation(subscription, returnPeriod, userAnswers)
   }
 
-  def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val sdilReturn = returnToBeSubmitted(userAnswers)
     val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
     for {
@@ -57,10 +56,10 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
     } yield variation
   }
 
-  def calculateAmounts(sdilRef: String,
-                       userAnswers: UserAnswers,
-                       returnPeriod: ReturnPeriod)
-                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Amounts] = {
+  def calculateAmounts(
+    sdilRef: String,
+    userAnswers: UserAnswers,
+    returnPeriod: ReturnPeriod)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Amounts] = {
     for {
       isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
       balanceBroughtForward <- getBalanceBroughtForward(sdilRef)
@@ -68,8 +67,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
 
   }
 
-  def getBalanceBroughtForward(sdilRef: String)
-                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[BigDecimal] = {
+  def getBalanceBroughtForward(sdilRef: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[BigDecimal] = {
     if (config.balanceAllEnabled) {
       sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { financialItem =>
         extractTotal(listItemsWithTotal(financialItem))
@@ -85,20 +83,20 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
     Amounts(totalForQuarter, balanceBroughtForward, total)
   }
 
-  private def submitReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, sdilReturn: SdilReturn)
-                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  private def submitReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     sdilConnector.returns_update(subscription.utr, returnPeriod, sdilReturn).map {
       case Some(OK) => logger.info(s"Return submitted for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
-      case _ => logger.error(s"Failed to submit return for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+      case _ =>
+        logger.error(s"Failed to submit return for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
         throw new RuntimeException(s"Failed to submit return ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
     }
   }
 
-  private def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)
-                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  private def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     sdilConnector.returns_variation(sdilRef, variation).map {
       case Some(NO_CONTENT) => logger.info(s"Return variation submitted for $sdilRef")
-      case _ => logger.error(s"Failed to submit return variation for $sdilRef")
+      case _ =>
+        logger.error(s"Failed to submit return variation for $sdilRef")
         throw new RuntimeException(s"Failed to submit return variation $sdilRef")
     }
   }
@@ -115,8 +113,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
       packingSites = userAnswers.packagingSiteList.values.toList,
       phoneNumber = subscription.contact.phoneNumber,
       email = subscription.contact.email,
-      taxEstimation = taxEstimation(sdilReturn)
-    )
+      taxEstimation = taxEstimation(sdilReturn))
   }
 
   private def returnToBeSubmitted(userAnswers: UserAnswers): SdilReturn = {
@@ -130,34 +127,39 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
       wastageLitres(userAnswers))
   }
 
-
   private def ownBrandsLitres(userAnswers: UserAnswers) = {
-    (userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
+    (
+      userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L))
   }
 
   private def packLargeLitres(userAnswers: UserAnswers) = {
-    (userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L),
+    (
+      userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L))
   }
 
   private def importsLitres(userAnswers: UserAnswers) = {
-    (userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L),
+    (
+      userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L))
   }
 
   private def importsSmallLitres(userAnswers: UserAnswers) = {
-    (userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.lowBand).getOrElse(0L),
+    (
+      userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.highBand).getOrElse(0L))
   }
 
   private def exportLitres(userAnswers: UserAnswers) = {
-    (userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L),
+    (
+      userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L))
   }
 
   private def wastageLitres(userAnswers: UserAnswers) = {
-    (userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
+    (
+      userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L))
   }
 

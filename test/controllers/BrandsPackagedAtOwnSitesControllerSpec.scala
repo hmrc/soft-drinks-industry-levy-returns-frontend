@@ -21,12 +21,10 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.BrandsPackagedAtOwnSitesFormProvider
 import helpers.LoggerHelper
-import models.{LitresInBands, NormalMode}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers
+import models.{ LitresInBands, NormalMode }
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.BrandsPackagedAtOwnSitesPage
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -58,10 +56,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
     Json.obj(
       BrandsPackagedAtOwnSitesPage.toString -> Json.obj(
         "lowBand" -> value1,
-        "highBand" -> value2
-      )
-    )
-  )
+        "highBand" -> value2)))
 
   "BrandsPackagedAtOwnSites Controller" - {
 
@@ -134,8 +129,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -192,7 +186,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
       running(application) {
         val request =
           FakeRequest(POST, brandsPackagedAtOwnSitesRoute)
-        .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -223,7 +217,6 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
     "should log an error message when internal server error is returned when getting user answers is not resolved" in {
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
-
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 

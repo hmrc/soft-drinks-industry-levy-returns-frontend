@@ -22,10 +22,10 @@ import errors.SessionDatabaseInsertError
 import forms.ExemptionsForSmallProducersFormProvider
 import helpers.LoggerHelper
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+
+import org.mockito.MockitoSugar
 import pages.ExemptionsForSmallProducersPage
 import play.api.data.Form
 import play.api.inject.bind
@@ -120,8 +120,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -195,8 +194,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
         val request = FakeRequest(POST, exemptionsForSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))

@@ -22,11 +22,11 @@ import connectors.httpParsers.AddressLookupHttpParser.AddressLookupInitJourneyRe
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import mocks.MockHttp
 import models.alf.AlfResponse
-import models.alf.init.{JourneyConfig, JourneyOptions}
+import models.alf.init.{ JourneyConfig, JourneyOptions }
 import models.core.ErrorModel
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.http.Status
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.http.HttpResponse
 
@@ -64,12 +64,12 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
 
     "getAddress" - {
 
-      def getAddressResult: Future[HttpResult[AlfResponse]] = testAddressLookupConnector.getAddress(id)(implicitly,implicitly)
+      def getAddressResult: Future[HttpResult[AlfResponse]] = testAddressLookupConnector.getAddress(id)(implicitly, implicitly)
 
-        "return a AlfResponse Model" in {
-          setupMockHttpGet(testAddressLookupConnector.getAddressUrl(id, addressLookupFrontendTestEnabled = true))(Right(customerAddressMax))
-          await(getAddressResult) mustBe Right(customerAddressMax)
-        }
+      "return a AlfResponse Model" in {
+        setupMockHttpGet(testAddressLookupConnector.getAddressUrl(id, addressLookupFrontendTestEnabled = true))(Right(customerAddressMax))
+        await(getAddressResult) mustBe Right(customerAddressMax)
+      }
 
       "given an error should" - {
 
@@ -85,7 +85,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
 
       s"should return url if ${Status.ACCEPTED} returned and ${HeaderNames.LOCATION} exists" in {
         val response = AddressLookupInitJourneyReads.read("", "", HttpResponse(Status.ACCEPTED, "", Map(HeaderNames.LOCATION -> Seq("foo"))))
-        setupMockHttpPost(testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true) )(response)
+        setupMockHttpPost(testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true))(response)
         await(testAddressLookupConnector.initJourney(journeyConfig)) mustBe response
       }
 

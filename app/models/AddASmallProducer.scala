@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json._
 
-case class AddASmallProducer (producerName:Option[String],referenceNumber:String,lowBand: Long, highBand: Long)
+case class AddASmallProducer(producerName: Option[String], referenceNumber: String, lowBand: Long, highBand: Long)
 
 object AddASmallProducer {
   implicit val format = Json.format[AddASmallProducer]

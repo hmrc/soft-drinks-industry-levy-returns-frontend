@@ -21,42 +21,41 @@ import forms.BroughtIntoUKFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
-import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage}
+import pages.{ BroughtIntoUKPage, HowManyBroughtIntoUkPage }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.BroughtIntoUKView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class BroughtIntoUKController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        val sessionRepository: SessionRepository,
-                                        val navigator: Navigator,
-                                        val errorHandler: ErrorHandler,
-                                        val genericLogger: GenericLogger,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        checkReturnSubmission: CheckingSubmissionAction,
-                                        formProvider: BroughtIntoUKFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: BroughtIntoUKView
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+class BroughtIntoUKController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: BroughtIntoUKFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: BroughtIntoUKView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
 
-    val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-    }
+      val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
+        case None => form
+        case Some(value) => form.fill(value)
+      }
 
-    Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode))
 
   }
 
@@ -72,7 +71,6 @@ class BroughtIntoUKController @Inject()(
             BroughtIntoUKPage, HowManyBroughtIntoUkPage, value)
 
           updateDatabaseAndRedirect(updatedUserAnswers, BroughtIntoUKPage, mode)
-        }
-      )
+        })
   }
 }

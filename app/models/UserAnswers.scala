@@ -20,37 +20,35 @@ import models.backend.Site
 import models.retrieved.RetrievedSubscription
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import queries.{Gettable, Settable}
+import queries.{ Gettable, Settable }
 import services.Encryption
 import uk.gov.hmrc.crypto.EncryptedValue
 import uk.gov.hmrc.crypto.json.CryptoFormats
 
 import java.time.Instant
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 case class UserAnswers(
-                        id: String,
-                        returnPeriod: ReturnPeriod,
-                        data: JsObject = Json.obj(),
-                        smallProducerList: List[SmallProducer] = List.empty,
-                        packagingSiteList: Map[String, Site] = Map.empty,
-                        warehouseList: Map[String, Site] = Map.empty,
-                        submitted:Boolean = false,
-                        isNilReturn: Boolean = false,
-                        lastUpdated: Instant = Instant.now
-                      ) {
+  id: String,
+  returnPeriod: ReturnPeriod,
+  data: JsObject = Json.obj(),
+  smallProducerList: List[SmallProducer] = List.empty,
+  packagingSiteList: Map[String, Site] = Map.empty,
+  warehouseList: Map[String, Site] = Map.empty,
+  submitted: Boolean = false,
+  isNilReturn: Boolean = false,
+  lastUpdated: Instant = Instant.now) {
 
   def this(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, nilReturn: Boolean) = this(
     id = subscription.sdilRef,
     returnPeriod = returnPeriod,
-    data = if(nilReturn) {
+    data = if (nilReturn) {
       Json.toJsObject(new DefaultUserAnswersData(subscription))
     } else {
       Json.obj()
     },
-    isNilReturn = nilReturn
-  )
-  
+    isNilReturn = nilReturn)
+
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
@@ -71,19 +69,15 @@ case class UserAnswers(
 
   def addPackagingSite(site: Site, siteId: String): UserAnswers = {
     copy(
-      packagingSiteList = packagingSiteList.filterNot(_._1 == siteId) ++ Map(siteId -> site)
-    )
+      packagingSiteList = packagingSiteList.filterNot(_._1 == siteId) ++ Map(siteId -> site))
   }
 
   def addWarehouse(site: Site, siteId: String): UserAnswers = {
     copy(
-      warehouseList = warehouseList.filterNot(_._1 == siteId) ++ Map(siteId -> site)
-    )
+      warehouseList = warehouseList.filterNot(_._1 == siteId) ++ Map(siteId -> site))
   }
 
-
-    def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)
-                             (implicit writes: Writes[Boolean]): Try[UserAnswers] = {
+  def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = {
     set(page, value).map { updatedAnswers =>
       if (value) {
         updatedAnswers
@@ -121,47 +115,44 @@ case class UserAnswers(
   }
 }
 
-  object UserAnswers {
+object UserAnswers {
 
-    object MongoFormats {
-      implicit val cryptEncryptedValueFormats: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
-      import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats.Implicits._
+  object MongoFormats {
+    implicit val cryptEncryptedValueFormats: Format[EncryptedValue] = CryptoFormats.encryptedValueFormat
+    import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats.Implicits._
 
-      def reads(implicit encryption: Encryption): Reads[UserAnswers] = {
-        (
-          (__ \ "_id").read[String] and
-            (__ \ "returnPeriod").read[ReturnPeriod] and
-            (__ \ "data").read[EncryptedValue] and
-            (__ \ "smallProducerList").read[EncryptedValue] and
-            (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
-            (__ \ "warehouseList").read[Map[String, EncryptedValue]] and
-            (__ \ "submitted").read[Boolean] and
-            (__ \ "isNilReturn").read[Boolean] and
-            (__ \ "lastUpdated").read[Instant]
-          )(ModelEncryption.decryptUserAnswers _)
-      }
-
-      def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
-        override def writes(userAnswers: UserAnswers): JsObject = {
-          val encryptedValue: (String, ReturnPeriod, EncryptedValue, EncryptedValue, Map[String, EncryptedValue],
-            Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
-            ModelEncryption.encryptUserAnswers(userAnswers)
-          }
-          Json.obj(
-            "id" -> encryptedValue._1,
-            "returnPeriod" -> encryptedValue._2,
-            "data" -> encryptedValue._3,
-            "smallProducerList" -> encryptedValue._4,
-            "packagingSiteList" -> encryptedValue._5,
-            "warehouseList" -> encryptedValue._6,
-            "submitted" -> encryptedValue._7,
-            "isNilReturn" -> encryptedValue._8,
-            "lastUpdated" -> encryptedValue._9
-          )
-        }
-      }
-
-      def format(implicit encryption: Encryption): OFormat[UserAnswers] = OFormat(reads, writes)
+    def reads(implicit encryption: Encryption): Reads[UserAnswers] = {
+      (
+        (__ \ "_id").read[String] and
+        (__ \ "returnPeriod").read[ReturnPeriod] and
+        (__ \ "data").read[EncryptedValue] and
+        (__ \ "smallProducerList").read[EncryptedValue] and
+        (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
+        (__ \ "warehouseList").read[Map[String, EncryptedValue]] and
+        (__ \ "submitted").read[Boolean] and
+        (__ \ "isNilReturn").read[Boolean] and
+        (__ \ "lastUpdated").read[Instant])(ModelEncryption.decryptUserAnswers _)
     }
 
+    def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
+      override def writes(userAnswers: UserAnswers): JsObject = {
+        val encryptedValue: (String, ReturnPeriod, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Boolean, Instant) = {
+          ModelEncryption.encryptUserAnswers(userAnswers)
+        }
+        Json.obj(
+          "id" -> encryptedValue._1,
+          "returnPeriod" -> encryptedValue._2,
+          "data" -> encryptedValue._3,
+          "smallProducerList" -> encryptedValue._4,
+          "packagingSiteList" -> encryptedValue._5,
+          "warehouseList" -> encryptedValue._6,
+          "submitted" -> encryptedValue._7,
+          "isNilReturn" -> encryptedValue._8,
+          "lastUpdated" -> encryptedValue._9)
+      }
+    }
+
+    def format(implicit encryption: Encryption): OFormat[UserAnswers] = OFormat(reads, writes)
   }
+
+}

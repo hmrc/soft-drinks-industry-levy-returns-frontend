@@ -16,26 +16,25 @@
 
 package controllers
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{ DataRequiredAction, DataRetrievalAction, IdentifierAction }
 import handlers.ErrorHandler
 import navigation.Navigator
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class KeepAliveController @Inject()(
-                                     val controllerComponents: MessagesControllerComponents,
-                                     val errorHandler: ErrorHandler,
-                                     val sessionRepository: SessionRepository,
-                                     val navigator: Navigator,
-                                     identify: IdentifierAction,
-                                     getData: DataRetrievalAction,
-                                     requireData: DataRequiredAction,
-                                     val genericLogger: GenericLogger
-                                   )(implicit ec: ExecutionContext) extends ControllerHelper {
+class KeepAliveController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  val errorHandler: ErrorHandler,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  val genericLogger: GenericLogger)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   def keepAlive: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

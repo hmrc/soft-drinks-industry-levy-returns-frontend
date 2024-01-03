@@ -29,17 +29,18 @@ trait Formatters {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
       data.get(key) match {
-        case None                      => Left(Seq(FormError(key, errorKey, args)))
+        case None => Left(Seq(FormError(key, errorKey, args)))
         case Some(s) if s.trim.isEmpty => Left(Seq(FormError(key, errorKey, args)))
-        case Some(s)                   => Right(s.trim)
+        case Some(s) => Right(s.trim)
       }
 
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
   }
 
-  private[mappings] def litresFormatter(band: String,
-                                        args: Seq[String] = Seq.empty): Formatter[Long] =
+  private[mappings] def litresFormatter(
+    band: String,
+    args: Seq[String] = Seq.empty): Formatter[Long] =
     new Formatter[Long] {
 
       val requiredKey = s"litres.error.$band.required"
@@ -47,7 +48,6 @@ trait Formatters {
       val negativeNumber = s"litres.error.$band.negative"
       val wholeNumberKey = s"litres.error.$band.wholeNumber"
       val nonNumericKey = s"litres.error.$band.nonNumeric"
-
 
       val decimalRegexp = """^-?(\d*\.\d*)$"""
       val numberRegexp = """^\d+$*"""
@@ -66,7 +66,8 @@ trait Formatters {
               Left(Seq(FormError(key, negativeNumber, args)))
             case s if s.matches(decimalRegexp) =>
               Try(s.split("\\.")(0).toLong)
-                .fold(_ => Left(Seq(FormError(key, outOfRangeKey, args))),
+                .fold(
+                  _ => Left(Seq(FormError(key, outOfRangeKey, args))),
                   _ => Left(Seq(FormError(key, wholeNumberKey, args))))
             case s =>
               nonFatalCatch
@@ -87,10 +88,10 @@ trait Formatters {
         baseFormatter
           .bind(key, data)
           .flatMap {
-          case "true"  => Right(true)
-          case "false" => Right(false)
-          case _       => Left(Seq(FormError(key, invalidKey, args)))
-        }
+            case "true" => Right(true)
+            case "false" => Right(false)
+            case _ => Left(Seq(FormError(key, invalidKey, args)))
+          }
 
       def unbind(key: String, value: Boolean) = Map(key -> value.toString)
     }
@@ -107,25 +108,25 @@ trait Formatters {
           .bind(key, data)
           .map(_.replace(",", ""))
           .flatMap {
-          case s if s.matches(decimalRegexp) =>
-            Left(Seq(FormError(key, wholeNumberKey, args)))
-          case s =>
-            nonFatalCatch
-              .either(s.toInt)
-              .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
-        }
+            case s if s.matches(decimalRegexp) =>
+              Left(Seq(FormError(key, wholeNumberKey, args)))
+            case s =>
+              nonFatalCatch
+                .either(s.toInt)
+                .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
+          }
 
       override def unbind(key: String, value: Int) =
         baseFormatter.unbind(key, value.toString)
     }
 
-
-  private[mappings] def longFormatter(requiredKey: String,
-                                      negativeNumber: String,
-                                      nonNumericKey: String,
-                                      wholeNumberKey: String,
-                                      outOfRangeKey: String,
-                                      args: Seq[String] = Seq.empty): Formatter[Long] =
+  private[mappings] def longFormatter(
+    requiredKey: String,
+    negativeNumber: String,
+    nonNumericKey: String,
+    wholeNumberKey: String,
+    outOfRangeKey: String,
+    args: Seq[String] = Seq.empty): Formatter[Long] =
     new Formatter[Long] {
 
       val decimalRegexp = """^-?(\d*\.\d*)$"""
@@ -137,21 +138,22 @@ trait Formatters {
           .bind(key, data)
           .map(_.replace(",", ""))
           .flatMap {
-          case s if s.matches(numberRegexp) =>
-            nonFatalCatch
-              .either(s.toLong)
-              .left.map(_ => Seq(FormError(key, outOfRangeKey, args)))
-          case s if s.startsWith("-") =>
-            Left(Seq(FormError(key, negativeNumber, args)))
-          case s if s.matches(decimalRegexp) =>
-            Try(s.split("\\.")(0).toLong)
-              .fold(_ => Left(Seq(FormError(key, outOfRangeKey, args))),
-                _ => Left(Seq(FormError(key, wholeNumberKey, args))))
-          case s =>
-            nonFatalCatch
-              .either(s.toLong)
-              .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
-        }
+            case s if s.matches(numberRegexp) =>
+              nonFatalCatch
+                .either(s.toLong)
+                .left.map(_ => Seq(FormError(key, outOfRangeKey, args)))
+            case s if s.startsWith("-") =>
+              Left(Seq(FormError(key, negativeNumber, args)))
+            case s if s.matches(decimalRegexp) =>
+              Try(s.split("\\.")(0).toLong)
+                .fold(
+                  _ => Left(Seq(FormError(key, outOfRangeKey, args))),
+                  _ => Left(Seq(FormError(key, wholeNumberKey, args))))
+            case s =>
+              nonFatalCatch
+                .either(s.toLong)
+                .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
+          }
 
       override def unbind(key: String, value: Long) =
         baseFormatter.unbind(key, value.toString)

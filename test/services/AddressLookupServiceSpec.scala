@@ -23,22 +23,22 @@ import controllers.routes
 import models.NormalMode
 import models.alf.AlfAddress
 import models.alf.init._
-import models.backend.{Site, UkAddress}
+import models.backend.{ Site, UkAddress }
 import models.core.ErrorModel
 import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar.{mock, when}
-import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
+import org.mockito.MockitoSugar.{ mock, when }
+import play.api.test.{ DefaultAwaitTimeout, FakeRequest, FutureAwaits }
 
 import scala.concurrent.Future
 
-class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAwaitTimeout  {
+class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAwaitTimeout {
 
   val mockSdilConnector = mock[AddressLookupConnector]
   val service = new AddressLookupService(mockSdilConnector, frontendAppConfig)
 
   "getAddress" - {
     "return an address when Connector returns success" in {
-      when(mockSdilConnector.getAddress("123456789")(hc,implicitly)).thenReturn(Future.successful(Right(customerAddressMax)))
+      when(mockSdilConnector.getAddress("123456789")(hc, implicitly)).thenReturn(Future.successful(Right(customerAddressMax)))
 
       val res = service.getAddress("123456789")
 
@@ -47,7 +47,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       }
     }
     "return an exception when Connector returns error" in {
-      when(mockSdilConnector.getAddress("123456789")(hc,implicitly)).thenReturn(Future.successful(Left(ErrorModel(1, "foo"))))
+      when(mockSdilConnector.getAddress("123456789")(hc, implicitly)).thenReturn(Future.successful(Left(ErrorModel(1, "foo"))))
 
       val res = intercept[Exception](await(service.getAddress("123456789")))
       res.getMessage mustBe "Error returned from ALF for 123456789 1 foo for None"
@@ -64,7 +64,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("super cola"), None),
         sdilId -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)), None, Some(organisation), None))
 
-      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+      val res = service.addAddressUserAnswers(
+        addressLookupState = addressLookupState,
         address = customerAddressMax.address,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         siteId = sdilId,
@@ -81,7 +82,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val updatedWarehouseMap = Map(sdilId ->
         Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None))
 
-      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+      val res = service.addAddressUserAnswers(
+        addressLookupState = addressLookupState,
         address = customerAddressMax.address,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         siteId = sdilId,
@@ -95,17 +97,18 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val sdilId: String = "foo"
       val alfId: String = "bar"
       val warehouseMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("super cola"), None))
-      val addedWarehouseMissingLines = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("super cola"), None),
+      val addedWarehouseMissingLines = Map(
+        "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("super cola"), None),
         sdilId -> Site(UkAddress(List(addressLine1, addressLine2), postcode, alfId = Some(alfId)), None, Some(organisation), None))
       val customerAddressMissingLines: AlfAddress =
         AlfAddress(
           Some(organisation),
           List(addressLine1, addressLine2),
           Some(postcode),
-          Some(countryCode)
-        )
+          Some(countryCode))
 
-      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+      val res = service.addAddressUserAnswers(
+        addressLookupState = addressLookupState,
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         siteId = sdilId,
@@ -120,17 +123,19 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val alfId: String = "bar"
       val warehouseMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("super cola"), None))
 
-      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
-        address = AlfAddress(Some(organisation),
+      val res = service.addAddressUserAnswers(
+        addressLookupState = addressLookupState,
+        address = AlfAddress(
+          Some(organisation),
           List(addressLine1, addressLine2, addressLine3, addressLine4),
           Some(postcode),
-          Some(countryCode)
-        ),
+          Some(countryCode)),
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         alfId = alfId,
         siteId = sdilId)
 
-      res.warehouseList mustBe Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("super cola"), None),
+      res.warehouseList mustBe Map(
+        "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("super cola"), None),
         sdilId -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)), None, Some(organisation), None))
     }
 
@@ -138,17 +143,18 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addressLookupState = PackingDetails
       val sdilId: String = "foo"
       val alfId: String = "bar"
-      val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None))
-      val addedPackingSiteMissingLines = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),
-        sdilId -> Site(UkAddress(List(addressLine1, addressLine2), postcode, alfId = Some(alfId)), None, Some(organisation),None))
+      val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("ref1"), Some("super cola"), None))
+      val addedPackingSiteMissingLines = Map(
+        "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("ref1"), Some("super cola"), None),
+        sdilId -> Site(UkAddress(List(addressLine1, addressLine2), postcode, alfId = Some(alfId)), None, Some(organisation), None))
       val customerAddressMissingLines: AlfAddress = AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2),
         Some(postcode),
-        Some(countryCode)
-      )
+        Some(countryCode))
 
-      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+      val res = service.addAddressUserAnswers(
+        addressLookupState = addressLookupState,
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(packagingSiteList = packingMap),
         alfId = alfId,
@@ -161,22 +167,22 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addressLookupState = PackingDetails
       val sdilId: String = "foo"
       val alfId: String = "bar"
-      val packingMap = Map(sdilId -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None))
+      val packingMap = Map(sdilId -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("ref1"), Some("super cola"), None))
       val addedPackingSite = Map(sdilId ->
-        Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)),None, Some(organisation),None))
+        Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)), None, Some(organisation), None))
 
       val customerAddressMissingLines: AlfAddress = AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2, addressLine3, addressLine4),
         Some(postcode),
-        Some(countryCode)
-      )
+        Some(countryCode))
 
-      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+      val res = service.addAddressUserAnswers(
+        addressLookupState = addressLookupState,
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(packagingSiteList = packingMap),
         alfId = alfId,
-        siteId =  sdilId)
+        siteId = sdilId)
 
       res.packagingSiteList mustBe addedPackingSite
     }
@@ -184,22 +190,23 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addressLookupState = PackingDetails
       val sdilId: String = "foo"
       val alfId: String = "bar"
-      val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None))
-      val addedPackingSite = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),Some("ref1"), Some("super cola"),None),
-        sdilId -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)),None, Some(organisation),None))
+      val packingMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("ref1"), Some("super cola"), None))
+      val addedPackingSite = Map(
+        "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("ref1"), Some("super cola"), None),
+        sdilId -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)), None, Some(organisation), None))
 
       val customerAddressMissingLines: AlfAddress = AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2, addressLine3, addressLine4),
         Some(postcode),
-        Some(countryCode)
-      )
+        Some(countryCode))
 
-      val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+      val res = service.addAddressUserAnswers(
+        addressLookupState = addressLookupState,
         address = customerAddressMissingLines,
         userAnswers = emptyUserAnswers.copy(packagingSiteList = packingMap),
         alfId = alfId,
-        siteId =  sdilId)
+        siteId = sdilId)
 
       res.packagingSiteList mustBe addedPackingSite
     }
@@ -210,10 +217,10 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         None,
         List(),
         None,
-        None
-      )
+        None)
 
-      lazy val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
+      lazy val res = service.addAddressUserAnswers(
+        addressLookupState = addressLookupState,
         address = customerAddressMissingLinesAndName,
         userAnswers = emptyUserAnswers.copy(warehouseList = warehouseMap),
         alfId = "foo",
@@ -257,8 +264,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           ukMode = Some(true),
           selectPageConfig = Some(SelectPageConfig(
             proposalListLimit = Some(10),
-            showSearchAgainLink = Some(true)
-          )),
+            showSearchAgainLink = Some(true))),
           showBackButtons = Some(true),
           disableTranslations = Some(true),
           allowedCountryCodes = None,
@@ -266,23 +272,19 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             showSearchAgainLink = Some(true),
             showSubHeadingAndInfo = Some(true),
             showChangeLink = Some(true),
-            showConfirmChangeText = Some(true)
-          )),
+            showConfirmChangeText = Some(true))),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = frontendAppConfig.timeout,
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
-            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
-          )),
+            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url))),
           serviceHref = Some(frontendAppConfig.sdilHomeUrl),
-          pageHeadingStyle = Some("govuk-heading-l")
-        ),
+          pageHeadingStyle = Some("govuk-heading-l")),
         labels = Some(
           JourneyLabels(
             en = Some(LanguageLabels(
               appLevelLabels = Some(AppLevelLabels(
                 navTitle = Some("Soft Drinks Industry Levy"),
-                phaseBannerHtml = None
-              )),
+                phaseBannerHtml = None)),
               selectPageLabels = None,
               lookupPageLabels = Some(
                 LookupPageLabels(
@@ -297,17 +299,13 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
                   townLabel = Some("Address line 4 (optional)"),
-                  postcodeLabel= Some("Postcode"),
-                  organisationLabel = Some("Packaging site name (optional)"))
-              ),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Packaging site name (optional)"))),
               confirmPageLabels = None,
-              countryPickerLabels = None
-            ))
-          )),
-        requestedVersion = None
-      )
+              countryPickerLabels = None)))),
+        requestedVersion = None)
 
-      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(ArgumentMatchers.any(),ArgumentMatchers.any()))
+      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(Right("foo")))
       whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails, sdilId)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))) {
         res => res mustBe "foo"
@@ -330,8 +328,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           ukMode = Some(true),
           selectPageConfig = Some(SelectPageConfig(
             proposalListLimit = Some(10),
-            showSearchAgainLink = Some(true)
-          )),
+            showSearchAgainLink = Some(true))),
           showBackButtons = Some(true),
           disableTranslations = Some(true),
           allowedCountryCodes = None,
@@ -339,23 +336,19 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             showSearchAgainLink = Some(true),
             showSubHeadingAndInfo = Some(true),
             showChangeLink = Some(true),
-            showConfirmChangeText = Some(true)
-          )),
+            showConfirmChangeText = Some(true))),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = frontendAppConfig.timeout,
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
-            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
-          )),
+            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url))),
           serviceHref = Some(frontendAppConfig.sdilHomeUrl),
-          pageHeadingStyle = Some("govuk-heading-l")
-        ),
+          pageHeadingStyle = Some("govuk-heading-l")),
         labels = Some(
           JourneyLabels(
             en = Some(LanguageLabels(
               appLevelLabels = Some(AppLevelLabels(
                 navTitle = Some("Soft Drinks Industry Levy"),
-                phaseBannerHtml = None
-              )),
+                phaseBannerHtml = None)),
               selectPageLabels = None,
               lookupPageLabels = Some(
                 LookupPageLabels(
@@ -370,17 +363,13 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
                   townLabel = Some("Address line 4 (optional)"),
-                  postcodeLabel= Some("Postcode"),
-                  organisationLabel = Some("Trading name (optional)"))
-              ),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Trading name (optional)"))),
               confirmPageLabels = None,
-              countryPickerLabels = None
-            ))
-          )),
-        requestedVersion = None
-      )
+              countryPickerLabels = None)))),
+        requestedVersion = None)
 
-      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(ArgumentMatchers.any(),ArgumentMatchers.any()))
+      when(mockSdilConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(Right("foo")))
       whenReady(service.initJourneyAndReturnOnRampUrl(WarehouseDetails, sdilId)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))) {
         res => res mustBe "foo"
@@ -388,7 +377,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
     }
 
     "should return Exception if connector returns left" in {
-      when(mockSdilConnector.initJourney(ArgumentMatchers.any())(ArgumentMatchers.any(),ArgumentMatchers.any()))
+      when(mockSdilConnector.initJourney(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(Left(ErrorModel(1, "foo"))))
       val res = intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))))
       res.getMessage mustBe "Failed to init ALF foo with status 1 for None"
@@ -397,10 +386,10 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
 
   "createJourneyConfig" - {
     s"should return a journey config for $WarehouseDetails" in {
-      val request = FakeRequest("foo","bar")
+      val request = FakeRequest("foo", "bar")
       val exampleSdilIdWeGenerate: String = "wizz"
       val res = service.createJourneyConfig(WarehouseDetails, exampleSdilIdWeGenerate, NormalMode)(request, implicitly)
-      val expected =  JourneyConfig(
+      val expected = JourneyConfig(
         version = 2,
         options = JourneyOptions(
           continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/secondary-warehouses/$exampleSdilIdWeGenerate",
@@ -415,8 +404,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           ukMode = Some(true),
           selectPageConfig = Some(SelectPageConfig(
             proposalListLimit = Some(10),
-            showSearchAgainLink = Some(true)
-          )),
+            showSearchAgainLink = Some(true))),
           showBackButtons = Some(true),
           disableTranslations = Some(true),
           allowedCountryCodes = None,
@@ -424,23 +412,19 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             showSearchAgainLink = Some(true),
             showSubHeadingAndInfo = Some(true),
             showChangeLink = Some(true),
-            showConfirmChangeText = Some(true)
-          )),
+            showConfirmChangeText = Some(true))),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = frontendAppConfig.timeout,
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
-            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
-          )),
+            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url))),
           serviceHref = Some(frontendAppConfig.sdilHomeUrl),
-          pageHeadingStyle = Some("govuk-heading-l")
-        ),
+          pageHeadingStyle = Some("govuk-heading-l")),
         labels = Some(
           JourneyLabels(
             en = Some(LanguageLabels(
               appLevelLabels = Some(AppLevelLabels(
                 navTitle = Some("Soft Drinks Industry Levy"),
-                phaseBannerHtml = None
-              )),
+                phaseBannerHtml = None)),
               selectPageLabels = None,
               lookupPageLabels = Some(
                 LookupPageLabels(
@@ -455,24 +439,20 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
                   townLabel = Some("Address line 4 (optional)"),
-                  postcodeLabel= Some("Postcode"),
-                  organisationLabel = Some("Trading name (optional)"))
-              ),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Trading name (optional)"))),
               confirmPageLabels = None,
-              countryPickerLabels = None
-            ))
-          )),
-        requestedVersion = None
-      )
+              countryPickerLabels = None)))),
+        requestedVersion = None)
 
       res mustBe expected
     }
 
     s"should return a journey config for $PackingDetails" in {
-      val request = FakeRequest("foo","bar")
+      val request = FakeRequest("foo", "bar")
       val exampleSdilIdWeGenerate: String = "wizz"
       val res = service.createJourneyConfig(PackingDetails, exampleSdilIdWeGenerate)(request, implicitly)
-      val expected =  JourneyConfig(
+      val expected = JourneyConfig(
         version = 2,
         options = JourneyOptions(
           continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/packing-site-details/$exampleSdilIdWeGenerate",
@@ -487,8 +467,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           ukMode = Some(true),
           selectPageConfig = Some(SelectPageConfig(
             proposalListLimit = Some(10),
-            showSearchAgainLink = Some(true)
-          )),
+            showSearchAgainLink = Some(true))),
           showBackButtons = Some(true),
           disableTranslations = Some(true),
           allowedCountryCodes = None,
@@ -496,23 +475,19 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             showSearchAgainLink = Some(true),
             showSubHeadingAndInfo = Some(true),
             showChangeLink = Some(true),
-            showConfirmChangeText = Some(true)
-          )),
+            showConfirmChangeText = Some(true))),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = frontendAppConfig.timeout,
             timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
-            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
-          )),
+            timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url))),
           serviceHref = Some(frontendAppConfig.sdilHomeUrl),
-          pageHeadingStyle = Some("govuk-heading-l")
-        ),
+          pageHeadingStyle = Some("govuk-heading-l")),
         labels = Some(
           JourneyLabels(
             en = Some(LanguageLabels(
               appLevelLabels = Some(AppLevelLabels(
                 navTitle = Some("Soft Drinks Industry Levy"),
-                phaseBannerHtml = None
-              )),
+                phaseBannerHtml = None)),
               selectPageLabels = None,
               lookupPageLabels = Some(
                 LookupPageLabels(
@@ -527,15 +502,11 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
                   townLabel = Some("Address line 4 (optional)"),
-                  postcodeLabel= Some("Postcode"),
-                  organisationLabel = Some("Packaging site name (optional)"))
-              ),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Packaging site name (optional)"))),
               confirmPageLabels = None,
-              countryPickerLabels = None
-            ))
-          )),
-        requestedVersion = None
-      )
+              countryPickerLabels = None)))),
+        requestedVersion = None)
 
       res mustBe expected
     }

@@ -20,44 +20,42 @@ import controllers.actions._
 import forms.PackAtBusinessAddressFormProvider
 import handlers.ErrorHandler
 import models.backend.Site
-import models.{Mode, SdilReturn}
+import models.{ Mode, SdilReturn }
 import navigation.Navigator
 import pages.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import services.{AddressLookupService, PackingDetails}
+import services.{ AddressLookupService, PackingDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import utilitlies.{AddressHelper, GenericLogger, UserTypeCheck}
+import utilitlies.{ AddressHelper, GenericLogger, UserTypeCheck }
 import viewmodels.AddressFormattingHelper
 import views.html.PackAtBusinessAddressView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-
-class PackAtBusinessAddressController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionRepository: SessionRepository,
-                                         val navigator: Navigator,
-                                         val errorHandler: ErrorHandler,
-                                         val genericLogger: GenericLogger,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         addressLookupService: AddressLookupService,
-                                         checkReturnSubmission: CheckingSubmissionAction,
-                                         formProvider: PackAtBusinessAddressFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: PackAtBusinessAddressView
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper with AddressHelper {
+class PackAtBusinessAddressController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  addressLookupService: AddressLookupService,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: PackAtBusinessAddressFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: PackAtBusinessAddressView)(implicit ec: ExecutionContext) extends ControllerHelper with AddressHelper {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
     implicit request =>
       val formattedAddress: HtmlContent = AddressFormattingHelper.formatBusinessAddress(request.subscription.address, Some(request.subscription.orgName))
-      val newPacker = UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers),request.subscription)
+      val newPacker = UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription)
       val noExistingProductionSites = request.subscription.productionSites.isEmpty
 
       lazy val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
@@ -80,26 +78,22 @@ class PackAtBusinessAddressController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            onwardUrl <-
-              if(value){
-                updateDatabaseWithoutRedirect(updatedAnswers.copy(
-                  packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
-                    generateId ->
-                      Site(
-                        address = request.subscription.address,
-                        ref = None,
-                        tradingName = Some(request.subscription.orgName),
-                        closureDate = None
-                      )
-                )), PackAtBusinessAddressPage).flatMap(_ =>
-                  Future.successful(routes.PackagingSiteDetailsController.onPageLoad(mode).url))
-              } else {
-                updateDatabaseWithoutRedirect(updatedAnswers, PackAtBusinessAddressPage).flatMap(_ =>
-                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
-              }
+            onwardUrl <- if (value) {
+              updateDatabaseWithoutRedirect(updatedAnswers.copy(
+                packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
+                  generateId ->
+                    Site(
+                      address = request.subscription.address,
+                      ref = None,
+                      tradingName = Some(request.subscription.orgName),
+                      closureDate = None))), PackAtBusinessAddressPage).flatMap(_ =>
+                Future.successful(routes.PackagingSiteDetailsController.onPageLoad(mode).url))
+            } else {
+              updateDatabaseWithoutRedirect(updatedAnswers, PackAtBusinessAddressPage).flatMap(_ =>
+                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
+            }
           } yield {
             Redirect(onwardUrl)
-          }
-      )
+          })
   }
 }

@@ -30,9 +30,10 @@ object TotalForQuarter {
       calculateHighBand(userAnswers, higherBandCostPerLitre, smallProducer)
   }
 
-  private def calculateLowBand(userAnswers: UserAnswers,
-                                              lowBandCostPerLitre: BigDecimal,
-                                              smallProducer: Boolean): BigDecimal = {
+  private def calculateLowBand(
+    userAnswers: UserAnswers,
+    lowBandCostPerLitre: BigDecimal,
+    smallProducer: Boolean): BigDecimal = {
 
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
@@ -49,9 +50,10 @@ object TotalForQuarter {
     }
   }
 
-  private def calculateHighBand(userAnswers: UserAnswers,
-                                               highBandCostPerLitre: BigDecimal,
-                                               smallProducer: Boolean): BigDecimal = {
+  private def calculateHighBand(
+    userAnswers: UserAnswers,
+    highBandCostPerLitre: BigDecimal,
+    smallProducer: Boolean): BigDecimal = {
 
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)

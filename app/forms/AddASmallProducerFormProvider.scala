@@ -20,8 +20,7 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{AddASmallProducer, UserAnswers}
-
+import models.{ AddASmallProducer, UserAnswers }
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
@@ -31,8 +30,6 @@ class AddASmallProducerFormProvider @Inject() extends Mappings {
         "producerName" -> optional(text().verifying(maxLength(160, "addASmallProducer.error.producerName.maxLength"))),
         "referenceNumber" -> sdilReference("addASmallProducer.error.referenceNumber.required", userAnswers.id),
         "lowBand" -> litres("lowBand"),
-        "highBand" -> litres("highBand")
-      )(AddASmallProducer.apply)(AddASmallProducer.unapply)
-    )
+        "highBand" -> litres("highBand"))(AddASmallProducer.apply)(AddASmallProducer.unapply))
   }
 }

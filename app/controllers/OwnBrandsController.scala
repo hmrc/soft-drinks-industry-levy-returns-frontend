@@ -21,28 +21,29 @@ import forms.OwnBrandsFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
-import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage}
+import pages.{ BrandsPackagedAtOwnSitesPage, OwnBrandsPage }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.OwnBrandsView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class OwnBrandsController @Inject()(override val messagesApi: MessagesApi,
-                                     val sessionRepository: SessionRepository,
-                                     val navigator: Navigator,
-                                     val errorHandler: ErrorHandler,
-                                     val genericLogger: GenericLogger,
-                                     identify: IdentifierAction,
-                                     getData: DataRetrievalAction,
-                                     requireData: DataRequiredAction,
-                                     checkReturnSubmission: CheckingSubmissionAction,
-                                     formProvider: OwnBrandsFormProvider,
-                                     val controllerComponents: MessagesControllerComponents,
-                                     view: OwnBrandsView)(implicit ec: ExecutionContext) extends ControllerHelper {
+class OwnBrandsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: OwnBrandsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: OwnBrandsView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
@@ -62,7 +63,6 @@ class OwnBrandsController @Inject()(override val messagesApi: MessagesApi,
         value => {
           val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(OwnBrandsPage, BrandsPackagedAtOwnSitesPage, value)
           updateDatabaseAndRedirect(updatedUserAnswers, OwnBrandsPage, mode)
-        }
-      )
+        })
   }
 }

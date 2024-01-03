@@ -22,12 +22,9 @@ import errors.SessionDatabaseInsertError
 import forms.ClaimCreditsForExportsFormProvider
 import helpers.LoggerHelper
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.ClaimCreditsForExportsPage
 import play.api.data.Form
 import play.api.inject.bind
@@ -122,8 +119,7 @@ class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar wi
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -197,8 +193,7 @@ class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar wi
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
         val request = FakeRequest(POST, claimCreditsForExportsRoute).withFormUrlEncodedBody(("value", "false"))

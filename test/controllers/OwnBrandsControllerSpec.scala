@@ -22,11 +22,9 @@ import errors.SessionDatabaseInsertError
 import forms.OwnBrandsFormProvider
 import helpers.LoggerHelper
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.OwnBrandsPage
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -105,8 +103,7 @@ class OwnBrandsControllerSpec extends SpecBase with MockitoSugar with LoggerHelp
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -150,8 +147,7 @@ class OwnBrandsControllerSpec extends SpecBase with MockitoSugar with LoggerHelp
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
         val request = FakeRequest(POST, ownBrandsRoute).withFormUrlEncodedBody(("value", "false"))
@@ -201,25 +197,25 @@ class OwnBrandsControllerSpec extends SpecBase with MockitoSugar with LoggerHelp
     }
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
-        val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
-        val app =
-          applicationBuilder(Some(completedUserAnswers))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-            .build()
+      val app =
+        applicationBuilder(Some(completedUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
-        running(app) {
-          withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-            val request = FakeRequest(POST, ownBrandsRoute).withFormUrlEncodedBody(("value", "false"))
-            await(route(app, request).value)
-            events.collectFirst {
-              case event =>
-                event.getLevel.levelStr mustEqual ("ERROR")
-                event.getMessage mustEqual ("Failed to set value in session repository while attempting set on ownBrands")
-            }.getOrElse(fail("No logging captured"))
-          }
+      running(app) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(POST, ownBrandsRoute).withFormUrlEncodedBody(("value", "false"))
+          await(route(app, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustEqual ("ERROR")
+              event.getMessage mustEqual ("Failed to set value in session repository while attempting set on ownBrands")
+          }.getOrElse(fail("No logging captured"))
         }
+      }
     }
 
   }

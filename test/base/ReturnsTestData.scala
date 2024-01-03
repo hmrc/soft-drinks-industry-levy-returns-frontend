@@ -16,15 +16,15 @@
 
 package base
 
-import models.alf.{AlfAddress, AlfResponse}
-import models.backend.{Contact, Site, UkAddress}
-import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{Amounts, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, UserAnswers}
-import play.api.libs.json.{JsObject, Json, Writes}
+import models.alf.{ AlfAddress, AlfResponse }
+import models.backend.{ Contact, Site, UkAddress }
+import models.retrieved.{ RetrievedActivity, RetrievedSubscription }
+import models.{ Amounts, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer, UserAnswers }
+import play.api.libs.json.{ JsObject, Json, Writes }
 import queries.Settable
 
 import java.time.LocalDate
-import scala.util.{Failure, Try}
+import scala.util.{ Failure, Try }
 
 object ReturnsTestData {
 
@@ -56,30 +56,25 @@ object ReturnsTestData {
   val smallProducerList: List[SmallProducer] = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
   val smallProducerListWithTwoProducers: List[SmallProducer] = List(
     SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)),
-    SmallProducer(producerName, sdilReference, (litres, litres))
-  )
+    SmallProducer(producerName, sdilReference, (litres, litres)))
   val smallProducerListOnlySuperCola: List[SmallProducer] = List(SmallProducer(producerName, sdilReference, (litres, litres)))
 
   val customerAddressJsonError: JsObject = Json.obj(
     "address" -> Json.obj(
-      "lines" -> 4
-    )
-  )
+      "lines" -> 4))
   val customerAddressMax: AlfResponse = AlfResponse(
     AlfAddress(
       Some(organisation),
       List(addressLine1, addressLine2, addressLine3, addressLine4),
       Some(postcode),
-      Some(countryCode)
-    ))
+      Some(countryCode)))
 
   val customerAddressMaxJson = Json.toJson(AlfResponse(
     AlfAddress(
       Some(organisation),
       List(addressLine1, addressLine2, addressLine3, addressLine4),
       Some(postcode),
-      Some(countryCode)
-    )))
+      Some(countryCode))))
 
   val returnPeriod = ReturnPeriod(2022, 1)
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
@@ -99,8 +94,7 @@ object ReturnsTestData {
       "producerName" -> baseAlias,
       "referenceNumber" -> sdilNumber,
       "lowBand" -> baseLitreage,
-      "highBand" -> baseLitreage
-    )
+      "highBand" -> baseLitreage)
 
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
@@ -134,12 +128,10 @@ object ReturnsTestData {
         UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
         Some("96"),
         Some("Star Products Ltd"),
-        Some(LocalDate.of(2017, 2, 11)))
-    ),
+        Some(LocalDate.of(2017, 2, 11)))),
     warehouseSites = List(),
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
+    deregDate = None)
 
   lazy val subscriptionWithCopacker = RetrievedSubscription(
     utr = "0000000022",
@@ -152,8 +144,7 @@ object ReturnsTestData {
     productionSites = List(),
     warehouseSites = List(),
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
+    deregDate = None)
 
   lazy val subscriptionWithSmallProducerActivity = aSubscription.copy(
     activity = RetrievedActivity(
@@ -161,15 +152,12 @@ object ReturnsTestData {
       largeProducer = false,
       contractPacker = false,
       importer = false,
-      voluntaryRegistration = false
-    )
-  )
+      voluntaryRegistration = false))
 
   lazy val emptyUserAnswers = UserAnswers(sdilNumber, defaultReturnsPeriod, Json.obj())
   val warehouseMap: Map[String, Site] = Map(("1", Site(
     tradingName = Some("Wild Lemonade Group"),
-    address = UkAddress(List("33", "Rhes", "Priordy", "East London"), "E73 2RP"),
-  )))
+    address = UkAddress(List("33", "Rhes", "Priordy", "East London"), "E73 2RP"))))
   lazy val failingUserAnswers: UserAnswers = new UserAnswers("sdilId", defaultReturnsPeriod, smallProducerList = smallProducerList,
     packagingSiteList = packagingSiteListWith2, warehouseList = warehouseMap) {
     override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
@@ -187,7 +175,7 @@ object ReturnsTestData {
     Some("Wild Lemonade Group"),
     None)
 
-    val WarehouseSite1 = Site(
+  val WarehouseSite1 = Site(
     tradingName = Some("Wild Lemonade Group"),
     address = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"))
 
@@ -203,14 +191,13 @@ object ReturnsTestData {
     ReturnsVariation(
       orgName = aSubscription.orgName,
       ppobAddress = aSubscription.address,
-      importer = (false, (0,0)),
-      packer = (false, (0,0)),
+      importer = (false, (0, 0)),
+      packer = (false, (0, 0)),
       warehouses = List.empty,
       packingSites = List.empty,
       phoneNumber = aSubscription.contact.phoneNumber,
       email = aSubscription.contact.email,
-      taxEstimation = 0
-    )
+      taxEstimation = 0)
   val zero = BigDecimal(0.00)
   val amountsZero = Amounts(zero, zero, zero)
   val amounts = Amounts(1000, 3000, 2000)

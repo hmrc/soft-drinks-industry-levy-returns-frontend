@@ -17,17 +17,16 @@
 package services
 
 import base.ReturnsTestData._
-import base.{SpecBase, UserAnswersTestData}
+import base.{ SpecBase, UserAnswersTestData }
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.{ReturnPeriod, SdilReturn}
-import org.mockito.MockitoSugar.{mock, when}
+import models.{ ReturnPeriod, SdilReturn }
+import org.mockito.MockitoSugar.{ mock, when }
 import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
 class ReturnServiceSpec extends SpecBase {
-
 
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockConfig = mock[FrontendAppConfig]
@@ -43,7 +42,7 @@ class ReturnServiceSpec extends SpecBase {
 
       val res = service.getPendingReturns("123456789")
 
-      whenReady(res) {result =>
+      whenReady(res) { result =>
         result mustBe List.empty[ReturnPeriod]
       }
     }
@@ -59,27 +58,26 @@ class ReturnServiceSpec extends SpecBase {
 
         val res = service.sendReturn(aSubscription, returnPeriod, emptyUserAnswers)
 
-        whenReady(res) {result =>
+        whenReady(res) { result =>
           result mustBe ((): Unit)
         }
       }
 
       "when a none nil return is being submitted" in {
         val userAnswers = UserAnswersTestData.withQuestionsAllTrueAllLitresInAllBands1SmallProducer
-        val returnFromUserAnswers = SdilReturn((1000, 1000),
+        val returnFromUserAnswers = SdilReturn(
+          (1000, 1000),
           (1000, 1000),
           userAnswers.smallProducerList,
           (1000, 1000),
           (1000, 1000),
           (1000, 1000),
-          (1000, 1000)
-        )
+          (1000, 1000))
         val returnVariation = returnVariationForNilReturn.copy(
           importer = (true, (8000, 8000)),
           packer = (true, (8000, 12000)),
           packingSites = userAnswers.packagingSiteList.values.toList,
-          taxEstimation = 5040.00
-        )
+          taxEstimation = 5040.00)
         when(mockSdilConnector.returns_update(aSubscription.utr, returnPeriod, returnFromUserAnswers)(hc)).thenReturn(Future.successful(Some(200)))
         when(mockSdilConnector.returns_variation(aSubscription.sdilRef, returnVariation)(hc)).thenReturn(Future.successful(Some(204)))
         val res = service.sendReturn(aSubscription, returnPeriod, userAnswers)

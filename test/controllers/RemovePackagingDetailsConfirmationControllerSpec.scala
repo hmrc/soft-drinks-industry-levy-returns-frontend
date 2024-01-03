@@ -21,15 +21,15 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.RemovePackagingDetailsConfirmationFormProvider
 import helpers.LoggerHelper
-import models.backend.{Site, UkAddress}
-import models.{CheckMode, Mode, NormalMode}
-import navigation.{FakeNavigator, Navigator}
+import models.backend.{ Site, UkAddress }
+import models.{ CheckMode, Mode, NormalMode }
+import navigation.{ FakeNavigator, Navigator }
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+
 import org.scalatest.Assertion
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -60,15 +60,15 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
     Map(
       "No Trading name" -> Site(
-      UkAddress(List("a", "b"), "c"),
-      None,
-      None,
-      None),
-    "Trading Name" -> Site(
-      UkAddress(List("a", "b"), "c"),
-      None,
-      Some("trading"),
-      None),
+        UkAddress(List("a", "b"), "c"),
+        None,
+        None,
+        None),
+      "Trading Name" -> Site(
+        UkAddress(List("a", "b"), "c"),
+        None,
+        Some("trading"),
+        None),
       "Trading Name AND Long Address AND Long Postcode" -> Site(
         UkAddress(List("abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg"), "abcdefg abcdefg abcdefg abcdefg"),
         None,
@@ -83,31 +83,30 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
         UkAddress(List.empty, "abcdefg abcdefg abcdefg abcdefg"),
         None,
         None,
-        None)
-    ).foreach { test =>
-      s"must return OK and the correct view for a GET when packaging site exists for ${test._1}" in {
-        val ref: String = "foo"
-        val htmlExpectedInView: Html = AddressFormattingHelper.addressFormatting(test._2.address, test._2.tradingName)
+        None)).foreach { test =>
+        s"must return OK and the correct view for a GET when packaging site exists for ${test._1}" in {
+          val ref: String = "foo"
+          val htmlExpectedInView: Html = AddressFormattingHelper.addressFormatting(test._2.address, test._2.tradingName)
 
-        val htmlExpectedAfterRender: Html = Html(htmlExpectedInView.body.replace("<br>", " "))
-        val userAnswers = emptyUserAnswers.copy(packagingSiteList = Map(ref -> test._2))
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+          val htmlExpectedAfterRender: Html = Html(htmlExpectedInView.body.replace("<br>", " "))
+          val userAnswers = emptyUserAnswers.copy(packagingSiteList = Map(ref -> test._2))
+          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        running(application) {
-          val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
+          running(application) {
+            val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
 
-          val result = route(application, request).value
+            val result = route(application, request).value
 
-          val view = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
+            val view = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
 
-          status(result) mustEqual OK
-          val contentOfResult: String = contentAsString(result)
+            status(result) mustEqual OK
+            val contentOfResult: String = contentAsString(result)
 
-          contentOfResult mustEqual view(form, NormalMode, ref, htmlExpectedInView)(request, messages(application)).toString
-          commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref)
+            contentOfResult mustEqual view(form, NormalMode, ref, htmlExpectedInView)(request, messages(application)).toString
+            commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref)
+          }
         }
       }
-    }
 
     "must redirect to returns sent page if return is already submitted" in {
       val ref: String = "foo"
@@ -205,8 +204,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -231,8 +229,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -366,8 +363,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
         applicationBuilder(userAnswersWithPackagingSites)
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(app) {

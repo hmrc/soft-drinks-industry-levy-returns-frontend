@@ -17,7 +17,7 @@
 package viewmodels
 
 import models.backend.UkAddress
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.{ Html, HtmlFormat }
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 object AddressFormattingHelper {
@@ -39,28 +39,24 @@ object AddressFormattingHelper {
     val breakLine = Html("<br>")
 
     addressFormat match {
-      case SeparatePostCodeAddressNoTradingName =>  HtmlFormat.fill(Seq(
+      case SeparatePostCodeAddressNoTradingName => HtmlFormat.fill(Seq(
         htmlSiteAddress,
         breakLine,
-        htmlPostcode
-      ))
-      case AddressNoTradingName =>  HtmlFormat.fill(Seq(
+        htmlPostcode))
+      case AddressNoTradingName => HtmlFormat.fill(Seq(
         htmlSiteAddress,
-        htmlPostcode
-      ))
+        htmlPostcode))
       case AddressWithTradingName => HtmlFormat.fill(Seq(
         htmlTradingName,
         breakLine,
         htmlSiteAddress,
-        htmlPostcode
-      ))
+        htmlPostcode))
       case SeparatePostCodeAddressWithTradingName => HtmlFormat.fill(Seq(
         htmlTradingName,
         breakLine,
         htmlSiteAddress,
         breakLine,
-        htmlPostcode
-      ))
+        htmlPostcode))
     }
   }
 

@@ -23,12 +23,9 @@ import errors.SessionDatabaseInsertError
 import forms.ClaimCreditsForLostDamagedFormProvider
 import helpers.LoggerHelper
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.ClaimCreditsForLostDamagedPage
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -126,8 +123,7 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
           .build()
 
       running(application) {
@@ -195,8 +191,9 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
     "must redirect to the next page removing litres data from user answers, when valid data is submitted" in {
       lazy val completedUserAnswersWithCreditLostDamaged = emptyUserAnswers.copy(data = Json.obj("ownBrands" -> false, "packagedContractPacker" ->
         false, "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> false, "broughtIntoUkFromSmallProducers" -> false, "claimCreditsForExports" ->
-          false, "claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj("lowBand" ->89032484,
-          "highBand" -> 87291372)))
+        false, "claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj(
+        "lowBand" -> 89032484,
+        "highBand" -> 87291372)))
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
@@ -204,8 +201,7 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
       val application =
         applicationBuilder(userAnswers = Some(completedUserAnswersWithCreditLostDamaged))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            bind[SessionRepository].toInstance(mockSessionRepository)).build()
 
       running(application) {
         val request = FakeRequest(POST, claimCreditsForLostDamagedRoute).withFormUrlEncodedBody(("value", "false"))
@@ -229,8 +225,7 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
           .build()
 
       running(application) {
@@ -255,8 +250,7 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
           .build()
 
       running(application) {

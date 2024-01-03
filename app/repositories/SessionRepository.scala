@@ -17,7 +17,7 @@
 package repositories
 
 import config.FrontendAppConfig
-import errors.{ReturnsErrors, SessionDatabaseInsertError}
+import errors.{ ReturnsErrors, SessionDatabaseInsertError }
 import models.UserAnswers
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
@@ -25,31 +25,26 @@ import services.Encryption
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import java.time.{Clock, Instant}
+import java.time.{ Clock, Instant }
 import java.util.concurrent.TimeUnit
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class SessionRepository @Inject()(
-                                   mongoComponent: MongoComponent,
-                                   appConfig: FrontendAppConfig,
-                                   clock: Clock
-                                 )(implicit ec: ExecutionContext, encryption: Encryption)
+class SessionRepository @Inject() (
+  mongoComponent: MongoComponent,
+  appConfig: FrontendAppConfig,
+  clock: Clock)(implicit ec: ExecutionContext, encryption: Encryption)
   extends PlayMongoRepository[UserAnswers](
     collectionName = "user-answers",
     mongoComponent = mongoComponent,
-    domainFormat   = UserAnswers.MongoFormats.format,
-    indexes        = Seq(
+    domainFormat = UserAnswers.MongoFormats.format,
+    indexes = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),
         IndexOptions()
           .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
-      )
-    )
-  ) {
-
+          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)))) {
 
   private def byId(id: String): Bson = Filters.equal("_id", id)
 
@@ -57,8 +52,7 @@ class SessionRepository @Inject()(
     collection
       .updateOne(
         filter = byId(id),
-        update = Updates.set("lastUpdated", Instant.now(clock))
-      )
+        update = Updates.set("lastUpdated", Instant.now(clock)))
       .toFuture()
       .map(_ => Right(true))
       .recover {
@@ -80,13 +74,12 @@ class SessionRepository @Inject()(
 
     collection
       .replaceOne(
-        filter      = byId(updatedAnswers.id),
+        filter = byId(updatedAnswers.id),
         replacement = updatedAnswers,
-        options     = ReplaceOptions().upsert(true)
-      )
+        options = ReplaceOptions().upsert(true))
       .toFuture()
       .map(_ => Right(true))
-      .recover{
+      .recover {
         case _ => Left(SessionDatabaseInsertError)
       }
   }

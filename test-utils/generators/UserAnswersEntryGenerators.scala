@@ -20,14 +20,14 @@ import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
 import pages._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
   implicit lazy val arbitraryRemoveWarehouseUserAnswersEntry: Arbitrary[(RemoveWarehouseConfirmPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[RemoveWarehouseConfirmPage.type]
+        page <- arbitrary[RemoveWarehouseConfirmPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -35,18 +35,18 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryRemovePackagingDetailsConfirmationUserAnswersEntry: Arbitrary[(RemovePackagingDetailsConfirmationPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[RemovePackagingDetailsConfirmationPage.type]
+        page <- arbitrary[RemovePackagingDetailsConfirmationPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
   implicit lazy val arbitraryproductionSiteDetailsUserAnswersEntry: Arbitrary[(PackagingSiteDetailsPage.type, JsValue)] =
-  Arbitrary {
-    for {
-      page <- arbitrary[PackagingSiteDetailsPage.type]
-      value <- arbitrary[Boolean].map(Json.toJson(_))
-    } yield (page, value)
-  }
+    Arbitrary {
+      for {
+        page <- arbitrary[PackagingSiteDetailsPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
   implicit lazy val arbitraryPackAtBusinessAddressUserAnswersEntry: Arbitrary[(PackAtBusinessAddressPage.type, JsValue)] =
     Arbitrary {
       for {
@@ -58,7 +58,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitrarySecondaryWarehouseDetailsUserAnswersEntry: Arbitrary[(SecondaryWarehouseDetailsPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[SecondaryWarehouseDetailsPage.type]
+        page <- arbitrary[SecondaryWarehouseDetailsPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -66,7 +66,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryRemoveSmallProducerConfirmUserAnswersEntry: Arbitrary[(RemoveSmallProducerConfirmPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[RemoveSmallProducerConfirmPage.type]
+        page <- arbitrary[RemoveSmallProducerConfirmPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -74,7 +74,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitrarySmallProducerDetailsUserAnswersEntry: Arbitrary[(SmallProducerDetailsPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[SmallProducerDetailsPage.type]
+        page <- arbitrary[SmallProducerDetailsPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -82,7 +82,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryAddASmallProducerUserAnswersEntry: Arbitrary[(AddASmallProducerPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[AddASmallProducerPage.type]
+        page <- arbitrary[AddASmallProducerPage.type]
         value <- arbitrary[AddASmallProducer].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -90,7 +90,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryClaimCreditsForExportsUserAnswersEntry: Arbitrary[(ClaimCreditsForExportsPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ClaimCreditsForExportsPage.type]
+        page <- arbitrary[ClaimCreditsForExportsPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -98,7 +98,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryBroughtIntoUkFromSmallProducersUserAnswersEntry: Arbitrary[(BroughtIntoUkFromSmallProducersPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[BroughtIntoUkFromSmallProducersPage.type]
+        page <- arbitrary[BroughtIntoUkFromSmallProducersPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -106,7 +106,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryAskSecondaryWarehouseInReturnUserAnswersEntry: Arbitrary[(AskSecondaryWarehouseInReturnPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[AskSecondaryWarehouseInReturnPage.type]
+        page <- arbitrary[AskSecondaryWarehouseInReturnPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -114,7 +114,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryHowManyCreditsForLostDamagedUserAnswersEntry: Arbitrary[(HowManyCreditsForLostDamagedPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[HowManyCreditsForLostDamagedPage.type]
+        page <- arbitrary[HowManyCreditsForLostDamagedPage.type]
         value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -122,7 +122,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryHowManyCreditsForExportUserAnswersEntry: Arbitrary[(HowManyCreditsForExportPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[HowManyCreditsForExportPage.type]
+        page <- arbitrary[HowManyCreditsForExportPage.type]
         value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -130,7 +130,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryBoughtIntoUKUserAnswersEntry: Arbitrary[(BroughtIntoUKPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[BroughtIntoUKPage.type]
+        page <- arbitrary[BroughtIntoUKPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -138,16 +138,15 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryClaimCreditsForLostDamagedUserAnswersEntry: Arbitrary[(ClaimCreditsForLostDamagedPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ClaimCreditsForLostDamagedPage.type]
+        page <- arbitrary[ClaimCreditsForLostDamagedPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryHowManyBroughtIntoTheUKFromSmallProducersUserAnswersEntry:
-    Arbitrary[(HowManyBroughtIntoTheUKFromSmallProducersPage.type, JsValue)] =
+  implicit lazy val arbitraryHowManyBroughtIntoTheUKFromSmallProducersUserAnswersEntry: Arbitrary[(HowManyBroughtIntoTheUKFromSmallProducersPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[HowManyBroughtIntoTheUKFromSmallProducersPage.type]
+        page <- arbitrary[HowManyBroughtIntoTheUKFromSmallProducersPage.type]
         value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -155,7 +154,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryHowManyAsAContractPackerUserAnswersEntry: Arbitrary[(HowManyAsAContractPackerPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[HowManyAsAContractPackerPage.type]
+        page <- arbitrary[HowManyAsAContractPackerPage.type]
         value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -163,25 +162,23 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryHowManyBoughtIntoUkUserAnswersEntry: Arbitrary[(HowManyBroughtIntoUkPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[HowManyBroughtIntoUkPage.type]
+        page <- arbitrary[HowManyBroughtIntoUkPage.type]
         value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
 
-
   implicit lazy val arbitraryPackagedContractPackerUserAnswersEntry: Arbitrary[(PackagedContractPackerPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[PackagedContractPackerPage.type]
+        page <- arbitrary[PackagedContractPackerPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
-
   implicit lazy val arbitraryOwnBrandsUserAnswersEntry: Arbitrary[(OwnBrandsPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[OwnBrandsPage.type]
+        page <- arbitrary[OwnBrandsPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -189,7 +186,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryBrandsPackagedAtOwnSitesUserAnswersEntry: Arbitrary[(BrandsPackagedAtOwnSitesPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[BrandsPackagedAtOwnSitesPage.type]
+        page <- arbitrary[BrandsPackagedAtOwnSitesPage.type]
         value <- arbitrary[LitresInBands].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -197,7 +194,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryExemptionsForSmallProducersUserAnswersEntry: Arbitrary[(ExemptionsForSmallProducersPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ExemptionsForSmallProducersPage.type]
+        page <- arbitrary[ExemptionsForSmallProducersPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }

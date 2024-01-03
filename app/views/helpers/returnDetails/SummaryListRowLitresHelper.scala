@@ -21,7 +21,7 @@ import models.LitresInBands
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Actions, SummaryListRow }
 import utilitlies.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -34,7 +34,6 @@ trait SummaryListRowLitresHelper {
   val hasZeroLevy: Boolean = false
   val isNegativeLevy: Boolean = false
 
-
   val lowBand = "lowband"
   val highBand = "highband"
 
@@ -43,8 +42,7 @@ trait SummaryListRowLitresHelper {
       bandRow(litresInBands.lowBand, lowBand, isCheckAnswers),
       bandLevyRow(litresInBands.lowBand, config.lowerBandCostPerLitre, lowBand),
       bandRow(litresInBands.highBand, highBand, isCheckAnswers),
-      bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand)
-    )
+      bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand))
   }
 
   private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
@@ -58,11 +56,10 @@ trait SummaryListRowLitresHelper {
       key = key,
       value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),
       classes = "govuk-summary-list__row--no-border",
-      actions = action(isCheckAnswers, band)
-    )
-}
+      actions = action(isCheckAnswers, band))
+  }
 
-private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
+  private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
     val key = if (band == lowBand) {
       "lowBandLevy"
     } else {
@@ -74,8 +71,7 @@ private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String
     SummaryListRow(
       key = key,
       value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),
-      classes = "govuk-summary-list__row--no-actions"
-    )
+      classes = "govuk-summary-list__row--no-actions")
   }
 
   private def levy(litres: BigDecimal, bandCostPerLitre: BigDecimal): BigDecimal = {
@@ -89,7 +85,8 @@ private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String
   }
 
   def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if (isCheckAnswers) {
-    Some(Actions("",
+    Some(Actions(
+      "",
       items =
         Seq(
           ActionItemViewModel("site.change", actionUrl)

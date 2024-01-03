@@ -19,24 +19,24 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import orchestrators.ReturnsOrchestrator
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilitlies.CurrencyFormatter
 import views.html.ReturnSentView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
-                                      override val messagesApi: MessagesApi,
-                                      config:FrontendAppConfig,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      view: ReturnSentView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class ReturnSentController @Inject() (
+  returnsOrchestrator: ReturnsOrchestrator,
+  override val messagesApi: MessagesApi,
+  config: FrontendAppConfig,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: ReturnSentView)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -48,12 +48,12 @@ class ReturnSentController @Inject()(returnsOrchestrator: ReturnsOrchestrator,
         val returnPeriod = request.returnPeriod
 
         returnsOrchestrator.getCalculatedAmountsForReturnSent(sdilRef, userAnswers, returnPeriod).map { amounts =>
-          Ok(view(returnPeriod,
+          Ok(view(
+            returnPeriod,
             userAnswers,
             amounts,
             subscription,
-            CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total)
-          )(implicitly, implicitly, config))
+            CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total))(implicitly, implicitly, config))
         }
       } else {
         Future.successful(Redirect(routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false)))

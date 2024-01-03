@@ -25,6 +25,5 @@ class RemoveSmallProducerConfirmFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("removeSmallProducerConfirm.error.required")
-    )
+      "value" -> boolean("removeSmallProducerConfirm.error.required"))
 }

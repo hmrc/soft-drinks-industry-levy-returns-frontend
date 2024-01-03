@@ -17,7 +17,7 @@
 package pages
 
 import controllers.routes
-import models.{AddASmallProducer, CheckMode, NormalMode}
+import models.{ AddASmallProducer, CheckMode, NormalMode }
 import pages.behaviours.PageBehaviours
 
 class AddASmallProducerPageSpec extends PageBehaviours {

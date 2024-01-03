@@ -16,15 +16,14 @@
 
 package controllers.test
 
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.{ Inject, Singleton }
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsObject, JsString, JsValue, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.libs.json.{ JsObject, JsString, JsValue, Json }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 @Singleton
-class AddressFrontendStubController @Inject()
-(val controllerComponents: MessagesControllerComponents) extends FrontendBaseController with I18nSupport {
+class AddressFrontendStubController @Inject() (val controllerComponents: MessagesControllerComponents) extends FrontendBaseController with I18nSupport {
 
   val exampleId: String = "foobarwizzbang"
   lazy val address = Json.obj(
@@ -32,20 +31,16 @@ class AddressFrontendStubController @Inject()
     ("lines", Json.toJson(List(
       "10 Other Place",
       "Some District",
-      "Anytown"))
-    ),
+      "Anytown"))),
     ("postcode", JsString("ZZ1 1ZZ")),
     ("country", Json.obj(
       ("code", JsString("GB")),
-      ("name", JsString("United Kingdom"))
-    ))
-  )
+      ("name", JsString("United Kingdom")))))
   lazy val addressResponse =
     Json.obj(
       ("auditRef", JsString("bed4bd24-72da-42a7-9338-f43431b7ed72")),
       ("id", JsString("GB990091234524")),
-      ("address", address)
-    )
+      ("address", address))
 
   def initialise(): Action[JsValue] = Action(parse.json) { request =>
     val continueUrl: String = (request.body.as[JsObject] \ "options" \ "continueUrl").get.as[String]
@@ -53,6 +48,6 @@ class AddressFrontendStubController @Inject()
   }
 
   def addresses(id: String): Action[AnyContent] = Action { _ =>
-  Ok(addressResponse)
+    Ok(addressResponse)
   }
 }

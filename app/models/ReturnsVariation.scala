@@ -16,9 +16,9 @@
 
 package models
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{Format, JsPath, Json}
+import models.backend.{ Site, UkAddress }
+import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
+import play.api.libs.json.{ Format, JsPath, Json }
 
 case class ReturnsVariation(
   orgName: String,
@@ -34,10 +34,9 @@ object ReturnsVariation {
 
   implicit val longTupleFormatter: Format[(Long, Long)] = (
     (JsPath \ "lower").format[Long] and
-      (JsPath \ "higher").format[Long]
-    )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
-    Tuple2.unapply(x)
-  }))
+    (JsPath \ "higher").format[Long])((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
+      Tuple2.unapply(x)
+    }))
 
   implicit val bllFormat: Format[(Boolean, (Long, Long))] = Json.format[(Boolean, (Long, Long))]
   implicit val format: Format[ReturnsVariation] = Json.format[ReturnsVariation]

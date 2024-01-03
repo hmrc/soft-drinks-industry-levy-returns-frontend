@@ -19,7 +19,7 @@ package forms
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.data.{Form, FormError}
+import play.api.data.{ Form, FormError }
 
 trait FormSpec extends AnyFreeSpec with Matchers with OptionValues {
 
@@ -32,8 +32,7 @@ trait FormSpec extends AnyFreeSpec with Matchers with OptionValues {
       },
       form => {
         fail("Expected a validation error when binding the form, but it was bound successfully.")
-      }
-    )
+      })
   }
 
   def error(key: String, value: String, args: Any*) = Seq(FormError(key, value, args))

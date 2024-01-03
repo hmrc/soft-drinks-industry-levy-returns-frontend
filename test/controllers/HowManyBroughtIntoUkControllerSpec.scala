@@ -21,13 +21,10 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.HowManyBoughtIntoUkFormProvider
 import helpers.LoggerHelper
-import models.{LitresInBands, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers
+import models.{ LitresInBands, NormalMode, UserAnswers }
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ ArgumentMatchers, MockitoSugar }
 import pages.HowManyBroughtIntoUkPage
 import play.api.data.Form
 import play.api.inject.bind
@@ -41,7 +38,7 @@ import views.html.HowManyBoughtIntoUkView
 
 import scala.concurrent.Future
 
-class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with LoggerHelper{
+class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -60,10 +57,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
     Json.obj(
       HowManyBroughtIntoUkPage.toString -> Json.obj(
         "lowBand" -> value1,
-        "highBand" -> value2
-      )
-    )
-  )
+        "highBand" -> value2)))
 
   "HowManyBroughtIntoUk Controller" - {
 
@@ -136,8 +130,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+            bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {

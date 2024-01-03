@@ -26,10 +26,9 @@ import uk.gov.hmrc.crypto.json.CryptoFormats
 import java.time.Instant
 
 case class DatedCacheMap(
-                          id: String,
-                          data: Map[String, JsValue],
-                          lastUpdated: Instant = Instant.now()
-                        )
+  id: String,
+  data: Map[String, JsValue],
+  lastUpdated: Instant = Instant.now())
 
 object DatedCacheMap {
   object MongoFormats {
@@ -38,9 +37,8 @@ object DatedCacheMap {
     def reads(implicit encryption: Encryption): Reads[DatedCacheMap] = {
       (
         (__ \ "id").read[String] and
-          (__ \ "data").read[Map[String, EncryptedValue]] and
-          (__ \ "lastUpdated").read[Instant]
-        ) (ModelEncryption.decryptDatedCacheMap _)
+        (__ \ "data").read[Map[String, EncryptedValue]] and
+        (__ \ "lastUpdated").read[Instant])(ModelEncryption.decryptDatedCacheMap _)
     }
 
     def writes(implicit encryption: Encryption): OWrites[DatedCacheMap] = new OWrites[DatedCacheMap] {
@@ -51,15 +49,13 @@ object DatedCacheMap {
         Json.obj(
           "id" -> encryptedValue._1,
           "data" -> encryptedValue._2,
-          "lastUpdated" -> encryptedValue._3
-        )
+          "lastUpdated" -> encryptedValue._3)
       }
     }
 
-      def formats(implicit encryption: Encryption): OFormat[DatedCacheMap] = OFormat(reads, writes)
+    def formats(implicit encryption: Encryption): OFormat[DatedCacheMap] = OFormat(reads, writes)
 
   }
   def apply(cacheMap: CacheMap): DatedCacheMap = DatedCacheMap(cacheMap.id, cacheMap.data)
 }
-
 

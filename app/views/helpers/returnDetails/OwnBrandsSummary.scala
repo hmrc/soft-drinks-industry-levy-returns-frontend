@@ -17,10 +17,10 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, LitresInBands}
-import pages.{BrandsPackagedAtOwnSitesPage, OwnBrandsPage, QuestionPage}
+import models.{ CheckMode, LitresInBands }
+import pages.{ BrandsPackagedAtOwnSitesPage, OwnBrandsPage, QuestionPage }
 
-object OwnBrandsSummary extends ReturnDetailsSummaryListWithLitres  {
+object OwnBrandsSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = OwnBrandsPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(BrandsPackagedAtOwnSitesPage)

@@ -22,29 +22,29 @@ import config.FrontendAppConfig
 import controllers.actions._
 import errors.ReturnsErrors
 import models.retrieved.RetrievedSubscription
-import models.{ReturnPeriod, UserAnswers}
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import models.{ ReturnPeriod, UserAnswers }
+import org.scalatest.concurrent.{ IntegrationPatience, ScalaFutures }
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
-import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
+import org.scalatest.{ BeforeAndAfterEach, OptionValues, TryValues }
+import play.api.i18n.{ Lang, Messages, MessagesApi, MessagesImpl }
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubControllerComponents
-import play.api.{Application, Play}
+import play.api.{ Application, Play }
 import service.ReturnResult
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 trait SpecBase
   extends AnyFreeSpec
-    with Matchers
-    with TryValues
-    with OptionValues
-    with ScalaFutures
-    with IntegrationPatience with BeforeAndAfterEach {
+  with Matchers
+  with TryValues
+  with OptionValues
+  with ScalaFutures
+  with IntegrationPatience with BeforeAndAfterEach {
 
   lazy val application = applicationBuilder(userAnswers = None).build()
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
@@ -61,16 +61,15 @@ trait SpecBase
     super.afterEach()
   }
   protected def applicationBuilder(
-                                    userAnswers: Option[UserAnswers] = None,
-                                    returnPeriod: Option[ReturnPeriod] = Some(defaultReturnsPeriod),
-                                    subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
+    userAnswers: Option[UserAnswers] = None,
+    returnPeriod: Option[ReturnPeriod] = Some(defaultReturnsPeriod),
+    subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
     val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].toInstance(new FakeIdentifierAction(subscription, bodyParsers)),
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
-      )
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod)))
   }
 
   def createSuccessReturnResult[T](result: T): ReturnResult[T] =

@@ -23,33 +23,29 @@ import models.Mode
 import navigation.Navigator
 import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import services.{AddressLookupService, WarehouseDetails}
+import services.{ AddressLookupService, WarehouseDetails }
 import utilitlies.GenericLogger
 import views.html.AskSecondaryWarehouseInReturnView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class AskSecondaryWarehouseInReturnController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionRepository: SessionRepository,
-                                         val navigator: Navigator,
-                                         val errorHandler: ErrorHandler,
-                                         val genericLogger: GenericLogger,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         checkReturnSubmission: CheckingSubmissionAction,
-                                         formProvider: AskSecondaryWarehouseInReturnFormProvider,
-                                         addressLookupService: AddressLookupService,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: AskSecondaryWarehouseInReturnView
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
-
-
-
+class AskSecondaryWarehouseInReturnController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: AskSecondaryWarehouseInReturnFormProvider,
+  addressLookupService: AddressLookupService,
+  val controllerComponents: MessagesControllerComponents,
+  view: AskSecondaryWarehouseInReturnView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
@@ -57,13 +53,12 @@ class AskSecondaryWarehouseInReturnController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-    }
-    Ok(view(preparedForm, mode))
+        case None => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
 
   }
-
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
 
@@ -75,16 +70,15 @@ class AskSecondaryWarehouseInReturnController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value))
-            onwardUrl              <- if(value){
-            updateDatabaseWithoutRedirect(updatedAnswers, AskSecondaryWarehouseInReturnPage).flatMap(_ =>
-              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
+            onwardUrl <- if (value) {
+              updateDatabaseWithoutRedirect(updatedAnswers, AskSecondaryWarehouseInReturnPage).flatMap(_ =>
+                addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
             } else {
               updateDatabaseWithoutRedirect(updatedAnswers.copy(warehouseList = Map.empty), AskSecondaryWarehouseInReturnPage).flatMap(_ =>
                 Future.successful(routes.CheckYourAnswersController.onPageLoad.url))
             }
           } yield {
             Redirect(onwardUrl)
-          }
-      )
+          })
   }
 }

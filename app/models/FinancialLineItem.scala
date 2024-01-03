@@ -17,10 +17,10 @@
 package models
 
 import play.api.i18n.Messages
-import play.api.libs.json.{Format, JsObject, JsResult, JsString, JsValue, Json}
+import play.api.libs.json.{ Format, JsObject, JsResult, JsString, JsValue, Json }
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate => Date}
+import java.time.{ LocalDate => Date }
 
 sealed trait FinancialLineItem {
   def date: Date
@@ -38,8 +38,7 @@ case class ReturnCharge(period: ReturnPeriod, amount: BigDecimal) extends Financ
     Messages(
       "financiallineitem.returncharge",
       formatter.format(period.start),
-      String.format("MMMM yyyy", period.end)
-    )
+      String.format("MMMM yyyy", period.end))
   def date = period.deadline
 }
 
@@ -88,14 +87,14 @@ object FinancialLineItem {
     new Format[FinancialLineItem] {
       def reads(json: JsValue): JsResult[FinancialLineItem] =
         (json \ "type").as[String] match {
-          case "ReturnCharge"         => Json.format[ReturnCharge].reads(json)
+          case "ReturnCharge" => Json.format[ReturnCharge].reads(json)
           case "ReturnChargeInterest" => Json.format[ReturnChargeInterest].reads(json)
-          case "CentralAssessment"    => Json.format[CentralAssessment].reads(json)
-          case "CentralAsstInterest"  => Json.format[CentralAsstInterest].reads(json)
-          case "OfficerAssessment"    => Json.format[OfficerAssessment].reads(json)
-          case "OfficerAsstInterest"  => Json.format[OfficerAsstInterest].reads(json)
-          case "PaymentOnAccount"     => Json.format[PaymentOnAccount].reads(json)
-          case "Unknown"              => Json.format[Unknown].reads(json)
+          case "CentralAssessment" => Json.format[CentralAssessment].reads(json)
+          case "CentralAsstInterest" => Json.format[CentralAsstInterest].reads(json)
+          case "OfficerAssessment" => Json.format[OfficerAssessment].reads(json)
+          case "OfficerAsstInterest" => Json.format[OfficerAsstInterest].reads(json)
+          case "PaymentOnAccount" => Json.format[PaymentOnAccount].reads(json)
+          case "Unknown" => Json.format[Unknown].reads(json)
         }
 
       def writes(o: FinancialLineItem): JsValue = o match {

@@ -16,13 +16,14 @@
 
 package forms.behaviours
 
-import play.api.data.{Form, FormError}
+import play.api.data.{ Form, FormError }
 
 trait SDILReferenceFieldBehaviours extends FieldBehaviours {
 
-  def invalidRefNumber(form: Form[_],
-                       fieldName: String,
-                       requiredError: FormError): Unit = {
+  def invalidRefNumber(
+    form: Form[_],
+    fieldName: String,
+    requiredError: FormError): Unit = {
 
     "not bind when SDIL reference has invalid format" in {
 
@@ -34,6 +35,5 @@ trait SDILReferenceFieldBehaviours extends FieldBehaviours {
     }
 
   }
-
 
 }

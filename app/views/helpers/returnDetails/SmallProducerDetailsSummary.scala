@@ -17,16 +17,14 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{CheckMode, EditMode, Mode, NormalMode, SmallProducer}
-import pages.{QuestionPage, SmallProducerDetailsPage}
+import models.{ CheckMode, EditMode, Mode, NormalMode, SmallProducer }
+import pages.{ QuestionPage, SmallProducerDetailsPage }
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ SummaryList, Text }
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-
 object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with ReturnDetailsSummaryRowHelper {
-
 
   override val actionUrl: String = routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "small-producers"
@@ -40,26 +38,21 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
 
   def producerList(mode: Mode, smallProducersList: List[SmallProducer])(implicit messages: Messages): SummaryList = {
     val rows = smallProducersList.map {
-    smallProducer =>
-      val value = ValueViewModel(
-        Text(
-          smallProducer.alias
-        )
-      )
-      SummaryListRowViewModel(
-        key     = smallProducer.sdilRef,
-        value   = value,
-        actions = Seq(
-          ActionItemViewModel("site.edit", routes.AddASmallProducerController.onEditPageLoad(if (mode == NormalMode) EditMode else CheckMode, smallProducer.sdilRef).url)
-            .withVisuallyHiddenText(s"${smallProducer.alias} ${smallProducer.sdilRef}"),
-          ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(mode, smallProducer.sdilRef).url)
-            .withVisuallyHiddenText(s"${smallProducer.alias} ${smallProducer.sdilRef}")
-        )
-      )
+      smallProducer =>
+        val value = ValueViewModel(
+          Text(
+            smallProducer.alias))
+        SummaryListRowViewModel(
+          key = smallProducer.sdilRef,
+          value = value,
+          actions = Seq(
+            ActionItemViewModel("site.edit", routes.AddASmallProducerController.onEditPageLoad(if (mode == NormalMode) EditMode else CheckMode, smallProducer.sdilRef).url)
+              .withVisuallyHiddenText(s"${smallProducer.alias} ${smallProducer.sdilRef}"),
+            ActionItemViewModel("site.remove", routes.RemoveSmallProducerConfirmController.onPageLoad(mode, smallProducer.sdilRef).url)
+              .withVisuallyHiddenText(s"${smallProducer.alias} ${smallProducer.sdilRef}")))
     }
 
     SummaryListViewModel(rows)
   }
-
 
 }

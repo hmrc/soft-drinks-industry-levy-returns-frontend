@@ -21,30 +21,29 @@ import forms.PackagedContractPackerFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
-import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
+import pages.{ HowManyAsAContractPackerPage, PackagedContractPackerPage }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
 import views.html.PackagedContractPackerView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class PackagedContractPackerController @Inject()(
-                                               override val messagesApi: MessagesApi,
-                                               val sessionRepository: SessionRepository,
-                                               val navigator: Navigator,
-                                               val errorHandler: ErrorHandler,
-                                               val genericLogger: GenericLogger,
-                                               identify: IdentifierAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               checkReturnSubmission: CheckingSubmissionAction,
-                                               formProvider: PackagedContractPackerFormProvider,
-                                               val controllerComponents: MessagesControllerComponents,
-                                               view: PackagedContractPackerView
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+class PackagedContractPackerController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionRepository: SessionRepository,
+  val navigator: Navigator,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkReturnSubmission: CheckingSubmissionAction,
+  formProvider: PackagedContractPackerFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: PackagedContractPackerView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 
@@ -52,9 +51,9 @@ class PackagedContractPackerController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(PackagedContractPackerPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
+        case None => form
+        case Some(value) => form.fill(value)
+      }
 
       Ok(view(preparedForm, mode))
 
@@ -69,7 +68,6 @@ class PackagedContractPackerController @Inject()(
         value => {
           val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedContractPackerPage, HowManyAsAContractPackerPage, value)
           updateDatabaseAndRedirect(updatedUserAnswers, PackagedContractPackerPage, mode)
-        }
-      )
+        })
   }
 }
