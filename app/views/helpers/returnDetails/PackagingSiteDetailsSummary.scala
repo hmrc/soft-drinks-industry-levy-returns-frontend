@@ -40,8 +40,8 @@ object PackagingSiteDetailsSummary {
         SummaryListRow(
           key = Key(
             content =
-              HtmlContent(AddressFormattingHelper.addressFormatting(site._2.address, site._2.tradingName)),
-            classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds"),
+              HtmlContent(AddressFormattingHelper.addressFormatting(site._2.address, site._2.tradingName)))
+            .withCssClass("govuk-!-font-weight-regular govuk-!-width-full"),
           actions = if (packagingSiteList.size > 1) {
             Some(Actions("", Seq(
               ActionItemViewModel("site.remove", routes.RemovePackagingDetailsConfirmationController.onPageLoad(mode, site._1).url)
