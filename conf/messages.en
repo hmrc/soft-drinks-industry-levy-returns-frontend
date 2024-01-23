@@ -299,7 +299,7 @@ totalThisQuarter = Total this quarter
 balanceBroughtForward = Balance brought forward
 summary = Summary
 total = Total
-financiallineitem.returncharge = Return <br/><span class="form-hint">for {0} to {1}</span>
+financialLineItem.returnCharge = Return for {0} to {1}
 
 registeredUkSites = UK site details
 packagingSites = Packaging Sites
