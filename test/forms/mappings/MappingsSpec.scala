@@ -168,6 +168,53 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     }
   }
 
+  "long" - {
+
+    val testForm: Form[Long] =
+      Form(
+        "value" -> long())
+
+    "must bind a valid long integer" in {
+      val result = testForm.bind(Map("value" -> "10000000000"))
+      result.get mustEqual 10000000000L
+    }
+
+    "must bind a valid long integer regardless of leading and trailing whitespace" in {
+      val result = testForm.bind(Map("value" -> " 10000000000 "))
+      result.get mustEqual 10000000000L
+    }
+
+    "must not bind an empty value" in {
+      val result = testForm.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind an empty map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "must not bind a decimal value" in {
+      val result = testForm.bind(Map("value" -> "1.1"))
+      result.errors must contain(FormError("value", "error.wholeNumber"))
+    }
+
+    "must not bind a negative value" in {
+      val result = testForm.bind(Map("value" -> "-1"))
+      result.errors must contain(FormError("value", "error.negative"))
+    }
+
+    "must not bind a non numeric value" in {
+      val result = testForm.bind(Map("value" -> "a"))
+      result.errors must contain(FormError("value", "error.nonNumeric"))
+    }
+
+    "must unbind a valid value" in {
+      val result = testForm.fill(123)
+      result.apply("value").value.value mustEqual "123"
+    }
+  }
+
   "enumerable" - {
 
     val testForm = Form(
