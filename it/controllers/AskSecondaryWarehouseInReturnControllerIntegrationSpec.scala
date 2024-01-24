@@ -38,7 +38,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends ControllerI
           continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/secondary-warehouses/${sdilNumber}",
           homeNavHref = None,
           signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
-          accessibilityFooterUrl = None,
+          accessibilityFooterUrl = Some("http://localhost:12346"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-returns-frontend&backUrl=http%3A%2F%2Flocalhost%3A8703%2Fsoft-drinks-industry-levy-returns-frontend%2Fask-secondary-warehouses-in-return"),
           deskProServiceName = None,
           showPhaseBanner = Some(false),

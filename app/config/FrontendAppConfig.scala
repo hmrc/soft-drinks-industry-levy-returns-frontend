@@ -62,6 +62,8 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
   val addressLookupOffRampUrl: String = servicesConfig.getString("addressLookupOffRampUrl")
 
+  val accessibilityStatementUrl: String = servicesConfig.getString("accessibility-statement.host")
+
   object AddressLookupConfig {
 
     private val addressLookupInitConfig: Config = configuration
