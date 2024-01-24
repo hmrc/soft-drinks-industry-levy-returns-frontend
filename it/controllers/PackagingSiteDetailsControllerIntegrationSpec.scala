@@ -24,7 +24,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
             continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/packing-sites/${sdilNumber}",
             homeNavHref = None,
             signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
-            accessibilityFooterUrl = Some("http://localhost:12346"),
+            accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-returns-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-returns-frontend&backUrl=http%3A%2F%2Flocalhost%3A8703%2Fsoft-drinks-industry-levy-returns-frontend%2Fpackaging-site-details"),
             deskProServiceName = None,
             showPhaseBanner = Some(false),
