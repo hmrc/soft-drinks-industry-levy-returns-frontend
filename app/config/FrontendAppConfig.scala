@@ -37,6 +37,9 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(returnsFrontendBaseUrl + request.uri).encodedUrl}"
   }
 
+  private val accessibilityHost: String = servicesConfig.getConfString("accessibility-statement.host", throw new Exception("missing config accessibility-statement.host"))
+  def accessibilityFooterUrl = s"$accessibilityHost/accessibility-statement/soft-drinks-industry-levy-returns-frontend"
+
   val basGatewayBaseUrl: String = servicesConfig.baseUrl("bas-gateway")
   val sdilBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy")
   val sdilHomeUrl: String = servicesConfig.getString("sdilHomeUrl")
