@@ -20,6 +20,7 @@ import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import play.api.i18n.Messages
 import play.api.test.Helpers.contentAsString
 import play.twirl.api.Html
 import play.api.test.Helpers._
@@ -84,6 +85,15 @@ trait ViewSpecHelper extends SpecBase {
 
     "accessibility statement exists, text and link are correct" in {
       accessibilityStatementElement.text() mustBe "Accessibility statement"
+    }
+  }
+
+  def testBackLink(doc: Document, href: String = "#") = {
+    val bLink = "govuk-back-link"
+    "contain the correct back link" in {
+      val backLink = doc.getElementsByClass(bLink)
+      backLink.text mustBe Messages("site.back")
+      backLink.get(0).attr("href") mustBe href
     }
   }
 
