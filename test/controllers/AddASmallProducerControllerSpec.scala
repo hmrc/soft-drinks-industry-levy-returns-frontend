@@ -484,7 +484,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
         status(result) mustEqual BAD_REQUEST
         val page = Jsoup.parse(contentAsString(result))
-        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.invalid"))
+        page.body().text() must include(Messages("addASmallProducer.error.referenceNumber.invalidFormat"))
       }
     }
 
