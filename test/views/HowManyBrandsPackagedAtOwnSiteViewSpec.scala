@@ -43,7 +43,7 @@ class HowManyBrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresS
   val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
 
-  "HowManyOperatePackagingSiteOwnBrandsView" - {
+  "Brands Packaged at Own Sites View" - {
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(form, mode)

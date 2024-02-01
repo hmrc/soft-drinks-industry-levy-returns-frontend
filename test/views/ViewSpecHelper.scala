@@ -41,11 +41,12 @@ trait ViewSpecHelper extends SpecBase {
       .collectFirst {
         case element if element.attr("name") == "hmrc-timeout-dialog" => element
       }
+
     "contain the timeout dialog" - {
       "that has the expected keep alive and signout urls" in {
         timeoutDialog.isDefined mustBe true
-        timeoutDialog.get.attr("data-keep-alive-url") mustBe "/protect-tax-info/keep-alive"
-        timeoutDialog.get.attr("data-sign-out-url") mustBe "/protect-tax-info/timeout"
+        timeoutDialog.get.attr("data-keep-alive-url") mustBe "/soft-drinks-industry-levy-returns-frontend/refresh-session"
+        timeoutDialog.get.attr("data-sign-out-url") mustBe controllers.auth.routes.SignedOutController.onPageLoad().url
       }
     }
   }
@@ -81,7 +82,7 @@ trait ViewSpecHelper extends SpecBase {
   }
 
   def validateAccessibilityStatementLinkPresent(doc: Document): Unit = {
-    val accessibilityStatementElement = doc.getElementsByAttributeValueContaining("href", "/accessibility-statement/personal-tax-account-user-id-checks").get(0)
+    val accessibilityStatementElement = doc.getElementsByAttributeValueContaining("href", "/accessibility-statement/soft-drinks-industry-levy-returns-frontend?referrerUrl=%2F\"").get(0)
 
     "accessibility statement exists, text and link are correct" in {
       accessibilityStatementElement.text() mustBe "Accessibility statement"

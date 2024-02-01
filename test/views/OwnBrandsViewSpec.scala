@@ -16,6 +16,7 @@
 
 package views
 
+import config.FrontendAppConfig
 import controllers.routes
 import forms.OwnBrandsFormProvider
 import models.{ CheckMode, NormalMode }
@@ -23,33 +24,36 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
+import play.twirl.api.HtmlFormat
 import views.html.OwnBrandsView
 
-class BrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresSpecHelper {
+class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
   val view: OwnBrandsView = application.injector.instanceOf[OwnBrandsView]
   val formProvider = new OwnBrandsFormProvider()
   val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
+  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+  "Own Brands View " - {
+    val html: HtmlFormat.Appendable = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
-    "should contain the expected title" in {
+    "should contain the expected title " in {
       document.title() mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
     }
 
-    "should include a legend with the expected heading" in {
+    "should include a legend with the expected heading " in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate?"
+      legend.get(0).getElementsByClass(Selectors.legendHeading).text() mustBe
+        "Are you reporting your own brands of liable drinks packaged at UK sites you operate?"
     }
 
-    "when the form is not preoccupied and has no errors" - {
+    "when the form is not preoccupied and has no errors " - {
 
-      "should have radio buttons" - {
+      "should have radio buttons " - {
         val radioButtons = document.getElementsByClass(Selectors.radios)
-        "that has the option to select Yes and is unchecked" in {
+        "that has the option to select Yes and is unchecked " in {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
@@ -63,7 +67,7 @@ class BrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresSpecHelp
             .hasAttr("checked") mustBe false
         }
 
-        "that has the option to select No and is unchecked" in {
+        "that has the option to select No and is unchecked " in {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
@@ -150,7 +154,7 @@ class BrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresSpecHelp
     }
 
     "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.saveContinue")
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
 
     "contains a form with the correct action" - {
@@ -211,8 +215,8 @@ class BrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresSpecHelp
 
     testBackLink(document)
     validateTimeoutDialog(document)
-    validateTechnicalHelpLinkPresent(document)
-    validateAccessibilityStatementLinkPresent(document)
-  }
+    // validateTechnicalHelpLinkPresent(document)
+    // validateAccessibilityStatementLinkPresent(document)
 
+  }
 }

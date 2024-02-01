@@ -27,19 +27,9 @@ trait LitresSpecHelper extends ViewSpecHelper {
   val highBandValue: Long = 2000
   val litresInBands: LitresInBands = LitresInBands(lowBandValue, highBandValue)
 
-  //  val formProvider = new Form
-  //  val form: Form[LitresInBands] = formProvider.apply()
-  //  val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
-  //  val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
-  //  val formWithHighBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
-  //  val emptyForm: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "", "litres.highBand" -> ""))
-  //  val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "x", "litres.highBand" -> "y"))
-  //  val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "-1", "litres.highBand" -> "-2"))
-  //  val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "1.8", "litres.highBand" -> "2.3"))
-  //  val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000"))
-  //
   object Selectors {
     val heading = "govuk-heading-l"
+    val legendHeading = "govuk-fieldset__heading"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"

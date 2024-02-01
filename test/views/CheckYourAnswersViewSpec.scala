@@ -59,13 +59,13 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
     "should have the expected caption" - {
       List(0, 1, 2, 3).foreach(quarter => {
-        val returnPeriodWithQuater = ReturnPeriod(2022, quarter)
+        val returnPeriodWithQuarter = ReturnPeriod(2022, quarter)
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriodWithQuater, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
+          checkYourAnswersView(baseAlias, returnPeriodWithQuarter, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
         val document1: Document = doc(html1)
 
         s"when in return period is in quarter $quarter" in {
-          val returnPeriodString = ReturnPeriodQuarter.formatted(returnPeriodWithQuater)
+          val returnPeriodString = ReturnPeriodQuarter.formatted(returnPeriodWithQuarter)
           document1.getElementById("cya-returnPeriod").text() mustEqual s"This return is for $baseAlias for $returnPeriodString"
         }
       })
