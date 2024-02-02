@@ -215,8 +215,8 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
     testBackLink(document)
     validateTimeoutDialog(document)
-    // validateTechnicalHelpLinkPresent(document)
-    // validateAccessibilityStatementLinkPresent(document)
+    validateTechnicalHelpLinkPresent(document)
+    validateAccessibilityStatementLinkPresent(document)
 
   }
 }

@@ -18,7 +18,6 @@ package views
 
 import models.LitresInBands
 import org.jsoup.nodes.Document
-import play.api.data.Form
 import play.api.i18n.Messages
 
 trait LitresSpecHelper extends ViewSpecHelper {

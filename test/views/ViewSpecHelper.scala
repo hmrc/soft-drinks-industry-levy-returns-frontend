@@ -66,7 +66,7 @@ trait ViewSpecHelper extends SpecBase {
 
   def validateTechnicalHelpLinkPresent(doc: Document): Unit = {
     val technicalHelpLink = doc
-      .getElementsByClass("govuk-link hmrc-report-technical-issue ")
+      .getElementsByClass("hmrc-report-technical-issue")
     "contain a technical help link" - {
       "that has the expected text" in {
         technicalHelpLink
@@ -82,10 +82,10 @@ trait ViewSpecHelper extends SpecBase {
   }
 
   def validateAccessibilityStatementLinkPresent(doc: Document): Unit = {
-    val accessibilityStatementElement = doc.getElementsByAttributeValueContaining("href", "/accessibility-statement/soft-drinks-industry-levy-returns-frontend?referrerUrl=%2F\"").get(0)
-
+    val footerItems = doc.getElementsByClass("govuk-footer__inline-list-item")
     "accessibility statement exists, text and link are correct" in {
-      accessibilityStatementElement.text() mustBe "Accessibility statement"
+      footerItems.html() must include("/accessibility-statement/soft-drinks-industry-levy-returns-frontend?referrerUrl=%2F")
+      footerItems.eachText() must contain("Accessibility statement")
     }
   }
 
