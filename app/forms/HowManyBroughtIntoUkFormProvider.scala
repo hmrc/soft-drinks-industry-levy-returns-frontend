@@ -23,7 +23,7 @@ import play.api.data.Forms._
 
 import javax.inject.Inject
 
-class HowManyBoughtIntoUkFormProvider @Inject() extends Mappings {
+class HowManyBroughtIntoUkFormProvider @Inject() extends Mappings {
 
   def apply(): Form[LitresInBands] = Form(
     mapping(

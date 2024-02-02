@@ -18,41 +18,41 @@ package views
 
 import config.FrontendAppConfig
 import controllers.routes
-import forms.OwnBrandsFormProvider
+import forms.{ BroughtIntoUKFormProvider, BroughtIntoUkFromSmallProducersFormProvider }
 import models.{ CheckMode, NormalMode }
 import play.api.data.Form
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.OwnBrandsView
+import views.html.{ BroughtIntoUKView, BroughtIntoUkFromSmallProducersView }
 
-class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
+class BroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
-  val view: OwnBrandsView = application.injector.instanceOf[OwnBrandsView]
-  val formProvider = new OwnBrandsFormProvider()
+  val view: BroughtIntoUkFromSmallProducersView = application.injector.instanceOf[BroughtIntoUkFromSmallProducersView]
+  val formProvider = new BroughtIntoUkFromSmallProducersFormProvider()
   val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  val title = "Are you reporting liable drinks you have brought into the UK from small producers? - Soft Drinks Industry Levy - GOV.UK"
 
-  "Own Brands View " - {
+  "Brought Into the UK View " - {
     val html: HtmlFormat.Appendable = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title " in {
-      document.title() mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+      document.title() mustBe title
     }
 
     "should include a legend with the expected heading " in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
       legend.get(0).getElementsByClass(Selectors.legendHeading).text() mustBe
-        "Are you reporting your own brands of liable drinks packaged at UK sites you operate?"
+        "Are you reporting liable drinks you have brought into the UK from small producers?"
     }
 
     "should include a hint with the expected content " in {
       val hint = document.getElementsByClass(Selectors.legendHint)
       hint.size() mustBe 1
-      hint.text() mustBe "This includes brands you own or have the rights to manufacture."
+      hint.text() mustBe "Include your own brands of liable drinks produced outside of the UK."
     }
 
     "when the form is not preoccupied and has no errors " - {
@@ -172,12 +172,12 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OwnBrandsController.onSubmit(CheckMode).url
+            .attr("action") mustEqual routes.BroughtIntoUkFromSmallProducersController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OwnBrandsController.onSubmit(CheckMode).url
+            .attr("action") mustEqual routes.BroughtIntoUkFromSmallProducersController.onSubmit(CheckMode).url
         }
       }
 
@@ -189,12 +189,12 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OwnBrandsController.onSubmit(NormalMode).url
+            .attr("action") mustEqual routes.BroughtIntoUkFromSmallProducersController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OwnBrandsController.onSubmit(NormalMode).url
+            .attr("action") mustEqual routes.BroughtIntoUkFromSmallProducersController.onSubmit(NormalMode).url
         }
       }
     }
@@ -204,8 +204,7 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
-        documentWithErrors.title must include("Error: " + titleMessage)
+        documentWithErrors.title must include("Error: " + title)
       }
 
       "contains a message that links to field with error" in {
@@ -215,7 +214,7 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe "Select yes if you are reporting your own brands of liable drinks you have packaged at UK sites you operate"
+        errorSummary.text() mustBe "Select yes if you are reporting liable drinks you have brought into the UK from small producers"
       }
     }
 

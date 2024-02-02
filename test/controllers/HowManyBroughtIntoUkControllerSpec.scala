@@ -19,7 +19,7 @@ package controllers
 import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
-import forms.HowManyBoughtIntoUkFormProvider
+import forms.HowManyBroughtIntoUkFormProvider
 import helpers.LoggerHelper
 import models.{ LitresInBands, NormalMode, UserAnswers }
 import navigation.{ FakeNavigator, Navigator }
@@ -42,7 +42,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new HowManyBoughtIntoUkFormProvider()
+  val formProvider = new HowManyBroughtIntoUkFormProvider()
   val form: Form[LitresInBands] = formProvider()
 
   val value1max: Long = 100000000000000L

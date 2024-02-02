@@ -17,22 +17,23 @@
 package views
 
 import config.FrontendAppConfig
-import forms.BrandsPackagedAtOwnSitesFormProvider
+import forms.{ HowManyBroughtIntoUkFormProvider, HowManyCreditsForExportFormProvider }
 import models.{ CheckMode, LitresInBands, NormalMode }
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.BrandsPackagedAtOwnSitesView
+import views.html.{ HowManyBroughtIntoUkView, HowManyCreditsForExportView }
 
-class HowManyBrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresSpecHelper {
+class HowManyCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
-  val howManyBrandsPackagedAtOwnSiteView: BrandsPackagedAtOwnSitesView = application.injector.instanceOf[BrandsPackagedAtOwnSitesView]
+  val howManyCreditsForExportsView: HowManyCreditsForExportView = application.injector.instanceOf[HowManyCreditsForExportView]
 
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  val formProvider = new BrandsPackagedAtOwnSitesFormProvider()
+  val formProvider = new HowManyCreditsForExportFormProvider()
   val form: Form[LitresInBands] = formProvider.apply()
   val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
   val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
@@ -43,43 +44,51 @@ class HowManyBrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresS
   val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
 
-  "Brands Packaged at Own Sites View" - {
+  "How Many Credits For Exports View" - {
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode + " mode" - {
-        val html: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(form, mode)
+        val html: HtmlFormat.Appendable = howManyCreditsForExportsView(form, mode)
         val document = doc(html)
-        val htmlWithValidData: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithHighAndLowBands, mode)
+        val htmlWithValidData: HtmlFormat.Appendable = howManyCreditsForExportsView(formWithHighAndLowBands, mode)
         val documentWithValidData = doc(htmlWithValidData)
-        val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formEmpty, mode)
+        val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyCreditsForExportsView(formEmpty, mode)
         val documentFormErrorsEmpty = doc(htmlFormErrorsEmpty)
-        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithNegativeNumber, mode)
+        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyCreditsForExportsView(formWithNegativeNumber, mode)
         val documentFormErrorsNegative = doc(htmlFormErrorsNegative)
-        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithNoNumeric, mode)
+        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyCreditsForExportsView(formWithNoNumeric, mode)
         val documentFormErrorsNoneNumeric = doc(htmlFormErrorsNoneNumeric)
-        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithDecimalNumber, mode)
+        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyCreditsForExportsView(formWithDecimalNumber, mode)
         val documentFormErrorsNotWhole = doc(htmlFormErrorsNotWhole)
-        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithOutOfRangeNumber, mode)
+        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyCreditsForExportsView(formWithOutOfRangeNumber, mode)
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
+        val title =
+          "How many credits do you want to claim for liable drinks that have been exported? - Soft Drinks Industry Levy - GOV.UK"
+
         "should have the expected title" in {
-          document.title() mustBe "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+          document.title() mustBe title
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe "How many litres of liable drinks have you packaged at UK sites you operate?"
+          document.getElementsByClass(Selectors.heading).text() mustBe
+            "How many credits do you want to claim for liable drinks that have been exported?"
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe "This includes brands you own or have the rights to manufacture."
+          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.")
         }
+
+        val expectedDetails = Map(
+          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
         testButton(document)
-        testAction(document, controllers.routes.BrandsPackagedAtOwnSitesController.onSubmit(mode).url)
+        testDetails(document, expectedDetails)
+        testAction(document, controllers.routes.HowManyCreditsForExportController.onSubmit(mode).url)
 
         "and the form has errors" - {
-          val errorTitle = "Error: " + "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+          val errorTitle = "Error: " + title
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)

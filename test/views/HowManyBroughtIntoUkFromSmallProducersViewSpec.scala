@@ -17,22 +17,24 @@
 package views
 
 import config.FrontendAppConfig
-import forms.BrandsPackagedAtOwnSitesFormProvider
+import forms.HowManyAsAContractPackerFormProvider
 import models.{ CheckMode, LitresInBands, NormalMode }
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.BrandsPackagedAtOwnSitesView
+import views.html.{ HowManyAsAContractPackerView, HowManyBroughtIntoTheUKFromSmallProducersView }
 
-class HowManyBrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresSpecHelper {
+class HowManyBroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
-  val howManyBrandsPackagedAtOwnSiteView: BrandsPackagedAtOwnSitesView = application.injector.instanceOf[BrandsPackagedAtOwnSitesView]
+  val howManyBroughtIntoTheUKFromSmallProducersView: HowManyBroughtIntoTheUKFromSmallProducersView =
+    application.injector.instanceOf[HowManyBroughtIntoTheUKFromSmallProducersView]
 
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  val formProvider = new BrandsPackagedAtOwnSitesFormProvider()
+  val formProvider = new HowManyAsAContractPackerFormProvider()
   val form: Form[LitresInBands] = formProvider.apply()
   val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
   val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
@@ -43,43 +45,51 @@ class HowManyBrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresS
   val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
 
-  "Brands Packaged at Own Sites View" - {
+  "How Many Packaged As Contract Packer View" - {
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode + " mode" - {
-        val html: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(form, mode)
+        val html: HtmlFormat.Appendable = howManyBroughtIntoTheUKFromSmallProducersView(form, mode)
         val document = doc(html)
-        val htmlWithValidData: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithHighAndLowBands, mode)
+        val htmlWithValidData: HtmlFormat.Appendable = howManyBroughtIntoTheUKFromSmallProducersView(formWithHighAndLowBands, mode)
         val documentWithValidData = doc(htmlWithValidData)
-        val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formEmpty, mode)
+        val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyBroughtIntoTheUKFromSmallProducersView(formEmpty, mode)
         val documentFormErrorsEmpty = doc(htmlFormErrorsEmpty)
-        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithNegativeNumber, mode)
+        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyBroughtIntoTheUKFromSmallProducersView(formWithNegativeNumber, mode)
         val documentFormErrorsNegative = doc(htmlFormErrorsNegative)
-        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithNoNumeric, mode)
+        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyBroughtIntoTheUKFromSmallProducersView(formWithNoNumeric, mode)
         val documentFormErrorsNoneNumeric = doc(htmlFormErrorsNoneNumeric)
-        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithDecimalNumber, mode)
+        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyBroughtIntoTheUKFromSmallProducersView(formWithDecimalNumber, mode)
         val documentFormErrorsNotWhole = doc(htmlFormErrorsNotWhole)
-        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(formWithOutOfRangeNumber, mode)
+        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyBroughtIntoTheUKFromSmallProducersView(formWithOutOfRangeNumber, mode)
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
+        val title =
+          "How many litres of liable drinks have you brought into the UK from small producers? - Soft Drinks Industry Levy - GOV.UK"
+
         "should have the expected title" in {
-          document.title() mustBe "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+          document.title() mustBe title
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe "How many litres of liable drinks have you packaged at UK sites you operate?"
+          document.getElementsByClass(Selectors.heading).text() mustBe
+            "How many litres of liable drinks have you brought into the UK from small producers?"
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe "This includes brands you own or have the rights to manufacture."
+          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("Include your own brands of liable drinks produced outside of the UK.")
         }
+
+        val expectedDetails = Map(
+          "Liable drinks from small producers" -> "If you are a registered small producer and you bring your own brand of liable drinks into the UK, you still need to report them but you will not pay the levy on them. If you bring liable drinks into the UK from someone else who would be considered a small producer, you need to get evidence of the: contact details, EU VAT number (if they have one) and website of the business amount of litres of liable drinks packaged globally for brands the business owns in the past 12 months signature of someone from the business, their position and the date of the signature")
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
         testButton(document)
-        testAction(document, controllers.routes.BrandsPackagedAtOwnSitesController.onSubmit(mode).url)
+        testDetails(document, expectedDetails)
+        testAction(document, controllers.routes.HowManyBroughtIntoTheUKFromSmallProducersController.onSubmit(mode).url)
 
         "and the form has errors" - {
-          val errorTitle = "Error: " + "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+          val errorTitle = "Error: " + title
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)

@@ -30,6 +30,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val heading = "govuk-heading-l"
     val legendHeading = "govuk-fieldset__heading"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
+    val legendSubHeading = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legendHint = "govuk-hint"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -40,6 +42,7 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val radioLabels = "govuk-label govuk-radios__label"
     val button = "govuk-button"
     val form = "form"
+    val warningText = "govuk-warning-text__text"
   }
 
   def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
@@ -100,6 +103,22 @@ trait LitresSpecHelper extends ViewSpecHelper {
     "should contains a form with the correct action" in {
       document.select(Selectors.form)
         .attr("action") mustEqual expectedAction
+    }
+  }
+
+  def testDetails(doc: Document, expectedDetails: Map[String, String]): Unit = {
+    val expectedNumberOfDetails = expectedDetails.size
+    val details = doc.getElementsByClass("govuk-details")
+    "should include " + expectedNumberOfDetails + " detail sections" in {
+      details.size() mustEqual expectedNumberOfDetails
+    }
+    expectedDetails.zipWithIndex.foreach {
+      case ((detailsSummary, detailsContent), index) =>
+        "should include the " + detailsSummary + " details summary with expected content" in {
+          val detail = details.get(index)
+          detail.getElementsByClass("govuk-details__summary-text").text() mustBe detailsSummary
+          detail.getElementsByClass("govuk-details__text").text() mustBe detailsContent
+        }
     }
   }
 

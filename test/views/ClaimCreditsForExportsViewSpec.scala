@@ -18,41 +18,41 @@ package views
 
 import config.FrontendAppConfig
 import controllers.routes
-import forms.OwnBrandsFormProvider
+import forms.ClaimCreditsForExportsFormProvider
 import models.{ CheckMode, NormalMode }
 import play.api.data.Form
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.OwnBrandsView
+import views.html.ClaimCreditsForExportsView
 
-class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
+class ClaimCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
-  val view: OwnBrandsView = application.injector.instanceOf[OwnBrandsView]
-  val formProvider = new OwnBrandsFormProvider()
+  val view: ClaimCreditsForExportsView = application.injector.instanceOf[ClaimCreditsForExportsView]
+  val formProvider = new ClaimCreditsForExportsFormProvider()
   val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  val title = "Exported drinks - Soft Drinks Industry Levy - GOV.UK"
 
-  "Own Brands View " - {
+  "Claim Credits for Exports View " - {
     val html: HtmlFormat.Appendable = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title " in {
-      document.title() mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+      document.title() mustBe title
     }
 
     "should include a legend with the expected heading " in {
-      val legend = document.getElementsByClass(Selectors.legend)
+      val legend = document.getElementsByClass(Selectors.legendSubHeading)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.legendHeading).text() mustBe
-        "Are you reporting your own brands of liable drinks packaged at UK sites you operate?"
+      legend.get(0).text() mustBe
+        "Do you want to claim a credit for liable drinks that have been exported?"
     }
 
     "should include a hint with the expected content " in {
       val hint = document.getElementsByClass(Selectors.legendHint)
       hint.size() mustBe 1
-      hint.text() mustBe "This includes brands you own or have the rights to manufacture."
+      hint.text() mustBe "You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them."
     }
 
     "when the form is not preoccupied and has no errors " - {
@@ -159,6 +159,14 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
       }
     }
 
+    "contain a warning" in {
+      document.getElementsByClass(Selectors.warningText).text() mustBe "Warning You can only claim credit if you have registered for the levy and paid it directly to HMRC. Claiming credits you are not entitled to is a criminal offence."
+    }
+
+    val expectedDetails = Map(
+      "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
+    testDetails(document, expectedDetails)
+
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
@@ -172,12 +180,12 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OwnBrandsController.onSubmit(CheckMode).url
+            .attr("action") mustEqual routes.ClaimCreditsForExportsController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OwnBrandsController.onSubmit(CheckMode).url
+            .attr("action") mustEqual routes.ClaimCreditsForExportsController.onSubmit(CheckMode).url
         }
       }
 
@@ -189,12 +197,12 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OwnBrandsController.onSubmit(NormalMode).url
+            .attr("action") mustEqual routes.ClaimCreditsForExportsController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OwnBrandsController.onSubmit(NormalMode).url
+            .attr("action") mustEqual routes.ClaimCreditsForExportsController.onSubmit(NormalMode).url
         }
       }
     }
@@ -204,8 +212,7 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
-        documentWithErrors.title must include("Error: " + titleMessage)
+        documentWithErrors.title must include("Error: " + title)
       }
 
       "contains a message that links to field with error" in {
@@ -215,7 +222,7 @@ class OwnBrandsViewSpec extends ViewSpecHelper with LitresSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe "Select yes if you are reporting your own brands of liable drinks you have packaged at UK sites you operate"
+        errorSummary.text() mustBe "Select yes if you want to claim a credit for liable drinks that have been exported"
       }
     }
 
