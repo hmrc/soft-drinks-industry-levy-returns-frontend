@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels
+package views.helpers
 
 import base.SpecBase
 import models.backend.UkAddress
 import play.twirl.api.Html
+import viewmodels.AddressFormattingHelper
 
 class AddressFormattingHelperSpec extends SpecBase {
   "AddressFormattingHelper" - {

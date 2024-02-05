@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package viewmodels
+package views.detailsPages
 
 import base.ReturnsTestData._
 import base.SpecBase
-import models.backend.{ Site, UkAddress }
-import views.detailsPages.SecondaryWarehouseDetailsSummary
+import models.backend.{Site, UkAddress}
 
 class SecondaryWarehouseDetailsSummarySpec extends SpecBase {
 

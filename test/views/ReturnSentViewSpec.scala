@@ -25,6 +25,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
+import views.helpers.ReturnDetailsSummaryRowTestHelper
 import views.html.ReturnSentView
 
 class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {

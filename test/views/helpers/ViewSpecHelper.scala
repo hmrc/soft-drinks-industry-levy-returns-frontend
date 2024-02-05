@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package views
+package views.helpers
 
 import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.Messages
-import play.api.test.Helpers.contentAsString
-import play.twirl.api.Html
 import play.api.test.Helpers._
+import play.twirl.api.Html
 
 import scala.jdk.CollectionConverters._
 

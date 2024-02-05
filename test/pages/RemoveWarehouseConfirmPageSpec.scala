@@ -26,7 +26,7 @@ import pages.behaviours.PageBehaviours
 import play.api.i18n.{ Messages, MessagesApi }
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import views.ViewSpecHelper
+import views.helpers.ViewSpecHelper
 import views.html.RemoveWarehouseConfirmView
 
 class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.helpers
 
 import models.LitresInBands
 import org.jsoup.nodes.Document

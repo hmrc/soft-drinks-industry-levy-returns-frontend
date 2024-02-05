@@ -19,11 +19,12 @@ package views
 import config.FrontendAppConfig
 import controllers.routes
 import forms.BroughtIntoUKFormProvider
-import models.{ CheckMode, NormalMode }
+import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.BroughtIntoUKView
 
 class BroughtIntoUkViewSpec extends ViewSpecHelper with LitresSpecHelper {

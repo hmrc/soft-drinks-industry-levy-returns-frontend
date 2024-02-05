@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package viewmodels
+package views.detailsPages
 
 import base.ReturnsTestData.emptyUserAnswers
 import base.SpecBase
-import models.{ CheckMode, NormalMode, SmallProducer }
+import models.{CheckMode, NormalMode, SmallProducer}
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import views.helpers.returnDetails.SmallProducerDetailsSummary
 

@@ -18,12 +18,13 @@ package views
 
 import config.FrontendAppConfig
 import forms.HowManyCreditsForExportFormProvider
-import models.{ CheckMode, LitresInBands, NormalMode }
+import models.{CheckMode, LitresInBands, NormalMode}
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.HowManyCreditsForExportView
 
 class HowManyCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHelper {
