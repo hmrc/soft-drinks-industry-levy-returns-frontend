@@ -20,14 +20,28 @@ import play.api.data.{ Form, FormError }
 
 trait SDILReferenceFieldBehaviours extends FieldBehaviours {
 
-  def invalidRefNumber(
-    form: Form[_],
-    fieldName: String,
-    requiredError: FormError): Unit = {
+  def invalidSDILFormat(form: Form[_],
+                        fieldName: String,
+                        requiredError: FormError): Unit = {
 
     "not bind when SDIL reference has invalid format" in {
 
-      forAll(badSdilReferences -> "sdilRef") {
+      forAll(invalidSdilFormatGen -> "sdilRef") {
+        sdilRef =>
+          val result = form.bind(Map(fieldName -> sdilRef)).apply(fieldName)
+          result.errors mustEqual Seq(requiredError)
+      }
+    }
+
+  }
+
+  def invalidSDILRef(form: Form[_],
+                     fieldName: String,
+                     requiredError: FormError): Unit = {
+
+    "not bind when SDIL reference has invalid ref" in {
+
+      forAll(invalidSDILRefGen -> "sdilRef") {
         sdilRef =>
           val result = form.bind(Map(fieldName -> sdilRef)).apply(fieldName)
           result.errors mustEqual Seq(requiredError)

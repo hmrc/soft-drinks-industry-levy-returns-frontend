@@ -52,17 +52,25 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
   ".referenceNumber" - {
     val fieldName = "referenceNumber"
     val requiredKey = "addASmallProducer.error.referenceNumber.required"
-    val invalidSDILRefNumber = "addASmallProducer.error.referenceNumber.invalid"
+    val invalidSDILFormatKey = "addASmallProducer.error.referenceNumber.invalidFormat"
+    val invalidSDILRefKey = "addASmallProducer.error.referenceNumber.invalidSDILRef"
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey))
 
-    behave like invalidRefNumber(
+    behave like invalidSDILFormat(
       form,
       fieldName,
-      requiredError = FormError(fieldName, invalidSDILRefNumber))
+      requiredError = FormError(fieldName, invalidSDILFormatKey)
+    )
+
+    behave like invalidSDILRef(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, invalidSDILRefKey)
+    )
 
   }
 
