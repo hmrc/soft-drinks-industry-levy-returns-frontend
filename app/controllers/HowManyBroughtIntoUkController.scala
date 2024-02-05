@@ -26,7 +26,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import utilitlies.GenericLogger
-import views.html.HowManyBoughtIntoUkView
+import views.html.HowManyBroughtIntoUkView
 
 import javax.inject.Inject
 import scala.concurrent.{ ExecutionContext, Future }
@@ -43,7 +43,7 @@ class HowManyBroughtIntoUkController @Inject() (
   checkReturnSubmission: CheckingSubmissionAction,
   formProvider: HowManyBroughtIntoUkFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: HowManyBoughtIntoUkView)(implicit ec: ExecutionContext) extends ControllerHelper {
+  view: HowManyBroughtIntoUkView)(implicit ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 

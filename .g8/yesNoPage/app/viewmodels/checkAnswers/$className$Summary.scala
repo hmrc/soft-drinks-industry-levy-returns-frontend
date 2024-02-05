@@ -1,4 +1,4 @@
-package viewmodels.checkAnswers
+package viewmodels.detailsPages
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}

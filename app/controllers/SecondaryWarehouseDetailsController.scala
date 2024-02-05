@@ -28,8 +28,8 @@ import repositories.SessionRepository
 import services.{ AddressLookupService, WarehouseDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilitlies.GenericLogger
-import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import viewmodels.govuk.summarylist._
+import views.detailsPages.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
 
 import javax.inject.Inject
@@ -61,7 +61,7 @@ class SecondaryWarehouseDetailsController @Inject() (
       }
 
       val siteList: SummaryList = SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList))
+        rows = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList))
 
       Ok(view(preparedForm, mode, siteList))
 
@@ -70,7 +70,7 @@ class SecondaryWarehouseDetailsController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val siteList: SummaryList = SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList))
+        rows = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),

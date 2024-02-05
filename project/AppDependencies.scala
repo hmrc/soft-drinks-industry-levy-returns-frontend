@@ -1,7 +1,6 @@
-import sbt._
+import sbt.*
 
 object AppDependencies {
-  import play.core.PlayVersion
 
 
   private val playSuffix = s"-play-30"

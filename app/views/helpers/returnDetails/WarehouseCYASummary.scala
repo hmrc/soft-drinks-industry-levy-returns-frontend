@@ -23,7 +23,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{ SummaryList, Value }
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object AskSecondaryWarehouseSummary {
+object WarehouseCYASummary {
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryList] = {
 
@@ -41,7 +41,7 @@ object AskSecondaryWarehouseSummary {
               actions = if (isCheckAnswers) {
                 Seq(
                   ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-                    .withAttribute(("id", "change-packaging-sites"))
+                    .withAttribute(("id", "change-warehouses"))
                     .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden")))
               } else {
                 Seq.empty

@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package views.detailsPages
 
 import controllers.routes
 import models.backend.Site
-import models.{ CheckMode, UserAnswers }
-import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ Actions, Key }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -30,26 +28,7 @@ import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary {
 
-  def warehouseList(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val value = 1.toString
-    SummaryListRow(
-      key = "secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel",
-      value = ValueViewModel(value))
-  }
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondaryWarehouseDetailsPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
-        SummaryListRowViewModel(
-          key = "secondaryWarehouseDetails.checkYourAnswersLabel",
-          value = ValueViewModel(value).withCssClass("sdil-right-align--desktop"),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("secondaryWarehouseDetails.change.hidden"))))
-    }
-
-  def row2(warehouseList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
+  def warehouseDetailRow(warehouseList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
         SummaryListRow(

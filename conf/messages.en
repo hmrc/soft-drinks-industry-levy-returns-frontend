@@ -8,7 +8,6 @@ site.no = No
 site.yes = Yes
 site.continue = Continue
 site.saveContinue = Save and continue
-site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
@@ -24,6 +23,14 @@ timeout.message = For security reasons, you will be signed out of this service i
 timeout.keepAlive = Stay signed in
 timeout.signOut = Sign out
 
+signedOut.title = For your security, we signed you out
+signedOut.guidance = We did not save your answers.
+
+unauthorised.title = You cannot access this service with this account
+
+journeyRecovery.title = Sorry, there is a problem with the service
+journeyRecovery.guidance = [Add content to explain how to proceed.]
+
 error.browser.title.prefix = Error:
 error.boolean = Please give an answer
 error.invalid_date = Give a correct date
@@ -33,9 +40,6 @@ error.date.month_blank = Enter a month
 error.date.month_invalid = Give a correct month using numbers 1 to 12
 error.date.year_blank = Enter a year
 error.date.year_invalid = Give a correct year
-error.integer = Give an answer in whole numbers
-error.non_numeric = Give a value using only numbers
-error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
@@ -43,51 +47,6 @@ index.title = soft-drinks-industry-levy-returns-frontend
 index.heading = soft-drinks-industry-levy-returns-frontend
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
-checkYourAnswers.title = Check your answers before sending your update
-checkYourAnswers.heading = Check your answers before sending your update
-checkYourAnswers.paragraph = This return is for {0} for {1}
-checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have 1 warehouse
-checkYourAnswers.warehouse.checkYourAnswersLabel.multiple = You have {0} warehouses
-checkYourAnswers.packing.checkYourAnswersLabel.one = You have 1 packaging site
-checkYourAnswers.packing.checkYourAnswersLabel.multiple = You have {0} packaging sites
-checkYourAnswers.sites.packing.change.hidden = the UK packaging site that you operate to produce liable drinks
-checkYourAnswers.sites.warehouse.change.hidden = the UK warehouses you use to store liable drinks
-
-
-journeyRecovery.title = Sorry, there is a problem with the service
-journeyRecovery.guidance = [Add content to explain how to proceed.]
-
-signedOut.title = For your security, we signed you out
-signedOut.guidance = We did not save your answers.
-
-unauthorised.title = You cannot access this service with this account
-
-packAtBusinessAddress.title = Your business address
-packAtBusinessAddress.legend = Is this address a UK packaging site you operate to produce liable drinks?
-packAtBusinessAddress.error.required = Select yes if your registered business address is a UK packaging site that you operate to produce liable drinks
-packAtBusinessAddress.detailsLink = Why we need these details
-packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
-packAtBusinessAddress.nameText = The business name is
-packAtBusinessAddress.addressText = The business address is
-
-packagedContractPacker.title = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
-packagedContractPacker.subHeading = Do not include liable drinks you have packaged for registered small producers.
-packagedContractPacker.checkYourAnswersLabel = packagedContractPacker
-packagedContractPacker.error.required = Select yes if you are reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate
-packagedContractPacker.change.hidden = whether you use contract packing at your own site
-
-
-ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
-ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
-ownBrands.checkYourAnswersLabel = ownBrands
-ownBrands.error.required = Select yes if you are reporting your own brands of liable drinks you have packaged at UK sites you operate
-ownBrands.change.hidden = whether you package your own brands at your own site
-
-
-whatIsASmallProducer.detailsLink = What is a small producer?
-whatIsASmallProducer.detailsContent1 = A business is a small producer if it:
-whatIsASmallProducer.detailsContent2 = has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months
-whatIsASmallProducer.detailsContent3 = will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days
 
 litres.text = Litres
 litres.lowBand = Litres in the low band
@@ -108,33 +67,75 @@ litres.error.lowBand.outOfMaxVal = Number of litres in the low band must be less
 litres.error.highBand.outOfMaxVal = Number of litres in the high band must be less than 100,000,000,000,000
 
 
+ownBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
+ownBrands.subHeading = This includes brands you own or have the rights to manufacture.
+ownBrands.error.required = Select yes if you are reporting your own brands of liable drinks you have packaged at UK sites you operate
+
 brandsPackagedAtOwnSites.title = How many litres of liable drinks have you packaged at UK sites you operate?
 brandsPackagedAtOwnSites.subtext = This includes brands you own or have the rights to manufacture.
-brandsPackagedAtOwnSites.checkYourAnswersLabel = How many litres of liable drinks have you packaged at UK sites you operate?
+
+
+whatIsASmallProducer.detailsLink = What is a small producer?
+whatIsASmallProducer.detailsContent1 = A business is a small producer if it:
+whatIsASmallProducer.detailsContent2 = has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months
+whatIsASmallProducer.detailsContent3 = will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days
+
+
+packagedContractPacker.title = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
+packagedContractPacker.subHeading = Do not include liable drinks you have packaged for registered small producers.
+packagedContractPacker.error.required = Select yes if you are reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate
+
+howManyAsAContractPacker.title = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
+howManyAsAContractPacker.subtext = Do not include liable drinks you have packaged for registered small producers.
 
 
 exemptionsForSmallProducers.title = Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers?
 exemptionsForSmallProducers.error.required = Select yes if you need to claim an exemption for any of the liable drinks you have packaged for registered small producers
 
 
-howManyAsAContractPacker.title = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
-howManyAsAContractPacker.subtext = Do not include liable drinks you have packaged for registered small producers.
-howManyAsAContractPacker.checkYourAnswersLabel = HowManyAsAContractPacker
+addASmallProducer.title = Enter the registered small producer''s details
+addASmallProducer.hint1 = Small producer name (optional)
+addASmallProducer.referenceNumber = Soft Drinks Industry Levy reference number
+addASmallProducer.hint2 = This is 6 letters then 9 numbers, like XCSDIL123456789
+addASmallProducer.error.referenceNumber.required = Enter the small producer''s reference number
+addASmallProducer.error.referenceNumber.invalid = Small producer reference number must be 6 letters and 9 numbers
+addASmallProducer.error.referenceNumber.same = Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
+addASmallProducer.error.referenceNumber.exists = Small producer reference number must be different to a small producer reference number you have already added
+addASmallProducer.error.referenceNumber.notASmallProducer = Small producer reference number does not match a business that is currently registered as a small producer. Check and try again.
+addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
 
-litres.suffix = litres
+smallProducerDetails.title = You added {0} small producer{1}
+smallProducerDetails.heading = Do you want to add another small producer?
+smallProducerDetails.checkYourAnswersLabel = smallProducerDetails
+smallProducerDetails.error.required = Select yes if you want to add another small producer
 
-howManyBoughtIntoUk.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
-howManyBoughtIntoUk.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
-howManyBoughtIntoUk.checkYourAnswersLabel = howManyBoughtIntoUk
+removeSmallProducerConfirm.title = Are you sure you want to remove this small producer?
+removeSmallProducerConfirm.heading = Are you sure you want to remove this small producer?
+removeSmallProducerConfirm.error.required = Select yes if you want to remove this small producer
 
 
 broughtIntoUK.title = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 broughtIntoUK.subHeading = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
 broughtIntoUK.error.required = Select yes if you are reporting liable drinks you have brought into the UK from anywhere outside of the UK
 
-howManyCreditsForExport.title = How many credits do you want to claim for liable drinks that have been exported?
-howManyCreditsForExport.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
-howManyCreditsForExport.checkYourAnswersLabel = HowManyCreditsForExport
+howManyBoughtIntoUk.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
+howManyBoughtIntoUk.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
+
+
+LiableDrinksBroughtIntoUkFromSmallProducers.DetailsLink = Liable drinks from small producers
+LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent1 = If you are a registered small producer and you bring your own brand of liable drinks into the UK, you still need to report them but you will not pay the levy on them.
+LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent2 = If you bring liable drinks into the UK from someone else who would be considered a small producer, you need to get evidence of the:
+LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent3 = contact details, EU VAT number (if they have one) and website of the business
+LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent4 = amount of litres of liable drinks packaged globally for brands the business owns in the past 12 months
+LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent5 = signature of someone from the business, their position and the date of the signature
+
+
+broughtIntoUkFromSmallProducers.title = Are you reporting liable drinks you have brought into the UK from small producers?
+broughtIntoUkFromSmallProducers.subHeading = Include your own brands of liable drinks produced outside of the UK.
+broughtIntoUkFromSmallProducers.error.required = Select yes if you are reporting liable drinks you have brought into the UK from small producers
+
+howManyBroughtIntoTheUKFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
+howManyBroughtIntoTheUKFromSmallProducers.subtext = Include your own brands of liable drinks produced outside of the UK.
 
 
 whatCanIClaimCreditForDetailsLink = What can I claim a credit for?
@@ -144,6 +145,15 @@ whatCanIClaimCreditForDetailsContent3= supplier or consigner
 whatCanIClaimCreditForDetailsContent4 = customer and destination the liable drinks are supplied to
 whatCanIClaimCreditForDetailsContent5 = method of delivery
 whatCanIClaimCreditForDetailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
+
+claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
+claimCreditsForExports.title = Exported drinks
+claimCreditsForExports.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
+claimCreditsForExports.warning = You can only claim credit if you have registered for the levy and paid it directly to HMRC. Claiming credits you are not entitled to is a criminal offence.
+claimCreditsForExports.error.required = Select yes if you want to claim a credit for liable drinks that have been exported
+
+howManyCreditsForExport.title = How many credits do you want to claim for liable drinks that have been exported?
+howManyCreditsForExport.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 
 
 claimCreditsForLostDamaged.title = Lost or destroyed drinks
@@ -158,64 +168,9 @@ claimCreditsForLostDamaged.detailsContent5 = reprocessed
 claimCreditsForLostDamaged.detailsContent6 = spilled and cannot be used
 claimCreditsForLostDamaged.detailsContent7 = To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.
 claimCreditsForLostDamaged.error.required = Select yes if you want to claim a credit for any liable drinks that have been lost or destroyed
-claimCreditsForLostDamaged.change.hidden = whether you want to claim credits for lost or destroyed liable drinks
 
 howManyCreditsForLostDamaged.title = How many credits do you want to claim for liable drinks which have been lost or destroyed?
 howManyCreditsForLostDamaged.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
-howManyCreditsForLostDamaged.checkYourAnswersLabel = HowManyCreditsForLostDamaged
-
-
-howManyBroughtIntoTheUKFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
-howManyBroughtIntoTheUKFromSmallProducers.subtext = Include your own brands of liable drinks produced outside of the UK.
-howManyBroughtIntoTheUKFromSmallProducers.checkYourAnswersLabel = HowManyBroughtIntoTheUKFromSmallProducers
-
-
-broughtIntoUkFromSmallProducers.title = Are you reporting liable drinks you have brought into the UK from small producers?
-broughtIntoUkFromSmallProducers.subHeading = Include your own brands of liable drinks produced outside of the UK.
-
-broughtIntoUkFromSmallProducers.checkYourAnswersLabel = broughtIntoUkFromSmallProducers
-broughtIntoUkFromSmallProducers.error.required = Select yes if you are reporting liable drinks you have brought into the UK from small producers
-broughtIntoUkFromSmallProducers.change.hidden = whether you bring liable drinks into the UK from a small producer
-
-
-LiableDrinksBroughtIntoUkFromSmallProducers.DetailsLink = Liable drinks from small producers
-LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent1 = If you are a registered small producer and you bring your own brand of liable drinks into the UK, you still need to report them but you will not pay the levy on them.
-LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent2 = If you bring liable drinks into the UK from someone else who would be considered a small producer, you need to get evidence of the:
-LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent3 = contact details, EU VAT number (if they have one) and website of the business
-LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent4 = amount of litres of liable drinks packaged globally for brands the business owns in the past 12 months
-LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent5 = signature of someone from the business, their position and the date of the signature
-
-
-askSecondaryWarehouseInReturn.title = Do you want to register any UK warehouses you use to store liable drinks?
-askSecondaryWarehouseInReturn.detailsLink = Why should I register a warehouse?
-askSecondaryWarehouseInReturn.detailsContent1 = You can delay when you have to report liable drinks in your quarterly return and pay the levy on them if you register the warehouses you use to store them.
-askSecondaryWarehouseInReturn.detailsContent2 = Because you changed your business activity, you can choose to register any of the UK warehouses you use to store liable drinks.
-askSecondaryWarehouseInReturn.checkYourAnswersLabel = Do you want to register any UK warehouses you use to store liable drinks?
-askSecondaryWarehouseInReturn.error.required = Select yes if you want to register any UK warehouses you use to store liable drinks
-askSecondaryWarehouseInReturn.change.hidden = AskSecondaryWarehouseInReturn
-
-
-claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
-claimCreditsForExports.title = Exported drinks
-claimCreditsForExports.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
-claimCreditsForExports.warning = You can only claim credit if you have registered for the levy and paid it directly to HMRC. Claiming credits you are not entitled to is a criminal offence.
-claimCreditsForExports.detailsLink = What can I claim a credit for?
-claimCreditsForExports.detailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
-claimCreditsForExports.detailsContent2 = brand of the liable drinks
-claimCreditsForExports.detailsContent3 = supplier or consigner
-claimCreditsForExports.detailsContent4 = customer and destination the liable drinks are supplied to
-claimCreditsForExports.detailsContent5 = method of delivery
-claimCreditsForExports.detailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
-claimCreditsForExports.error.required = Select yes if you want to claim a credit for liable drinks that have been exported
-claimCreditsForExports.change.hidden = whether you want to claim credits for exported liable drinks
-
-
-smallProducerDetails.title = You added {0} small producer{1}
-smallProducerDetails.heading = Do you want to add another small producer?
-smallProducerDetails.checkYourAnswersLabel = smallProducerDetails
-smallProducerDetails.producerList.checkYourAnswersLabel = Packaging sites
-smallProducerDetails.error.required = Select yes if you want to add another small producer
-smallProducerDetails.change.hidden = Do you want to add another small producer?
 
 
 returnChangeRegistration.title = You changed your soft drinks business activity
@@ -225,32 +180,48 @@ returnChangeRegistration.subtext2 = This is different to your registered busines
 returnChangeRegistration.subtext3 = If you made a mistake, you need to <a class="govuk-link" href={0}>go back and change your answers</a>.
 returnChangeRegistration.subtext4 = If you’re happy with the change, select Update Registration.
 
-removeSmallProducerConfirm.title = Are you sure you want to remove this small producer?
-removeSmallProducerConfirm.heading = Are you sure you want to remove this small producer?
-removeSmallProducerConfirm.error.required = Select yes if you want to remove this small producer
+
+packAtBusinessAddress.title = Your business address
+packAtBusinessAddress.legend = Is this address a UK packaging site you operate to produce liable drinks?
+packAtBusinessAddress.error.required = Select yes if your registered business address is a UK packaging site that you operate to produce liable drinks
+packAtBusinessAddress.detailsLink = Why we need these details
+packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
+
+packagingSiteDetails.title.heading = You added {0} packaging site{1}
+packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+packagingSiteDetails.addAnotherPackingSite = Do you want to add another UK packaging site?
+packagingSiteDetails.error.required = Select yes if you need to add another packaging site
+packagingSiteDetails.hidden = Packaging site {0} at {1}
+
+removePackagingDetailsConfirmation.title = Are you sure you want to remove this packaging site?
+removePackagingDetailsConfirmation.heading = Are you sure you want to remove this packaging site?
+removePackagingDetailsConfirmation.error.required = Select yes if you want to remove this packaging site
 
 
-
-addASmallProducer.title = Enter the registered small producer''s details
-addASmallProducer.hint1 = Small producer name (optional)
-addASmallProducer.referenceNumber = Soft Drinks Industry Levy reference number
-addASmallProducer.hint2 = This is 6 letters then 9 numbers, like XCSDIL123456789
-addASmallProducer.checkYourAnswersLabel = AddASmallProducer
-addASmallProducer.error.referenceNumber.required = Enter the small producer''s reference number
-addASmallProducer.error.referenceNumber.invalid = Small producer reference number must be 6 letters and 9 numbers
-addASmallProducer.error.referenceNumber.same = Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
-addASmallProducer.error.referenceNumber.exists = Small producer reference number must be different to a small producer reference number you have already added
-addASmallProducer.error.referenceNumber.notASmallProducer = Small producer reference number does not match a business that is currently registered as a small producer. Check and try again.
-addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
+askSecondaryWarehouseInReturn.title = Do you want to register any UK warehouses you use to store liable drinks?
+askSecondaryWarehouseInReturn.detailsLink = Why should I register a warehouse?
+askSecondaryWarehouseInReturn.detailsContent1 = You can delay when you have to report liable drinks in your quarterly return and pay the levy on them if you register the warehouses you use to store them.
+askSecondaryWarehouseInReturn.detailsContent2 = Because you changed your business activity, you can choose to register any of the UK warehouses you use to store liable drinks.
+askSecondaryWarehouseInReturn.error.required = Select yes if you want to register any UK warehouses you use to store liable drinks
 
 secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
 secondaryWarehouseDetails.heading = You added {0} UK warehouse{1}
-secondaryWarehouseDetails.checkYourAnswersLabel = secondaryWarehouseDetails
-secondaryWarehouseDetails.warehouseList.checkYourAnswersLabel = Warehouses
 secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
-secondaryWarehouseDetails.change.hidden = Do you want to add another UK warehouse?
-secondaryWarehouseDetails.edit.hidden = UK warehouse
 secondaryWarehouseDetails.remove.hidden = Warehouse {0} at {1}
+
+removeWarehouseConfirm.title = Are you sure you want to remove this warehouse?
+removeWarehouseConfirm.error.required = Select yes if you want to remove this warehouse
+
+
+checkYourAnswers.title = Check your answers before sending your update
+checkYourAnswers.heading = Check your answers before sending your update
+checkYourAnswers.paragraph = This return is for {0} for {1}
+checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have 1 warehouse
+checkYourAnswers.warehouse.checkYourAnswersLabel.multiple = You have {0} warehouses
+checkYourAnswers.packing.checkYourAnswersLabel.one = You have 1 packaging site
+checkYourAnswers.packing.checkYourAnswersLabel.multiple = You have {0} packaging sites
+checkYourAnswers.sites.packing.change.hidden = the UK packaging site that you operate to produce liable drinks
+checkYourAnswers.sites.warehouse.change.hidden = the UK warehouses you use to store liable drinks
 
 firstQuarter = January to March
 secondQuarter = April to June
@@ -261,14 +232,17 @@ ownBrandsPackagedAtYourOwnSite = Own brands packaged at your own site
 reportingOwnBrandsPackagedAtYourOwnSite = Reporting own brands packaged at your own site?
 ownBrandsPackagedAtYourOwnSite.lowband.litres.hidden = number of litres in low band packaged at your own site
 ownBrandsPackagedAtYourOwnSite.highband.litres.hidden = number of litres in high band packaged at your own site
+ownBrands.change.hidden = whether you package your own brands at your own site
 
 contractPackedAtYourOwnSite = Contract packed at your own site
 reportingContractPackedAtYourOwnSite = Reporting contract packed at your own sites?
 contractPackedAtYourOwnSite.lowband.litres.hidden = number of litres in low band contract packed at your own site
 contractPackedAtYourOwnSite.highband.litres.hidden = number of litres in high band contract packed at your own site
+packagedContractPacker.change.hidden = whether you use contract packing at your own site
 
 contractPackedForRegisteredSmallProducers = Contract packed for registered small producers
 exemptionForRegisteredSmallProducers = Exemption for registered small producers?
+exemptionsForSmallProducers.change.hidden = whether you need to claim an exemption for registered small producers
 contractPackedForRegisteredSmallProducers.lowband.litres.hidden = number of litres in low band you are claiming exemption for
 contractPackedForRegisteredSmallProducers.highband.litres.hidden = number of litres in high band you are claiming exemption for
 
@@ -276,21 +250,25 @@ broughtIntoUK = Brought into the UK
 reportingLiableDrinksBroughtIntoTheUK = Reporting liable drinks brought into the UK?
 broughtIntoUK.lowband.litres.hidden = number of litres in low band brought into the UK
 broughtIntoUK.highband.litres.hidden = number of litres in high band brought into the UK
+broughtIntoUK.change.hidden = whether you bring liable drinks into the UK
 
 broughtIntoTheUKFromSmallProducers = Brought into the UK from small producers
 reportingLiableDrinksBroughtIntoTheUKFromSmallProducers = Reporting liable drinks brought into the UK from small producers?
 broughtIntoTheUKFromSmallProducers.lowband.litres.hidden = number of litres in low band brought into the UK from a small producer
 broughtIntoTheUKFromSmallProducers.highband.litres.hidden = number of litres in high band brought into the UK from a small producer
+broughtIntoUkFromSmallProducers.change.hidden = whether you bring liable drinks into the UK from a small producer
 
 exported = Exported
 claimingCreditForExportedLiableDrinks = Claiming credit for exported liable drinks?
 exported.lowband.litres.hidden = number of litres in the low band for exported liable drinks
 exported.highband.litres.hidden = number of litres in the high band for exported liable drinks
+claimCreditsForExports.change.hidden = whether you want to claim credits for exported liable drinks
 
 lostOrDestroyed = Lost or destroyed
 claimingCreditForLostOrDestroyedLiableDrinks = Claiming credit for lost or destroyed liable drinks?
 lostOrDestroyed.lowband.litres.hidden = number of litres in the low band for lost or destroyed drinks
 lostOrDestroyed.highband.litres.hidden = number of litres in the high band for lost or destroyed drinks
+claimCreditsForLostDamaged.change.hidden = whether you want to claim credits for lost or destroyed liable drinks
 
 youNeedToPay = You need to pay {0}
 yourSoftDrinksLevyAccountsWillBeCredited = Your Soft Drinks Levy Account will be credited {0}
@@ -308,17 +286,15 @@ sendYourReturnConfirmation = By submitting this return you are confirming that, 
 confirmDetailsAndSendReturn = Confirm details and send return
 
 reportingContractPackedAtYourOwnSite.checkYourAnswersLabel = Reporting contract packed at your own site
-exemptionsForSmallProducers.checkYourAnswersLabel = Exemptions for registered small producers?
-exemptionsForSmallProducers.change.hidden = whether you need to claim an exemption for registered small producers
 ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel =  Reporting own brands packaged at your own site
 broughtIntoUK.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
-broughtIntoUK.change.hidden = whether you bring liable drinks into the UK
+
 claimCreditsForLostDamaged.checkYourAnswersLabel = Claiming credit for lost or destroyed liable drinks?
 broughtIntoUKFromSmallProducers.checkYourAnswersLabel = Reporting liable drinks brought into the UK?
 
 returnSent.title = Return sent
 returnSent.panel.returnMessage = Soft Drinks Industry Levy return {0} to {1} {2} for the {3}
-returnSent.returnsDoneMessage = Your Soft Drinks Industry Levy return from {0} to {1} {2} for {3} was sent at {4} on the {5}.
+returnSent.returnsDoneMessage = Your Soft Drinks Industry Levy return from {0} to {1} {2} for {3} was sent at {4} on {5}.
 returnSent.headerOne = What you need to do next
 
 returnSent.paymentsBlurb.payby=You need to pay {0} by {1}.
@@ -343,12 +319,8 @@ returnSent.broughtIntoUk = Brought into the UK
 returnSent.broughtIntoUkSmallProducer = Brought into the UK from small producers
 returnSent.exported = Exported
 returnSent.lostDestroyed = Lost or destroyed
-returnSent.amountToPay = Amount to pay
 returnSent.details = View the details of your return
 
-checkYourAnswers.amountToPay.title = Amount to pay
-checkYourAnswers.creditedPay.title = Amount you will be credited
-checkYourAnswers.noPayNeeded.title = You do not need to pay anything
 totalThisQuarter.checkYourAnswersLabel = Total this quarter
 balanceBroughtForward.checkYourAnswersLabel = Balance brought forward
 total.checkYourAnswersLabel = Total
@@ -358,23 +330,6 @@ litresInTheLowBand = Litres in the low band
 highBandLevy = High band levy
 lowBandLevy = Low band levy
 
-packagingSiteDetails.title.heading = You added {0} packaging site{1}
-packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
-packagingSiteDetails.checkYourAnswersLabel = PackagingSiteDetails
-packagingSiteDetails.addAnotherPackingSite = Do you want to add another UK packaging site?
-packagingSiteDetails.error.required = Select yes if you need to add another packaging site
-packagingSiteDetails.change.hidden = UK packaging site details
-packagingSiteDetails.hidden = Packaging site {0} at {1}
-
-removeWarehouseConfirm.title = Are you sure you want to remove this warehouse?
-removeWarehouseConfirm.heading = Are you sure you want to remove this warehouse?
-removeWarehouseConfirm.error.required = Select yes if you want to remove this warehouse
-removeWarehouseConfirm.change.hidden = Are you sure you want to remove this warehouse?
-
-removePackagingDetailsConfirmation.title = Are you sure you want to remove this packaging site?
-removePackagingDetailsConfirmation.heading = Are you sure you want to remove this packaging site?
-removePackagingDetailsConfirmation.error.required = Select yes if you want to remove this packaging site
-removePackagingDetailsConfirmation.change.hidden = Confirm remove this packaging site
 
 addressLookupFrontend.warehouseDetails.lookupPageLabels.title = Find UK warehouse address
 addressLookupFrontend.warehouseDetails.lookupPageLabels.postcodeLabel = Postcode
@@ -395,4 +350,3 @@ addressLookupFrontend.packingDetails.editPageLabels.line3Label = Address line 3 
 addressLookupFrontend.packingDetails.editPageLabels.townLabel = Address line 4 (optional)
 addressLookupFrontend.packingDetails.editPageLabels.postcodeLabel = Postcode
 addressLookupFrontend.packingDetails.editPageLabels.organisationLabel = Packaging site name (optional)
-

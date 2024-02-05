@@ -18,13 +18,13 @@ package views
 
 import config.FrontendAppConfig
 import controllers.routes
-import forms.{ ClaimCreditsForExportsFormProvider, ClaimCreditsForLostDamagedFormProvider }
+import forms.ClaimCreditsForLostDamagedFormProvider
 import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.{ ClaimCreditsForExportsView, ClaimCreditsForLostDamagedView }
+import views.html.ClaimCreditsForLostDamagedView
 
 class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper with LitresSpecHelper {
 

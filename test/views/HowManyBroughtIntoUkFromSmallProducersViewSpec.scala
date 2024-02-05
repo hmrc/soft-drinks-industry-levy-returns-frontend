@@ -24,7 +24,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.{ HowManyAsAContractPackerView, HowManyBroughtIntoTheUKFromSmallProducersView }
+import views.html.HowManyBroughtIntoTheUKFromSmallProducersView
 
 class HowManyBroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with LitresSpecHelper {
 

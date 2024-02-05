@@ -18,13 +18,13 @@ package views
 
 import config.FrontendAppConfig
 import controllers.routes
-import forms.{ BroughtIntoUKFormProvider, BroughtIntoUkFromSmallProducersFormProvider }
+import forms.BroughtIntoUkFromSmallProducersFormProvider
 import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.{ BroughtIntoUKView, BroughtIntoUkFromSmallProducersView }
+import views.html.BroughtIntoUkFromSmallProducersView
 
 class BroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
