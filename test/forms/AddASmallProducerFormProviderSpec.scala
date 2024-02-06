@@ -63,14 +63,12 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     behave like invalidSDILFormat(
       form,
       fieldName,
-      requiredError = FormError(fieldName, invalidSDILFormatKey)
-    )
+      requiredError = FormError(fieldName, invalidSDILFormatKey))
 
     behave like invalidSDILRef(
       form,
       fieldName,
-      requiredError = FormError(fieldName, invalidSDILRefKey)
-    )
+      requiredError = FormError(fieldName, invalidSDILRefKey))
 
   }
 

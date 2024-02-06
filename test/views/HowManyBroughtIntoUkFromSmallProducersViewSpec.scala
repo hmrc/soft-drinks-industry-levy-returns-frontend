@@ -17,14 +17,14 @@
 package views
 
 import config.FrontendAppConfig
-import forms.HowManyAsAContractPackerFormProvider
-import models.{CheckMode, LitresInBands, NormalMode}
+import forms.HowManyBroughtIntoTheUKFromSmallProducersFormProvider
+import models.{ CheckMode, LitresInBands, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{LitresSpecHelper, ViewSpecHelper}
+import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
 import views.html.HowManyBroughtIntoTheUKFromSmallProducersView
 
 class HowManyBroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with LitresSpecHelper {
@@ -35,7 +35,7 @@ class HowManyBroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  val formProvider = new HowManyAsAContractPackerFormProvider()
+  val formProvider = new HowManyBroughtIntoTheUKFromSmallProducersFormProvider()
   val form: Form[LitresInBands] = formProvider.apply()
   val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
   val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))

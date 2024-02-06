@@ -39,7 +39,7 @@ import services.{ AddressLookupService, WarehouseDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import utilitlies.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import views.detailsPages.SecondaryWarehouseDetailsSummary
+import views.helpers.returnDetails.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
 
 import scala.concurrent.Future

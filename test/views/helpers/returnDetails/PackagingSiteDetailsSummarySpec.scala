@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package views.detailsPages
+package views.helpers.returnDetails
 
 import base.ReturnsTestData._
 import base.SpecBase
 import models.NormalMode
-import models.backend.{Site, UkAddress}
+import models.backend.{ Site, UkAddress }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 import views.helpers.returnDetails.PackagingSiteDetailsSummary
 

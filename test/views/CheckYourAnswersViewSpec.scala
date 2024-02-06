@@ -21,10 +21,10 @@ import base.UserAnswersTestData
 import base.UserAnswersTestData.userIsSmallProducer
 import config.FrontendAppConfig
 import controllers.routes
-import models.{Amounts, ReturnPeriod}
+import models.{ Amounts, ReturnPeriod }
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
-import play.api.mvc.{Call, Request}
+import play.api.mvc.{ Call, Request }
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import utilitlies.CurrencyFormatter

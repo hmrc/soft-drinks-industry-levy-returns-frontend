@@ -29,7 +29,7 @@ import services.{ AddressLookupService, WarehouseDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilitlies.GenericLogger
 import viewmodels.govuk.summarylist._
-import views.detailsPages.SecondaryWarehouseDetailsSummary
+import views.helpers.returnDetails.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
 
 import javax.inject.Inject

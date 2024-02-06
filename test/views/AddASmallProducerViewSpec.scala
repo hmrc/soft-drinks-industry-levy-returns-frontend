@@ -19,13 +19,13 @@ package views
 import base.ReturnsTestData.emptyUserAnswers
 import config.FrontendAppConfig
 import forms.AddASmallProducerFormProvider
-import models.{AddASmallProducer, CheckMode, EditMode, Mode, NormalMode}
+import models.{ AddASmallProducer, CheckMode, EditMode, Mode, NormalMode }
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{LitresSpecHelper, ViewSpecHelper}
+import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
 import views.html.AddASmallProducerView
 
 class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
