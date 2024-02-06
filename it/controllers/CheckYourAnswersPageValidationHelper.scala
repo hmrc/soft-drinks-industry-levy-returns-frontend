@@ -2,7 +2,6 @@ package controllers
 
 import cats.implicits.catsSyntaxSemigroup
 import controllers.testSupport.ReturnSummaryValidationHelper
-import models.backend.Site
 import models.{FinancialLineItem, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer}
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages

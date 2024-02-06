@@ -835,6 +835,11 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
           navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode,
             emptyUserAnswers.copy(data = Json.obj("exemptionsForSmallProducers" -> true), smallProducerList = smallProducerListOnlySuperCola)) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
         }
+
+        "Should navigate to add a small producer page when yes is selected AND there are no small producers in the list" in {
+          navigator.nextPage(ExemptionsForSmallProducersPage, CheckMode,
+            emptyUserAnswers.copy(data = Json.obj("exemptionsForSmallProducers" -> true), smallProducerList = List.empty)) mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
+        }
       }
 
       "Brought into UK " - {
@@ -967,6 +972,23 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
         }
       }
 
+      "Remove a packaging site confirmation page" - {
+
+        "Should navigate to packaging site details controller when yes is selected" in {
+          navigator.nextPage(
+            RemovePackagingDetailsConfirmationPage,
+            CheckMode,
+            emptyUserAnswers.copy(data = Json.obj("removePackagingDetailsConfirmation" -> true))) mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
+        }
+
+        "Should navigate to secondary warehouse details controller when no is selected" in {
+          navigator.nextPage(
+            RemovePackagingDetailsConfirmationPage,
+            CheckMode,
+            emptyUserAnswers.copy(data = Json.obj("removePackagingDetailsConfirmation" -> false))) mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
+        }
+      }
+
       "Remove a warehouse confirmation page" - {
 
         "Should navigate to secondary warehouse details controller when yes is selected" in {
@@ -975,6 +997,7 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
             CheckMode,
             emptyUserAnswers.copy(data = Json.obj("removeWarehouse" -> true))) mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         }
+
         "Should navigate to secondary warehouse details controller when no is selected" in {
           navigator.nextPage(
             RemoveWarehouseConfirmPage,

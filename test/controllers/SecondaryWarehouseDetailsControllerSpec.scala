@@ -38,8 +38,8 @@ import repositories.SessionRepository
 import services.{ AddressLookupService, WarehouseDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import utilitlies.GenericLogger
-import viewmodels.checkAnswers.SecondaryWarehouseDetailsSummary
 import viewmodels.govuk.SummaryListFluency
+import views.helpers.returnDetails.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
 
 import scala.concurrent.Future
@@ -105,7 +105,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
             "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), tradingName = Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+          SecondaryWarehouseDetailsSummary.warehouseDetailRow(WarhouseMap)(messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList)
@@ -199,7 +199,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
             "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), tradingName = Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(warehouseMap)(messages(application))
+          SecondaryWarehouseDetailsSummary.warehouseDetailRow(warehouseMap)(messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList)
@@ -318,13 +318,13 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val result = route(application, request).value
 
-        val WarhouseMap: Map[String, Site] =
+        val WarehouseMap: Map[String, Site] =
           Map(
             "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"), tradingName = Some("ABC Ltd")),
             "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), tradingName = Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+          SecondaryWarehouseDetailsSummary.warehouseDetailRow(WarehouseMap)(messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList)

@@ -19,7 +19,7 @@ package controllers
 import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
-import forms.HowManyBoughtIntoUkFormProvider
+import forms.HowManyBroughtIntoUkFormProvider
 import helpers.LoggerHelper
 import models.{ LitresInBands, NormalMode, UserAnswers }
 import navigation.{ FakeNavigator, Navigator }
@@ -34,7 +34,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import utilitlies.GenericLogger
-import views.html.HowManyBoughtIntoUkView
+import views.html.HowManyBroughtIntoUkView
 
 import scala.concurrent.Future
 
@@ -42,7 +42,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new HowManyBoughtIntoUkFormProvider()
+  val formProvider = new HowManyBroughtIntoUkFormProvider()
   val form: Form[LitresInBands] = formProvider()
 
   val value1max: Long = 100000000000000L
@@ -51,7 +51,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
   val value2max: Long = 100000000000000L
   val value2: Long = value2max - 1
 
-  lazy val howManyBoughtIntoUkRoute: String = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
+  lazy val howManyBroughtIntoUkRoute: String = routes.HowManyBroughtIntoUkController.onPageLoad(NormalMode).url
 
   val userAnswers: UserAnswers = emptyUserAnswers.copy(data =
     Json.obj(
@@ -65,7 +65,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
       val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, howManyBoughtIntoUkRoute)
+        val request = FakeRequest(GET, howManyBroughtIntoUkRoute)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -78,7 +78,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request =
-          FakeRequest(POST, howManyBoughtIntoUkRoute)
+          FakeRequest(POST, howManyBroughtIntoUkRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -93,9 +93,9 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, howManyBoughtIntoUkRoute)
+        val request = FakeRequest(GET, howManyBroughtIntoUkRoute)
 
-        val view = application.injector.instanceOf[HowManyBoughtIntoUkView]
+        val view = application.injector.instanceOf[HowManyBroughtIntoUkView]
 
         val result = route(application, request).value
 
@@ -109,9 +109,9 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, howManyBoughtIntoUkRoute)
+        val request = FakeRequest(GET, howManyBroughtIntoUkRoute)
 
-        val view = application.injector.instanceOf[HowManyBoughtIntoUkView]
+        val view = application.injector.instanceOf[HowManyBroughtIntoUkView]
 
         val result = route(application, request).value
 
@@ -135,7 +135,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request =
-          FakeRequest(POST, howManyBoughtIntoUkRoute)
+          FakeRequest(POST, howManyBroughtIntoUkRoute)
             .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
 
         val result = route(application, request).value
@@ -151,12 +151,12 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request =
-          FakeRequest(POST, howManyBoughtIntoUkRoute)
+          FakeRequest(POST, howManyBroughtIntoUkRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[HowManyBoughtIntoUkView]
+        val view = application.injector.instanceOf[HowManyBroughtIntoUkView]
 
         val result = route(application, request).value
 
@@ -170,7 +170,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, howManyBoughtIntoUkRoute)
+        val request = FakeRequest(GET, howManyBroughtIntoUkRoute)
 
         val result = route(application, request).value
 
@@ -185,7 +185,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request =
-          FakeRequest(POST, howManyBoughtIntoUkRoute)
+          FakeRequest(POST, howManyBroughtIntoUkRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -204,7 +204,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request =
-          FakeRequest(POST, howManyBoughtIntoUkRoute)
+          FakeRequest(POST, howManyBroughtIntoUkRoute)
             .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
 
         val result = route(application, request).value
@@ -222,7 +222,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request = FakeRequest(POST, howManyBoughtIntoUkRoute).withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
+          val request = FakeRequest(POST, howManyBroughtIntoUkRoute).withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
           await(route(application, request).value)
           events.collectFirst {
             case event =>
@@ -244,7 +244,7 @@ class HowManyBroughtIntoUkControllerSpec extends SpecBase with MockitoSugar with
 
       running(app) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request = FakeRequest(POST, howManyBoughtIntoUkRoute)
+          val request = FakeRequest(POST, howManyBroughtIntoUkRoute)
             .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
           await(route(app, request).value)
           events.collectFirst {

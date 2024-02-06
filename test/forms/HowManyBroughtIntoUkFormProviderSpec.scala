@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class HowManyBroughtIntoUkFormProviderSpec extends LongFieldBehaviour {
 
-  val form = new HowManyBoughtIntoUkFormProvider()()
+  val form = new HowManyBroughtIntoUkFormProvider()()
 
   ".lowBand" - {
 

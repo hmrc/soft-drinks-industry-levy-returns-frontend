@@ -5,8 +5,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, res
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import config.FrontendAppConfig
 import controllers.actions._
+import models.UserAnswers
 import models.retrieved.OptSmallProducer
-import models.{ReturnPeriod, UserAnswers}
 import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import org.scalatest.time.{Millis, Seconds, Span}

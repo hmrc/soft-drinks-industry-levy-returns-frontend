@@ -18,6 +18,7 @@ package views
 
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
+import views.helpers.ViewSpecHelper
 import views.html.auth.SignedOutView
 
 class SignedOutViewSpec extends ViewSpecHelper {

@@ -154,7 +154,7 @@ object ReturnsTestData {
       importer = false,
       voluntaryRegistration = false))
 
-  lazy val emptyUserAnswers = UserAnswers(sdilNumber, defaultReturnsPeriod, Json.obj())
+  lazy val emptyUserAnswers: UserAnswers = UserAnswers(sdilNumber, defaultReturnsPeriod, Json.obj())
   val warehouseMap: Map[String, Site] = Map(("1", Site(
     tradingName = Some("Wild Lemonade Group"),
     address = UkAddress(List("33", "Rhes", "Priordy", "East London"), "E73 2RP"))))

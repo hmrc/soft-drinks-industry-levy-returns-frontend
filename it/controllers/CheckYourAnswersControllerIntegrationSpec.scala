@@ -2,7 +2,7 @@ package controllers
 
 import controllers.testSupport.helpers.ReturnSentTestHelper
 import models.retrieved.{OptSmallProducer, RetrievedActivity}
-import models.{AddASmallProducer, CheckMode, LitresInBands, NormalMode}
+import models.{AddASmallProducer, LitresInBands, NormalMode}
 import org.jsoup.Jsoup
 import pages._
 import play.api.i18n.Messages

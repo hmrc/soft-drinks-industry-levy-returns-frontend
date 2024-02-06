@@ -69,7 +69,7 @@ govukSummaryList: GovukSummaryList
  }
 }
 
-@AskSecondaryWarehouseSummary.summaryList(userAnswers, isCheckAnswers) match {
+@WarehouseCYASummary.summaryList(userAnswers, isCheckAnswers) match {
  case Some(warehouse) => {
   @govukSummaryList(warehouse)
  }

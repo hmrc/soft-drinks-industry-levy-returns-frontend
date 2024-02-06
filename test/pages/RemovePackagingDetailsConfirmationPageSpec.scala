@@ -22,7 +22,7 @@ import pages.behaviours.PageBehaviours
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import views.ViewSpecHelper
+import views.helpers.ViewSpecHelper
 import views.html.RemovePackagingDetailsConfirmationView
 
 class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with PageBehaviours {

@@ -20,6 +20,7 @@ import controllers.routes
 import models.NormalMode
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
+import views.helpers.ViewSpecHelper
 import views.html.ReturnChangeRegistrationView
 
 class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {

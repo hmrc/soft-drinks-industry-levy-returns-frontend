@@ -50,6 +50,19 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     }
   }
 
+  "referenceNumberSame" - {
+
+    "must return Valid when the reference number is not the same" in {
+      val result = referenceNumberSame("1234567890", "error.referenceNumberSame").apply("1234567891")
+      result mustEqual Valid
+    }
+
+    "must return Invalid when the reference number is the same" in {
+      val result = referenceNumberSame("1234567890", "error.referenceNumberSame").apply("1234567890")
+      result mustEqual Invalid("error.referenceNumberSame", "1234567890")
+    }
+  }
+
   "minimumValue" - {
 
     "must return Valid for a number greater than the threshold" in {
@@ -83,6 +96,24 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     "must return Invalid for a number above the threshold" in {
       val result = maximumValue(1, "error.max").apply(2)
       result mustEqual Invalid("error.max", 1)
+    }
+  }
+
+  "inRange" - {
+
+    "must return Valid for a number within the range" in {
+      val result = inRange(1, 10, "error.range").apply(5)
+      result mustEqual Valid
+    }
+
+    "must return Invalid for a number outside of the range (lower)" in {
+      val result = inRange(1, 10, "error.range").apply(0)
+      result mustEqual Invalid("error.range", 1, 10)
+    }
+
+    "must return Invalid for a number outside of the range (higher)" in {
+      val result = inRange(1, 10, "error.range").apply(100)
+      result mustEqual Invalid("error.range", 1, 10)
     }
   }
 
@@ -185,6 +216,19 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           val result = minDate(min, "error.past", "foo")(date)
           result mustEqual Invalid("error.past", "foo")
       }
+    }
+  }
+
+  "nonEmptySet" - {
+
+    "must return Valid for a non-empty set" in {
+      val result = nonEmptySet("error.empty").apply(Set("foo"))
+      result mustEqual Valid
+    }
+
+    "must return Invalid for an empty set" in {
+      val result = nonEmptySet("error.empty").apply(Set.empty)
+      result mustEqual Invalid("error.empty")
     }
   }
 }

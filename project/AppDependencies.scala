@@ -1,13 +1,12 @@
-import sbt._
+import sbt.*
 
 object AppDependencies {
-  import play.core.PlayVersion
 
 
   private val playSuffix = s"-play-30"
-  private val bootstrapVersion = "8.3.0"
-  private val hmrcMongoVersion = "1.6.0"
-  private val playFrontendHMRCVersion = "8.2.0"
+  private val bootstrapVersion = "8.4.0"
+  private val hmrcMongoVersion = "1.7.0"
+  private val playFrontendHMRCVersion = "8.4.0"
 
   // Test dependencies
   private val scalaTestPlusPlayVersion = "7.0.0"
