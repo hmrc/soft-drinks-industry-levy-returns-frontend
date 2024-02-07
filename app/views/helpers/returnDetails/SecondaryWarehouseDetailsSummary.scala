@@ -19,7 +19,7 @@ package views.helpers.returnDetails
 import controllers.routes
 import models.backend.Site
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ Actions, Key }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.AddressFormattingHelper

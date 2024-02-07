@@ -39,6 +39,44 @@ case class ReturnCharge(period: ReturnPeriod, amount: BigDecimal) extends Financ
   def date: Date = period.deadline
 }
 
+sealed trait Interest
+
+case class ReturnChargeInterest(date: Date, amount: BigDecimal) extends FinancialLineItem with Interest {
+  val formatter: DateTimeFormatter = java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy")
+
+  override def messageKey(implicit messages: Messages): String =
+    Messages("financiallineitem.returnchargeinterest", date.format(formatter))
+}
+
+case class CentralAssessment(date: Date, amount: BigDecimal) extends FinancialLineItem {
+  override def messageKey(implicit messages: Messages): String =
+    Messages("financiallineitem.centralassessment")
+}
+
+case class CentralAsstInterest(date: Date, amount: BigDecimal) extends FinancialLineItem with Interest {
+  override def messageKey(implicit messages: Messages): String =
+    Messages("financiallineitem.centralasstinterest")
+}
+
+case class OfficerAssessment(date: Date, amount: BigDecimal) extends FinancialLineItem {
+  override def messageKey(implicit messages: Messages): String =
+    Messages("financiallineitem.officerassessment")
+}
+
+case class OfficerAsstInterest(date: Date, amount: BigDecimal) extends FinancialLineItem with Interest {
+  override def messageKey(implicit messages: Messages): String =
+    Messages("financiallineitem.officerasstinterest")
+}
+
+case class PaymentOnAccount(date: Date, reference: String, amount: BigDecimal) extends FinancialLineItem {
+  override def messageKey(implicit messages: Messages): String =
+    Messages("financiallineitem.paymentonaccount", reference)
+}
+
+case class Unknown(date: Date, title: String, amount: BigDecimal) extends FinancialLineItem {
+  override def messageKey(implicit messages: Messages): String = title
+}
+
 object FinancialLineItem {
 
   implicit val formatPeriod: Format[ReturnPeriod] =
@@ -49,10 +87,30 @@ object FinancialLineItem {
       def reads(json: JsValue): JsResult[FinancialLineItem] =
         (json \ "type").as[String] match {
           case "ReturnCharge" => Json.format[ReturnCharge].reads(json)
+          case "ReturnChargeInterest" => Json.format[ReturnChargeInterest].reads(json)
+          case "CentralAssessment" => Json.format[CentralAssessment].reads(json)
+          case "CentralAsstInterest" => Json.format[CentralAsstInterest].reads(json)
+          case "OfficerAssessment" => Json.format[OfficerAssessment].reads(json)
+          case "OfficerAsstInterest" => Json.format[OfficerAsstInterest].reads(json)
+          case "PaymentOnAccount" => Json.format[PaymentOnAccount].reads(json)
+          case "Unknown" => Json.format[Unknown].reads(json)
         }
 
       def writes(o: FinancialLineItem): JsValue = o match {
         case i: ReturnCharge => Json.format[ReturnCharge].writes(i).as[JsObject] + ("type" -> JsString("ReturnCharge"))
+        case i: ReturnChargeInterest =>
+          Json.format[ReturnChargeInterest].writes(i).as[JsObject] + ("type" -> JsString("ReturnChargeInterest"))
+        case i: CentralAssessment =>
+          Json.format[CentralAssessment].writes(i).as[JsObject] + ("type" -> JsString("CentralAssessment"))
+        case i: CentralAsstInterest =>
+          Json.format[CentralAsstInterest].writes(i).as[JsObject] + ("type" -> JsString("CentralAsstInterest"))
+        case i: OfficerAssessment =>
+          Json.format[OfficerAssessment].writes(i).as[JsObject] + ("type" -> JsString("OfficerAssessment"))
+        case i: OfficerAsstInterest =>
+          Json.format[OfficerAsstInterest].writes(i).as[JsObject] + ("type" -> JsString("OfficerAsstInterest"))
+        case i: PaymentOnAccount =>
+          Json.format[PaymentOnAccount].writes(i).as[JsObject] + ("type" -> JsString("PaymentOnAccount"))
+        case i: Unknown => Json.format[Unknown].writes(i).as[JsObject] + ("type" -> JsString("Unknown"))
       }
     }
 }

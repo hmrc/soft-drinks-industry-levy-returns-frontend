@@ -28,6 +28,7 @@ class LevyCalculator @Inject() (config: FrontendAppConfig) {
   val lowBandRate = config.lowerBandCostPerLitre
   val highBandRate = config.higherBandCostPerLitre
   val nilCalculation = SdilCalculation(0, 0)
+
   def calculateLevyForAnswers(answers: UserAnswers): Map[String, SdilCalculation] = {
     Map(
       BrandsPackagedAtOwnSitesPage.toString -> brandsPackagedAtOwnSitesCalculation(answers),

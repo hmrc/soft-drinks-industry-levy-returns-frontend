@@ -28,10 +28,10 @@ import scala.concurrent.Future
 
 class ReturnServiceSpec extends SpecBase {
 
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-  val mockConfig = mock[FrontendAppConfig]
+  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val service = new ReturnService(mockSdilConnector, mockConfig) {
+  val service: ReturnService = new ReturnService(mockSdilConnector, mockConfig) {
     override val costHigher: BigDecimal = BigDecimal("0.24")
     override val costLower: BigDecimal = BigDecimal("0.18")
   }
