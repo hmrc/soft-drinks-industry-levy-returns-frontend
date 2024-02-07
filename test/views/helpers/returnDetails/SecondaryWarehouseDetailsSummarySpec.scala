@@ -18,7 +18,7 @@ package views.helpers.returnDetails
 
 import base.ReturnsTestData._
 import base.SpecBase
-import models.backend.{Site, UkAddress}
+import models.backend.{ Site, UkAddress }
 import views.helpers.returnDetails.SecondaryWarehouseDetailsSummary
 
 class SecondaryWarehouseDetailsSummarySpec extends SpecBase {
