@@ -1,4 +1,4 @@
-import sbt.*
+import sbt._
 
 object AppDependencies {
 
