@@ -14,7 +14,10 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+
 @this(
+    frontendAppConfig: FrontendAppConfig,
     layout: templates.Layout,
     govukButton: GovukButton
 )
@@ -30,7 +33,7 @@
     <p class="govuk-body">
         @govukButton(
             ButtonViewModel(messages("site.startAgain"))
-                .asLink(routes.IndexController.onPageLoad().url)
+                .asLink(frontendAppConfig.sdilHomeUrl)
         )
     </p>
 }

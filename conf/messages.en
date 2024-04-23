@@ -43,11 +43,6 @@ error.date.year_invalid = Give a correct year
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = soft-drinks-industry-levy-returns-frontend
-index.heading = soft-drinks-industry-levy-returns-frontend
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
-
-
 litres.text = Litres
 litres.lowBand = Litres in the low band
 litres.lowBandHint = At least 5 grams of sugar per 100 millilitres

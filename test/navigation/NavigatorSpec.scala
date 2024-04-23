@@ -33,12 +33,12 @@ class NavigatorSpec extends SpecBase with LoggerHelper {
 
     "in Normal mode" - {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "must go from a page that doesn't exist in the route map to CYA controller" in {
 
         case object UnknownPage extends Page {
           override val url: Mode => String = _ => ""
         }
-        navigator.nextPage(UnknownPage, NormalMode, emptyUserAnswers) mustBe routes.IndexController.onPageLoad()
+        navigator.nextPage(UnknownPage, NormalMode, emptyUserAnswers) mustBe routes.CheckYourAnswersController.onPageLoad
       }
 
       "navigate to correct page " - {
