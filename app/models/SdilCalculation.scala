@@ -16,12 +16,12 @@
 
 package models
 
-import play.api.libs.json.{ Json, Reads, Writes }
+import play.api.libs.json.{ Json, OFormat, Reads, Writes }
 
 case class SdilCalculation(lowBandLevy: Double, highBandLevy: Double)
 
 object SdilCalculation {
-  implicit val format = Json.format[SdilCalculation]
+  implicit val format: OFormat[SdilCalculation] = Json.format[SdilCalculation]
   implicit val writes: Writes[SdilCalculation] = Json.writes
   implicit val reads: Reads[SdilCalculation] = Json.reads
 }

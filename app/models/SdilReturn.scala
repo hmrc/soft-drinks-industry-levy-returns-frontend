@@ -61,7 +61,7 @@ object SdilReturn {
     }))
 
   implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
-  implicit val returnsFormat = Json.format[SdilReturn]
+  implicit val returnsFormat: OFormat[SdilReturn] = Json.format[SdilReturn]
 
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll

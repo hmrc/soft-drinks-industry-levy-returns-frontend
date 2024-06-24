@@ -46,13 +46,13 @@ trait SpecBase
   with ScalaFutures
   with IntegrationPatience with BeforeAndAfterEach {
 
-  lazy val application = applicationBuilder(userAnswers = None).build()
-  implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
-  implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
-  lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
-  lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-  implicit lazy val hc = HeaderCarrier()
-  implicit lazy val ec = application.injector.instanceOf[ExecutionContext]
+  lazy val application: Application = applicationBuilder(userAnswers = None).build()
+  implicit lazy val messagesAPI: MessagesApi = application.injector.instanceOf[MessagesApi]
+  implicit lazy val messagesProvider: MessagesImpl = MessagesImpl(Lang("en"), messagesAPI)
+  lazy val mcc: MessagesControllerComponents = application.injector.instanceOf[MessagesControllerComponents]
+  lazy val frontendAppConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit lazy val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
