@@ -17,7 +17,6 @@
 package models
 
 import base.ReturnsTestData.litreage
-import config.FrontendAppConfig
 
 trait DataHelper {
 
@@ -27,7 +26,7 @@ trait DataHelper {
     packSmall: List[SmallProducer],
     importLarge: (Long, Long) = litreage,
     importSmall: (Long, Long) = litreage,
-    export: (Long, Long) = litreage,
+    `export`: (Long, Long) = litreage,
     wastage: (Long, Long) = litreage): SdilReturn = {
     SdilReturn(
       ownBrand = (ownBrand._1, ownBrand._2),

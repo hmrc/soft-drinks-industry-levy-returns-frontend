@@ -17,7 +17,7 @@
 package utilities
 
 import base.SpecBase
-import models.{ FinancialLineItem, PaymentOnAccount, ReturnCharge, ReturnChargeInterest, ReturnPeriod }
+import models.{ FinancialLineItem, PaymentOnAccount, ReturnCharge, ReturnPeriod }
 import utilitlies.ReturnsHelper
 import utilitlies.ReturnsHelper.listItemsWithTotal
 

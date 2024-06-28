@@ -19,7 +19,7 @@ package models.retrieved
 import models.backend.{ Contact, Site, UkAddress }
 
 import java.time.LocalDate
-import play.api.libs.json.Json
+import play.api.libs.json.{ Json, OFormat }
 
 case class RetrievedActivity(
   smallProducer: Boolean,
@@ -35,7 +35,7 @@ case class RetrievedActivity(
     smallProducer && (contractPacker || importer)
 }
 object RetrievedActivity {
-  implicit val format = Json.format[RetrievedActivity]
+  implicit val format: OFormat[RetrievedActivity] = Json.format[RetrievedActivity]
 }
 
 case class RetrievedSubscription(
@@ -51,5 +51,5 @@ case class RetrievedSubscription(
   deregDate: Option[LocalDate] = None)
 
 object RetrievedSubscription {
-  implicit val format = Json.format[RetrievedSubscription]
+  implicit val format: OFormat[RetrievedSubscription] = Json.format[RetrievedSubscription]
 }

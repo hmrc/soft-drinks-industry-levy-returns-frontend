@@ -26,6 +26,6 @@ object ReturnChangeRegistrationPage extends QuestionPage[String] {
 
   override def toString: String = "returnChangeRegistration"
 
-  override val url: Mode => String = _ => routes.ReturnChangeRegistrationController.onPageLoad.url
+  override val url: Mode => String = _ => routes.ReturnChangeRegistrationController.onPageLoad().url
 
 }

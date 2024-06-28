@@ -17,7 +17,7 @@
 package models
 
 import models.retrieved.RetrievedSubscription
-import play.api.libs.json.Json
+import play.api.libs.json.{ Json, OFormat }
 
 case class DefaultUserAnswersData(
   ownBrands: Option[Boolean],
@@ -38,5 +38,5 @@ case class DefaultUserAnswersData(
 }
 
 object DefaultUserAnswersData {
-  implicit val format = Json.format[DefaultUserAnswersData]
+  implicit val format: OFormat[DefaultUserAnswersData] = Json.format[DefaultUserAnswersData]
 }
