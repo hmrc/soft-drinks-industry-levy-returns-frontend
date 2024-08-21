@@ -27,7 +27,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
           res.status mustBe OK
           val doc = Jsoup.parse(res.body)
           doc.getElementsByTag("h1").text() mustBe "You changed your soft drinks business activity"
-          doc.getElementsByTag("title").text() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
+          doc.title() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
           doc.getElementById("main-content").getElementsByTag("a").attr("href") mustBe "/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer"
         }
       }

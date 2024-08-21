@@ -67,14 +67,14 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
       def getAddressResult: Future[HttpResult[AlfResponse]] = testAddressLookupConnector.getAddress(id)(implicitly, implicitly)
 
       "return a AlfResponse Model" in {
-        setupMockHttpGet(testAddressLookupConnector.getAddressUrl(id, addressLookupFrontendTestEnabled = true))(Right(customerAddressMax))
+        setupMockHttpGet(Right(customerAddressMax))
         await(getAddressResult) mustBe Right(customerAddressMax)
       }
 
       "given an error should" - {
 
         "return an Left with an ErrorModel" in {
-          setupMockHttpGet(testAddressLookupConnector.getAddressUrl(id, addressLookupFrontendTestEnabled = true))(Left(errorModel))
+          setupMockHttpGet(Left(errorModel))
           await(getAddressResult) mustBe Left(errorModel)
         }
       }
@@ -85,26 +85,26 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
 
       s"should return url if ${Status.ACCEPTED} returned and ${HeaderNames.LOCATION} exists" in {
         val response = AddressLookupInitJourneyReads.read("", "", HttpResponse(Status.ACCEPTED, "", Map(HeaderNames.LOCATION -> Seq("foo"))))
-        setupMockHttpPost(testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true))(response)
+        setupMockHttpPost(response)
         await(testAddressLookupConnector.initJourney(journeyConfig)) mustBe response
       }
 
       s"return Left if ${Status.ACCEPTED} but no header exists" in {
         val response = AddressLookupInitJourneyReads.read("", "", HttpResponse(Status.ACCEPTED, "", Map.empty))
-        setupMockHttpPost(testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true))(response)
+        setupMockHttpPost(response)
         await(testAddressLookupConnector.initJourney(journeyConfig)) mustBe
           Left(ErrorModel(Status.ACCEPTED, s"No ${HeaderNames.LOCATION} key in response from init response from ALF"))
       }
 
       s"return Left if status is ${Status.BAD_REQUEST}" in {
         val response = AddressLookupInitJourneyReads.read("", "", HttpResponse(Status.BAD_REQUEST, "Error Message"))
-        setupMockHttpPost(testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true))(response)
+        setupMockHttpPost(response)
         await(testAddressLookupConnector.initJourney(journeyConfig)) mustBe Left(ErrorModel(Status.BAD_REQUEST, "Error Message returned from ALF"))
       }
 
       "return Left if status not accepted statuses from API" in {
         val response = AddressLookupInitJourneyReads.read("", "", HttpResponse(Status.INTERNAL_SERVER_ERROR, "Error Message"))
-        setupMockHttpPost(testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true))(response)
+        setupMockHttpPost(response)
         await(testAddressLookupConnector.initJourney(journeyConfig)) mustBe
           Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected error occurred when init journey from ALF"))
       }

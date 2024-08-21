@@ -59,12 +59,12 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
   def setAndRedirect(updatedAnswers: UserAnswers, page: Page, mode: Mode, sdilReturn: Option[SdilReturn] = None,
     subscription: Option[RetrievedSubscription] = None,
     smallProducerMissing: Option[Boolean] = None)(implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
-    sessionRepository.set(updatedAnswers).map {
-      case Right(_) =>
-        Redirect(navigator.nextPage(page, mode, updatedAnswers, sdilReturn, subscription, smallProducerMissing))
+    sessionRepository.set(updatedAnswers).flatMap {
+      case Right(_) => Future.successful(
+        Redirect(navigator.nextPage(page, mode, updatedAnswers, sdilReturn, subscription, smallProducerMissing)))
       case Left(_) =>
         genericLogger.logger.error(sessionRepo500ErrorMessage(page))
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
     }
   }
 
@@ -78,9 +78,9 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
     }
   }
 
-  private def failure(page: Page)(implicit request: Request[_]): Future[Result] = {
+  private def failure(page: Page)(implicit ec: ExecutionContext, request: Request[_]): Future[Result] = {
     genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")
-    Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
   }
 
 }

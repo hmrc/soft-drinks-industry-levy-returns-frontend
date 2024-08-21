@@ -54,7 +54,7 @@ lazy val root = (project in file("."))
           "javascripts/app.js"
         ))
     ),
-    // scalacOptions += "-deprecation",
+    scalacOptions += "-deprecation",
     scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "off"),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
