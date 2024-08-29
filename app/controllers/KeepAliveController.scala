@@ -24,7 +24,7 @@ import repositories.SessionRepository
 import utilitlies.GenericLogger
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ ExecutionContext, Future }
 
 class KeepAliveController @Inject() (
   val controllerComponents: MessagesControllerComponents,
@@ -38,11 +38,11 @@ class KeepAliveController @Inject() (
 
   def keepAlive: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      sessionRepository.keepAlive(request.userAnswers.id).map {
-        case Right(_) => Ok
+      sessionRepository.keepAlive(request.userAnswers.id).flatMap {
+        case Right(_) => Future.successful(Ok)
         case Left(_) =>
           genericLogger.logger.error("Failed to keep the session alive due to error from mongo session repository's keepAlive")
-          InternalServerError(errorHandler.internalServerErrorTemplate)
+          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
       }
   }
 }

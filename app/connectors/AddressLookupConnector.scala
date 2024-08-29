@@ -21,14 +21,16 @@ import connectors.httpParsers.AddressLookupHttpParser._
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import models.alf.AlfResponse
 import models.alf.init.JourneyConfig
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient }
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{ HeaderCarrier, StringContextOps }
 
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class AddressLookupConnector @Inject() (
-  val http: HttpClient,
+  val http: HttpClientV2,
   implicit val config: FrontendAppConfig) {
   private[connectors] def getAddressUrl(id: String, addressLookupFrontendTestEnabled: Boolean): String = {
     if (addressLookupFrontendTestEnabled) {
@@ -47,12 +49,13 @@ class AddressLookupConnector @Inject() (
   }
 
   def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = {
-    http.GET[HttpResult[AlfResponse]](getAddressUrl(id, config.addressLookUpFrontendTestEnabled))(AddressLookupGetAddressReads, hc, ec)
+    http.get(url"${getAddressUrl(id, config.addressLookUpFrontendTestEnabled)}")
+      .execute[HttpResult[AlfResponse]]
   }
 
   def initJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[String]] = {
-    http.POST[JourneyConfig, HttpResult[String]](
-      initJourneyUrl(config.addressLookUpFrontendTestEnabled),
-      journeyConfig)(JourneyConfig.format, AddressLookupInitJourneyReads, hc, ec)
+    http.post(url"${initJourneyUrl(config.addressLookUpFrontendTestEnabled)}")
+      .withBody(Json.toJson(journeyConfig))
+      .execute[HttpResult[String]]
   }
 }

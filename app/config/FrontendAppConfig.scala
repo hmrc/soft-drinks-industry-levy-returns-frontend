@@ -21,8 +21,12 @@ import com.typesafe.config.Config
 import models.Mode
 import play.api.Configuration
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.play.bootstrap.binders.{ RedirectUrl, SafeRedirectUrl }
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import java.net.URLEncoder
+import java.util.Base64.Encoder
 
 @Singleton
 class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
@@ -34,7 +38,8 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   private val contactFormServiceIdentifier: String = "soft-drinks-industry-levy-returns-frontend"
 
   def feedbackUrl(implicit request: RequestHeader): String = {
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(returnsFrontendBaseUrl + request.uri).encodedUrl}"
+    val backUrl = URLEncoder.encode(returnsFrontendBaseUrl + request.uri, "UTF-8")
+    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=$backUrl"
   }
 
   private val accessibilityHost: String = servicesConfig.getConfString("accessibility-statement.host", throw new Exception("missing config accessibility-statement.host"))
