@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.ReturnsHelper.{ extractTotal, listItemsWithTotal }
 import utilitlies.{ TotalForQuarter, UserTypeCheck }
 
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -48,7 +49,7 @@ class ReturnService @Inject() (
   }
 
   def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val sdilReturn = returnToBeSubmitted(userAnswers)
+    val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(getCurrentDateTime))
     val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
     for {
       _ <- submitReturn(subscription, returnPeriod, sdilReturn)
@@ -82,10 +83,11 @@ class ReturnService @Inject() (
     val total = totalForQuarter - balanceBroughtForward
     Amounts(totalForQuarter, balanceBroughtForward, total)
   }
-
   private def submitReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    sdilConnector.returns_update(subscription.utr, returnPeriod, sdilReturn).map {
-      case Some(OK) => logger.info(s"Return submitted for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
+    val returnWithDate = sdilReturn.copy(submittedOn = sdilReturn.submittedOn.orElse(Some(getCurrentDateTime)))
+    sdilConnector.returns_update(subscription.utr, returnPeriod, returnWithDate).map {
+      case Some(OK) =>
+        logger.info(s"Return submitted for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
       case _ =>
         logger.error(s"Failed to submit return for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
         throw new RuntimeException(s"Failed to submit return ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
@@ -124,7 +126,8 @@ class ReturnService @Inject() (
       importsLitres(userAnswers),
       importsSmallLitres(userAnswers),
       exportLitres(userAnswers),
-      wastageLitres(userAnswers))
+      wastageLitres(userAnswers),
+      submittedOn = Some(getCurrentDateTime))
   }
 
   private def ownBrandsLitres(userAnswers: UserAnswers) = {
@@ -166,5 +169,9 @@ class ReturnService @Inject() (
   private def taxEstimation(r: SdilReturn): BigDecimal = {
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4
+  }
+
+  private def getCurrentDateTime: ZonedDateTime = {
+    ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("Europe/London"))
   }
 }
