@@ -49,7 +49,7 @@ class ReturnService @Inject() (
   }
 
   def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(getCurrentDateTime))
+    val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(Instant.now()))
     val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
     for {
       _ <- submitReturn(subscription, returnPeriod, sdilReturn)
@@ -171,7 +171,9 @@ class ReturnService @Inject() (
     (t._1 * costLower |+| t._2 * costHigher) * 4
   }
 
-  private def getCurrentDateTime: ZonedDateTime = {
-    ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("Europe/London"))
-  }
+  //  private def getCurrentDateTime: ZonedDateTime = {
+  //    ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("Europe/London"))
+  //  }
+
+  private def getCurrentDateTime: Instant = Instant.now()
 }
