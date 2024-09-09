@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.ReturnsHelper.{ extractTotal, listItemsWithTotal }
 import utilitlies.{ TotalForQuarter, UserTypeCheck }
 
-import java.time.{ Instant, ZoneId, ZonedDateTime }
+import java.time.{ Instant, LocalDateTime, ZoneId, ZonedDateTime }
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -84,7 +84,7 @@ class ReturnService @Inject() (
     Amounts(totalForQuarter, balanceBroughtForward, total)
   }
   private def submitReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val returnWithDate = sdilReturn.copy(submittedOn = sdilReturn.submittedOn.orElse(Some(getCurrentDateTime)))
+    val returnWithDate = sdilReturn.copy(submittedOn = sdilReturn.submittedOn.orElse(Some(getCurrentDateTime())))
     sdilConnector.returns_update(subscription.utr, returnPeriod, returnWithDate).map {
       case Some(OK) =>
         logger.info(s"Return submitted for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
@@ -127,9 +127,8 @@ class ReturnService @Inject() (
       importsSmallLitres(userAnswers),
       exportLitres(userAnswers),
       wastageLitres(userAnswers),
-      submittedOn = Some(getCurrentDateTime))
+      submittedOn = Some(getCurrentDateTime()))
   }
-
   private def ownBrandsLitres(userAnswers: UserAnswers) = {
     (
       userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L),
@@ -170,10 +169,7 @@ class ReturnService @Inject() (
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4
   }
-
-  //  private def getCurrentDateTime: ZonedDateTime = {
-  //    ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("Europe/London"))
-  //  }
-
-  private def getCurrentDateTime: Instant = Instant.now()
+  private def getCurrentDateTime(zoneId: ZoneId = ZoneId.of("Europe/London")): Instant = {
+    Instant.now().atZone(zoneId).toInstant
+  }
 }

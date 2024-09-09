@@ -20,9 +20,9 @@ import base.ReturnsTestData._
 import base.{ SpecBase, UserAnswersTestData }
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.{ReturnPeriod, SdilReturn}
-import org.mockito.ArgumentMatchers.{any, argThat}
-import org.mockito.MockitoSugar.{mock, reset, when}
+import models.{ ReturnPeriod, SdilReturn }
+import org.mockito.ArgumentMatchers.{ any, argThat }
+import org.mockito.MockitoSugar.{ mock, reset, when }
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -42,7 +42,7 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockSdilConnector) // Ensure mocks are reset before each test
+    reset(mockSdilConnector)
   }
 
   "getPendingReturns" - {
