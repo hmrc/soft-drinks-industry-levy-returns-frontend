@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utilitlies.ReturnsHelper.{ extractTotal, listItemsWithTotal }
 import utilitlies.{ TotalForQuarter, UserTypeCheck }
 
-import java.time.{ Instant, LocalDateTime, ZoneId, ZonedDateTime }
+import java.time.{LocalDateTime, ZoneId, ZonedDateTime }
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -49,7 +49,7 @@ class ReturnService @Inject() (
   }
 
   def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(Instant.now()))
+    val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(getCurrentDateTime))
     val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
     for {
       _ <- submitReturn(subscription, returnPeriod, sdilReturn)
@@ -84,7 +84,7 @@ class ReturnService @Inject() (
     Amounts(totalForQuarter, balanceBroughtForward, total)
   }
   private def submitReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val returnWithDate = sdilReturn.copy(submittedOn = sdilReturn.submittedOn.orElse(Some(getCurrentDateTime())))
+    val returnWithDate = sdilReturn.copy(submittedOn = sdilReturn.submittedOn.orElse(Some(getCurrentDateTime)))
     sdilConnector.returns_update(subscription.utr, returnPeriod, returnWithDate).map {
       case Some(OK) =>
         logger.info(s"Return submitted for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
@@ -127,7 +127,7 @@ class ReturnService @Inject() (
       importsSmallLitres(userAnswers),
       exportLitres(userAnswers),
       wastageLitres(userAnswers),
-      submittedOn = Some(getCurrentDateTime()))
+      submittedOn = Some(getCurrentDateTime))
   }
   private def ownBrandsLitres(userAnswers: UserAnswers) = {
     (
@@ -169,7 +169,10 @@ class ReturnService @Inject() (
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4
   }
-  private def getCurrentDateTime(zoneId: ZoneId = ZoneId.of("Europe/London")): Instant = {
-    Instant.now().atZone(zoneId).toInstant
+
+  private def getCurrentDateTime: LocalDateTime = {
+    val zone = ZoneId.of("Europe/London")
+    val zonedDateTime = ZonedDateTime.now(zone)
+    zonedDateTime.toLocalDateTime
   }
 }
