@@ -46,7 +46,7 @@
         content = HtmlContent(messages("returnSent.panel.returnMessage", returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.end.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.start.getYear.toString, subscription.orgName))
     ))
     <p class="govuk-body-m" id="printPage" xmlns="http://www.w3.org/1999/html">
-        <a href="javascript:window.print()" class="govuk-link">@messages("site.print")</a>
+        <a href="#" data-module="hmrc-print-link" class="govuk-link">@messages("site.print")</a>
     </p>
 
     <p class="govuk-body" id="returnDone">
