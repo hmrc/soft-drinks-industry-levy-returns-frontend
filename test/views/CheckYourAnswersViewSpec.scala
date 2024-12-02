@@ -160,7 +160,7 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       printPageElements.className() mustBe Selectors.bodyM
       val link = printPageElements.getElementsByClass(Selectors.link)
       link.text() mustEqual Messages("site.print")
-      link.attr("href") mustEqual "javascript:window.print()"
+      link.attr("data-module") mustEqual "hmrc-print-link"
     }
   }
 }
