@@ -16,7 +16,7 @@
 
 package config
 
-import com.google.inject.{ Inject, Singleton }
+import com.google.inject.{Inject, Singleton}
 import com.typesafe.config.Config
 import models.Mode
 import play.api.Configuration
@@ -24,7 +24,6 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.net.URLEncoder
-import java.time.{LocalDate, ZoneId}
 
 @Singleton
 class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
@@ -60,23 +59,11 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val cacheTtl: Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
   val sdilCacheTTL: Int = servicesConfig.getInt("mongodb.short-lived.timeToLiveInSeconds")
 
-  val rateChangeDate = LocalDate.of(2025, 4, 1)
+  val lowerBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitre"))
+  val higherBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))
 
-  val lowerBandCostPerLitre: BigDecimal = {
-    if (LocalDate.now(ZoneId.of("Europe/London")).isAfter(rateChangeDate) || LocalDate.now(ZoneId.of("Europe/London")).isEqual(rateChangeDate)) {
-      BigDecimal(servicesConfig.getString("lowerBandCostPerLitrePostApril2025"))
-    } else {
-      BigDecimal(servicesConfig.getString("lowerBandCostPerLitre"))
-    }
-  }
-
-  val higherBandCostPerLitre: BigDecimal = {
-    if (LocalDate.now(ZoneId.of("Europe/London")).isAfter(rateChangeDate) || LocalDate.now(ZoneId.of("Europe/London")).isEqual(rateChangeDate)) {
-      BigDecimal(servicesConfig.getString("higherBandCostPerLitrePostApril2025"))
-    } else {
-      BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))
-    }
-  }
+  val lowerBandCostPerLitrePostApril2025: BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitrePostApril2025"))
+  val higherBandCostPerLitrePostApril2025: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitrePostApril2025"))
 
   val balanceAllEnabled: Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
