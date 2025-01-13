@@ -16,17 +16,14 @@
 
 package config
 
-import com.google.inject.{ Inject, Singleton }
+import com.google.inject.{Inject, Singleton}
 import com.typesafe.config.Config
 import models.Mode
 import play.api.Configuration
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.StringContextOps
-import uk.gov.hmrc.play.bootstrap.binders.{ RedirectUrl, SafeRedirectUrl }
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.net.URLEncoder
-import java.util.Base64.Encoder
 
 @Singleton
 class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
@@ -64,6 +61,9 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
 
   val lowerBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitre"))
   val higherBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))
+
+  val lowerBandCostPerLitrePostApril2025: BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitrePostApril2025"))
+  val higherBandCostPerLitrePostApril2025: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitrePostApril2025"))
 
   val balanceAllEnabled: Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
