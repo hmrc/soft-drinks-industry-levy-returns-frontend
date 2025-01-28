@@ -39,7 +39,7 @@ object LevyCalculator {
     taxYear match {
       case year if year < 2025 => BandRates(frontendAppConfig.lowerBandCostPerLitre, frontendAppConfig.higherBandCostPerLitre)
       case 2025 => BandRates(frontendAppConfig.lowerBandCostPerLitrePostApril2025, frontendAppConfig.higherBandCostPerLitrePostApril2025)
-//      case 2026 => BandRates(frontendAppConfig.lowerBandCostPerLitrePostApril2026, frontendAppConfig.higherBandCostPerLitrePostApril2026)
+      //      case 2026 => BandRates(frontendAppConfig.lowerBandCostPerLitrePostApril2026, frontendAppConfig.higherBandCostPerLitrePostApril2026)
     }
   }
 
