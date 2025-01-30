@@ -16,7 +16,7 @@
 
 package config
 
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.{ Inject, Singleton }
 import com.typesafe.config.Config
 import models.Mode
 import play.api.Configuration
