@@ -27,9 +27,9 @@ object Year2026 extends TaxYear
 object TaxYear {
   def fromYear(year: Int): TaxYear = year match {
     case y if y < 2025 => Pre2025
-    case 2025          => Year2025
-    case 2026          => Year2026
-    case _             => throw new IllegalArgumentException(s"Unsupported tax year: $year")
+    case 2025 => Year2025
+    case 2026 => Year2026
+    case _ => throw new IllegalArgumentException(s"Unsupported tax year: $year")
   }
 }
 
@@ -45,9 +45,9 @@ object LevyCalculator {
 
   // Map tax years to their corresponding band rates using the Rates object
   private def bandRatesByTaxYear(implicit frontendAppConfig: FrontendAppConfig): Map[TaxYear, BandRates] = Map(
-    Pre2025  -> BandRates(frontendAppConfig.lowerBandCostPerLitre, frontendAppConfig.higherBandCostPerLitre),
+    Pre2025 -> BandRates(frontendAppConfig.lowerBandCostPerLitre, frontendAppConfig.higherBandCostPerLitre),
     Year2025 -> BandRates(frontendAppConfig.lowerBandCostPerLitrePostApril2025, frontendAppConfig.higherBandCostPerLitrePostApril2025)
-    // Add more years as needed
+  // Add more years as needed
   )
 
   private[models] def getTaxYear(returnPeriod: ReturnPeriod): TaxYear = {
@@ -61,8 +61,7 @@ object LevyCalculator {
   private[models] def getBandRates(taxYear: TaxYear)(implicit frontendAppConfig: FrontendAppConfig): BandRates =
     bandRatesByTaxYear.getOrElse(
       taxYear,
-      throw new IllegalArgumentException(s"No band rates found for tax year: ${taxYear.toString}")
-    )
+      throw new IllegalArgumentException(s"No band rates found for tax year: ${taxYear.toString}"))
 
   def getLevyCalculation(lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit frontendAppConfig: FrontendAppConfig): LevyCalculation = {
     if (lowLitres < 0 || highLitres < 0) {
