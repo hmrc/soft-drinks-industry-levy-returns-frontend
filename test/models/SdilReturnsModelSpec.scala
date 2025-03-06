@@ -18,6 +18,7 @@ package models
 
 import base.ReturnsTestData.smallProducerListWithTwoProducers
 import base.SpecBase
+import config.FrontendAppConfig
 import org.scalatestplus.mockito.MockitoSugar
 
 class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper {
@@ -35,6 +36,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper {
         export = (15, 15),
         wastage = (15, 15))
 
+      implicit val returnPeriod = ReturnPeriod(2025, 0)
+      implicit val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
       data.total mustBe expectedValue
     }
 
@@ -48,6 +51,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper {
         `export` = (15, 15),
         wastage = (15, 15))
 
+      implicit val returnPeriod = ReturnPeriod(2025, 0)
+      implicit val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
       data.total mustBe expectedValue
     }
 
