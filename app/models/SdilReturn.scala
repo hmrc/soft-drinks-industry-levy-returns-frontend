@@ -17,6 +17,8 @@
 package models
 
 import cats.implicits._
+import config.FrontendAppConfig
+import models.LevyCalculator.getLevyCalculation
 import models.SdilReturn._
 import pages._
 import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
@@ -37,18 +39,19 @@ case class SdilReturn(
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
 
-  private def sumLitres(l: List[(Long, Long)]) = l.map(x => LitreOps(x).dueLevy).sum
+  private def sumLitres(l: List[(Long, Long)])(implicit returnPeriod: ReturnPeriod, frontendAppConfig: FrontendAppConfig) = l.map(x => LitreOps(x).dueLevy).sum
 
-  def total: BigDecimal =
+  def total(implicit returnPeriod: ReturnPeriod, frontendAppConfig: FrontendAppConfig): BigDecimal =
     sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
 
   type Litres = Long
   type LitreBands = (Litres, Litres)
 
-  implicit class LitreOps(litreBands: LitreBands) {
-    lazy val lowLevy: BigDecimal = litreBands._1 * BigDecimal("0.18")
-    lazy val highLevy: BigDecimal = litreBands._2 * BigDecimal("0.24")
-    lazy val dueLevy: BigDecimal = lowLevy + highLevy
+  implicit class LitreOps(litreBands: LitreBands)(implicit returnPeriod: ReturnPeriod, frontendAppConfig: FrontendAppConfig) {
+    lazy val levyCalculation: LevyCalculation = getLevyCalculation(litreBands._1, litreBands._2, returnPeriod)
+    lazy val lowLevy: BigDecimal = levyCalculation.lowLevy
+    lazy val highLevy: BigDecimal = levyCalculation.highLevy
+    lazy val dueLevy: BigDecimal = levyCalculation.total
   }
 }
 
