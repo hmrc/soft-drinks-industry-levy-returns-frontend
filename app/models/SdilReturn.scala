@@ -36,23 +36,8 @@ case class SdilReturn(
   wastage: (Long, Long),
   submittedOn: Option[LocalDateTime] = None) {
 
-  def totalPacked: (Long, Long) = packLarge |+| packSmall.total
-  def totalImported: (Long, Long) = importLarge |+| importSmall
-
-  private def sumLitres(l: List[(Long, Long)])(implicit returnPeriod: ReturnPeriod, frontendAppConfig: FrontendAppConfig) = l.map(x => LitreOps(x).dueLevy).sum
-
-  def total(implicit returnPeriod: ReturnPeriod, frontendAppConfig: FrontendAppConfig): BigDecimal =
-    sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
-
-  type Litres = Long
-  type LitreBands = (Litres, Litres)
-
-  implicit class LitreOps(litreBands: LitreBands)(implicit returnPeriod: ReturnPeriod, frontendAppConfig: FrontendAppConfig) {
-    lazy val levyCalculation: LevyCalculation = getLevyCalculation(litreBands._1, litreBands._2, returnPeriod)
-    lazy val lowLevy: BigDecimal = levyCalculation.lowLevy
-    lazy val highLevy: BigDecimal = levyCalculation.highLevy
-    lazy val dueLevy: BigDecimal = levyCalculation.total
-  }
+    def totalPacked: (Long, Long) = packLarge |+| packSmall.total
+    def totalImported: (Long, Long) = importLarge |+| importSmall
 }
 
 object SdilReturn {
