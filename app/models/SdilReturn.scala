@@ -34,8 +34,8 @@ case class SdilReturn(
   wastage: (Long, Long),
   submittedOn: Option[LocalDateTime] = None) {
 
-    def totalPacked: (Long, Long) = packLarge |+| packSmall.total
-    def totalImported: (Long, Long) = importLarge |+| importSmall
+  def totalPacked: (Long, Long) = packLarge |+| packSmall.total
+  def totalImported: (Long, Long) = importLarge |+| importSmall
 }
 
 object SdilReturn {
