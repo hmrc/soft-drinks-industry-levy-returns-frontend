@@ -326,6 +326,34 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must show own brands packaged at own site row containing small calculations when yes is selected - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("dd").text() must include("5")
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£0.90")
+        page.getElementsByTag("dd").text() must include("3")
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£0.72")
+      }
+    }
+
     "must show packaged contract packer row when present and answer is no" in {
 
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
@@ -376,6 +404,46 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£4,800.00")
+
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.highband.litres.hidden"))
+      }
+    }
+
+    "must show packaged contract packer row containing calculation when yes is selected - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val userAnswersData = Json.obj(
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedAtYourOwnSite"))
+        page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite"))
+        page.getElementById("change-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-packaged-as-contract-packer"
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementById("change-lowband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementById("change-highband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.lowband.litres.hidden"))
@@ -447,6 +515,50 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must show exemption for small producers row when yes is selected - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val userAnswersData = Json.obj(
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
+
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("contractPackedForRegisteredSmallProducers"))
+        page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
+        page.getElementById("change-exemption-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-exemptions-for-small-producers"
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("4000")
+        page.getElementById("change-lowband-litreage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£0.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("6000")
+        page.getElementById("change-highband-litreage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£0.00")
+
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.highband.litres.hidden"))
+      }
+    }
+
     "must show brought into the UK row when present and answer is no" in {
 
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
@@ -497,6 +609,46 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£4,800.00")
+
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.highband.litres.hidden"))
+      }
+    }
+
+    "must show brought into the UK row containing calculation when yes is selected - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val userAnswersData = Json.obj(
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoUK"))
+        page.getElementsByTag("dt").text() must include(Messages("reportingLiableDrinksBroughtIntoTheUK"))
+        page.getElementById("change-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk"
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementById("change-lowband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementById("change-highband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.lowband.litres.hidden"))
@@ -561,6 +713,46 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must show brought into the UK from small producers row containing calculation when yes is selected - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val userAnswersData = Json.obj(
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("broughtIntoTheUKFromSmallProducers"))
+        page.getElementsByTag("dt").text() must include(Messages("reportingLiableDrinksBroughtIntoTheUKFromSmallProducers"))
+        page.getElementById("change-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk-from-small-producers"
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementById("change-lowband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£0.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementById("change-highband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£0.00")
+
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.highband.litres.hidden"))
+      }
+    }
+
     "must show claim credits for exports row when present and answer is no" in {
 
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
@@ -611,6 +803,46 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        page.getElementsByTag("dd").text() must include("−£4,800.00")
+
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.highband.litres.hidden"))
+      }
+    }
+
+    "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val userAnswersData = Json.obj(
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("exported"))
+        page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
+        page.getElementById("change-exports").attributes().get("href") mustEqual s"$baseUrl/change-claim-credits-for-exports"
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementById("change-lowband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("−£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementById("change-highband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("−£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.lowband.litres.hidden"))
@@ -675,6 +907,46 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must show lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val userAnswersData = Json.obj(
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("lostOrDestroyed"))
+        page.getElementsByTag("dt").text() must include(Messages("claimingCreditForLostOrDestroyedLiableDrinks"))
+        page.getElementById("change-credits-lost-damaged").attributes().get("href") mustEqual s"$baseUrl/change-claim-credits-for-lost-damaged"
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementById("change-lowband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("−£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementById("change-highband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("−£4,800.00")
+
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.lowband.litres.hidden"))
+        page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.highband.litres.hidden"))
+      }
+    }
+
     "must return OK and contain amount to pay section for small producer - pre April 2025 rates" in {
 
       when(mockConfig.balanceAllEnabled).thenReturn(true)
@@ -711,6 +983,52 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        page.getElementsByClass("total-for-quarter").text() must include("£1,000.00")
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("£3,000.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("£2,000.00")
+
+      }
+    }
+
+    "must return OK and contain amount to pay section for small producer - 2025 tax year rates" in {
+
+      when(mockConfig.balanceAllEnabled).thenReturn(true)
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 1000, "highBand" -> 2000),
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 100, "highBand" -> 200),
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 100, "highBand" -> 200))
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (1000L, 2000L))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
+
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("summary"))
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        //        TODO: Correct this value
         page.getElementsByClass("total-for-quarter").text() must include("£1,000.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
         page.getElementsByClass("balance-brought-forward").text() must include("£3,000.00")
@@ -831,6 +1149,53 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
+    "must return OK and contain amount to pay header when return amount - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val amounts1 = Amounts(4200, 300, 3900)
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
+
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts1))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        //        TODO: Correct this value
+        page.getElementsByClass("total-for-quarter").text() must include("£4,200.00")
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("−£300.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("£3,900.00")
+        page.getElementsByClass("total").text() mustNot include("−£3,900.00")
+
+      }
+    }
+
     "must return OK and contain amount owed header when total is negative - pre April 2025 rates" in {
 
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
@@ -867,6 +1232,51 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        page.getElementsByClass("total-for-quarter").text() must include("−£4,200.00")
+        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
+        page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
+        page.getElementsByTag("dt").text() must include(Messages("total"))
+        page.getElementsByClass("total").text() must include("−£3,900.00")
+      }
+    }
+
+    "must return OK and contain amount owed header when total is negative - 2025 tax year rates" in {
+
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      val amounts1 = Amounts(-4200, -300, -3900)
+      val userAnswersData = Json.obj(
+        "ownBrands" -> true,
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "packagedContractPacker" -> true,
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
+        "smallProducerDetails" -> false,
+        "broughtIntoUK" -> true,
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "broughtIntoUkFromSmallProducers" -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForExports" -> true,
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+        "claimCreditsForLostDamaged" -> true,
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
+
+      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      running(application) {
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts1))
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
+        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
+        //        TODO: Correct this value
         page.getElementsByClass("total-for-quarter").text() must include("−£4,200.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
         page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
