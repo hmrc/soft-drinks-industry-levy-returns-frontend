@@ -18,8 +18,9 @@ package controllers
 
 import base.ReturnsTestData._
 import base.SpecBase
+import config.FrontendAppConfig
 import models.retrieved.RetrievedActivity
-import models.{ Amounts, SmallProducer }
+import models.{Amounts, ReturnPeriod, SmallProducer}
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -37,9 +38,13 @@ import scala.concurrent.Future
 
 class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter {
 
+  private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+
   "ReturnSent Controller" - {
 
     val mockOrchestrator = mock[ReturnsOrchestrator]
+    val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
     "must not show return sent page as return has not been sent" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
@@ -76,11 +81,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show own brands row with answer yes, with calculation when answered" in {
+    "must show own brands row with answer yes, with calculation when answered - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -126,11 +133,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show Contract packed at your own sites row with answer yes, with calculation when answered" in {
+    "must show Contract packed at your own sites row with answer yes, with calculation when answered - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -176,6 +185,32 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
+    "must show Exemptions For Small Producers row has been added - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      val userAnswersData = Json.obj(
+        "exemptionsForSmallProducers" -> true,
+        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), submitted = true, returnPeriod = preApril2025ReturnPeriod)
+
+      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
+        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+
+      running(application) {
+        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
+//        TODO: ADD CHECKS ON NUMBERS HERE
+      }
+    }
+
     "must show brought into uk with answer no, when answered" in {
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
@@ -195,11 +230,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show brought into uk row with answer yes, with calculation when answered" in {
+    "must show brought into uk row with answer yes, with calculation when answered - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -245,11 +282,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show brought into uk small producer row with answer yes, with calculation when answered" in {
+    "must show brought into uk small producer row with answer yes, with calculation when answered - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers" -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -295,11 +334,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show claim credits for exports row containing calculation when yes is selected" in {
+    "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -345,11 +386,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show lost or damaged row containing calculation when yes is selected" in {
+    "must show lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -375,30 +418,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show producer added when a producer has been added" in {
-      val userAnswersData = Json.obj(
-        "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), submitted = true)
-
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
-
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
-
-      running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
-      }
-    }
-
-    "must show correct message to user when nothing is owed " in {
+    "must show correct message to user when nothing is owed" in {
       val userAnswers = emptyUserAnswers.copy(submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -416,9 +436,11 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show correct message to user when user is owed funding" in {
+    "must show correct message to user when user is owed funding - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val amounts = Amounts(0, 0, -6600)
-      val userAnswers = emptyUserAnswers.copy(submitted = true)
+      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -437,9 +459,11 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show correct message to user when user owes funds" in {
+    "must show correct message to user when user owes funds - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val amounts = Amounts(0, 0, 6600)
-      val userAnswers = emptyUserAnswers.copy(submitted = true)
+      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -457,9 +481,11 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show correct total for quarter " in {
+    "must show correct total for quarter - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val amounts = Amounts(660, 0, 660)
-      val userAnswers = emptyUserAnswers.copy(submitted = true)
+      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
