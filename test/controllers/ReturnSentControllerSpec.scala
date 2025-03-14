@@ -20,7 +20,7 @@ import base.ReturnsTestData._
 import base.SpecBase
 import config.FrontendAppConfig
 import models.retrieved.RetrievedActivity
-import models.{Amounts, ReturnPeriod, SmallProducer}
+import models.{ Amounts, ReturnPeriod, SmallProducer }
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -277,7 +277,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
-//        TODO: ADD CHECKS ON NUMBERS HERE
+        //        TODO: ADD CHECKS ON NUMBERS HERE
       }
     }
 
