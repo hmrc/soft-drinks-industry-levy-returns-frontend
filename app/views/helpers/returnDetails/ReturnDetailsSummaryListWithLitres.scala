@@ -47,7 +47,7 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
 
   private def getLitresDetails(userAnswers: UserAnswers, isCheckAnswers: Boolean, litresPage: QuestionPage[LitresInBands])(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     (userAnswers.get(page), userAnswers.get(litresPage)) match {
-      case (Some(true), Some(litresInBands)) => summaryLitres.rows(litresInBands, isCheckAnswers)
+      case (Some(true), Some(litresInBands)) => summaryLitres.rows(litresInBands, userAnswers.returnPeriod, isCheckAnswers)
       case _ => Seq.empty
     }
   }
@@ -58,7 +58,7 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
       val lowBandLitres = smallProducerList.map(_.litreage._1).sum
       val highBandLitres = smallProducerList.map(_.litreage._2).sum
       val litresInBands = LitresInBands(lowBandLitres, highBandLitres)
-      summaryLitres.rows(litresInBands, isCheckAnswers)
+      summaryLitres.rows(litresInBands, userAnswers.returnPeriod, isCheckAnswers)
     } else {
       Seq.empty
     }
