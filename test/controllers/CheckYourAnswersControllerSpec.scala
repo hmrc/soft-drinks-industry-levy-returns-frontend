@@ -53,6 +53,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
     guiceApplicationBuilder.overrides(bind[RequiredUserAnswers].to(requiredAnswers))
   }
+
+  private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+
   "Check Your Answers Controller onPageLoad" - {
 
     "must redirect to returns sent page if return is already submitted" in {
@@ -214,12 +218,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show own brands packaged at own site row containing calculation when yes is selected" in {
+    "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -252,12 +258,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show own brands packaged at own site row containing small calculations when yes is selected" in {
+    "must show own brands packaged at own site row containing small calculations when yes is selected - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -295,12 +303,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show packaged contract packer row containing calculation when yes is selected" in {
+    "must show packaged contract packer row containing calculation when yes is selected - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "packagedContractPacker" -> true,
         "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
@@ -353,8 +363,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show exemption for small producers row when yes is selected" in {
+    "must show exemption for small producers row when yes is selected - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "exemptionsForSmallProducers" -> true,
         "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
@@ -362,7 +374,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
 
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = preApril2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
@@ -412,12 +424,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show brought into the UK row containing calculation when yes is selected" in {
+    "must show brought into the UK row containing calculation when yes is selected - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "broughtIntoUK" -> true,
         "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
@@ -467,12 +481,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show brought into the UK from small producers row containing calculation when yes is selected" in {
+    "must show brought into the UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers" -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
@@ -522,12 +538,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show claim credits for exports row containing calculation when yes is selected" in {
+    "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "claimCreditsForExports" -> true,
         "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
@@ -577,12 +595,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must show lost or damaged row containing calculation when yes is selected" in {
+    "must show lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
@@ -612,9 +632,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.highband.litres.hidden"))
       }
     }
-    "must return OK and contain amount to pay section for small producer" in {
+
+    "must return OK and contain amount to pay section for small producer - pre April 2025 rates" in {
 
       when(mockConfig.balanceAllEnabled).thenReturn(true)
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
@@ -633,7 +656,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 100, "highBand" -> 200))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (1000L, 2000L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = preApril2025ReturnPeriod)
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -719,8 +742,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       }
     }
-    "must return OK and contain amount to pay header when return amount" in {
 
+    "must return OK and contain amount to pay header when return amount - pre April 2025 rates" in {
+
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val amounts1 = Amounts(4200, 300, 3900)
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
@@ -740,7 +766,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = preApril2025ReturnPeriod)
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -763,8 +789,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must return OK and contain amount owed header when total is negative" in {
+    "must return OK and contain amount owed header when total is negative - pre April 2025 rates" in {
 
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val amounts1 = Amounts(-4200, -300, -3900)
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
@@ -784,7 +812,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = preApril2025ReturnPeriod)
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -962,6 +990,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
   }
+
   "Check your Answers Controller onSubmit" - {
     "should submit return and redirect to return sent" in {
       val userAnswersData = Json.obj()
