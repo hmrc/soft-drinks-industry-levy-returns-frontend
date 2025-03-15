@@ -277,7 +277,19 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
-        //        TODO: ADD CHECKS ON NUMBERS HERE
+        page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("1000")
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£180")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("2000")
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£480")
       }
     }
 
@@ -303,7 +315,19 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
-        //        TODO: ADD CHECKS ON NUMBERS HERE
+        page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dd").text() must include("1000")
+        page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£180")
+
+        page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dd").text() must include("2000")
+        page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
+        //        TODO: Correct this value
+        page.getElementsByTag("dd").text() must include("£480")
       }
     }
 
