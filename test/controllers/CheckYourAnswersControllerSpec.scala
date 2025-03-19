@@ -264,7 +264,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10001, "highBand" -> 20002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -282,14 +282,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementById("change-own-brands").attributes().get("href") mustEqual s"$baseUrl/change-own-brands-packaged-at-own-sites"
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
@@ -433,14 +433,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementById("change-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-packaged-as-contract-packer"
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
@@ -638,14 +638,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementById("change-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk"
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
@@ -735,14 +735,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementById("change-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-brought-into-uk-from-small-producers"
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
@@ -832,14 +832,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementById("change-exports").attributes().get("href") mustEqual s"$baseUrl/change-claim-credits-for-exports"
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
@@ -929,14 +929,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementById("change-credits-lost-damaged").attributes().get("href") mustEqual s"$baseUrl/change-claim-credits-for-lost-damaged"
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
