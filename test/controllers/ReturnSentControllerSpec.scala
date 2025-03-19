@@ -110,7 +110,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("£240.00")
+        page.getElementsByTag("dd").text() must include("£480.00")
       }
     }
 
@@ -136,13 +136,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("1000")
+        page.getElementsByTag("dd").text() must include("1001")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£180.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("1000")
+        page.getElementsByTag("dd").text() must include("2002")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£240.00")
@@ -318,13 +318,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("1000")
+        page.getElementsByTag("dd").text() must include("1001")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£180")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("2000")
+        page.getElementsByTag("dd").text() must include("2002")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£480")
@@ -405,13 +405,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("broughtIntoUK.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("1000")
+        page.getElementsByTag("dd").text() must include("1001")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£180")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("2000")
+        page.getElementsByTag("dd").text() must include("2002")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£480")
@@ -492,13 +492,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("broughtIntoUKFromSmallProducers.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("1000")
+        page.getElementsByTag("dd").text() must include("1001")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("2000")
+        page.getElementsByTag("dd").text() must include("2002")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("0.00")
@@ -579,13 +579,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("1001")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("2002")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("−£4,800.00")
@@ -664,13 +664,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("claimCreditsForLostDamaged.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("1001")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("2002")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
         //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("−£4,800.00")
