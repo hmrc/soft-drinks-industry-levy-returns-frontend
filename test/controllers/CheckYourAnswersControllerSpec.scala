@@ -471,9 +471,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val userAnswersData = Json.obj(
-        "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+      val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
 
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
@@ -513,9 +511,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val userAnswersData = Json.obj(
-        "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+      val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
 
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
