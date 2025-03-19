@@ -86,7 +86,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000))
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -119,7 +119,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000))
+        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -206,7 +206,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -260,7 +260,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+        "addASmallProducer" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), submitted = true, returnPeriod = preApril2025ReturnPeriod)
@@ -298,7 +298,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+        "addASmallProducer" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), submitted = true, returnPeriod = taxYear2025ReturnPeriod)
@@ -388,7 +388,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "broughtIntoUK" -> true,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -475,7 +475,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers" -> true,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -529,7 +529,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -546,14 +546,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,800.00")
+        page.getElementsByTag("dd").text() must include("−£180.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£4,800.00")
+        page.getElementsByTag("dd").text() must include("−£480.00")
       }
     }
 
@@ -562,7 +562,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+        "howManyCreditsForExport" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -616,7 +616,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -632,14 +632,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         page.getElementsByTag("dt").text() must include(Messages("claimCreditsForLostDamaged.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dd").text() must include("10000")
+        page.getElementsByTag("dd").text() must include("1000")
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,800.00")
+        page.getElementsByTag("dd").text() must include("−£180.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
-        page.getElementsByTag("dd").text() must include("20000")
+        page.getElementsByTag("dd").text() must include("2000")
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£4,800.00")
+        page.getElementsByTag("dd").text() must include("−£480.00")
       }
     }
 
@@ -648,7 +648,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
+        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
