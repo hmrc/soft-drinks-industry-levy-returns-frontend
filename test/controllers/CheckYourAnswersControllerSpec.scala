@@ -285,15 +285,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("£1,800.00")
+        page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-own-site").attributes().get("href") mustEqual s"$baseUrl/change-how-many-own-brands-packaged-at-own-sites"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("£4,800.00")
+        page.getElementsByTag("dd").text() must include("£5,180.52")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("ownBrandsPackagedAtYourOwnSite.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("ownBrandsPackagedAtYourOwnSite.highband.litres.hidden"))
@@ -346,11 +344,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
 
         page.getElementsByTag("dd").text() must include("5")
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("£0.90")
+        page.getElementsByTag("dd").text() must include("£0.97")
         page.getElementsByTag("dd").text() must include("3")
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("£0.72")
+        page.getElementsByTag("dd").text() must include("£0.78")
       }
     }
 
@@ -436,15 +432,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("£1,800.00")
+        page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-contract-packer").attributes().get("href") mustEqual s"$baseUrl/change-how-many-packaged-as-contract-packer"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("£4,800.00")
+        page.getElementsByTag("dd").text() must include("£5,180.52")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedAtYourOwnSite.highband.litres.hidden"))
@@ -544,14 +538,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("4000")
         page.getElementById("change-lowband-litreage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("6000")
         page.getElementById("change-highband-litreage-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-small-producer-details"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("contractPackedForRegisteredSmallProducers.lowband.litres.hidden"))
@@ -641,15 +633,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("£1,800.00")
+        page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-brought-into-uk").attributes().get("href") mustEqual s"$baseUrl/change-how-many-brought-into-uk"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("£4,800.00")
+        page.getElementsByTag("dd").text() must include("£5,180.52")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoUK.highband.litres.hidden"))
@@ -738,14 +728,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-brought-into-uk-small-producers").attributes().get("href") mustEqual s"$baseUrl/change-how-many-into-uk-small-producers"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        //        TODO: Correct this value
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("broughtIntoTheUKFromSmallProducers.lowband.litres.hidden"))
@@ -835,15 +823,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("−£1,800.00")
+        page.getElementsByTag("dd").text() must include("−£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("−£4,800.00")
+        page.getElementsByTag("dd").text() must include("−£5,180.52")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.highband.litres.hidden"))
@@ -932,15 +918,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("−£1,800.00")
+        page.getElementsByTag("dd").text() must include("−£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        //        TODO: Correct this value
-        page.getElementsByTag("dd").text() must include("−£4,800.00")
+        page.getElementsByTag("dd").text() must include("−£5,180.52")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.highband.litres.hidden"))
@@ -1028,7 +1012,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        //        TODO: Correct this value
+        //        TODO: Correct this value DLS-11196
         page.getElementsByClass("total-for-quarter").text() must include("£1,000.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
         page.getElementsByClass("balance-brought-forward").text() must include("£3,000.00")
@@ -1185,7 +1169,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        //        TODO: Correct this value
+        //        TODO: Correct this value DLS-11196
         page.getElementsByClass("total-for-quarter").text() must include("£4,200.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
         page.getElementsByClass("balance-brought-forward").text() must include("−£300.00")
@@ -1276,7 +1260,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        //        TODO: Correct this value
+        //        TODO: Correct this value DLS-11196
         page.getElementsByClass("total-for-quarter").text() must include("−£4,200.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
         page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
