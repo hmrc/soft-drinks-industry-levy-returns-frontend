@@ -30,7 +30,7 @@ object TotalForQuarter {
       calculateHighBand(userAnswers, higherBandCostPerLitre, smallProducer)
   }
 
-  private def calculateLowBand(
+  private[utilities] def calculateLowBand(
     userAnswers: UserAnswers,
     lowBandCostPerLitre: BigDecimal,
     smallProducer: Boolean): BigDecimal = {
@@ -50,7 +50,7 @@ object TotalForQuarter {
     }
   }
 
-  private def calculateHighBand(
+  private[utilities] def calculateHighBand(
     userAnswers: UserAnswers,
     highBandCostPerLitre: BigDecimal,
     smallProducer: Boolean): BigDecimal = {
