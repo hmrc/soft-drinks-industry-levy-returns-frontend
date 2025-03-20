@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utilitlies
+package utilities
 
 import config.FrontendAppConfig
 import models.UserAnswers

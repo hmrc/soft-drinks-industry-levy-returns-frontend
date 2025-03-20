@@ -25,8 +25,8 @@ import pages._
 import play.api.Logger
 import play.api.http.Status.{ NO_CONTENT, OK }
 import uk.gov.hmrc.http.HeaderCarrier
-import utilitlies.ReturnsHelper.{ extractTotal, listItemsWithTotal }
-import utilitlies.{ TotalForQuarter, UserTypeCheck }
+import utilities.ReturnsHelper.{ extractTotal, listItemsWithTotal }
+import utilities.{ TotalForQuarter, UserTypeCheck }
 
 import java.time.{ LocalDateTime, ZoneId, ZonedDateTime }
 import javax.inject.{ Inject, Singleton }

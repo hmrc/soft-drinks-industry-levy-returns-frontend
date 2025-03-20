@@ -25,7 +25,7 @@ import pages.BrandsPackagedAtOwnSitesPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import utilities.GenericLogger
 import views.html.BrandsPackagedAtOwnSitesView
 
 import javax.inject.Inject

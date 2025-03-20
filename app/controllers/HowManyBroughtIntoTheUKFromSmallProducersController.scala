@@ -25,7 +25,7 @@ import pages.HowManyBroughtIntoTheUKFromSmallProducersPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import utilities.GenericLogger
 import views.html.HowManyBroughtIntoTheUKFromSmallProducersView
 
 import javax.inject.Inject

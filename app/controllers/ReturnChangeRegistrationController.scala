@@ -23,7 +23,7 @@ import pages.ReturnChangeRegistrationPage
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilitlies.UserTypeCheck
+import utilities.UserTypeCheck
 import views.html.ReturnChangeRegistrationView
 
 import javax.inject.Inject

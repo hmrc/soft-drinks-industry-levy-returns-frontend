@@ -26,7 +26,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import services.{ AddressLookupService, WarehouseDetails }
-import utilitlies.GenericLogger
+import utilities.GenericLogger
 import views.html.AskSecondaryWarehouseInReturnView
 
 import javax.inject.Inject

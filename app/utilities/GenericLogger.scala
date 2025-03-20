@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package utilitlies
+package utilities
 
-trait AddressHelper {
+import play.api.Logger
 
-  def generateId: String = {
-    java.util.UUID.randomUUID().toString
-  }
+class GenericLogger {
+
+  val logger: Logger = Logger(this.getClass)
+
 }

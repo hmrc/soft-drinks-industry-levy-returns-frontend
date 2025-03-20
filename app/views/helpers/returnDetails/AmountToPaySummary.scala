@@ -20,7 +20,7 @@ import models.Amounts
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import utilitlies.CurrencyFormatter
+import utilities.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 

@@ -37,7 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import utilities.GenericLogger
 import views.html.RemoveWarehouseConfirmView
 
 import scala.concurrent.Future
