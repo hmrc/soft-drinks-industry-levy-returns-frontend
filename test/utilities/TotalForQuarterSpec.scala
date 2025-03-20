@@ -16,17 +16,40 @@
 
 package utilities
 
+import base.ReturnsTestData.emptyUserAnswers
 import base.SpecBase
 import config.FrontendAppConfig
 import models.LevyCalculator._
+import models.SmallProducer
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.Json
 
 import java.time.LocalDate
 
 class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   override lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+  private val userAnswersData = Json.obj(
+    "ownBrands" -> true,
+    "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+    "packagedContractPacker" -> true,
+    "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
+    "exemptionsForSmallProducers" -> true,
+    "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
+    "smallProducerDetails" -> false,
+    "broughtIntoUK" -> true,
+    "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+    "broughtIntoUkFromSmallProducers" -> true,
+    "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+    "claimCreditsForExports" -> true,
+    "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
+    "claimCreditsForLostDamaged" -> true,
+    "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
+  private val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
+  private val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
+  private val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
 
 //  TODO: Add tests for TotalForQuarter calculateTotal, calculateLowBand, calculateHighBand
 
@@ -43,14 +66,20 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
       val higherBandCostPerLitre = BigDecimal("0.24")
 
 //      TODO: One for each of lines below - test all three values at once, add in random values for small producer list - use CYAControllerSpec as guide on how to set these
-//          val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
-      //    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
-      //    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand)
-      //    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.lowBand)
-      //    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.lowBand)
+//          val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand) "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates"
+      //    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand) "must show packaged contract packer row containing calculation when yes is selected - pre April 2025 rates"
+//      "must show exemption for small producers row when yes is selected - pre April 2025 rates"
+      //    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand) "must show brought into the UK row containing calculation when yes is selected - pre April 2025 rates"
+//      "must show brought into the UK from small producers row containing calculation when yes is selected - pre April 2025 rates"
+      //    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.lowBand) "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates"
+      //    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.lowBand) "must show lost or damaged row containing calculation when yes is selected - 2025 tax year rates"
       //
       //    val total = litresBroughtIntoTheUk + litresAsContractPacker
       //    val totalCredits = litresExported + litresLostOrDamaged
+//      "must return OK and contain you do not need to pay anything when return amount is 0"
+//      "must return OK and contain amount to pay header when return amount - pre April 2025 rates"
+//      "must return OK and contain amount owed header when total is negative - pre April 2025 rates"
+
 
 //
 //      s"calculate low levy, high levy, and total correctly with non-zero litres totals using original rates for Apr - Dec $year" in {
