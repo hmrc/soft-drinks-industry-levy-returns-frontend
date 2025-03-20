@@ -37,7 +37,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utilitlies.GenericLogger
+import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future

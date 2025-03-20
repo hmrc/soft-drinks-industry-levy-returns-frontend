@@ -18,8 +18,8 @@ package utilities
 
 import base.SpecBase
 import models.{ FinancialLineItem, PaymentOnAccount, ReturnCharge, ReturnPeriod }
-import utilitlies.ReturnsHelper
-import utilitlies.ReturnsHelper.listItemsWithTotal
+import utilities.ReturnsHelper
+import utilities.ReturnsHelper.listItemsWithTotal
 
 import java.time.LocalDate
 

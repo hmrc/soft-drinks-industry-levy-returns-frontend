@@ -17,7 +17,7 @@
 package utilities
 
 import base.SpecBase
-import utilitlies.AddressHelper
+import utilities.AddressHelper
 
 class AddressHelperSpec extends SpecBase with AddressHelper {
 

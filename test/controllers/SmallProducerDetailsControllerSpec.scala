@@ -31,7 +31,7 @@ import play.api.mvc.{ AnyContentAsEmpty, Call }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.SmallProducerDetailsView
 

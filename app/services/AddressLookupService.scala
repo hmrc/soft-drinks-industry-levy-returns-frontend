@@ -28,7 +28,7 @@ import play.api.Logger
 import play.api.i18n.Messages
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
-import utilitlies.AddressHelper
+import utilities.AddressHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ ExecutionContext, Future }

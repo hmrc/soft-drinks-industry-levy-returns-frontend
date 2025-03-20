@@ -33,7 +33,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import utilities.GenericLogger
 import views.html.ExemptionsForSmallProducersView
 
 import scala.concurrent.Future
