@@ -98,17 +98,89 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
       //      }
       //      TODO: One for each of lines below - test all three values at once, add in random values for small producer list - use CYAControllerSpec as guide on how to set these
 
-//      isSmallProducer / notSmallProducer
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with litres packed at own site using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with litres contract packed using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with exemptions for small producers using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with litres brought into the uk using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with litres brought into the uk from small producers using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with credits for litres exported using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with credits for litres lost or damaged using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}when return amount is 0 using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}when return amount to pay using original rates for Apr - Dec $year" in {}
-//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}when return amount is negative using original rates for Apr - Dec $year" in {}
+      List(true, false).foreach(isSmallProducer => {
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Apr - Dec $year" in {
+          
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Jan - Mar ${year + 1}" in {
+
+        }
+      })
+      //      isSmallProducer / notSmallProducer
 
 //
 //      s"calculate low levy, high levy, and total correctly with non-zero litres totals using original rates for Apr - Dec $year" in {
@@ -149,6 +221,89 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
       val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
 
       val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
+
+      List(true, false).foreach(isSmallProducer => {
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Apr - Dec $year" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+
+        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Jan - Mar ${year + 1}" in {
+
+        }
+      })
 //
 //      s"calculate low levy, high levy, and total correctly with large litres totals using $year rates for Apr - Dec $year" in {
 //        forAll(aprToDecInt) { month =>
