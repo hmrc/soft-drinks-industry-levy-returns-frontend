@@ -110,8 +110,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = lowerBandCostPerLitre * lowLitres
-                val expectedHighLevy = higherBandCostPerLitre * highLitres
+                val expectedLowLevy = if (isSmallProducer) BigDecimal(0) else lowerBandCostPerLitre * lowLitres
+                val expectedHighLevy = if (isSmallProducer) BigDecimal(0) else higherBandCostPerLitre * highLitres
                 lowBand mustBe expectedLowLevy
                 highBand mustBe expectedHighLevy
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
