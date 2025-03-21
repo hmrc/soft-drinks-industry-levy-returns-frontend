@@ -23,17 +23,13 @@ import pages._
 object TotalForQuarter {
 
   def calculateTotal(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig) = {
-    val lowerBandCostPerLitre: BigDecimal = config.lowerBandCostPerLitre
-    val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
-
-    calculateLowBand(userAnswers, lowerBandCostPerLitre, smallProducer) +
-      calculateHighBand(userAnswers, higherBandCostPerLitre, smallProducer)
+    calculateLowBand(userAnswers, smallProducer)(config) +
+      calculateHighBand(userAnswers, smallProducer)(config)
   }
 
   private[util] def calculateLowBand(
     userAnswers: UserAnswers,
-    lowBandCostPerLitre: BigDecimal,
-    smallProducer: Boolean): BigDecimal = {
+    smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
 
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
@@ -45,15 +41,14 @@ object TotalForQuarter {
     val totalCredits = litresExported + litresLostOrDamaged
 
     smallProducer match {
-      case true => (total - totalCredits) * lowBandCostPerLitre
-      case _ => (total + litresPackedAtOwnSite - totalCredits) * lowBandCostPerLitre
+      case true => (total - totalCredits) * config.lowerBandCostPerLitre
+      case _ => (total + litresPackedAtOwnSite - totalCredits) * config.lowerBandCostPerLitre
     }
   }
 
   private[util] def calculateHighBand(
     userAnswers: UserAnswers,
-    highBandCostPerLitre: BigDecimal,
-    smallProducer: Boolean): BigDecimal = {
+    smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
 
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
@@ -65,8 +60,8 @@ object TotalForQuarter {
     val totalCredits = litresExported + litresLostOrDamaged
 
     smallProducer match {
-      case true => (total - totalCredits) * highBandCostPerLitre
-      case _ => (total + litresPackedAtOwnSite - totalCredits) * highBandCostPerLitre
+      case true => (total - totalCredits) * config.higherBandCostPerLitre
+      case _ => (total + litresPackedAtOwnSite - totalCredits) * config.higherBandCostPerLitre
     }
   }
 
