@@ -16,14 +16,14 @@
 
 package navigation
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import controllers.routes
 import pages._
 import models._
 import models.retrieved.RetrievedSubscription
 import play.api.Logger
-import utilitlies.UserTypeCheck
+import util.UserTypeCheck
 
 @Singleton
 class Navigator @Inject() () {

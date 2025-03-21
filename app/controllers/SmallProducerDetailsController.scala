@@ -25,7 +25,7 @@ import pages.SmallProducerDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import util.GenericLogger
 import views.html.SmallProducerDetailsView
 
 import javax.inject.Inject

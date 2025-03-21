@@ -27,7 +27,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import services.{ AddressLookupService, PackingDetails }
-import utilitlies.{ GenericLogger, UserTypeCheck }
+import util.{ GenericLogger, UserTypeCheck }
 import views.html.PackagingSiteDetailsView
 
 import javax.inject.Inject
