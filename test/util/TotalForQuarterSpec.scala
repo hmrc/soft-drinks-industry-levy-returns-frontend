@@ -24,6 +24,7 @@ import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsBoolean, JsObject, Json}
+import util.TotalForQuarter._
 
 import java.time.LocalDate
 
@@ -101,7 +102,22 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
       List(true, false).foreach(isSmallProducer => {
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Apr - Dec $year" in {
-
+          forAll(largePosInts) { lowLitres =>
+            forAll(largePosInts) { highLitres =>
+              forAll(aprToDecInt) { month =>
+                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+                val userAnswers = userAnswersData(ownBrandsLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
+                val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+                val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+                val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+                val expectedLowLevy = lowerBandCostPerLitre * lowLitres
+                val expectedHighLevy = higherBandCostPerLitre * highLitres
+                lowBand mustBe expectedLowLevy
+                highBand mustBe expectedHighLevy
+                totalForQuarter mustBe expectedLowLevy + expectedHighLevy
+              }
+            }
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Apr - Dec $year" in {
