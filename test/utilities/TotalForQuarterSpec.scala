@@ -20,10 +20,10 @@ import base.ReturnsTestData.emptyUserAnswers
 import base.SpecBase
 import config.FrontendAppConfig
 import models.LevyCalculator._
-import models.SmallProducer
+import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{JsBoolean, JsObject, Json}
 
 import java.time.LocalDate
 
@@ -31,14 +31,17 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   override lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  private val userAnswersData = Json.obj(
+  private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+
+//JsObject(Seq(    "key1" -> JsString("value"),    "key2" -> JsNumber(123),    "key3" -> JsObject(Seq("key31" -> JsString("value31"))) )) == Json. obj(   "key1" -> "value", "key2" -> 123, "key3" -> Json. obj("key31" -> "value31"))
+
+  private val userAnswersData1 = Json.obj(
     "ownBrands" -> true,
     "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
     "packagedContractPacker" -> true,
     "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
     "exemptionsForSmallProducers" -> true,
-    "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
-    "smallProducerDetails" -> false,
     "broughtIntoUK" -> true,
     "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
     "broughtIntoUkFromSmallProducers" -> true,
@@ -50,6 +53,34 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
   private val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
   private val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
   private val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
+
+  private def userAnswersData(
+                             ownBrandsLitres: Option[(Long, Long)] = None,
+                             contractPackerLitres: Option[(Long, Long)] = None,
+                             broughtIntoUKLitres: Option[(Long, Long)] = None,
+                             broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None,
+                             claimCreditsForExportsLitres: Option[(Long, Long)] = None,
+                             claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None,
+                             smallProducerList: List[SmallProducer] = List.empty,
+                             returnPeriod: ReturnPeriod
+                             ): UserAnswers = {
+    
+    val ownBrandsJson = ownBrandsLitres.map(literage => JsObject(Seq("ownBrands" -> JsBoolean(true), "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> literage._1, "highBand" -> literage._2)))).getOrElse(JsObject(Seq("ownBrands" -> JsBoolean(false))))
+    val contractPackerJson = JsObject(Seq())
+    val broughtIntoUKJson = JsObject(Seq())
+    val broughtIntoUkFromSmallProducersJson = JsObject(Seq())
+    val claimCreditsForExportsJson = JsObject(Seq())
+    val claimCreditsForLostDamagedJson = JsObject(Seq())
+    val data = JsObject(
+      ownBrandsJson.fields ++
+      contractPackerJson.fields++
+      broughtIntoUKJson.fields ++
+      broughtIntoUkFromSmallProducersJson.fields ++
+      claimCreditsForExportsJson.fields ++
+      claimCreditsForLostDamagedJson.fields
+    )
+    emptyUserAnswers.copy(data = data, smallProducerList = smallProducerList, returnPeriod = returnPeriod)
+  }
 
 //  TODO: Add tests for TotalForQuarter calculateTotal, calculateLowBand, calculateHighBand
 
@@ -76,10 +107,25 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
       //
       //    val total = litresBroughtIntoTheUk + litresAsContractPacker
       //    val totalCredits = litresExported + litresLostOrDamaged
+//      smallProducer match {
+//        case true => (total - totalCredits) * lowBandCostPerLitre
+//        case _ => (total + litresPackedAtOwnSite - totalCredits) * lowBandCostPerLitre
+//      }
 //      "must return OK and contain you do not need to pay anything when return amount is 0"
 //      "must return OK and contain amount to pay header when return amount - pre April 2025 rates"
 //      "must return OK and contain amount owed header when total is negative - pre April 2025 rates"
 
+//      isSmallProducer / notSmallProducer
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with litres packed at own site using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with litres contract packed using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with exemptions for small producers using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with litres brought into the uk using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with litres brought into the uk from small producers using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with credits for litres exported using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}with credits for litres lost or damaged using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}when return amount is 0 using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}when return amount to pay using original rates for Apr - Dec $year" in {}
+//        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ isSmallProducer ? "for small producer " : ""}when return amount is negative using original rates for Apr - Dec $year" in {}
 
 //
 //      s"calculate low levy, high levy, and total correctly with non-zero litres totals using original rates for Apr - Dec $year" in {
