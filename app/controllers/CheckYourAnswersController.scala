@@ -28,7 +28,7 @@ import pages.CheckYourAnswersPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, Call, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilities.{ GenericLogger, UserTypeCheck }
+import util.{ GenericLogger, UserTypeCheck }
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ ExecutionContext, Future }

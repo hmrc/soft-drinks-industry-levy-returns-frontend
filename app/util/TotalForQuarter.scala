@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utilities
+package util
 
 import config.FrontendAppConfig
 import models.UserAnswers
@@ -30,7 +30,7 @@ object TotalForQuarter {
       calculateHighBand(userAnswers, higherBandCostPerLitre, smallProducer)
   }
 
-  private[utilities] def calculateLowBand(
+  private[util] def calculateLowBand(
     userAnswers: UserAnswers,
     lowBandCostPerLitre: BigDecimal,
     smallProducer: Boolean): BigDecimal = {
@@ -50,7 +50,7 @@ object TotalForQuarter {
     }
   }
 
-  private[utilities] def calculateHighBand(
+  private[util] def calculateHighBand(
     userAnswers: UserAnswers,
     highBandCostPerLitre: BigDecimal,
     smallProducer: Boolean): BigDecimal = {

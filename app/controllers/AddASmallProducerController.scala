@@ -30,7 +30,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utilities.GenericLogger
+import util.GenericLogger
 import views.html.AddASmallProducerView
 
 import javax.inject.Inject

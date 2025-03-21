@@ -5,7 +5,7 @@ import controllers.testSupport.ReturnSummaryValidationHelper
 import models.{FinancialLineItem, ReturnCharge, ReturnPeriod, ReturnsVariation, SdilReturn, SmallProducer}
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
-import utilities.CurrencyFormatter
+import util.CurrencyFormatter
 
 trait CheckYourAnswersPageValidationHelper extends ReturnSummaryValidationHelper {
   def validateAmountToPaySubHeader(page: Document, total: BigDecimal) = {

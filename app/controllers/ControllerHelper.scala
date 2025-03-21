@@ -25,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{ AnyContent, Request, Result }
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utilities.GenericLogger
+import util.GenericLogger
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.{ Failure, Success, Try }

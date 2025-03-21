@@ -25,7 +25,7 @@ import pages.{ HowManyAsAContractPackerPage, PackagedContractPackerPage }
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilities.GenericLogger
+import util.GenericLogger
 import views.html.PackagedContractPackerView
 
 import javax.inject.Inject

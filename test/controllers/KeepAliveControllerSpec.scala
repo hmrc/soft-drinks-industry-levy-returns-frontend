@@ -25,7 +25,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import utilities.GenericLogger
+import util.GenericLogger
 
 import scala.concurrent.Future
 

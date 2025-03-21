@@ -37,7 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import utilities.GenericLogger
+import util.GenericLogger
 import viewmodels.AddressFormattingHelper
 import views.html.RemovePackagingDetailsConfirmationView
 

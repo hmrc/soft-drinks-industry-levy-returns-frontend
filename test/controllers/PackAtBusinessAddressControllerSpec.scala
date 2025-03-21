@@ -39,7 +39,7 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{ AddressLookupService, PackingDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import utilities.GenericLogger
+import util.GenericLogger
 import views.html.PackAtBusinessAddressView
 
 import scala.concurrent.Future

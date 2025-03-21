@@ -25,7 +25,7 @@ import pages.{ RemoveSmallProducerConfirmPage, SmallProducerDetailsPage }
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilities.GenericLogger
+import util.GenericLogger
 import views.html.RemoveSmallProducerConfirmView
 
 import javax.inject.Inject

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package utilities
+package util
 
 import base.SpecBase
 import models.{ FinancialLineItem, PaymentOnAccount, ReturnCharge, ReturnPeriod }
-import utilities.ReturnsHelper.listItemsWithTotal
+import util.ReturnsHelper.listItemsWithTotal
 
 import java.time.LocalDate
 

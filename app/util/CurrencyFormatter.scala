@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package utilities
+package util
 
-import models.FinancialLineItem
+import java.util.Locale
 
-object ReturnsHelper {
-  def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
-    items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
-      (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
-    }
+object CurrencyFormatter {
 
-  def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
+  private val currencyFormatter = java.text.NumberFormat.getCurrencyInstance(Locale.UK)
 
+  def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String = {
+    currencyFormatter.format(d)
+  }
 }

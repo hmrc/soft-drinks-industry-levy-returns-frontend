@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package utilities
+package util
 
-import java.util.Locale
+trait AddressHelper {
 
-object CurrencyFormatter {
-
-  private val currencyFormatter = java.text.NumberFormat.getCurrencyInstance(Locale.UK)
-
-  def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String = {
-    currencyFormatter.format(d)
+  def generateId: String = {
+    java.util.UUID.randomUUID().toString
   }
 }
