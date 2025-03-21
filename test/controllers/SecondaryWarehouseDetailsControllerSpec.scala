@@ -37,7 +37,7 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{ AddressLookupService, WarehouseDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
-import utilities.GenericLogger
+import util.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.helpers.returnDetails.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView

@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Actions, SummaryListRow }
-import utilities.CurrencyFormatter
+import util.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 

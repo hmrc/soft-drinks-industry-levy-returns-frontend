@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utilities
+package util
 
 import base.ReturnsTestData.emptyUserAnswers
 import base.SpecBase

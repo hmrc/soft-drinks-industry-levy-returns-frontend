@@ -27,7 +27,7 @@ import play.api.i18n.Messages
 import play.api.mvc.{ Call, Request }
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import utilities.CurrencyFormatter
+import util.CurrencyFormatter
 import views.helpers.ReturnDetailsSummaryRowTestHelper
 import views.helpers.returnDetails.ReturnPeriodQuarter
 import views.html.CheckYourAnswersView
