@@ -28,8 +28,6 @@ object TotalForQuarter {
     val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
     val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
     levyCalculation.total
-//    calculateLowBand(userAnswers, smallProducer)(config) +
-//      calculateHighBand(userAnswers, smallProducer)(config)
   }
 
   private def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
@@ -42,10 +40,7 @@ object TotalForQuarter {
     val total = litresBroughtIntoTheUk + litresAsContractPacker
     val totalCredits = litresExported + litresLostOrDamaged
 
-    smallProducer match {
-      case true => (total - totalCredits)
-      case _ => (total + litresPackedAtOwnSite - totalCredits)
-    }
+    total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
   }
 
   private def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
@@ -58,54 +53,17 @@ object TotalForQuarter {
     val total = litresBroughtIntoTheUk + litresAsContractPacker
     val totalCredits = litresExported + litresLostOrDamaged
 
-    smallProducer match {
-      case true => (total - totalCredits)
-      case _ => (total + litresPackedAtOwnSite - totalCredits)
-    }
+    total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
   }
 
-  private[util] def calculateLowBand(
-    userAnswers: UserAnswers,
-    smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
-
-//    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
-//    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
-//    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand)
-//    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.lowBand)
-//    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.lowBand)
-//
-//    val total = litresBroughtIntoTheUk + litresAsContractPacker
-//    val totalCredits = litresExported + litresLostOrDamaged
-//
-//    smallProducer match {
-//      case true => (total - totalCredits) * config.lowerBandCostPerLitre
-//      case _ => (total + litresPackedAtOwnSite - totalCredits) * config.lowerBandCostPerLitre
-//    }
-
+  private[util] def calculateLowBand(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
     val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
     val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
     val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
     levyCalculation.lowLevy
   }
 
-  private[util] def calculateHighBand(
-    userAnswers: UserAnswers,
-    smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
-
-//    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
-//    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
-//    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.highBand)
-//    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.highBand)
-//    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.highBand)
-//
-//    val total = litresBroughtIntoTheUk + litresAsContractPacker
-//    val totalCredits = litresExported + litresLostOrDamaged
-//
-//    smallProducer match {
-//      case true => (total - totalCredits) * config.higherBandCostPerLitre
-//      case _ => (total + litresPackedAtOwnSite - totalCredits) * config.higherBandCostPerLitre
-//    }
-
+  private[util] def calculateHighBand(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
     val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
     val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
     val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
