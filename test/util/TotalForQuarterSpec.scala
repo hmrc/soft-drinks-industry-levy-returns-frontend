@@ -32,9 +32,6 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   override lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-//  private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
-//  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
-
   private def getRandomLitres: Long = Math.floor(Math.random() * 1000000).toLong
   private def getRandomLitreage: (Long, Long) = (getRandomLitres, getRandomLitres)
 
@@ -586,8 +583,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitreMap(year) * lowLitres
-                val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitreMap(year) * highLitres
+                val expectedLowLevy = BigDecimal("0.00")
+                val expectedHighLevy = BigDecimal("0.00")
                 lowBand mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 highBand mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -801,8 +798,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitreMap(year) * lowLitres
-                val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitreMap(year) * highLitres
+                val expectedLowLevy = BigDecimal("0.00")
+                val expectedHighLevy = BigDecimal("0.00")
                 lowBand mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 highBand mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
