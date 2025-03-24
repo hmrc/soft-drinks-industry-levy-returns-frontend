@@ -19,7 +19,7 @@ package views
 import base.ReturnsTestData._
 import base.UserAnswersTestData
 import config.FrontendAppConfig
-import models.Amounts
+import models.{Amounts, ReturnPeriod}
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -162,13 +162,21 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
         "has contains the expected content" - {
           UserAnswersTestData.userAnswersModels.foreach {
             case (key, userAnswers) =>
-              s"when the $key" - {
-                val html1: HtmlFormat.Appendable =
-                  returnSentView(returnPeriod, userAnswers, amounts, aSubscription, amountOwed)
-                val document1: Document = doc(html1)
-                val details = document1.getElementsByClass(Selectors.details).get(0)
-                testSummaryLists(key, details, userAnswers, false)
-              }
+              val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+              val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+              List(
+                ("pre April 2025 rates", preApril2025ReturnPeriod),
+                ("2025 tax year rates", taxYear2025ReturnPeriod)
+              ).foreach(returnPeriodWithKey => {
+                s"when the $key - ${returnPeriodWithKey._1}" - {
+                  val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
+                  val html1: HtmlFormat.Appendable =
+                    returnSentView(returnPeriod, userAnswersWithReturnPeriod, amounts, aSubscription, amountOwed)
+                  val document1: Document = doc(html1)
+                  val details = document1.getElementsByClass(Selectors.details).get(0)
+                  testSummaryLists(key, details, userAnswersWithReturnPeriod, false)
+                }
+              })
           }
         }
       }
