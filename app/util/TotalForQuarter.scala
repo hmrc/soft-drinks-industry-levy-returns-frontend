@@ -30,7 +30,7 @@ object TotalForQuarter {
     levyCalculation.total
   }
 
-  private def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
+  private[util] def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand)
@@ -43,7 +43,7 @@ object TotalForQuarter {
     total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
   }
 
-  private def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
+  private[util] def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.highBand)
@@ -56,18 +56,18 @@ object TotalForQuarter {
     total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
   }
 
-  private[util] def calculateLowBand(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
-    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
-    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
-    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
-    levyCalculation.lowLevy
-  }
-
-  private[util] def calculateHighBand(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
-    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
-    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
-    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
-    levyCalculation.highLevy
-  }
+//  private[util] def calculateLowBand(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
+//    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
+//    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
+//    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
+//    levyCalculation.lowLevy
+//  }
+//
+//  private[util] def calculateHighBand(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
+//    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
+//    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
+//    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
+//    levyCalculation.highLevy
+//  }
 
 }
