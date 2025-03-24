@@ -243,7 +243,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Apr - Dec $year" in {
           forAll(aprToDecInt) { month =>
-            val ownBrandsLitres: Option[(Long, Long)] = None
+            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
             val contractPackerLitres: Option[(Long, Long)] = None
             val broughtIntoUKLitres: Option[(Long, Long)] = None
             val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -408,7 +408,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Jan - Mar ${year + 1}" in {
           forAll(janToMarInt) { month =>
-            val ownBrandsLitres: Option[(Long, Long)] = None
+            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
             val contractPackerLitres: Option[(Long, Long)] = None
             val broughtIntoUKLitres: Option[(Long, Long)] = None
             val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -582,7 +582,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Apr - Dec $year" in {
           forAll(aprToDecInt) { month =>
-            val ownBrandsLitres: Option[(Long, Long)] = None
+            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
             val contractPackerLitres: Option[(Long, Long)] = None
             val broughtIntoUKLitres: Option[(Long, Long)] = None
             val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -747,7 +747,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
           forAll(janToMarInt) { month =>
-            val ownBrandsLitres: Option[(Long, Long)] = None
+            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
             val contractPackerLitres: Option[(Long, Long)] = None
             val broughtIntoUKLitres: Option[(Long, Long)] = None
             val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = Option(getRandomLitreage)
