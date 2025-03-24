@@ -32,11 +32,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   override lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
-  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
-
-  private val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
-  private val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
+//  private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+//  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
 
   private def getLitresJson(boolFieldKey: String, litreageFieldKey: String)(litresOpt: Option[(Long, Long)]): JsObject = {
     litresOpt match {
@@ -56,7 +53,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                              broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None,
                              claimCreditsForExportsLitres: Option[(Long, Long)] = None,
                              claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None,
-                             smallProducerList: List[SmallProducer] = List.empty,
+                             smallProducerLitres: List[(Long, Long)] = List.empty,
                              returnPeriod: ReturnPeriod
                              ): UserAnswers = {
 
@@ -74,15 +71,16 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
       claimCreditsForExportsJson.fields ++
       claimCreditsForLostDamagedJson.fields
     )
-    emptyUserAnswers.copy(data = data, smallProducerList = smallProducerList, returnPeriod = returnPeriod)
+    val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", smallProducerLitres.head)
+    val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", smallProducerLitres.last)
+    emptyUserAnswers.copy(data = data, smallProducerList = if (smallProducerLitres.isEmpty) List.empty else List(superCola, sparkyJuice), returnPeriod = returnPeriod)
   }
 
 //  TODO: Add tests for TotalForQuarter calculateTotal, calculateLowBand, calculateHighBand
 
   "TotalForQuarter" - {
 
-    val smallPosInts = Gen.choose(0, 1000)
-    val largePosInts = Gen.choose(1000, 10000000)
+    val posLitresInts = Gen.choose(1000, 10000000)
     val janToMarInt = Gen.choose(1, 3)
     val aprToDecInt = Gen.choose(4, 12)
 
@@ -102,8 +100,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
       List(true, false).foreach(isSmallProducer => {
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Apr - Dec $year" in {
-          forAll(largePosInts) { lowLitres =>
-            forAll(largePosInts) { highLitres =>
+          forAll(posLitresInts) { lowLitres =>
+            forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
                 val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
                 val userAnswers = userAnswersData(ownBrandsLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
