@@ -718,9 +718,9 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               contractPackerHighLitres <- contractPackerLitres.map(_._2)
               broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
             } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitreMap(year)
-            lowBand mustBe expectedLowLevy.get
-            highBand mustBe expectedHighLevy.get
-            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+            lowBand mustBe expectedLowLevy.get.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+            highBand mustBe expectedHighLevy.get.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+            totalForQuarter mustBe (expectedLowLevy.get + expectedHighLevy.get).setScale(2, BigDecimal.RoundingMode.HALF_UP)
           }
         }
 
@@ -746,9 +746,9 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
             } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
-            lowBand mustBe expectedLowLevy.get
-            highBand mustBe expectedHighLevy.get
-            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+            lowBand mustBe expectedLowLevy.get.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+            highBand mustBe expectedHighLevy.get.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+            totalForQuarter mustBe (expectedLowLevy.get + expectedHighLevy.get).setScale(2, BigDecimal.RoundingMode.HALF_UP)
           }
         }
 
@@ -933,9 +933,9 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               contractPackerHighLitres <- contractPackerLitres.map(_._2)
               broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
             } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitreMap(year)
-            lowBand mustBe expectedLowLevy.get
-            highBand mustBe expectedHighLevy.get
-            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+            lowBand mustBe expectedLowLevy.get.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+            highBand mustBe expectedHighLevy.get.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+            totalForQuarter mustBe (expectedLowLevy.get + expectedHighLevy.get).setScale(2, BigDecimal.RoundingMode.HALF_UP)
           }
         }
 
@@ -961,9 +961,9 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
             } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
-            lowBand mustBe expectedLowLevy.get
-            highBand mustBe expectedHighLevy.get
-            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+            lowBand mustBe expectedLowLevy.get.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+            highBand mustBe expectedHighLevy.get.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+            totalForQuarter mustBe (expectedLowLevy.get + expectedHighLevy.get).setScale(2, BigDecimal.RoundingMode.HALF_UP)
           }
         }
       })
