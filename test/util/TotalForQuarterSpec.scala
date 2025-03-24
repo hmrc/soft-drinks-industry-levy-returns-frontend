@@ -264,11 +264,61 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Apr - Dec $year" in {
-
+          forAll(aprToDecInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
+            val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val broughtIntoUKLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = None
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
+            val smallProducerLitres: List[(Long, Long)] = List.empty
+            val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy: Option[BigDecimal] = for {
+              ownBrandLowLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._1)
+              contractPackerLowLitres <- contractPackerLitres.map(_._1)
+              broughtIntoUKLowLitres <- broughtIntoUKLitres.map(_._1)
+            } yield (ownBrandLowLitres + contractPackerLowLitres + broughtIntoUKLowLitres) * lowerBandCostPerLitre
+            val expectedHighLevy: Option[BigDecimal] = for {
+              ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
+              contractPackerHighLitres <- contractPackerLitres.map(_._2)
+              broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
+            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitre
+            lowBand mustBe expectedLowLevy.get
+            highBand mustBe expectedHighLevy.get
+            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Apr - Dec $year" in {
-
+          forAll(aprToDecInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = None
+            val contractPackerLitres: Option[(Long, Long)] = None
+            val broughtIntoUKLitres: Option[(Long, Long)] = None
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val smallProducerLitres: List[(Long, Long)] = List.empty
+            val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy: Option[BigDecimal] = for {
+              claimCreditsForExportsLowLitres <- claimCreditsForExportsLitres.map(_._1)
+              claimCreditsForLostDamagedLowLitres <- claimCreditsForLostDamagedLitres.map(_._1)
+            } yield (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitre
+            val expectedHighLevy: Option[BigDecimal] = for {
+              claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
+              claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
+            } yield (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitre
+            lowBand mustBe expectedLowLevy.get
+            highBand mustBe expectedHighLevy.get
+            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Jan - Mar ${year + 1}" in {
@@ -429,11 +479,61 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Jan - Mar ${year + 1}" in {
-
+          forAll(janToMarInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
+            val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val broughtIntoUKLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = None
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
+            val smallProducerLitres: List[(Long, Long)] = List.empty
+            val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy: Option[BigDecimal] = for {
+              ownBrandLowLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._1)
+              contractPackerLowLitres <- contractPackerLitres.map(_._1)
+              broughtIntoUKLowLitres <- broughtIntoUKLitres.map(_._1)
+            } yield (ownBrandLowLitres + contractPackerLowLitres + broughtIntoUKLowLitres) * lowerBandCostPerLitre
+            val expectedHighLevy: Option[BigDecimal] = for {
+              ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
+              contractPackerHighLitres <- contractPackerLitres.map(_._2)
+              broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
+            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitre
+            lowBand mustBe expectedLowLevy.get
+            highBand mustBe expectedHighLevy.get
+            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Jan - Mar ${year + 1}" in {
-
+          forAll(janToMarInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = None
+            val contractPackerLitres: Option[(Long, Long)] = None
+            val broughtIntoUKLitres: Option[(Long, Long)] = None
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val smallProducerLitres: List[(Long, Long)] = List.empty
+            val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy: Option[BigDecimal] = for {
+              claimCreditsForExportsLowLitres <- claimCreditsForExportsLitres.map(_._1)
+              claimCreditsForLostDamagedLowLitres <- claimCreditsForLostDamagedLitres.map(_._1)
+            } yield (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitre
+            val expectedHighLevy: Option[BigDecimal] = for {
+              claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
+              claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
+            } yield (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitre
+            lowBand mustBe expectedLowLevy.get
+            highBand mustBe expectedHighLevy.get
+            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+          }
         }
       })
     })
@@ -603,11 +703,61 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Apr - Dec $year" in {
-
+          forAll(aprToDecInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
+            val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val broughtIntoUKLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = None
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
+            val smallProducerLitres: List[(Long, Long)] = List.empty
+            val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy: Option[BigDecimal] = for {
+              ownBrandLowLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._1)
+              contractPackerLowLitres <- contractPackerLitres.map(_._1)
+              broughtIntoUKLowLitres <- broughtIntoUKLitres.map(_._1)
+            } yield (ownBrandLowLitres + contractPackerLowLitres + broughtIntoUKLowLitres) * lowerBandCostPerLitreMap(year)
+            val expectedHighLevy: Option[BigDecimal] = for {
+              ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
+              contractPackerHighLitres <- contractPackerLitres.map(_._2)
+              broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
+            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * lowerBandCostPerLitreMap(year)
+            lowBand mustBe expectedLowLevy.get
+            highBand mustBe expectedHighLevy.get
+            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Apr - Dec $year" in {
-
+          forAll(aprToDecInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = None
+            val contractPackerLitres: Option[(Long, Long)] = None
+            val broughtIntoUKLitres: Option[(Long, Long)] = None
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val smallProducerLitres: List[(Long, Long)] = List.empty
+            val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy: Option[BigDecimal] = for {
+              claimCreditsForExportsLowLitres <- claimCreditsForExportsLitres.map(_._1)
+              claimCreditsForLostDamagedLowLitres <- claimCreditsForLostDamagedLitres.map(_._1)
+            } yield (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitreMap(year)
+            val expectedHighLevy: Option[BigDecimal] = for {
+              claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
+              claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
+            } yield (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
+            lowBand mustBe expectedLowLevy.get
+            highBand mustBe expectedHighLevy.get
+            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in {
@@ -768,11 +918,61 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
-
+          forAll(aprToDecInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
+            val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val broughtIntoUKLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = None
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
+            val smallProducerLitres: List[(Long, Long)] = List.empty
+            val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy: Option[BigDecimal] = for {
+              ownBrandLowLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._1)
+              contractPackerLowLitres <- contractPackerLitres.map(_._1)
+              broughtIntoUKLowLitres <- broughtIntoUKLitres.map(_._1)
+            } yield (ownBrandLowLitres + contractPackerLowLitres + broughtIntoUKLowLitres) * lowerBandCostPerLitreMap(year)
+            val expectedHighLevy: Option[BigDecimal] = for {
+              ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
+              contractPackerHighLitres <- contractPackerLitres.map(_._2)
+              broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
+            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * lowerBandCostPerLitreMap(year)
+            lowBand mustBe expectedLowLevy.get
+            highBand mustBe expectedHighLevy.get
+            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Jan - Mar ${year + 1}" in {
-
+          forAll(janToMarInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = None
+            val contractPackerLitres: Option[(Long, Long)] = None
+            val broughtIntoUKLitres: Option[(Long, Long)] = None
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val smallProducerLitres: List[(Long, Long)] = List.empty
+            val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy: Option[BigDecimal] = for {
+              claimCreditsForExportsLowLitres <- claimCreditsForExportsLitres.map(_._1)
+              claimCreditsForLostDamagedLowLitres <- claimCreditsForLostDamagedLitres.map(_._1)
+            } yield (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitreMap(year)
+            val expectedHighLevy: Option[BigDecimal] = for {
+              claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
+              claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
+            } yield (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
+            lowBand mustBe expectedLowLevy.get
+            highBand mustBe expectedHighLevy.get
+            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
+          }
         }
       })
     })
