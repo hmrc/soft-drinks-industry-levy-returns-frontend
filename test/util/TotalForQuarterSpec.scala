@@ -96,14 +96,6 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
       val lowerBandCostPerLitre = BigDecimal("0.18")
       val higherBandCostPerLitre = BigDecimal("0.24")
 
-      //    val total = litresBroughtIntoTheUk + litresAsContractPacker
-      //    val totalCredits = litresExported + litresLostOrDamaged
-      //      smallProducer match {
-      //        case true => (total - totalCredits) * lowBandCostPerLitre
-      //        case _ => (total + litresPackedAtOwnSite - totalCredits) * lowBandCostPerLitre
-      //      }
-      //      TODO: One for each of lines below - test all three values at once, add in random values for small producer list - use CYAControllerSpec as guide on how to set these
-
       List(true, false).foreach(isSmallProducer => {
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Apr - Dec $year" in {
