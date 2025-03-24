@@ -33,17 +33,6 @@ object TotalForQuarter {
   }
 
   private def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
-    0L
-  }
-
-  private def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
-    0L
-  }
-
-  private[util] def calculateLowBand(
-    userAnswers: UserAnswers,
-    smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
-
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand)
@@ -54,9 +43,44 @@ object TotalForQuarter {
     val totalCredits = litresExported + litresLostOrDamaged
 
     smallProducer match {
-      case true => (total - totalCredits) * config.lowerBandCostPerLitre
-      case _ => (total + litresPackedAtOwnSite - totalCredits) * config.lowerBandCostPerLitre
+      case true => (total - totalCredits)
+      case _ => (total + litresPackedAtOwnSite - totalCredits)
     }
+  }
+
+  private def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
+    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
+    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
+    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.highBand)
+    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.highBand)
+    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.highBand)
+
+    val total = litresBroughtIntoTheUk + litresAsContractPacker
+    val totalCredits = litresExported + litresLostOrDamaged
+
+    smallProducer match {
+      case true => (total - totalCredits)
+      case _ => (total + litresPackedAtOwnSite - totalCredits)
+    }
+  }
+
+  private[util] def calculateLowBand(
+    userAnswers: UserAnswers,
+    smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
+
+//    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
+//    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
+//    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand)
+//    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.lowBand)
+//    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.lowBand)
+//
+//    val total = litresBroughtIntoTheUk + litresAsContractPacker
+//    val totalCredits = litresExported + litresLostOrDamaged
+//
+//    smallProducer match {
+//      case true => (total - totalCredits) * config.lowerBandCostPerLitre
+//      case _ => (total + litresPackedAtOwnSite - totalCredits) * config.lowerBandCostPerLitre
+//    }
 
     val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
     val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
@@ -68,19 +92,19 @@ object TotalForQuarter {
     userAnswers: UserAnswers,
     smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
 
-    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
-    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
-    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.highBand)
-    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.highBand)
-    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.highBand)
-
-    val total = litresBroughtIntoTheUk + litresAsContractPacker
-    val totalCredits = litresExported + litresLostOrDamaged
-
-    smallProducer match {
-      case true => (total - totalCredits) * config.higherBandCostPerLitre
-      case _ => (total + litresPackedAtOwnSite - totalCredits) * config.higherBandCostPerLitre
-    }
+//    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
+//    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
+//    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.highBand)
+//    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.highBand)
+//    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.highBand)
+//
+//    val total = litresBroughtIntoTheUk + litresAsContractPacker
+//    val totalCredits = litresExported + litresLostOrDamaged
+//
+//    smallProducer match {
+//      case true => (total - totalCredits) * config.higherBandCostPerLitre
+//      case _ => (total + litresPackedAtOwnSite - totalCredits) * config.higherBandCostPerLitre
+//    }
 
     val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
     val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
