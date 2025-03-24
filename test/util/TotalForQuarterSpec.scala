@@ -302,11 +302,11 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
             val expectedLowLevy: Option[BigDecimal] = for {
               claimCreditsForExportsLowLitres <- claimCreditsForExportsLitres.map(_._1)
               claimCreditsForLostDamagedLowLitres <- claimCreditsForLostDamagedLitres.map(_._1)
-            } yield (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitre
+            } yield -1 * (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitre
             val expectedHighLevy: Option[BigDecimal] = for {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
-            } yield (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitre
+            } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitre
             lowBand mustBe expectedLowLevy.get
             highBand mustBe expectedHighLevy.get
             totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
@@ -517,11 +517,11 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
             val expectedLowLevy: Option[BigDecimal] = for {
               claimCreditsForExportsLowLitres <- claimCreditsForExportsLitres.map(_._1)
               claimCreditsForLostDamagedLowLitres <- claimCreditsForLostDamagedLitres.map(_._1)
-            } yield (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitre
+            } yield -1 * (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitre
             val expectedHighLevy: Option[BigDecimal] = for {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
-            } yield (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitre
+            } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitre
             lowBand mustBe expectedLowLevy.get
             highBand mustBe expectedHighLevy.get
             totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
@@ -741,11 +741,11 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
             val expectedLowLevy: Option[BigDecimal] = for {
               claimCreditsForExportsLowLitres <- claimCreditsForExportsLitres.map(_._1)
               claimCreditsForLostDamagedLowLitres <- claimCreditsForLostDamagedLitres.map(_._1)
-            } yield (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitreMap(year)
+            } yield -1 * (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitreMap(year)
             val expectedHighLevy: Option[BigDecimal] = for {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
-            } yield (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
+            } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
             lowBand mustBe expectedLowLevy.get
             highBand mustBe expectedHighLevy.get
             totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
@@ -956,11 +956,11 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
             val expectedLowLevy: Option[BigDecimal] = for {
               claimCreditsForExportsLowLitres <- claimCreditsForExportsLitres.map(_._1)
               claimCreditsForLostDamagedLowLitres <- claimCreditsForLostDamagedLitres.map(_._1)
-            } yield (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitreMap(year)
+            } yield -1 * (claimCreditsForExportsLowLitres + claimCreditsForLostDamagedLowLitres) * lowerBandCostPerLitreMap(year)
             val expectedHighLevy: Option[BigDecimal] = for {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
-            } yield (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
+            } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
             lowBand mustBe expectedLowLevy.get
             highBand mustBe expectedHighLevy.get
             totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
