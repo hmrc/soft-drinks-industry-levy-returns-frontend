@@ -17,14 +17,27 @@
 package util
 
 import config.FrontendAppConfig
-import models.UserAnswers
+import models.LevyCalculator.getLevyCalculation
+import models.{LevyCalculation, UserAnswers}
 import pages._
 
 object TotalForQuarter {
 
   def calculateTotal(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig) = {
-    calculateLowBand(userAnswers, smallProducer)(config) +
-      calculateHighBand(userAnswers, smallProducer)(config)
+    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
+    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
+    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
+    levyCalculation.total
+//    calculateLowBand(userAnswers, smallProducer)(config) +
+//      calculateHighBand(userAnswers, smallProducer)(config)
+  }
+
+  private def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
+    0L
+  }
+
+  private def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
+    0L
   }
 
   private[util] def calculateLowBand(
@@ -44,6 +57,11 @@ object TotalForQuarter {
       case true => (total - totalCredits) * config.lowerBandCostPerLitre
       case _ => (total + litresPackedAtOwnSite - totalCredits) * config.lowerBandCostPerLitre
     }
+
+    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
+    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
+    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
+    levyCalculation.lowLevy
   }
 
   private[util] def calculateHighBand(
@@ -63,6 +81,11 @@ object TotalForQuarter {
       case true => (total - totalCredits) * config.higherBandCostPerLitre
       case _ => (total + litresPackedAtOwnSite - totalCredits) * config.higherBandCostPerLitre
     }
+
+    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
+    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
+    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
+    levyCalculation.highLevy
   }
 
 }
