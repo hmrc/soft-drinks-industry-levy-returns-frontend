@@ -35,6 +35,9 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 //  private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
 //  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
 
+  private def getRandomLitres: Long = Math.floor(Math.random() * 1000000).toLong
+  private def getRandomLitreage: (Long, Long) = (getRandomLitres, getRandomLitres)
+
   private def getLitresJson(boolFieldKey: String, litreageFieldKey: String)(litresOpt: Option[(Long, Long)]): JsObject = {
     litresOpt match {
       case Some((low, high)) =>
@@ -80,7 +83,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
     }
     emptyUserAnswers.copy(data = data, smallProducerList = smallProducerList, returnPeriod = returnPeriod)
   }
-
+  
 
   "TotalForQuarter" - {
 
@@ -112,8 +115,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = if (isSmallProducer) BigDecimal(0) else lowerBandCostPerLitre * lowLitres
-                val expectedHighLevy = if (isSmallProducer) BigDecimal(0) else higherBandCostPerLitre * highLitres
+                val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitre * lowLitres
+                val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitre * highLitres
                 lowBand mustBe expectedLowLevy
                 highBand mustBe expectedHighLevy
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
@@ -152,8 +155,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = BigDecimal(0)
-                val expectedHighLevy = BigDecimal(0)
+                val expectedLowLevy = BigDecimal("0.00")
+                val expectedHighLevy = BigDecimal("0.00")
                 lowBand mustBe expectedLowLevy
                 highBand mustBe expectedHighLevy
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
@@ -190,8 +193,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = BigDecimal(0)
-                val expectedHighLevy = BigDecimal(0)
+                val expectedLowLevy = BigDecimal("0.00")
+                val expectedHighLevy = BigDecimal("0.00")
                 lowBand mustBe expectedLowLevy
                 highBand mustBe expectedHighLevy
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
@@ -239,7 +242,25 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Apr - Dec $year" in {
-
+          forAll(aprToDecInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = None
+            val contractPackerLitres: Option[(Long, Long)] = None
+            val broughtIntoUKLitres: Option[(Long, Long)] = None
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = None
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
+            val smallProducerLitres: List[(Long, Long)] = List(getRandomLitreage, getRandomLitreage)
+            val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy = BigDecimal("0.00")
+            val expectedHighLevy = BigDecimal("0.00")
+            lowBand mustBe expectedLowLevy
+            highBand mustBe expectedHighLevy
+            totalForQuarter mustBe expectedLowLevy + expectedHighLevy
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Apr - Dec $year" in {
@@ -259,8 +280,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = if (isSmallProducer) BigDecimal(0) else lowerBandCostPerLitre * lowLitres
-                val expectedHighLevy = if (isSmallProducer) BigDecimal(0) else higherBandCostPerLitre * highLitres
+                val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitre * lowLitres
+                val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitre * highLitres
                 lowBand mustBe expectedLowLevy
                 highBand mustBe expectedHighLevy
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
@@ -299,8 +320,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = BigDecimal(0)
-                val expectedHighLevy = BigDecimal(0)
+                val expectedLowLevy = BigDecimal("0.00")
+                val expectedHighLevy = BigDecimal("0.00")
                 lowBand mustBe expectedLowLevy
                 highBand mustBe expectedHighLevy
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
@@ -337,8 +358,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = BigDecimal(0)
-                val expectedHighLevy = BigDecimal(0)
+                val expectedLowLevy = BigDecimal("0.00")
+                val expectedHighLevy = BigDecimal("0.00")
                 lowBand mustBe expectedLowLevy
                 highBand mustBe expectedHighLevy
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
@@ -386,7 +407,25 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Jan - Mar ${year + 1}" in {
-
+          forAll(janToMarInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = None
+            val contractPackerLitres: Option[(Long, Long)] = None
+            val broughtIntoUKLitres: Option[(Long, Long)] = None
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = None
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
+            val smallProducerLitres: List[(Long, Long)] = List(getRandomLitreage, getRandomLitreage)
+            val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy = BigDecimal("0.00")
+            val expectedHighLevy = BigDecimal("0.00")
+            lowBand mustBe expectedLowLevy
+            highBand mustBe expectedHighLevy
+            totalForQuarter mustBe expectedLowLevy + expectedHighLevy
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Jan - Mar ${year + 1}" in {
@@ -415,8 +454,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = if (isSmallProducer) BigDecimal(0) else lowerBandCostPerLitreMap(year) * lowLitres
-                val expectedHighLevy = if (isSmallProducer) BigDecimal(0) else higherBandCostPerLitreMap(year) * highLitres
+                val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitreMap(year) * lowLitres
+                val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitreMap(year) * highLitres
                 lowBand mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 highBand mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -455,8 +494,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = if (isSmallProducer) BigDecimal(0) else lowerBandCostPerLitreMap(year) * lowLitres
-                val expectedHighLevy = if (isSmallProducer) BigDecimal(0) else higherBandCostPerLitreMap(year) * highLitres
+                val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitreMap(year) * lowLitres
+                val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitreMap(year) * highLitres
                 lowBand mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 highBand mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -493,8 +532,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = BigDecimal(0)
-                val expectedHighLevy = BigDecimal(0)
+                val expectedLowLevy = BigDecimal("0.00")
+                val expectedHighLevy = BigDecimal("0.00")
                 lowBand mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 highBand mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -542,7 +581,25 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Apr - Dec $year" in {
-
+          forAll(aprToDecInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = None
+            val contractPackerLitres: Option[(Long, Long)] = None
+            val broughtIntoUKLitres: Option[(Long, Long)] = None
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = None
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
+            val smallProducerLitres: List[(Long, Long)] = List(getRandomLitreage, getRandomLitreage)
+            val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy = BigDecimal("0.00")
+            val expectedHighLevy = BigDecimal("0.00")
+            lowBand mustBe expectedLowLevy
+            highBand mustBe expectedHighLevy
+            totalForQuarter mustBe expectedLowLevy + expectedHighLevy
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Apr - Dec $year" in {
@@ -562,8 +619,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = if (isSmallProducer) BigDecimal(0) else lowerBandCostPerLitreMap(year) * lowLitres
-                val expectedHighLevy = if (isSmallProducer) BigDecimal(0) else higherBandCostPerLitreMap(year) * highLitres
+                val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitreMap(year) * lowLitres
+                val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitreMap(year) * highLitres
                 lowBand mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 highBand mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -602,8 +659,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = if (isSmallProducer) BigDecimal(0) else lowerBandCostPerLitreMap(year) * lowLitres
-                val expectedHighLevy = if (isSmallProducer) BigDecimal(0) else higherBandCostPerLitreMap(year) * highLitres
+                val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitreMap(year) * lowLitres
+                val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitreMap(year) * highLitres
                 lowBand mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 highBand mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -640,8 +697,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-                val expectedLowLevy = BigDecimal(0)
-                val expectedHighLevy = BigDecimal(0)
+                val expectedLowLevy = BigDecimal("0.00")
+                val expectedHighLevy = BigDecimal("0.00")
                 lowBand mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 highBand mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -689,7 +746,25 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
-
+          forAll(janToMarInt) { month =>
+            val ownBrandsLitres: Option[(Long, Long)] = None
+            val contractPackerLitres: Option[(Long, Long)] = None
+            val broughtIntoUKLitres: Option[(Long, Long)] = None
+            val broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = Option(getRandomLitreage)
+            val claimCreditsForExportsLitres: Option[(Long, Long)] = None
+            val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
+            val smallProducerLitres: List[(Long, Long)] = List(getRandomLitreage, getRandomLitreage)
+            val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
+            val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
+            val lowBand = calculateLowBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val highBand = calculateHighBand(userAnswers, isSmallProducer)(frontendAppConfig)
+            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
+            val expectedLowLevy = BigDecimal("0.00")
+            val expectedHighLevy = BigDecimal("0.00")
+            lowBand mustBe expectedLowLevy
+            highBand mustBe expectedHighLevy
+            totalForQuarter mustBe expectedLowLevy + expectedHighLevy
+          }
         }
 
         s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
