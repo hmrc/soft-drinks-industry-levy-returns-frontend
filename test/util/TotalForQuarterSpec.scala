@@ -717,7 +717,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
               contractPackerHighLitres <- contractPackerLitres.map(_._2)
               broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
-            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * lowerBandCostPerLitreMap(year)
+            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitreMap(year)
             lowBand mustBe expectedLowLevy.get
             highBand mustBe expectedHighLevy.get
             totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
@@ -932,7 +932,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
               contractPackerHighLitres <- contractPackerLitres.map(_._2)
               broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
-            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * lowerBandCostPerLitreMap(year)
+            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitreMap(year)
             lowBand mustBe expectedLowLevy.get
             highBand mustBe expectedHighLevy.get
             totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
