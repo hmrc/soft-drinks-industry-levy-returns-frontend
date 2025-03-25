@@ -18,7 +18,7 @@ package util
 
 import config.FrontendAppConfig
 import models.LevyCalculator.getLevyCalculation
-import models.{LevyCalculation, UserAnswers}
+import models.{ LevyCalculation, UserAnswers }
 import pages._
 
 object TotalForQuarter {
