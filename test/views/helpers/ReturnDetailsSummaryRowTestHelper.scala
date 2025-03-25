@@ -17,7 +17,7 @@
 package views.helpers
 
 import base.UserAnswersTestData
-import models.UserAnswers
+import models.{ReturnPeriod, UserAnswers}
 import org.jsoup.nodes.Element
 import play.api.i18n.Messages
 
@@ -273,7 +273,11 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
       .contains(summaryId)) {
       "£0.00"
     } else {
-      s"${if (isNegativeLevy(summaryId)) "−" else ""}£180.00"
+      val levyTotal = userAnswers.returnPeriod match {
+        case ReturnPeriod(2025, 0) => "£180.00"
+        case ReturnPeriod(2026, 0) => "£194.00"
+      }
+      s"${if (isNegativeLevy(summaryId)) "−" else ""}$levyTotal"
     }
   }
 
@@ -285,7 +289,11 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
       .contains(summaryId)) {
       "£0.00"
     } else {
-      s"${if (isNegativeLevy(summaryId)) "−" else ""}£240.00"
+      val levyTotal = userAnswers.returnPeriod match {
+        case ReturnPeriod(2025, 0) => "£240.00"
+        case ReturnPeriod(2026, 0) => "£259.00"
+      }
+      s"${if (isNegativeLevy(summaryId)) "−" else ""}$levyTotal"
     }
   }
 }
