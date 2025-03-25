@@ -46,7 +46,6 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     val button = "govuk-button"
   }
 
-  //  TODO: Test these for Pre2025 return period and 2025 TaxYearReturnPeriod
   def testSummaryLists(key: String, element: Element, userAnswers: UserAnswers, isCheckAnswers: Boolean) = {
     val summaryLists = element.getElementsByClass(Selectors.summaryList)
 
