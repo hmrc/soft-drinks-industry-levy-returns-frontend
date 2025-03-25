@@ -106,8 +106,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitre * lowLitres
                 val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitre * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe (if (isSmallProducer) 0L else lowLitres)
+                highBandLitres mustBe (if (isSmallProducer) 0L else highLitres)
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -146,8 +146,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = BigDecimal("0.00")
                 val expectedHighLevy = BigDecimal("0.00")
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe 0L
+                highBandLitres mustBe 0L
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -184,8 +184,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = BigDecimal("0.00")
                 val expectedHighLevy = BigDecimal("0.00")
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe 0L
+                highBandLitres mustBe 0L
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -203,8 +203,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = -1 * lowerBandCostPerLitre * lowLitres
                 val expectedHighLevy = -1 * higherBandCostPerLitre * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe -1 * lowLitres
+                highBandLitres mustBe -1 * highLitres
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -222,8 +222,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = -1 * lowerBandCostPerLitre * lowLitres
                 val expectedHighLevy = -1 * higherBandCostPerLitre * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe -1 * lowLitres
+                highBandLitres mustBe -1 * highLitres
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -321,8 +321,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitre * lowLitres
                 val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitre * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe (if (isSmallProducer) 0L else lowLitres)
+                highBandLitres mustBe (if (isSmallProducer) 0L else highLitres)
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -361,8 +361,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = BigDecimal("0.00")
                 val expectedHighLevy = BigDecimal("0.00")
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe 0L
+                highBandLitres mustBe 0L
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -399,8 +399,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = BigDecimal("0.00")
                 val expectedHighLevy = BigDecimal("0.00")
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe 0L
+                highBandLitres mustBe 0L
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -418,8 +418,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = -1 * lowerBandCostPerLitre * lowLitres
                 val expectedHighLevy = -1 * higherBandCostPerLitre * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe -1 * lowLitres
+                highBandLitres mustBe -1 * highLitres
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -437,8 +437,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = -1 * lowerBandCostPerLitre * lowLitres
                 val expectedHighLevy = -1 * higherBandCostPerLitre * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe -1 * lowLitres
+                highBandLitres mustBe -1 * highLitres
                 totalForQuarter mustBe expectedLowLevy + expectedHighLevy
               }
             }
@@ -545,8 +545,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitreMap(year) * lowLitres
                 val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitreMap(year) * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe (if (isSmallProducer) 0L else lowLitres)
+                highBandLitres mustBe (if (isSmallProducer) 0L else highLitres)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -585,8 +585,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = BigDecimal("0.00")
                 val expectedHighLevy = BigDecimal("0.00")
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe 0L
+                highBandLitres mustBe 0L
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -623,8 +623,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = BigDecimal("0.00")
                 val expectedHighLevy = BigDecimal("0.00")
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe 0L
+                highBandLitres mustBe 0L
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -642,8 +642,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = -1 * lowerBandCostPerLitreMap(year) * lowLitres
                 val expectedHighLevy = -1 * higherBandCostPerLitreMap(year) * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe -1 * lowLitres
+                highBandLitres mustBe -1 * highLitres
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -661,8 +661,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = -1 * lowerBandCostPerLitreMap(year) * lowLitres
                 val expectedHighLevy = -1 * higherBandCostPerLitreMap(year) * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe -1 * lowLitres
+                highBandLitres mustBe -1 * highLitres
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -760,8 +760,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = if (isSmallProducer) BigDecimal("0.00") else lowerBandCostPerLitreMap(year) * lowLitres
                 val expectedHighLevy = if (isSmallProducer) BigDecimal("0.00") else higherBandCostPerLitreMap(year) * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe (if (isSmallProducer) 0L else lowLitres)
+                highBandLitres mustBe (if (isSmallProducer) 0L else highLitres)
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -800,8 +800,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = BigDecimal("0.00")
                 val expectedHighLevy = BigDecimal("0.00")
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe 0L
+                highBandLitres mustBe 0L
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -838,8 +838,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = BigDecimal("0.00")
                 val expectedHighLevy = BigDecimal("0.00")
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe 0L
+                highBandLitres mustBe 0L
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -857,8 +857,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = -1 * lowerBandCostPerLitreMap(year) * lowLitres
                 val expectedHighLevy = -1 * higherBandCostPerLitreMap(year) * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe -1 * lowLitres
+                highBandLitres mustBe -1 * highLitres
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -876,8 +876,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
                 val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
                 val expectedLowLevy = -1 * lowerBandCostPerLitreMap(year) * lowLitres
                 val expectedHighLevy = -1 * higherBandCostPerLitreMap(year) * highLitres
-                lowBandLitres mustBe lowLitres
-                highBandLitres mustBe highLitres
+                lowBandLitres mustBe -1 * lowLitres
+                highBandLitres mustBe -1 * highLitres
                 totalForQuarter mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
