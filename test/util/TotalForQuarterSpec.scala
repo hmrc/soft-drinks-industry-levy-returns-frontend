@@ -304,8 +304,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
             } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitre
-            lowBandLitres mustBe -1 * expectedLowLevy.get / lowerBandCostPerLitre
-            highBandLitres mustBe -1 * expectedHighLevy.get / higherBandCostPerLitre
+            lowBandLitres mustBe expectedLowLevy.get / lowerBandCostPerLitre
+            highBandLitres mustBe expectedHighLevy.get / higherBandCostPerLitre
             totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
           }
         }
@@ -519,8 +519,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
             } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitre
-            lowBandLitres mustBe -1 * expectedLowLevy.get / lowerBandCostPerLitre
-            highBandLitres mustBe -1 * expectedHighLevy.get / higherBandCostPerLitre
+            lowBandLitres mustBe expectedLowLevy.get / lowerBandCostPerLitre
+            highBandLitres mustBe expectedHighLevy.get / higherBandCostPerLitre
             totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
           }
         }
@@ -743,8 +743,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
             } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
-            lowBandLitres mustBe -1 * expectedLowLevy.get / lowerBandCostPerLitreMap(year)
-            highBandLitres mustBe -1 * expectedHighLevy.get / higherBandCostPerLitreMap(year)
+            lowBandLitres mustBe expectedLowLevy.get / lowerBandCostPerLitreMap(year)
+            highBandLitres mustBe expectedHighLevy.get / higherBandCostPerLitreMap(year)
             totalForQuarter mustBe (expectedLowLevy.get + expectedHighLevy.get).setScale(2, BigDecimal.RoundingMode.HALF_UP)
           }
         }
@@ -958,8 +958,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
               claimCreditsForExportsHighLitres <- claimCreditsForExportsLitres.map(_._2)
               claimCreditsForLostDamagedHighLitres <- claimCreditsForLostDamagedLitres.map(_._2)
             } yield -1 * (claimCreditsForExportsHighLitres + claimCreditsForLostDamagedHighLitres) * higherBandCostPerLitreMap(year)
-            lowBandLitres mustBe -1 * expectedLowLevy.get / lowerBandCostPerLitreMap(year)
-            highBandLitres mustBe -1 * expectedHighLevy.get / higherBandCostPerLitreMap(year)
+            lowBandLitres mustBe expectedLowLevy.get / lowerBandCostPerLitreMap(year)
+            highBandLitres mustBe expectedHighLevy.get / higherBandCostPerLitreMap(year)
             totalForQuarter mustBe (expectedLowLevy.get + expectedHighLevy.get).setScale(2, BigDecimal.RoundingMode.HALF_UP)
           }
         }
