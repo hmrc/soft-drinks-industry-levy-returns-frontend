@@ -56,18 +56,4 @@ object TotalForQuarter {
     total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
   }
 
-//  private[util] def calculateLowBand(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
-//    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
-//    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
-//    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
-//    levyCalculation.lowLevy
-//  }
-//
-//  private[util] def calculateHighBand(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig): BigDecimal = {
-//    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
-//    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
-//    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
-//    levyCalculation.highLevy
-//  }
-
 }
