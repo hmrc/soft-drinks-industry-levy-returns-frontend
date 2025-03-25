@@ -272,10 +272,8 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
       .contains(summaryId)) {
       "£0.00"
-    } else if (isNegativeLevy(summaryId)) {
-      "−£180.00"
     } else {
-      "£180.00"
+      s"${if (isNegativeLevy(summaryId)) "−" else ""}£180.00"
     }
   }
 
@@ -286,10 +284,8 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
       .contains(summaryId)) {
       "£0.00"
-    } else if (isNegativeLevy(summaryId)) {
-      "−£240.00"
     } else {
-      "£240.00"
+      s"${if (isNegativeLevy(summaryId)) "−" else ""}£240.00"
     }
   }
 }
