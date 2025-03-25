@@ -5,7 +5,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.TryValues
 import play.api.i18n.Messages
-import utilitlies.CurrencyFormatter
+import util.CurrencyFormatter
 
 trait ReturnSummaryValidationHelper extends Specifications
   with TestConfiguration

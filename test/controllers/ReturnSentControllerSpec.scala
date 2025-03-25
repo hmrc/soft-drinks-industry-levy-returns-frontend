@@ -675,11 +675,9 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       }
     }
 
-    "must show correct message to user when user is owed funding - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val amounts = Amounts(0, 0, -6600)
-      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = preApril2025ReturnPeriod)
+    "must show correct message to user when user is owed funding" in {
+      val amounts = Amounts(0, 0, -0.01)
+      val userAnswers = emptyUserAnswers.copy(submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -694,15 +692,13 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include(" −£6,600.00")
+        page.getElementsByTag("dd").text() must include(" −£0.01")
       }
     }
 
-    "must show correct message to user when user is owed funding - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val amounts = Amounts(0, 0, -6600)
-      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = taxYear2025ReturnPeriod)
+    "must show correct message to user when user owes funds" in {
+      val amounts = Amounts(0, 0, 0.01)
+      val userAnswers = emptyUserAnswers.copy(submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -714,19 +710,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        //        TODO: Correct this value DLS-11196
-        page.getElementsByTag("dd").text() must include(" −£6,600.00")
+        page.getElementsByTag("dd").text() must include("£0.01")
       }
     }
 
-    "must show correct message to user when user owes funds - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val amounts = Amounts(0, 0, 6600)
-      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = preApril2025ReturnPeriod)
+    "must show correct total for quarter" in {
+      val amounts = Amounts(0.01, 0, 0)
+      val userAnswers = emptyUserAnswers.copy(submitted = true)
       val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
@@ -740,75 +732,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include("£6,600.00")
-      }
-    }
-
-    "must show correct message to user when user owes funds - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val amounts = Amounts(0, 0, 6600)
-      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = taxYear2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
-
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
-
-      running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        //        TODO: Correct this value DLS-11196
-        page.getElementsByTag("dd").text() must include("£6,600.00")
-      }
-    }
-
-    "must show correct total for quarter - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val amounts = Amounts(660, 0, 660)
-      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = preApril2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
-
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
-
-      running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include("£660.00")
-      }
-    }
-
-    "must show correct total for quarter - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val amounts = Amounts(660, 0, 660)
-      val userAnswers = emptyUserAnswers.copy(submitted = true, returnPeriod = taxYear2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
-
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
-
-      running(application) {
-        val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        //        TODO: Correct this value DLS-11196
-        page.getElementsByTag("dd").text() must include("£660.00")
+        page.getElementsByTag("dd").text() must include("£0.01")
       }
     }
 

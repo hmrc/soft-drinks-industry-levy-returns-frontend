@@ -201,7 +201,6 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
     (2025 to 2025).foreach(year => {
 
       val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
-
       val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
 
       s"calculate low levy, high levy, and total correctly with zero litres totals using $year rates for Apr - Dec $year" in {

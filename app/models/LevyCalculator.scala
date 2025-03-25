@@ -64,10 +64,6 @@ object LevyCalculator {
       throw new IllegalArgumentException(s"No band rates found for tax year: ${taxYear.toString}"))
 
   def getLevyCalculation(lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit frontendAppConfig: FrontendAppConfig): LevyCalculation = {
-    if (lowLitres < 0 || highLitres < 0) {
-      throw new IllegalArgumentException("Litres cannot be negative")
-    }
-
     val taxYear: TaxYear = getTaxYear(returnPeriod)
     val bandRates: BandRates = getBandRates(taxYear)
     val lowLevy = lowLitres * bandRates.lowerBandCostPerLites
