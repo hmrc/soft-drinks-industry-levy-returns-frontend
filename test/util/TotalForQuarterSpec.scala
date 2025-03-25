@@ -95,7 +95,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
       List(true, false).foreach(isSmallProducer => {
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -114,7 +114,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -133,7 +133,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using original rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -154,7 +154,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using original rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -173,7 +173,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using original rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -192,7 +192,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using original rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -211,7 +211,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using original rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -230,7 +230,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Apr - Dec $year" in {
           forAll(aprToDecInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
             val contractPackerLitres: Option[(Long, Long)] = None
@@ -252,7 +252,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Apr - Dec $year" in {
           forAll(aprToDecInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
             val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -282,7 +282,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Apr - Dec $year" in {
           forAll(aprToDecInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = None
             val contractPackerLitres: Option[(Long, Long)] = None
@@ -310,7 +310,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(janToMarInt) { month =>
@@ -329,7 +329,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(janToMarInt) { month =>
@@ -348,7 +348,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using original rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(janToMarInt) { month =>
@@ -369,7 +369,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using original rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(janToMarInt) { month =>
@@ -388,7 +388,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using original rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(janToMarInt) { month =>
@@ -407,7 +407,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using original rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(janToMarInt) { month =>
@@ -426,7 +426,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using original rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(janToMarInt) { month =>
@@ -445,7 +445,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Jan - Mar ${year + 1}" in {
           forAll(janToMarInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
             val contractPackerLitres: Option[(Long, Long)] = None
@@ -467,7 +467,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Jan - Mar ${year + 1}" in {
           forAll(janToMarInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
             val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -497,7 +497,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Jan - Mar ${year + 1}" in {
           forAll(janToMarInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = None
             val contractPackerLitres: Option[(Long, Long)] = None
@@ -534,7 +534,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
 
       List(true, false).foreach(isSmallProducer => {
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -553,7 +553,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -572,7 +572,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -593,7 +593,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -612,7 +612,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -631,7 +631,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -650,7 +650,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Apr - Dec $year" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -669,7 +669,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Apr - Dec $year" in {
           forAll(aprToDecInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
             val contractPackerLitres: Option[(Long, Long)] = None
@@ -691,7 +691,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Apr - Dec $year" in {
           forAll(aprToDecInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
             val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -721,7 +721,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Apr - Dec $year" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Apr - Dec $year" in {
           forAll(aprToDecInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = None
             val contractPackerLitres: Option[(Long, Long)] = None
@@ -749,7 +749,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -768,7 +768,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -787,7 +787,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -808,7 +808,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -827,7 +827,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -846,7 +846,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -865,7 +865,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
               forAll(aprToDecInt) { month =>
@@ -884,7 +884,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
           forAll(janToMarInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
             val contractPackerLitres: Option[(Long, Long)] = None
@@ -906,7 +906,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
           forAll(aprToDecInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
             val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -936,7 +936,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
 
-        s"calculate low levy, high levy, and total correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Jan - Mar ${year + 1}" in {
+        s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Jan - Mar ${year + 1}" in {
           forAll(janToMarInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = None
             val contractPackerLitres: Option[(Long, Long)] = None
