@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utilitlies
+package util
 
 import models.SdilReturn
 import models.retrieved.RetrievedSubscription

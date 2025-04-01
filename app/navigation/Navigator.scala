@@ -23,7 +23,7 @@ import pages._
 import models._
 import models.retrieved.RetrievedSubscription
 import play.api.Logger
-import utilitlies.UserTypeCheck
+import util.UserTypeCheck
 
 @Singleton
 class Navigator @Inject() () {

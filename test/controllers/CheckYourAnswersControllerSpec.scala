@@ -37,7 +37,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utilitlies.GenericLogger
+import util.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -927,11 +927,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must return OK and contain amount to pay section for small producer - pre April 2025 rates" in {
+    "must return OK and contain amount to pay section for small producer" in {
 
       when(mockConfig.balanceAllEnabled).thenReturn(true)
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
@@ -950,12 +948,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 100, "highBand" -> 200))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (1000L, 2000L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = preApril2025ReturnPeriod)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
+        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(Amounts(0.01, 0.03, 0.02)))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result = route(application, request).value
 
@@ -963,57 +961,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementsByTag("h2").text() must include(Messages("summary"))
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        page.getElementsByClass("total-for-quarter").text() must include("£1,000.00")
+        page.getElementsByClass("total-for-quarter").text() must include("£0.01")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
-        page.getElementsByClass("balance-brought-forward").text() must include("£3,000.00")
+        page.getElementsByClass("balance-brought-forward").text() must include("£0.03")
         page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("£2,000.00")
-
-      }
-    }
-
-    "must return OK and contain amount to pay section for small producer - 2025 tax year rates" in {
-
-      when(mockConfig.balanceAllEnabled).thenReturn(true)
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val userAnswersData = Json.obj(
-        "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
-        "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 1000, "highBand" -> 2000),
-        "smallProducerDetails" -> false,
-        "broughtIntoUK" -> true,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
-        "broughtIntoUkFromSmallProducers" -> true,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
-        "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 100, "highBand" -> 200),
-        "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 100, "highBand" -> 200))
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (1000L, 2000L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
-
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
-      running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts))
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        //        TODO: Correct this value DLS-11196
-        page.getElementsByClass("total-for-quarter").text() must include("£1,000.00")
-        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
-        page.getElementsByClass("balance-brought-forward").text() must include("£3,000.00")
-        page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("£2,000.00")
+        page.getElementsByClass("total").text() must include("£0.02")
 
       }
     }
@@ -1083,11 +1035,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must return OK and contain amount to pay header when return amount - pre April 2025 rates" in {
+    "must return OK and contain amount to pay header when return amount" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val amounts1 = Amounts(4200, 300, 3900)
+      val amounts1 = Amounts(0.06, 0.05, 0.01)
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
@@ -1106,7 +1056,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = preApril2025ReturnPeriod)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -1119,67 +1069,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        page.getElementsByClass("total-for-quarter").text() must include("£4,200.00")
+        page.getElementsByClass("total-for-quarter").text() must include("£0.06")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
-        page.getElementsByClass("balance-brought-forward").text() must include("−£300.00")
+        page.getElementsByClass("balance-brought-forward").text() must include("−£0.05")
         page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("£3,900.00")
-        page.getElementsByClass("total").text() mustNot include("−£3,900.00")
+        page.getElementsByClass("total").text() must include("£0.01")
+        page.getElementsByClass("total").text() mustNot include("−£0.01")
 
       }
     }
 
-    "must return OK and contain amount to pay header when return amount - 2025 tax year rates" in {
-
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val amounts1 = Amounts(4200, 300, 3900)
-      val userAnswersData = Json.obj(
-        "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
-        "smallProducerDetails" -> false,
-        "broughtIntoUK" -> true,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "broughtIntoUkFromSmallProducers" -> true,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
-
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
-      running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts1))
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        //        TODO: Correct this value DLS-11196
-        page.getElementsByClass("total-for-quarter").text() must include("£4,200.00")
-        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
-        page.getElementsByClass("balance-brought-forward").text() must include("−£300.00")
-        page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("£3,900.00")
-        page.getElementsByClass("total").text() mustNot include("−£3,900.00")
-
-      }
-    }
-
-    "must return OK and contain amount owed header when total is negative - pre April 2025 rates" in {
-
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+    "must return OK and contain amount owed header when total is negative" in {
       val amounts1 = Amounts(-4200, -300, -3900)
       val userAnswersData = Json.obj(
         "ownBrands" -> true,
@@ -1199,7 +1099,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = preApril2025ReturnPeriod)
+      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola))
 
       val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
         bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
@@ -1212,51 +1112,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
         page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        page.getElementsByClass("total-for-quarter").text() must include("−£4,200.00")
-        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
-        page.getElementsByClass("balance-brought-forward").text() must include("£300.00")
-        page.getElementsByTag("dt").text() must include(Messages("total"))
-        page.getElementsByClass("total").text() must include("−£3,900.00")
-      }
-    }
-
-    "must return OK and contain amount owed header when total is negative - 2025 tax year rates" in {
-
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val amounts1 = Amounts(-4200, -300, -3900)
-      val userAnswersData = Json.obj(
-        "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 10000),
-        "exemptionsForSmallProducers" -> true,
-        "addASmallProducer" -> Json.obj("referenceNumber" -> "XZSDIL000000235", "lowBand" -> 0, "highBand" -> 0),
-        "smallProducerDetails" -> false,
-        "broughtIntoUK" -> true,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "broughtIntoUkFromSmallProducers" -> true,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 0, "highBand" -> 0),
-        "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 0, "highBand" -> 0))
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (0L, 0L))
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (0L, 0L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), returnPeriod = taxYear2025ReturnPeriod)
-
-      val application = withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
-      running(application) {
-        when(mockOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn (Future.successful(amounts1))
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementById("amount-to-pay-title").text mustEqual Messages("summary")
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter"))
-        //        TODO: Correct this value DLS-11196
         page.getElementsByClass("total-for-quarter").text() must include("−£4,200.00")
         page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward"))
         page.getElementsByClass("balance-brought-forward").text() must include("£300.00")

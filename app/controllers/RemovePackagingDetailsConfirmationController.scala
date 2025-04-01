@@ -26,7 +26,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import play.twirl.api.Html
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import util.GenericLogger
 import viewmodels.AddressFormattingHelper
 import views.html.RemovePackagingDetailsConfirmationView
 

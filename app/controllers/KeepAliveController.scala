@@ -21,7 +21,7 @@ import handlers.ErrorHandler
 import navigation.Navigator
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import util.GenericLogger
 
 import javax.inject.Inject
 import scala.concurrent.{ ExecutionContext, Future }

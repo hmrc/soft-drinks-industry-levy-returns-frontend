@@ -25,7 +25,7 @@ import pages.{ BroughtIntoUKPage, HowManyBroughtIntoUkPage }
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import utilitlies.GenericLogger
+import util.GenericLogger
 import views.html.BroughtIntoUKView
 
 import javax.inject.Inject
