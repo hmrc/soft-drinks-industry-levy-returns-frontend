@@ -752,8 +752,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
-              forAll(aprToDecInt) { month =>
-                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              forAll(janToMarInt) { month =>
+                val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
                 val userAnswers = userAnswersData(ownBrandsLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
                 val lowBandLitres = getTotalLowBandLitres(userAnswers, isSmallProducer)
                 val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
@@ -771,8 +771,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
-              forAll(aprToDecInt) { month =>
-                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              forAll(janToMarInt) { month =>
+                val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
                 val userAnswers = userAnswersData(contractPackerLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
                 val lowBandLitres = getTotalLowBandLitres(userAnswers, isSmallProducer)
                 val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
@@ -790,8 +790,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
-              forAll(aprToDecInt) { month =>
-                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              forAll(janToMarInt) { month =>
+                val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
                 val smallProducerLitresOne: (Long, Long) = (lowLitres, highLitres)
                 val smallProducerLitresTwo: (Long, Long) = (Math.floor((1 + Math.random()) * lowLitres / 1.5).toLong, Math.floor((1 + Math.random()) * highLitres / 1.5).toLong)
                 val userAnswers = userAnswersData(smallProducerLitres = List(smallProducerLitresOne, smallProducerLitresTwo), returnPeriod = returnPeriod)
@@ -811,8 +811,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
-              forAll(aprToDecInt) { month =>
-                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              forAll(janToMarInt) { month =>
+                val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
                 val userAnswers = userAnswersData(broughtIntoUKLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
                 val lowBandLitres = getTotalLowBandLitres(userAnswers, isSmallProducer)
                 val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
@@ -830,8 +830,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
-              forAll(aprToDecInt) { month =>
-                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              forAll(janToMarInt) { month =>
+                val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
                 val userAnswers = userAnswersData(broughtIntoUkFromSmallProducersLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
                 val lowBandLitres = getTotalLowBandLitres(userAnswers, isSmallProducer)
                 val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
@@ -849,8 +849,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
-              forAll(aprToDecInt) { month =>
-                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              forAll(janToMarInt) { month =>
+                val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
                 val userAnswers = userAnswersData(claimCreditsForExportsLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
                 val lowBandLitres = getTotalLowBandLitres(userAnswers, isSmallProducer)
                 val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
@@ -868,8 +868,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Jan - Mar ${year + 1}" in {
           forAll(posLitresInts) { lowLitres =>
             forAll(posLitresInts) { highLitres =>
-              forAll(aprToDecInt) { month =>
-                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              forAll(janToMarInt) { month =>
+                val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
                 val userAnswers = userAnswersData(claimCreditsForLostDamagedLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
                 val lowBandLitres = getTotalLowBandLitres(userAnswers, isSmallProducer)
                 val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
@@ -907,7 +907,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
         }
 
         s"calculate low litres total, high litres total, and total levy for quarter correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
-          forAll(aprToDecInt) { month =>
+          forAll(janToMarInt) { month =>
             val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
             val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
             val broughtIntoUKLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -915,7 +915,7 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
             val claimCreditsForExportsLitres: Option[(Long, Long)] = None
             val claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None
             val smallProducerLitres: List[(Long, Long)] = List.empty
-            val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+            val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
             val userAnswers = userAnswersData(ownBrandsLitres, contractPackerLitres, broughtIntoUKLitres, broughtIntoUkFromSmallProducersLitres, claimCreditsForExportsLitres, claimCreditsForLostDamagedLitres, smallProducerLitres, returnPeriod)
             val lowBandLitres = getTotalLowBandLitres(userAnswers, isSmallProducer)
             val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
