@@ -17,10 +17,11 @@
 package models
 
 import cats.implicits._
+import config.FrontendAppConfig
 import models.SdilReturn._
 import pages._
-import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
-import play.api.libs.json.{ Format, JsPath, Json, OFormat }
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
 import java.time.LocalDateTime
 
@@ -36,6 +37,13 @@ case class SdilReturn(
 
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
+
+  def taxEstimation(r: SdilReturn)(implicit config: FrontendAppConfig): BigDecimal = {
+    val costLower = config.lowerBandCostPerLitre
+    val costHigher = config.higherBandCostPerLitre
+    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
+    (t._1 * costLower |+| t._2 * costHigher) * 4
+  }
 }
 
 object SdilReturn {
