@@ -48,6 +48,7 @@ class ReturnService @Inject() (
     submitReturnAndVariation(subscription, returnPeriod, userAnswers)
   }
 
+//  TODO: Make private to services package
   def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(getCurrentDateTime))
     val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
@@ -165,6 +166,7 @@ class ReturnService @Inject() (
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L))
   }
 
+//  TODO: Remove this method
   private def taxEstimation(r: SdilReturn): BigDecimal = {
     val t = r.packLarge |+| r.importLarge |+| r.ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4

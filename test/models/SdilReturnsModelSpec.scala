@@ -45,6 +45,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
     SdilReturn(ownBrand, packLarge, packSmall = smallProducers.toList, importLarge, importSmall, export, wastage, submittedOn = None)
   }
 
+//  TODO: Fix unit tests and add total packed and total imported checks
 
   "SdilReturn" - {
     val posLitresInts = Gen.choose(1000, 10000000)
