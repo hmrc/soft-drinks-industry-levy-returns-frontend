@@ -38,10 +38,10 @@ case class SdilReturn(
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
 
-  def taxEstimation(r: SdilReturn)(implicit config: FrontendAppConfig): BigDecimal = {
+  def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
     val costLower = config.lowerBandCostPerLitre
     val costHigher = config.higherBandCostPerLitre
-    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
+    val t = packLarge |+| importLarge |+| ownBrand
     (t._1 * costLower |+| t._2 * costHigher) * 4
   }
 }
