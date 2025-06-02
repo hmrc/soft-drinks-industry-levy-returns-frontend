@@ -101,9 +101,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(aprToDecInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
-              
-
-
               val expectedTaxEstimation = BigDecimal("0.00")
 
 
@@ -139,9 +136,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(aprToDecInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(importSmall = (lowLitres, highLitres))
-              
-
-
               val expectedTaxEstimation = BigDecimal("0.00")
 
 
@@ -158,8 +152,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(aprToDecInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(`export` = (lowLitres, highLitres))
-              
-              
               val expectedTotal = -1 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
               val expectedTaxEstimation = BigDecimal("0.00")
 
@@ -177,8 +169,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(aprToDecInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(wastage = (lowLitres, highLitres))
-              
-              
               val expectedTotal = -1 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
               val expectedTaxEstimation = BigDecimal("0.00")
 
@@ -194,13 +184,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(aprToDecInt) { month =>
           implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
           val sdilReturn = getSdilReturn()
-          
-          
-
           val expectedTaxEstimation = BigDecimal("0.00")
-          
-          
-          
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
@@ -212,13 +196,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val packLargeLitres = getRandomLitreage
           val importLargeLitres = getRandomLitreage
           val sdilReturn = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          
-          
-          
           val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * expectedLevied(Long, Long).lower + higherBandCostPerLitre * expectedLevied(Long, Long).higher)
-          
-          
-          
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
@@ -229,13 +207,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val exportLitres = getRandomLitreage
           val wastageLitres = getRandomLitreage
           val sdilReturn = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          
-          
-          
           val expectedTaxEstimation = BigDecimal("0.00")
-          
-          
-          
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
@@ -284,9 +256,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(janToMarInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
-              
-
-
               val expectedTaxEstimation = BigDecimal("0.00")
 
 
@@ -322,9 +291,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(janToMarInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(importSmall = (lowLitres, highLitres))
-              
-
-
               val expectedTaxEstimation = BigDecimal("0.00")
 
 
@@ -341,8 +307,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(janToMarInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(`export` = (lowLitres, highLitres))
-              
-              
               val expectedTotal = -1 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
               val expectedTaxEstimation = BigDecimal("0.00")
 
@@ -360,8 +324,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(janToMarInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(wastage = (lowLitres, highLitres))
-              
-              
               val expectedTotal = -1 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
               val expectedTaxEstimation = BigDecimal("0.00")
 
@@ -377,13 +339,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(janToMarInt) { month =>
           implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
           val sdilReturn = getSdilReturn()
-          
-          
-
           val expectedTaxEstimation = BigDecimal("0.00")
-          
-          
-          
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
@@ -395,13 +351,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val packLargeLitres = getRandomLitreage
           val importLargeLitres = getRandomLitreage
           val sdilReturn = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          
-          
-          
           val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * expectedLevied(Long, Long).lower + higherBandCostPerLitre * expectedLevied(Long, Long).higher)
-          
-          
-          
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
@@ -412,13 +362,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val exportLitres = getRandomLitreage
           val wastageLitres = getRandomLitreage
           val sdilReturn = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          
-          
-          
           val expectedTaxEstimation = BigDecimal("0.00")
-          
-          
-          
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
@@ -471,9 +415,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(aprToDecInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
-              
-
-
               val expectedTaxEstimation = BigDecimal("0.00")
 
 
@@ -507,9 +448,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(aprToDecInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(importSmall = (lowLitres, highLitres))
-              
-
-
               val expectedTaxEstimation = BigDecimal("0.00")
 
 
@@ -525,10 +463,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(aprToDecInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(`export` = (lowLitres, highLitres))
-              
-              
-
-              val expectedTaxEstimation = BigDecimal("0.00")
+                  val expectedTaxEstimation = BigDecimal("0.00")
 
 
               sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -543,13 +478,10 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               forAll(aprToDecInt) { month =>
                 implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
                 val sdilReturn = getSdilReturn(wastage = (lowLitres, highLitres))
-                
-                
-  
+
                 val expectedTaxEstimation = BigDecimal("0.00")
-  
-  
-  .setScale(2, BigDecimal.RoundingMode.HALF_UP)
+
+
                 sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               }
             }
@@ -560,13 +492,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(aprToDecInt) { month =>
           implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
           val sdilReturn = getSdilReturn()
-          
-          
-
           val expectedTaxEstimation = BigDecimal("0.00")
-          
-          
-          
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
@@ -578,13 +504,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val packLargeLitres = getRandomLitreage
           val importLargeLitres = getRandomLitreage
           val sdilReturn = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          
-          
-
           val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * expectedLevied(Long, Long).lower + higherBandCostPerLitreMap(year) * expectedLevied(Long, Long).higher)
-          
-          
-          .setScale(2, BigDecimal.RoundingMode.HALF_UP)
           sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
         }
       }
@@ -595,13 +515,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val exportLitres = getRandomLitreage
           val wastageLitres = getRandomLitreage
           val sdilReturn = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          
-          
-
           val expectedTaxEstimation = BigDecimal("0.00")
-          
-          
-          .setScale(2, BigDecimal.RoundingMode.HALF_UP)
           sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
         }
       }
@@ -648,9 +562,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(janToMarInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
-              
-
-
               val expectedTaxEstimation = BigDecimal("0.00")
 
 
@@ -684,9 +595,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(janToMarInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(importSmall = (lowLitres, highLitres))
-              
-
-
               val expectedTaxEstimation = BigDecimal("0.00")
 
 
@@ -702,10 +610,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(janToMarInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(`export` = (lowLitres, highLitres))
-              
-              
-
-              val expectedTaxEstimation = BigDecimal("0.00")
+                  val expectedTaxEstimation = BigDecimal("0.00")
 
 
               sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -720,10 +625,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(janToMarInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(wastage = (lowLitres, highLitres))
-              
-              
-
-              val expectedTaxEstimation = BigDecimal("0.00")
+                  val expectedTaxEstimation = BigDecimal("0.00")
 
 
               sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -736,13 +638,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(janToMarInt) { month =>
           implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
           val sdilReturn = getSdilReturn()
-          
-          
-
           val expectedTaxEstimation = BigDecimal("0.00")
-          
-          
-          
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
@@ -754,13 +650,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val packLargeLitres = getRandomLitreage
           val importLargeLitres = getRandomLitreage
           val sdilReturn = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          
-          
-
           val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * expectedLevied(Long, Long).lower + higherBandCostPerLitreMap(year) * expectedLevied(Long, Long).higher)
-          
-          
-          .setScale(2, BigDecimal.RoundingMode.HALF_UP)
           sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
         }
       }
@@ -771,13 +661,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val exportLitres = getRandomLitreage
           val wastageLitres = getRandomLitreage
           val sdilReturn = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          
-          
-
           val expectedTaxEstimation = BigDecimal("0.00")
-          
-          
-          .setScale(2, BigDecimal.RoundingMode.HALF_UP)
           sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
         }
       }
