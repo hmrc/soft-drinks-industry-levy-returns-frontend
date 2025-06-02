@@ -25,7 +25,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import java.time.LocalDate
 
 class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper with ScalaCheckPropertyChecks {
-  override implicit val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  override implicit lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   private def getRandomLitres: Long = Math.floor(Math.random() * 1000000).toLong
   private def getRandomLitreage: (Long, Long) = (getRandomLitres, getRandomLitres)
