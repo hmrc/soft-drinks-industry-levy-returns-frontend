@@ -39,16 +39,12 @@ class ReturnService @Inject() (
 
   val logger: Logger = Logger(this.getClass())
 
-  //  val costLower = config.lowerBandCostPerLitre
-  //  val costHigher = config.higherBandCostPerLitre
-
   def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.getPendingReturnPeriods(utr)
 
   def sendReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     submitReturnAndVariation(subscription, returnPeriod, userAnswers)
   }
 
-  //  TODO: Make private to services package
   private[services] def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(getCurrentDateTime))
     implicit val rp: ReturnPeriod = returnPeriod
@@ -168,12 +164,6 @@ class ReturnService @Inject() (
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L))
   }
-
-  //  TODO: Remove this method
-  //  private def taxEstimation(r: SdilReturn): BigDecimal = {
-  //    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
-  //    (t._1 * costLower |+| t._2 * costHigher) * 4
-  //  }
 
   private def getCurrentDateTime: LocalDateTime = {
     val zone = ZoneId.of("Europe/London")

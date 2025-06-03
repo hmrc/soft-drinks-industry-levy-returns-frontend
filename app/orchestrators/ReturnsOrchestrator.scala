@@ -19,7 +19,6 @@ package orchestrators
 import cats.data.EitherT
 import cats.implicits._
 import com.google.inject.{ Inject, Singleton }
-import config.FrontendAppConfig
 import errors.NoPendingReturnForGivenPeriod
 import models.requests.{ DataRequest, OptionalDataRequest }
 import models.retrieved.RetrievedSubscription
