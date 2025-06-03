@@ -35,10 +35,7 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val service: ReturnService = new ReturnService(mockSdilConnector, mockConfig) {
-    //    override val costHigher: BigDecimal = BigDecimal("0.24")
-    //    override val costLower: BigDecimal = BigDecimal("0.18")
-  }
+  val service: ReturnService = new ReturnService(mockSdilConnector, mockConfig)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -66,8 +63,6 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
       "when a nil return is being submitted" in {
         val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), None)
 
-//        when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-//        when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.24"))
         when(mockSdilConnector.returns_update(
           eqTo(aSubscription.utr),
           eqTo(returnPeriod),
@@ -110,8 +105,6 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
           packingSites = userAnswers.packagingSiteList.values.toList,
           taxEstimation = 5040.00)
 
-//        when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-//        when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.24"))
         when(mockSdilConnector.returns_update(
           eqTo(aSubscription.utr),
           eqTo(returnPeriod),
@@ -140,8 +133,6 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
       "when a none nil return and all answers no is being submitted" in {
         val userAnswers = UserAnswersTestData.withQuestionsAllFalseAndNoLitres
 
-//        when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-//        when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.24"))
         when(mockSdilConnector.returns_update(
           eqTo(aSubscription.utr),
           eqTo(returnPeriod),
