@@ -207,8 +207,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
-//          val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * expectedLevied(Long, Long).lower + higherBandCostPerLitre * expectedLevied(Long, Long).higher)
-//          sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
 
@@ -373,8 +371,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
-//          val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * expectedLevied(Long, Long).lower + higherBandCostPerLitre * expectedLevied(Long, Long).higher)
-//          sdilReturn.taxEstimation mustBe expectedTaxEstimation
         }
       }
 
@@ -545,8 +541,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
           sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-//          val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * expectedLevied(Long, Long).lower + higherBandCostPerLitreMap(year) * expectedLevied(Long, Long).higher)
-//          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
         }
       }
 
@@ -711,8 +705,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
           sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-          //          val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * expectedLevied(Long, Long).lower + higherBandCostPerLitreMap(year) * expectedLevied(Long, Long).higher)
-          //          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
         }
       }
 
