@@ -18,7 +18,6 @@ package orchestrators
 
 import base.ReturnsTestData._
 import base.SpecBase
-import config.FrontendAppConfig
 import errors.NoPendingReturnForGivenPeriod
 import models.requests.{ DataRequest, OptionalDataRequest }
 import models.{ Amounts, ReturnPeriod }
@@ -36,14 +35,13 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
   val mockReturnService = mock[ReturnService]
   val mockSdilCache = mock[SDILSessionCache]
   val mockSessionRepository = mock[SessionRepository]
-  val mockConfig = mock[FrontendAppConfig]
   val year = 2018
   val quarter = 1
   val requestReturnPeriod = ReturnPeriod(year, quarter)
   val optDataRequestNoData: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest(), sdilReference, aSubscription, None)
   val dataRequest: DataRequest[AnyContent] = DataRequest(FakeRequest(), sdilReference, aSubscription, emptyUserAnswers, requestReturnPeriod)
 
-  val orchestrator = new ReturnsOrchestrator(mockReturnService, mockSdilCache, mockSessionRepository, mockConfig)
+  val orchestrator = new ReturnsOrchestrator(mockReturnService, mockSdilCache, mockSessionRepository)
 
   "handleReturnRequest" - {
     "when a return hasn't already been started" - {
