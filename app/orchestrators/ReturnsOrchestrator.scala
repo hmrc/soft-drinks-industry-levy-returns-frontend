@@ -36,8 +36,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 class ReturnsOrchestrator @Inject() (
   returnService: ReturnService,
   sdilSessionCache: SDILSessionCache,
-  sessionRepository: SessionRepository,
-  config: FrontendAppConfig) {
+  sessionRepository: SessionRepository) {
 
   def handleReturnRequest(year: Int, quarter: Int, nilReturn: Boolean)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = EitherT {
 
