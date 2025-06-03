@@ -17,6 +17,7 @@
 package models
 
 import base.SpecBase
+import cats.implicits.catsSyntaxSemigroup
 import config.FrontendAppConfig
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar
@@ -201,7 +202,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val sdilReturn = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
           val expectedTotalPacked = packLargeLitres
           val expectedTotalImported = importLargeLitres
-          val expectedTaxEstimation = BigDecimal("0.00")
+          val liableLitres: (Long, Long) = ownBrandLitres |+| packLargeLitres |+| importLargeLitres
+          val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * liableLitres._1 + higherBandCostPerLitre * liableLitres._2)
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
@@ -366,7 +368,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val sdilReturn = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
           val expectedTotalPacked = packLargeLitres
           val expectedTotalImported = importLargeLitres
-          val expectedTaxEstimation = BigDecimal("0.00")
+          val liableLitres: (Long, Long) = ownBrandLitres |+| packLargeLitres |+| importLargeLitres
+          val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * liableLitres._1 + higherBandCostPerLitre * liableLitres._2)
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
           sdilReturn.taxEstimation mustBe expectedTaxEstimation
@@ -537,7 +540,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val sdilReturn = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
           val expectedTotalPacked = packLargeLitres
           val expectedTotalImported = importLargeLitres
-          val expectedTaxEstimation = BigDecimal("0.00")
+          val liableLitres: (Long, Long) = ownBrandLitres |+| packLargeLitres |+| importLargeLitres
+          val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * liableLitres._1 + higherBandCostPerLitreMap(year) * liableLitres._2)
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
           sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -702,7 +706,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val sdilReturn = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
           val expectedTotalPacked = packLargeLitres
           val expectedTotalImported = importLargeLitres
-          val expectedTaxEstimation = BigDecimal("0.00")
+          val liableLitres: (Long, Long) = ownBrandLitres |+| packLargeLitres |+| importLargeLitres
+          val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * liableLitres._1 + higherBandCostPerLitreMap(year) * liableLitres._2)
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
           sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
