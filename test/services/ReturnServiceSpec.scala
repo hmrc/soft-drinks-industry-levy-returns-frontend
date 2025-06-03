@@ -36,8 +36,8 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
   val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val service: ReturnService = new ReturnService(mockSdilConnector, mockConfig) {
-    override val costHigher: BigDecimal = BigDecimal("0.24")
-    override val costLower: BigDecimal = BigDecimal("0.18")
+    //    override val costHigher: BigDecimal = BigDecimal("0.24")
+    //    override val costLower: BigDecimal = BigDecimal("0.18")
   }
 
   override def beforeEach(): Unit = {
