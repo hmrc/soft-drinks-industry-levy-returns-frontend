@@ -17,7 +17,7 @@
 package views.helpers
 
 import base.UserAnswersTestData
-import models.{ReturnPeriod, UserAnswers}
+import models.{ ReturnPeriod, UserAnswers }
 import org.jsoup.nodes.Element
 import play.api.i18n.Messages
 

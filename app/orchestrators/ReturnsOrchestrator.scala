@@ -19,6 +19,7 @@ package orchestrators
 import cats.data.EitherT
 import cats.implicits._
 import com.google.inject.{ Inject, Singleton }
+import config.FrontendAppConfig
 import errors.NoPendingReturnForGivenPeriod
 import models.requests.{ DataRequest, OptionalDataRequest }
 import models.retrieved.RetrievedSubscription
@@ -35,7 +36,8 @@ import scala.concurrent.{ ExecutionContext, Future }
 class ReturnsOrchestrator @Inject() (
   returnService: ReturnService,
   sdilSessionCache: SDILSessionCache,
-  sessionRepository: SessionRepository) {
+  sessionRepository: SessionRepository,
+  config: FrontendAppConfig) {
 
   def handleReturnRequest(year: Int, quarter: Int, nilReturn: Boolean)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): ReturnResult[Unit] = EitherT {
 

@@ -33,23 +33,22 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
   private def getRandomSdilRef(index: Int): String = s"${Math.floor(Math.random() * 1000).toLong}SdilRef$index"
 
   private def getSdilReturn(
-                     ownBrand: (Long, Long) = (0L, 0L),
-                     packLarge: (Long, Long) = (0L, 0L),
-                     packSmall: List[(Long, Long)] = List.empty,
-                     importLarge: (Long, Long) = (0L, 0L),
-                     importSmall: (Long, Long) = (0L, 0L),
-                     export: (Long, Long) = (0L, 0L),
-                     wastage: (Long, Long) = (0L, 0L)
-                   ): SdilReturn = {
+    ownBrand: (Long, Long) = (0L, 0L),
+    packLarge: (Long, Long) = (0L, 0L),
+    packSmall: List[(Long, Long)] = List.empty,
+    importLarge: (Long, Long) = (0L, 0L),
+    importSmall: (Long, Long) = (0L, 0L),
+    export: (Long, Long) = (0L, 0L),
+    wastage: (Long, Long) = (0L, 0L)): SdilReturn = {
     val smallProducers: Seq[SmallProducer] = packSmall
       .zipWithIndex
       .map(litreageWithIndex => SmallProducer(getRandomSdilRef(litreageWithIndex._2), getRandomSdilRef(litreageWithIndex._2), litreageWithIndex._1))
     SdilReturn(ownBrand, packLarge, packSmall = smallProducers.toList, importLarge, importSmall, export, wastage, submittedOn = None)
   }
-  
+
   private val zero: (Long, Long) = (0L, 0L)
 
-//  TODO: Fix unit tests and add total packed and total imported checks
+  //  TODO: Fix unit tests and add total packed and total imported checks
 
   "SdilReturn" - {
     val posLitresInts = Gen.choose(1000, 10000000)
@@ -486,7 +485,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
             forAll(aprToDecInt) { month =>
               implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
               val sdilReturn = getSdilReturn(`export` = (lowLitres, highLitres))
-                  val expectedTotalPacked = zero
+              val expectedTotalPacked = zero
               val expectedTotalImported = zero
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
@@ -497,22 +496,22 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         }
       }
 
-        s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using $year rates for Apr - Dec $year" in {
-          forAll(posLitresInts) { lowLitres =>
-            forAll(posLitresInts) { highLitres =>
-              forAll(aprToDecInt) { month =>
-                implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-                val sdilReturn = getSdilReturn(wastage = (lowLitres, highLitres))
-                val expectedTotalPacked = zero
-                val expectedTotalImported = zero
-                val expectedTaxEstimation = BigDecimal("0.00")
-                sdilReturn.totalPacked mustBe expectedTotalPacked
-                sdilReturn.totalImported mustBe expectedTotalImported
-                sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              }
+      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using $year rates for Apr - Dec $year" in {
+        forAll(posLitresInts) { lowLitres =>
+          forAll(posLitresInts) { highLitres =>
+            forAll(aprToDecInt) { month =>
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              val sdilReturn = getSdilReturn(wastage = (lowLitres, highLitres))
+              val expectedTotalPacked = zero
+              val expectedTotalImported = zero
+              val expectedTaxEstimation = BigDecimal("0.00")
+              sdilReturn.totalPacked mustBe expectedTotalPacked
+              sdilReturn.totalImported mustBe expectedTotalImported
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
             }
           }
         }
+      }
 
       s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is 0 using $year rates for Apr - Dec $year" in {
         forAll(aprToDecInt) { month =>
