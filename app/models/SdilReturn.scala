@@ -17,10 +17,12 @@
 package models
 
 import cats.implicits._
+import config.FrontendAppConfig
+import models.LevyCalculator.getLevyCalculation
 import models.SdilReturn._
 import pages._
-import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
-import play.api.libs.json.{ Format, JsPath, Json, OFormat }
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
 import java.time.LocalDateTime
 
@@ -36,6 +38,14 @@ case class SdilReturn(
 
   def totalPacked: (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
+
+  def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
+    val leviedLitreageForQuarter: (Long, Long) = packLarge |+| importLarge |+| ownBrand
+    val estimatedLowLitreageForYear: Long = 4 * leviedLitreageForQuarter._1
+    val estimatedHighLitreageForYear: Long = 4 * leviedLitreageForQuarter._2
+    val levyCalculation: LevyCalculation = getLevyCalculation(estimatedLowLitreageForYear, estimatedHighLitreageForYear, returnPeriod)(config)
+    levyCalculation.total
+  }
 }
 
 object SdilReturn {

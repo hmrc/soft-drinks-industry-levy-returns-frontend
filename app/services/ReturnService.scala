@@ -39,17 +39,15 @@ class ReturnService @Inject() (
 
   val logger: Logger = Logger(this.getClass())
 
-  val costLower = config.lowerBandCostPerLitre
-  val costHigher = config.higherBandCostPerLitre
-
   def getPendingReturns(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = sdilConnector.getPendingReturnPeriods(utr)
 
   def sendReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     submitReturnAndVariation(subscription, returnPeriod, userAnswers)
   }
 
-  def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  private[services] def submitReturnAndVariation(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(getCurrentDateTime))
+    implicit val rp: ReturnPeriod = returnPeriod
     val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
     for {
       _ <- submitReturn(subscription, returnPeriod, sdilReturn)
@@ -103,9 +101,11 @@ class ReturnService @Inject() (
     }
   }
 
-  private def returnVariationToBeSubmitted(subscription: RetrievedSubscription, sdilReturn: SdilReturn, userAnswers: UserAnswers) = {
+  private def returnVariationToBeSubmitted(subscription: RetrievedSubscription, sdilReturn: SdilReturn, userAnswers: UserAnswers)(implicit returnPeriod: ReturnPeriod): ReturnsVariation = {
     val isNewImporter = UserTypeCheck.isNewImporter(sdilReturn, subscription)
     val isNewPacker = UserTypeCheck.isNewPacker(sdilReturn, subscription)
+    implicit val conf: FrontendAppConfig = config
+    val taxEstimation = sdilReturn.taxEstimation
     ReturnsVariation(
       orgName = subscription.orgName,
       ppobAddress = subscription.address,
@@ -115,7 +115,7 @@ class ReturnService @Inject() (
       packingSites = userAnswers.packagingSiteList.values.toList,
       phoneNumber = subscription.contact.phoneNumber,
       email = subscription.contact.email,
-      taxEstimation = taxEstimation(sdilReturn))
+      taxEstimation = taxEstimation)
   }
 
   private def returnToBeSubmitted(userAnswers: UserAnswers): SdilReturn = {
@@ -163,11 +163,6 @@ class ReturnService @Inject() (
     (
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L),
       userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L))
-  }
-
-  private def taxEstimation(r: SdilReturn): BigDecimal = {
-    val t = r.packLarge |+| r.importLarge |+| r.ownBrand
-    (t._1 * costLower |+| t._2 * costHigher) * 4
   }
 
   private def getCurrentDateTime: LocalDateTime = {

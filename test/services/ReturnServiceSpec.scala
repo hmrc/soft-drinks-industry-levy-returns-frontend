@@ -35,15 +35,15 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val service: ReturnService = new ReturnService(mockSdilConnector, mockConfig) {
-    override val costHigher: BigDecimal = BigDecimal("0.24")
-    override val costLower: BigDecimal = BigDecimal("0.18")
-  }
+  val service: ReturnService = new ReturnService(mockSdilConnector, mockConfig)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSdilConnector)
   }
+
+  when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+  when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
   "getPendingReturns" - {
     "return a list of return periods" in {
