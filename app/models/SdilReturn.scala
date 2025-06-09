@@ -21,8 +21,8 @@ import config.FrontendAppConfig
 import models.LevyCalculator.getLevyCalculation
 import models.SdilReturn._
 import pages._
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{Format, JsPath, Json, OFormat}
+import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
+import play.api.libs.json.{ Format, JsPath, Json, OFormat }
 
 import java.time.LocalDateTime
 

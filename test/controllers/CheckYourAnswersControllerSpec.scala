@@ -781,13 +781,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementById("change-lowband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,800.00")
+        page.getElementsByTag("dd").text() must include("\u2212£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£4,800.00")
+        page.getElementsByTag("dd").text() must include("\u2212£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.highband.litres.hidden"))
@@ -819,13 +819,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,940.19")
+        page.getElementsByTag("dd").text() must include("\u2212£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-export-credits").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-exports"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£5,180.52")
+        page.getElementsByTag("dd").text() must include("\u2212£5,180.52")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("exported.highband.litres.hidden"))
@@ -876,13 +876,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10000")
         page.getElementById("change-lowband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,800.00")
+        page.getElementsByTag("dd").text() must include("\u2212£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20000")
         page.getElementById("change-highband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£4,800.00")
+        page.getElementsByTag("dd").text() must include("\u2212£4,800.00")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.highband.litres.hidden"))
@@ -914,13 +914,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         page.getElementsByTag("dd").text() must include("10001")
         page.getElementById("change-lowband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,940.19")
+        page.getElementsByTag("dd").text() must include("\u2212£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheHighBand"))
         page.getElementsByTag("dd").text() must include("20002")
         page.getElementById("change-highband-litreage-lost-destroyed").attributes().get("href") mustEqual s"$baseUrl/change-how-many-credits-for-lost-damaged"
         page.getElementsByTag("dt").text() must include(Messages("highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£5,180.52")
+        page.getElementsByTag("dd").text() must include("\u2212£5,180.52")
 
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.lowband.litres.hidden"))
         page.getElementsByClass("govuk-visually-hidden").text() must include(Messages("lostOrDestroyed.highband.litres.hidden"))
