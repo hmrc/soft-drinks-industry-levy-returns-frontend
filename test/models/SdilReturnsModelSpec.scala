@@ -403,7 +403,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -420,7 +420,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -437,7 +437,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -454,7 +454,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -471,7 +471,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -488,7 +488,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -505,7 +505,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -520,7 +520,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val expectedTaxEstimation = BigDecimal("0.00")
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
+          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
         }
       }
 
@@ -537,7 +537,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * liableLitres._1 + higherBandCostPerLitreMap(year) * liableLitres._2)
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
         }
       }
 
@@ -552,7 +552,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val expectedTaxEstimation = BigDecimal("0.00")
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
         }
       }
 
@@ -567,7 +567,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -584,7 +584,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -601,7 +601,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -618,7 +618,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -635,7 +635,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -652,7 +652,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -669,7 +669,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
               val expectedTaxEstimation = BigDecimal("0.00")
               sdilReturn.totalPacked mustBe expectedTotalPacked
               sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -684,7 +684,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val expectedTaxEstimation = BigDecimal("0.00")
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
+          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
         }
       }
 
@@ -701,7 +701,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * liableLitres._1 + higherBandCostPerLitreMap(year) * liableLitres._2)
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
         }
       }
 
@@ -716,7 +716,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
           val expectedTaxEstimation = BigDecimal("0.00")
           sdilReturn.totalPacked mustBe expectedTotalPacked
           sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
         }
       }
     })
