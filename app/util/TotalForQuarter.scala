@@ -27,7 +27,7 @@ object TotalForQuarter {
     val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
     val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
     val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
-    levyCalculation.total
+    levyCalculation.totalRoundedDown
   }
 
   private[util] def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
