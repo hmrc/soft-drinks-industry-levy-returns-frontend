@@ -17,17 +17,13 @@
 package connectors
 
 import base.ReturnsTestData._
-import base.SpecBase
 import models.retrieved.{ OptRetrievedSubscription, RetrievedSubscription }
 import models.{ FinancialLineItem, ReturnPeriod, SdilReturn }
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
 import org.mockito.MockitoSugar.when
 import play.api.http.Status.OK
-import play.api.libs.json.JsValue
 import repositories.SDILSessionCache
-import uk.gov.hmrc.http.{ HttpClient, HttpResponse }
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
