@@ -21,4 +21,4 @@ addSbtPlugin("com.github.sbt" % "sbt-uglify" % "3.0.1")
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3" exclude("org.scala-lang.modules", "scala-xml_2.12"))
 
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
-addSbtPlugin("org.scoverage"     % "sbt-scoverage"      % "2.1.0")
+addSbtPlugin("org.scoverage"     % "sbt-scoverage"      % "2.1.1")
