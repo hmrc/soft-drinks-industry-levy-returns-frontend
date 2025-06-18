@@ -56,6 +56,12 @@
 
     @returnDetailsSummary(returnPeriod, userAnswers, amounts, true, isSmallProducer)
 
+    @govukInsetText(InsetText(
+        id = Some("rounding-inset-sub-header"),
+        content = messages("roundingHelpText"),
+        classes = "govuk-!-margin-top-0"
+    ))
+
     <h2 class="govuk-heading-m" id="sendYourReturn">@messages("sendYourReturn")</h2>
     <p class="govuk-body govuk-!-margin-bottom-5" id="sendYourReturnConfirmation">@messages("sendYourReturnConfirmation")</p>
 

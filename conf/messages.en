@@ -272,6 +272,7 @@ totalThisQuarter = Total this quarter
 balanceBroughtForward = Balance brought forward
 summary = Summary
 total = Total
+roundingHelpText = Some values in the line items are rounded to the nearest penny. This may cause a slight difference in the overall total. This is expected and won’t affect your calculated return.
 financialLineItem.returnCharge = Return for {0} to {1}
 
 registeredUkSites = UK site details

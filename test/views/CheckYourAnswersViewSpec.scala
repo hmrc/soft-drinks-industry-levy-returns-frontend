@@ -135,6 +135,12 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
           })
     }
 
+    "should include rounding help text sub header" - {
+      val element = document.getElementById("rounding-inset-sub-header")
+      element.className() mustEqual Selectors.insetSubHeading
+      element.text() mustEqual Messages("roundingHelpText")
+    }
+
     "should have the sendYourReturn sub heading" in {
       val element = document.getElementById("sendYourReturn")
       element.className() mustEqual Selectors.subHeading
