@@ -79,36 +79,47 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
               val subHeading = document1.getElementById("whatNextHeader")
               subHeading.text() mustEqual Messages("returnSent.headerOne")
             }
-//            TODO: Update this test and add one for inset rounding text
             "that has the expected body" - {
-              val body = document1.getElementById("whatNextText")
               "which has the expectedText" in {
-                val expectedText = if (amount.total > 0) {
-                  "You need to pay £100 by 30 July 2022." +
-                    " Make sure you include your Soft Drinks Industry Levy reference." +
+                if (amount.total > 0) {
+                  val bodyOne = document1.getElementById("whatNextText")
+                  val expectedTextOne = "You need to pay £100 by 30 July 2022."
+                  bodyOne.text() mustEqual expectedTextOne
+                  val bodyTwo = document1.getElementById("whatNextText-part2")
+                  val expectedTextTwo = "Make sure you include your Soft Drinks Industry Levy reference." +
                     " XKSDIL000000022 when making a payment." +
                     " See how to pay the levy (opens in a new tab)" +
                     " Your next return will be for July to September 2022." +
                     " You must send this return and make any payments by 30 October 2022."
-                } else if (amount.total < 0) {
-                  "You do not need to do anything else." +
-                    " We will take the payment from your Soft Drinks Industry Levy account shortly." +
-                    " Your next return will be for July to September 2022." +
-                    " You must send this return and make any payments by 30 October 2022."
+                  bodyTwo.text() mustEqual expectedTextTwo
                 } else {
-                  "You do not need to do anything else." +
-                    " Your next return will be for July to September 2022." +
-                    " You must send this return and make any payments by 30 October 2022."
+                  val body = document1.getElementById("whatNextText")
+                  val expectedText = if (amount.total < 0) {
+                    "You do not need to do anything else." +
+                      " We will take the payment from your Soft Drinks Industry Levy account shortly." +
+                      " Your next return will be for July to September 2022." +
+                      " You must send this return and make any payments by 30 October 2022."
+                  } else {
+                    "You do not need to do anything else." +
+                      " Your next return will be for July to September 2022." +
+                      " You must send this return and make any payments by 30 October 2022."
+                  }
+                  body.text() mustEqual expectedText
                 }
-                body.text() mustEqual expectedText
               }
               if (amount.total > 0) {
                 "which has the sdil number in bold" in {
-                  body.getElementsByTag("strong").text() mustBe aSubscription.sdilRef
+                  document1.getElementById("whatNextText-part2").getElementsByTag("strong").text() mustBe aSubscription.sdilRef
+                }
+
+                "which has the inset rounding help text" in {
+                  val element = document1.getElementById("returnSentRoundingInset")
+                  element.className() mustEqual Selectors.insetSubHeading
+                  element.text() mustEqual Messages("roundingHelpText")
                 }
 
                 "which has the expected link" in {
-                  val link = body.getElementsByClass(Selectors.link)
+                  val link = document1.getElementById("whatNextText-part2").getElementsByClass(Selectors.link)
                   link.text() mustEqual "See how to pay the levy (opens in a new tab)"
                   link.attr("href") mustEqual "https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5"
                 }
