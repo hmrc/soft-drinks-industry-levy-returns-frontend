@@ -28,7 +28,7 @@ import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
 import services.{ AddressLookupService, PackingDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import utilitlies.{ AddressHelper, GenericLogger, UserTypeCheck }
+import util.{ AddressHelper, GenericLogger, UserTypeCheck }
 import viewmodels.AddressFormattingHelper
 import views.html.PackAtBusinessAddressView
 

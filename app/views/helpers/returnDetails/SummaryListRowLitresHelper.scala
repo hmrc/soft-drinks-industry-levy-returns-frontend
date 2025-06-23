@@ -17,12 +17,13 @@
 package views.helpers.returnDetails
 
 import config.FrontendAppConfig
-import models.LitresInBands
+import models.LevyCalculator.getLevyCalculation
+import models.{ LevyCalculation, LitresInBands, ReturnPeriod }
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Actions, SummaryListRow }
-import utilitlies.CurrencyFormatter
+import util.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -37,12 +38,13 @@ trait SummaryListRowLitresHelper {
   val lowBand = "lowband"
   val highBand = "highband"
 
-  def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+  def rows(litresInBands: LitresInBands, returnPeriod: ReturnPeriod, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    val levyCalculation: LevyCalculation = getLevyCalculation(litresInBands.lowBand, litresInBands.highBand, returnPeriod)
     Seq(
       bandRow(litresInBands.lowBand, lowBand, isCheckAnswers),
-      bandLevyRow(litresInBands.lowBand, config.lowerBandCostPerLitre, lowBand),
+      bandLevyRow(levyCalculation.lowLevy, lowBand),
       bandRow(litresInBands.highBand, highBand, isCheckAnswers),
-      bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand))
+      bandLevyRow(levyCalculation.highLevy, highBand))
   }
 
   private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
@@ -59,14 +61,14 @@ trait SummaryListRowLitresHelper {
       actions = action(isCheckAnswers, band))
   }
 
-  private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
+  private def bandLevyRow(levyAmount: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
     val key = if (band == lowBand) {
       "lowBandLevy"
     } else {
       "highBandLevy"
     }
 
-    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(litres, bandCostPerLitre))).toString.replace("-", "&minus;")
+    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(levyAmount))).toString.replace("-", "&minus;")
 
     SummaryListRow(
       key = key,
@@ -74,13 +76,13 @@ trait SummaryListRowLitresHelper {
       classes = "govuk-summary-list__row--no-actions")
   }
 
-  private def levy(litres: BigDecimal, bandCostPerLitre: BigDecimal): BigDecimal = {
+  private def levy(levyAmount: BigDecimal): BigDecimal = {
     if (hasZeroLevy) {
       0
     } else if (isNegativeLevy) {
-      litres * bandCostPerLitre.toDouble * -1
+      levyAmount.toDouble * -1
     } else {
-      litres * bandCostPerLitre.toDouble
+      levyAmount.toDouble
     }
   }
 

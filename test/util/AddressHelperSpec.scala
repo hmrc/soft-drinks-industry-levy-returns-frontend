@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package utilitlies
+package util
 
-import java.util.Locale
+import base.SpecBase
 
-object CurrencyFormatter {
+class AddressHelperSpec extends SpecBase with AddressHelper {
 
-  private val currencyFormatter = java.text.NumberFormat.getCurrencyInstance(Locale.UK)
+  "Address Helper" - {
+    "generate a unique id" in {
 
-  def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String = {
-    currencyFormatter.format(d)
+      val result: List[String] = List(generateId, generateId)
+
+      result.size mustBe 2
+      result.foreach(eachUUID => eachUUID.length mustBe 36)
+      result.distinct.size mustBe 2
+    }
   }
 }

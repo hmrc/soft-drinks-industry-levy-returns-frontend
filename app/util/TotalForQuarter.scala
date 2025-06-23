@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package utilitlies
+package util
 
 import config.FrontendAppConfig
-import models.UserAnswers
+import models.LevyCalculator.getLevyCalculation
+import models.{ LevyCalculation, UserAnswers }
 import pages._
 
 object TotalForQuarter {
 
   def calculateTotal(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig) = {
-    val lowerBandCostPerLitre: BigDecimal = config.lowerBandCostPerLitre
-    val higherBandCostPerLitre: BigDecimal = config.higherBandCostPerLitre
-
-    calculateLowBand(userAnswers, lowerBandCostPerLitre, smallProducer) +
-      calculateHighBand(userAnswers, higherBandCostPerLitre, smallProducer)
+    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
+    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
+    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
+    levyCalculation.totalRoundedDown
   }
 
-  private def calculateLowBand(
-    userAnswers: UserAnswers,
-    lowBandCostPerLitre: BigDecimal,
-    smallProducer: Boolean): BigDecimal = {
-
+  private[util] def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand)
@@ -44,17 +40,10 @@ object TotalForQuarter {
     val total = litresBroughtIntoTheUk + litresAsContractPacker
     val totalCredits = litresExported + litresLostOrDamaged
 
-    smallProducer match {
-      case true => (total - totalCredits) * lowBandCostPerLitre
-      case _ => (total + litresPackedAtOwnSite - totalCredits) * lowBandCostPerLitre
-    }
+    total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
   }
 
-  private def calculateHighBand(
-    userAnswers: UserAnswers,
-    highBandCostPerLitre: BigDecimal,
-    smallProducer: Boolean): BigDecimal = {
-
+  private[util] def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
     val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.highBand)
@@ -64,10 +53,7 @@ object TotalForQuarter {
     val total = litresBroughtIntoTheUk + litresAsContractPacker
     val totalCredits = litresExported + litresLostOrDamaged
 
-    smallProducer match {
-      case true => (total - totalCredits) * highBandCostPerLitre
-      case _ => (total + litresPackedAtOwnSite - totalCredits) * highBandCostPerLitre
-    }
+    total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
   }
 
 }

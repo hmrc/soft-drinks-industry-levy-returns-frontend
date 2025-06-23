@@ -17,7 +17,7 @@
 package views.helpers
 
 import base.UserAnswersTestData
-import models.UserAnswers
+import models.{ ReturnPeriod, UserAnswers }
 import org.jsoup.nodes.Element
 import play.api.i18n.Messages
 
@@ -271,16 +271,12 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
       .contains(summaryId)) {
       "£0.00"
-    } else if (isNegativeLevy(summaryId)) {
-      "−£180.00"
-    } else if (summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers) {
-      userAnswers.smallProducerList.map(_.litreage._1).sum match {
-        case 0 => "£0.00"
-        case 1000 => "£180.00"
-        case _ => "£540.00"
-      }
     } else {
-      "£180.00"
+      val levyTotal = userAnswers.returnPeriod match {
+        case ReturnPeriod(2025, 0) => "£180.00"
+        case ReturnPeriod(2026, 0) => "£194.00"
+      }
+      s"${if (isNegativeLevy(summaryId)) "−" else ""}$levyTotal"
     }
   }
 
@@ -291,16 +287,12 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
       .contains(summaryId)) {
       "£0.00"
-    } else if (isNegativeLevy(summaryId)) {
-      "−£240.00"
-    } else if (summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers) {
-      userAnswers.smallProducerList.map(_.litreage._2).sum match {
-        case 0 => "£0.00"
-        case 2000 => "£480.00"
-        case _ => "£720.00"
-      }
     } else {
-      "£240.00"
+      val levyTotal = userAnswers.returnPeriod match {
+        case ReturnPeriod(2025, 0) => "£240.00"
+        case ReturnPeriod(2026, 0) => "£259.00"
+      }
+      s"${if (isNegativeLevy(summaryId)) "−" else ""}$levyTotal"
     }
   }
 }

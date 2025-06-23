@@ -120,6 +120,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           levyCalculation.lowLevy mustBe BigDecimal("0.00")
           levyCalculation.highLevy mustBe BigDecimal("0.00")
           levyCalculation.total mustBe BigDecimal("0.00")
+          levyCalculation.totalRoundedDown mustBe BigDecimal("0.00")
         }
       }
 
@@ -134,6 +135,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               levyCalculation.lowLevy mustBe expectedLowLevy
               levyCalculation.highLevy mustBe expectedHighLevy
               levyCalculation.total mustBe expectedLowLevy + expectedHighLevy
+              levyCalculation.totalRoundedDown mustBe expectedLowLevy + expectedHighLevy
             }
           }
         }
@@ -150,6 +152,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               levyCalculation.lowLevy mustBe expectedLowLevy
               levyCalculation.highLevy mustBe expectedHighLevy
               levyCalculation.total mustBe expectedLowLevy + expectedHighLevy
+              levyCalculation.totalRoundedDown mustBe expectedLowLevy + expectedHighLevy
             }
           }
         }
@@ -162,6 +165,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           levyCalculation.lowLevy mustBe BigDecimal("0.00")
           levyCalculation.highLevy mustBe BigDecimal("0.00")
           levyCalculation.total mustBe BigDecimal("0.00")
+          levyCalculation.totalRoundedDown mustBe BigDecimal("0.00")
         }
       }
 
@@ -176,6 +180,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               levyCalculation.lowLevy mustBe expectedLowLevy
               levyCalculation.highLevy mustBe expectedHighLevy
               levyCalculation.total mustBe expectedLowLevy + expectedHighLevy
+              levyCalculation.totalRoundedDown mustBe expectedLowLevy + expectedHighLevy
             }
           }
         }
@@ -192,6 +197,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               levyCalculation.lowLevy mustBe expectedLowLevy
               levyCalculation.highLevy mustBe expectedHighLevy
               levyCalculation.total mustBe expectedLowLevy + expectedHighLevy
+              levyCalculation.totalRoundedDown mustBe expectedLowLevy + expectedHighLevy
             }
           }
         }
@@ -201,7 +207,6 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
     (2025 to 2025).foreach(year => {
 
       val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
-
       val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
 
       s"calculate low levy, high levy, and total correctly with zero litres totals using $year rates for Apr - Dec $year" in {
@@ -211,6 +216,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           levyCalculation.lowLevy mustBe BigDecimal("0.00")
           levyCalculation.highLevy mustBe BigDecimal("0.00")
           levyCalculation.total mustBe BigDecimal("0.00")
+          levyCalculation.totalRoundedDown mustBe BigDecimal("0.00")
         }
       }
 
@@ -225,6 +231,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.highLevy mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -241,6 +248,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.highLevy mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -253,6 +261,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           levyCalculation.lowLevy mustBe BigDecimal("0.00")
           levyCalculation.highLevy mustBe BigDecimal("0.00")
           levyCalculation.total mustBe BigDecimal("0.00")
+          levyCalculation.totalRoundedDown mustBe BigDecimal("0.00")
         }
       }
 
@@ -267,6 +276,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.highLevy mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -283,6 +293,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.highLevy mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }

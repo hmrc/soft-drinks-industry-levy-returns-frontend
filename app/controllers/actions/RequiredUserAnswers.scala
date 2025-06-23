@@ -23,7 +23,7 @@ import pages._
 import play.api.libs.json.Reads
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import utilitlies.{ GenericLogger, UserTypeCheck }
+import util.{ GenericLogger, UserTypeCheck }
 
 import javax.inject.Inject
 import scala.concurrent.{ ExecutionContext, Future }

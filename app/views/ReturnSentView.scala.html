@@ -28,6 +28,7 @@
         govukPanel : GovukPanel,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
+        govukInsetText: GovukInsetText,
         govukTable : GovukTable,
         govukDetails : GovukDetails,
         returnDetailsSummary: returnDetailsSummary
@@ -70,8 +71,13 @@
                 amountOwed,
                 returnPeriod.deadline.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
             ))
-            <br>
-            <br>
+            </p>
+            @govukInsetText(InsetText(
+                id = Some("returnSentRoundingInset"),
+                content = messages("roundingHelpText"),
+                classes = "govuk-!-margin-top-0"
+            ))
+            <p class="govuk-body" id="whatNextText-part2">
             @messages("returnSent.paymentsBlurb.payby.info1") <strong>@subscription.sdilRef</strong> @messages("returnSent.paymentsBlurb.payby.info2")
             <br>
             <br>

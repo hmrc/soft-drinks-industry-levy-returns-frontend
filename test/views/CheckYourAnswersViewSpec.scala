@@ -27,7 +27,7 @@ import play.api.i18n.Messages
 import play.api.mvc.{ Call, Request }
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import utilitlies.CurrencyFormatter
+import util.CurrencyFormatter
 import views.helpers.ReturnDetailsSummaryRowTestHelper
 import views.helpers.returnDetails.ReturnPeriodQuarter
 import views.html.CheckYourAnswersView
@@ -120,12 +120,25 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
     UserAnswersTestData.userAnswersModels.foreach {
       case (key, userAnswers) =>
-        s"when the $key" - {
-          val html1: HtmlFormat.Appendable =
-            checkYourAnswersView(baseAlias, returnPeriod, userAnswers, amounts, call, isSmallProducer)
-          val document1: Document = doc(html1)
-          testSummaryLists(key, document1, userAnswers, isCheckAnswers = true)
-        }
+        val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+        val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+        List(
+          ("pre April 2025 rates", preApril2025ReturnPeriod),
+          ("2025 tax year rates", taxYear2025ReturnPeriod)).foreach(returnPeriodWithKey => {
+            s"when the $key - ${returnPeriodWithKey._1}" - {
+              val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
+              val html1: HtmlFormat.Appendable =
+                checkYourAnswersView(baseAlias, returnPeriod, userAnswersWithReturnPeriod, amounts, call, isSmallProducer)
+              val document1: Document = doc(html1)
+              testSummaryLists(key, document1, userAnswersWithReturnPeriod, isCheckAnswers = true)
+            }
+          })
+    }
+
+    "should include rounding help text sub header" - {
+      val element = document.getElementById("rounding-inset-sub-header")
+      element.className() mustEqual Selectors.insetSubHeading
+      element.text() mustEqual Messages("roundingHelpText")
     }
 
     "should have the sendYourReturn sub heading" in {

@@ -22,7 +22,6 @@ import errors.NoPendingReturnForGivenPeriod
 import models.requests.{ DataRequest, OptionalDataRequest }
 import models.{ Amounts, ReturnPeriod }
 import org.mockito.ArgumentMatchers.any
-
 import org.mockito.MockitoSugar
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
