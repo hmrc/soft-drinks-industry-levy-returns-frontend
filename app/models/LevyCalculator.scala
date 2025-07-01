@@ -17,6 +17,7 @@
 package models
 
 import config.FrontendAppConfig
+import play.api.Logging
 
 sealed trait TaxYear
 
@@ -42,7 +43,7 @@ case class LevyCalculation(low: BigDecimal, high: BigDecimal) {
   lazy val totalRoundedDown = (low + high).setScale(2, BigDecimal.RoundingMode.DOWN)
 }
 
-object LevyCalculator {
+object LevyCalculator extends Logging {
 
   // Map tax years to their corresponding band rates using the Rates object
   private def bandRatesByTaxYear(implicit frontendAppConfig: FrontendAppConfig): Map[TaxYear, BandRates] = Map(
@@ -69,6 +70,7 @@ object LevyCalculator {
     val bandRates: BandRates = getBandRates(taxYear)
     val lowLevy = lowLitres * bandRates.lowerBandCostPerLites
     val highLevy = highLitres * bandRates.higherBandCostPerLitre
+    logger.info(s"getLevyCalculation called with returnPeriod year ${returnPeriod.year} quarter ${returnPeriod.quarter} using bandRates lower ${bandRates.lowerBandCostPerLites} higher ${bandRates.higherBandCostPerLitre}")
     LevyCalculation(lowLevy, highLevy)
   }
 
