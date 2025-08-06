@@ -25,6 +25,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{ JsBoolean, JsObject, Json }
 import util.TotalForQuarter._
+import models.TaxRateUtil._
 
 import java.time.LocalDate
 
@@ -81,13 +82,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
   "TotalForQuarter" - {
 
     val posLitresInts = Gen.choose(1000, 10000000)
-    val janToMarInt = Gen.choose(1, 3)
-    val aprToDecInt = Gen.choose(4, 12)
 
     (2018 to 2024).foreach(year => {
-
-      val lowerBandCostPerLitre = BigDecimal("0.18")
-      val higherBandCostPerLitre = BigDecimal("0.24")
 
       List(true, false).foreach(isSmallProducer => {
 
@@ -524,9 +520,6 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks {
     })
 
     (2025 to 2025).foreach(year => {
-
-      val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
-      val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
 
       List(true, false).foreach(isSmallProducer => {
 
