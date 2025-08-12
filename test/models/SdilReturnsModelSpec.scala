@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import models.TaxRateUtil._
 
 import java.time.LocalDate
 
@@ -50,13 +51,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 
   "SdilReturn" - {
     val posLitresInts = Gen.choose(1000, 10000000)
-    val janToMarInt = Gen.choose(1, 3)
-    val aprToDecInt = Gen.choose(4, 12)
 
     (2018 to 2024).foreach(year => {
-
-      val lowerBandCostPerLitre = BigDecimal("0.18")
-      val higherBandCostPerLitre = BigDecimal("0.24")
 
       s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Apr - Dec $year" in {
         forAll(posLitresInts) { lowLitres =>
@@ -388,9 +384,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
     })
 
     (2025 to 2025).foreach(year => {
-
-      val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
-      val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
 
       s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres packed at own site using $year rates for Apr - Dec $year" in {
         forAll(posLitresInts) { lowLitres =>

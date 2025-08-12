@@ -34,3 +34,22 @@ Run other services required for running this service via the service manager. (*
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+
+lowerBandCostPerLitre = "0.18"
+higherBandCostPerLitre = "0.24"
+lowerBandCostPerLitrePostApril2025 = "0.194"
+higherBandCostPerLitrePostApril2025 = "0.259"
+
+
+
+## Adding 2026 rates
+1. Make sure you have your NEW_LOWER_BAND_VALUE and NEW_HIGHER_BAND_VALUE band rate values for 2026 tax year
+2. Do a global find for `(2025 to 2025)` in Scala files and replace with `(2025 to 2026)`
+3. Add lowerBandCostPerLitrePostApril2026 with NEW_LOWER_BAND_VALUE in application.conf 
+4. Add higherBandCostPerLitrePostApril2026 with NEW_HIGHER_BAND_VALUE in application.conf
+5. Add `Year2026 -> BandRates(lowerBandCostPerLitrePostApril2026, higherBandCostPerLitrePostApril2026)` to `LevyCalculator.bandRatesByTaxYear` function in `LevyCalculator.scala` 
+6. Add `2026 -> Year2026` to `TaxYear.fromYear` function in `LevyCalculator.scala`
+7. Add `2026 -> BigDecimal(NEW_LOWER_BAND_VALUE)` to `lowerBandCostPerLitreMap` function in `TaxRateUtil.scala`
+8. Add `2026 -> BigDecimal(NEW_HIGHER_BAND_VALUE)` to `higherBandCostPerLitreMap` function in `TaxRateUtil.scala`
+9. Test the behaviour out and make sure it works!
+10. When happy with the changes, update these instructions for 'Adding 2027 rates'
