@@ -26,7 +26,8 @@
         govukDetails: GovukDetails,
         govukWarningText : GovukWarningText,
         saveAndContinueButton: saveAndContinueButton,
-        exportedWhatCanIClaimCreditFor: exportedWhatCanIClaimCreditFor
+        exportedWhatCanIClaimCreditFor: exportedWhatCanIClaimCreditFor,
+        creditClaimsInset: creditClaimsInset
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -48,6 +49,8 @@
         iconFallbackText = Some("Warning"),
         content = Text(messages("claimCreditsForExports.warning"))
         ))
+
+        @creditClaimsInset(messages)
 
         @govukRadios(
             RadiosViewModel.yesNo(
