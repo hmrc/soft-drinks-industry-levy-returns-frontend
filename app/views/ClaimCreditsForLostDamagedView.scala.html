@@ -27,6 +27,7 @@
         govukWarningText : GovukWarningText,
         claimCreditsForLostDamaged: claimCreditsForLostDamaged,
         saveAndContinueButton: saveAndContinueButton,
+        creditClaimsInset: creditClaimsInset
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -40,12 +41,12 @@
         }
 
         <h1 class="govuk-heading-l">@messages("claimCreditsForLostDamaged.title")</h1>
-
-
         @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
         content = Text(messages("claimCreditsForLostDamaged.warning"))
         ))
+
+        @creditClaimsInset(messages)
 
         @govukRadios(
             RadiosViewModel.yesNo(
