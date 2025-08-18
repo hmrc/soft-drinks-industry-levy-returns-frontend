@@ -158,9 +158,9 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHelpe
       document.getElementsByClass(Selectors.warningText).text() mustBe "Warning You can only claim credit if you have registered for the levy and paid it directly to HMRC. Claiming credits you are not entitled to is a criminal offence."
     }
 
-    val expectedDetails = Map(
-      "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
-    testDetails(document, expectedDetails)
+    "contain a details text" in {
+      document.getElementsByClass(Selectors.detailsText).text() mustBe "What can I claim a credit for? You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner disposed of as waste customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return."
+    }
 
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
