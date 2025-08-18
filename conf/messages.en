@@ -138,9 +138,10 @@ whatCanIClaimCreditForDetailsLink = What can I claim a credit for?
 whatCanIClaimCreditForDetailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
 whatCanIClaimCreditForDetailsContent2 = brand of the liable drinks
 whatCanIClaimCreditForDetailsContent3= supplier or consigner
-whatCanIClaimCreditForDetailsContent4 = customer and destination the liable drinks are supplied to
-whatCanIClaimCreditForDetailsContent5 = method of delivery
-whatCanIClaimCreditForDetailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
+whatCanIClaimCreditForDetailsContent4= disposed of as waste
+whatCanIClaimCreditForDetailsContent5 = customer and destination the liable drinks are supplied to
+whatCanIClaimCreditForDetailsContent6 = method of delivery
+whatCanIClaimCreditForDetailsContent7 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
 
 claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
 claimCreditsForExports.title = Exported drinks
