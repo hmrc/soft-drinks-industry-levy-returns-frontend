@@ -52,7 +52,7 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("claimCreditsForLostDamaged.heading1")).withCssClass("govuk-fieldset__legend--m"),
-                hint = Some(Hint(content = Text(messages("claimCreditsForLostDamaged.subHeading"))))
+                hint = None
             ))
 
         @claimCreditsForLostDamaged(form)(messages)

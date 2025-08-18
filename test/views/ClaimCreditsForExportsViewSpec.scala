@@ -50,12 +50,6 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHelpe
         "Do you want to claim a credit for liable drinks that have been exported?"
     }
 
-    "should include a hint with the expected content " in {
-      val hint = document.getElementsByClass(Selectors.legendHint)
-      hint.size() mustBe 1
-      hint.text() mustBe "You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them."
-    }
-
     "when the form is not preoccupied and has no errors " - {
 
       "should have radio buttons " - {

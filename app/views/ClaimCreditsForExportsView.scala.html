@@ -56,7 +56,7 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("claimCreditsForExports.heading2")).withCssClass("govuk-fieldset__legend--m"),
-                hint = Some(Hint(content = Text(messages("claimCreditsForExports.subHeading"))))
+                hint = None
             ))
 
         @exportedWhatCanIClaimCreditFor(form)(messages)

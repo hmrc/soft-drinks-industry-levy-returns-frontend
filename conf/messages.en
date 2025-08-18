@@ -45,10 +45,10 @@ error.summary.title = There is a problem
 
 litres.text = Litres
 litres.lowBand = Litres in the low band
-litres.lowBandHint = At least 5 grams of sugar per 100 millilitres
+litres.lowBandHint = At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them.
 litres.lowBand.visuallyHidden = Error
 litres.highBand = Litres in the high band
-litres.highBandHint = At least 8 grams of sugar per 100 millilitres
+litres.highBandHint = At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them.
 litres.highBand.visuallyHidden = Error
 litres.error.lowBand.required = Enter the number of litres in the low band
 litres.error.highBand.required = Enter the number of litres in the high band
