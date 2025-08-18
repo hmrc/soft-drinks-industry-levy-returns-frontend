@@ -80,13 +80,13 @@ trait LitresSpecHelper extends ViewSpecHelper {
         "that includes a field for low band that is not populated" in {
           val lowBandGroup = formGroups.get(0)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the low band"
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres"
+          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe false
         }
         "that includes a field for high band that is not populated" in {
           val highBandGroup = formGroups.get(1)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the high band"
-          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres"
+          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           highBandGroup.getElementById("highBand").hasAttr("value") mustBe false
         }
       }

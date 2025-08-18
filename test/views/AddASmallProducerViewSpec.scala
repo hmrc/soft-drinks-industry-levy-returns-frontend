@@ -117,14 +117,14 @@ class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
         "that includes a field for low band that is not populated" in {
           val lowBandGroup = formGroupsNotPopulated.get(2)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the low band"
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres"
+          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe false
         }
 
         "that includes a field for high band that is not populated" in {
           val highBandGroup = formGroupsNotPopulated.get(3)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the high band"
-          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres"
+          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           highBandGroup.getElementById("highBand").hasAttr("value") mustBe false
         }
 
@@ -147,7 +147,7 @@ class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
         "that includes a field for low band that is populated" in {
           val lowBandGroup = formGroupsPopulated.get(2)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the low band"
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres"
+          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe true
           lowBandGroup.getElementById("lowBand").attr("value") mustBe lowBandValue.toString
         }
@@ -155,7 +155,7 @@ class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
         "that includes a field for high band that is populated" in {
           val highBandGroup = formGroupsPopulated.get(3)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the high band"
-          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres"
+          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           highBandGroup.getElementById("highBand").hasAttr("value") mustBe true
           highBandGroup.getElementById("highBand").attr("value") mustBe highBandValue.toString
         }
