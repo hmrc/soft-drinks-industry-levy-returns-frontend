@@ -59,7 +59,7 @@
                 hint = None
             ))
 
-        @exportedWhatCanIClaimCreditFor(form)(messages)
+        @exportedWhatCanIClaimCreditFor(form, includeDisposedOfWaste = false)(messages)
         @saveAndContinueButton(messages)
     }
 }

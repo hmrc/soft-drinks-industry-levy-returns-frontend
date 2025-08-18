@@ -16,18 +16,20 @@
 
 @this(govukDetails: GovukDetails)
 
-@(form: Form[_])(implicit messages: Messages)
+@(form: Form[_], includeDisposedOfWaste: Boolean)(implicit messages: Messages)
 
 @htmlContent = {
  <p class ="govuk-body">@messages("whatCanIClaimCreditForDetailsContent1")</p>
  <ul class="govuk-list govuk-list--bullet">
   <li>@messages("whatCanIClaimCreditForDetailsContent2")</li>
   <li>@messages("whatCanIClaimCreditForDetailsContent3")</li>
-  <li>@messages("whatCanIClaimCreditForDetailsContent4")</li>
+  @if(includeDisposedOfWaste) {
+   <li>@messages("whatCanIClaimCreditForDetailsContent4")</li>
+  }
   <li>@messages("whatCanIClaimCreditForDetailsContent5")</li>
   <li>@messages("whatCanIClaimCreditForDetailsContent6")</li>
  </ul>
- <p class ="govuk-body">@messages("whatCanIClaimCreditForDetailsContent7")</p>
+ <p class ="govuk-body">@messages("whatCanIClaimCreditForDetailsContentLastParagraph")</p>
 }
 
 @govukDetails(

@@ -43,7 +43,7 @@
         <h1 class="govuk-heading-l">@messages("howManyCreditsForExport.title")</h1>
         @creditClaimsInset(messages)
         @lowAndHighBandInputs(form)(messages)
-        @exportedWhatCanIClaimCreditFor(form)(messages)
+        @exportedWhatCanIClaimCreditFor(form, includeDisposedOfWaste = true)(messages)
         @saveAndContinueButton(messages)
     }
 }

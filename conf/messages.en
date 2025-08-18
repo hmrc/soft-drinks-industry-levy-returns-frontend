@@ -141,7 +141,7 @@ whatCanIClaimCreditForDetailsContent3= supplier or consigner
 whatCanIClaimCreditForDetailsContent4= disposed of as waste
 whatCanIClaimCreditForDetailsContent5 = customer and destination the liable drinks are supplied to
 whatCanIClaimCreditForDetailsContent6 = method of delivery
-whatCanIClaimCreditForDetailsContent7 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
+whatCanIClaimCreditForDetailsContentLastParagraph = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
 
 claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
 claimCreditsForExports.title = Exported drinks
