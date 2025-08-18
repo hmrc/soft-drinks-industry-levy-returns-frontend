@@ -43,7 +43,6 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val button = "govuk-button"
     val form = "form"
     val warningText = "govuk-warning-text__text"
-    val detailsText = "govuk-details"
   }
 
   def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
