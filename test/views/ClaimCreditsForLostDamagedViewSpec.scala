@@ -225,6 +225,6 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper with LitresSpecH
     validateTimeoutDialog(document)
     validateTechnicalHelpLinkPresent(document)
     validateAccessibilityStatementLinkPresent(document)
-
+    validateCreditClaim(document)
   }
 }

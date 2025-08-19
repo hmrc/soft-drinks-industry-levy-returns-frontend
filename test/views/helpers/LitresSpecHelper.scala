@@ -17,6 +17,7 @@
 package views.helpers
 
 import models.LitresInBands
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 
@@ -43,6 +44,7 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val button = "govuk-button"
     val form = "form"
     val warningText = "govuk-warning-text__text"
+    val insetText = "govuk-inset-text"
   }
 
   def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
@@ -236,4 +238,16 @@ trait LitresSpecHelper extends ViewSpecHelper {
       }
     }
   }
+
+  def validateCreditClaim(document: Document): Unit = {
+    val insetText = document.getElementsByClass(Selectors.insetText)
+    val claimCreditNote = Jsoup.parse(Messages("creditClaims.info")).text()
+    val claimCreditLink = insetText.get(0).getElementsByClass("govuk-link").attr("href")
+    "should contain the correct credit claim note" in {
+      insetText.size() mustBe 1
+      insetText.get(0).text() mustBe claimCreditNote
+      claimCreditLink mustBe "https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2"
+    }
+  }
+
 }
