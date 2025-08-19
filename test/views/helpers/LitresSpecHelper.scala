@@ -17,6 +17,7 @@
 package views.helpers
 
 import models.LitresInBands
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 
@@ -240,10 +241,12 @@ trait LitresSpecHelper extends ViewSpecHelper {
 
   def validateCreditClaim(document: Document): Unit = {
     val insetText = document.getElementsByClass(Selectors.insetText)
-    val claimCreditNote = "Returns ending after 1 April 2025 cannot be used to claim credit for levy reported or paid in returns ending before 1 April 2025. Notify HMRC separately to claim credits for the levy accounted for or paid in returns ending on or before 31 March 2025."
+    val claimCreditNote = Jsoup.parse(Messages("creditClaims.info")).text()
+    val claimCreditLink = insetText.get(0).getElementsByClass("govuk-link").attr("href")
     "should contain the correct credit claim note" in {
       insetText.size() mustBe 1
       insetText.get(0).text() mustBe claimCreditNote
+      claimCreditLink mustBe "https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2"
     }
   }
 

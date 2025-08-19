@@ -169,7 +169,7 @@ claimCreditsForLostDamaged.error.required = Select yes if you want to claim a cr
 howManyCreditsForLostDamaged.title = How many credits do you want to claim for liable drinks which have been lost or destroyed?
 howManyCreditsForLostDamaged.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 
-creditClaims.info=Returns ending after 1 April 2025 cannot be used to claim credit for levy reported or paid in returns ending before 1 April 2025. Notify HMRC separately to <a class="govuk-link" href="{0}">claim credits for the levy accounted for or paid in returns ending on or before 31 March 2025</a>.
+creditClaims.info=Returns ending after 1 April 2025 cannot be used to claim credit for levy reported or paid in returns ending before 1 April 2025. Notify HMRC separately to <a class="govuk-link" href="https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2">claim credits for the levy accounted for or paid in returns ending on or before 31 March 2025</a>.
 
 returnChangeRegistration.title = You changed your soft drinks business activity
 returnChangeRegistration.heading = You changed your soft drinks business activity
