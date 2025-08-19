@@ -96,6 +96,7 @@ class HowManyCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHel
         validateTimeoutDialog(document)
         validateTechnicalHelpLinkPresent(document)
         validateAccessibilityStatementLinkPresent(document)
+        validateCreditClaim(document)
       }
     }
   }

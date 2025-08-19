@@ -96,6 +96,7 @@ class HowManyCreditsForLostDamagedViewSpec extends ViewSpecHelper with LitresSpe
         validateTimeoutDialog(document)
         validateTechnicalHelpLinkPresent(document)
         validateAccessibilityStatementLinkPresent(document)
+        validateCreditClaim(document)
       }
     }
   }

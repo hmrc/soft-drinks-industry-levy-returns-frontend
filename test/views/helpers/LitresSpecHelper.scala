@@ -43,6 +43,7 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val button = "govuk-button"
     val form = "form"
     val warningText = "govuk-warning-text__text"
+    val insetText = "govuk-inset-text"
   }
 
   def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
@@ -236,4 +237,14 @@ trait LitresSpecHelper extends ViewSpecHelper {
       }
     }
   }
+
+  def validateCreditClaim(document: Document): Unit = {
+    val insetText = document.getElementsByClass(Selectors.insetText)
+    val claimCreditNote = "Returns ending after 1 April 2025 cannot be used to claim credit for levy reported or paid in returns ending before 1 April 2025. Notify HMRC separately to claim credits for the levy accounted for or paid in returns ending on or before 31 March 2025."
+    "should contain the correct credit claim note" in {
+      insetText.size() mustBe 1
+      insetText.get(0).text() mustBe claimCreditNote
+    }
+  }
+
 }

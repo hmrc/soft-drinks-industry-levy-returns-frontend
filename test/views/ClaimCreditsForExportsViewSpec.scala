@@ -225,6 +225,6 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHelpe
     validateTimeoutDialog(document)
     validateTechnicalHelpLinkPresent(document)
     validateAccessibilityStatementLinkPresent(document)
-
+    validateCreditClaim(document)
   }
 }
