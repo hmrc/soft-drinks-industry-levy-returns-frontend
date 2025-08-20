@@ -26,7 +26,8 @@
         govukDetails: GovukDetails,
         govukWarningText : GovukWarningText,
         saveAndContinueButton: saveAndContinueButton,
-        exportedWhatCanIClaimCreditFor: exportedWhatCanIClaimCreditFor
+        exportedWhatCanIClaimCreditFor: exportedWhatCanIClaimCreditFor,
+        creditClaimsInset: creditClaimsInset
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -49,14 +50,16 @@
         content = Text(messages("claimCreditsForExports.warning"))
         ))
 
+        @creditClaimsInset(messages)
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("claimCreditsForExports.heading2")).withCssClass("govuk-fieldset__legend--m"),
-                hint = Some(Hint(content = Text(messages("claimCreditsForExports.subHeading"))))
+                hint = None
             ))
 
-        @exportedWhatCanIClaimCreditFor(form)(messages)
+        @exportedWhatCanIClaimCreditFor(form, includeDisposedOfWaste = false)(messages)
         @saveAndContinueButton(messages)
     }
 }

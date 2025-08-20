@@ -17,6 +17,7 @@
 package views.helpers
 
 import models.LitresInBands
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 
@@ -43,6 +44,7 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val button = "govuk-button"
     val form = "form"
     val warningText = "govuk-warning-text__text"
+    val insetText = "govuk-inset-text"
   }
 
   def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
@@ -80,13 +82,13 @@ trait LitresSpecHelper extends ViewSpecHelper {
         "that includes a field for low band that is not populated" in {
           val lowBandGroup = formGroups.get(0)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the low band"
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres"
+          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe false
         }
         "that includes a field for high band that is not populated" in {
           val highBandGroup = formGroups.get(1)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the high band"
-          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres"
+          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           highBandGroup.getElementById("highBand").hasAttr("value") mustBe false
         }
       }
@@ -236,4 +238,16 @@ trait LitresSpecHelper extends ViewSpecHelper {
       }
     }
   }
+
+  def validateCreditClaim(document: Document): Unit = {
+    val insetText = document.getElementsByClass(Selectors.insetText)
+    val claimCreditNote = Jsoup.parse(Messages("creditClaims.info")).text()
+    val claimCreditLink = insetText.get(0).getElementsByClass("govuk-link").attr("href")
+    "should contain the correct credit claim note" in {
+      insetText.size() mustBe 1
+      insetText.get(0).text() mustBe claimCreditNote
+      claimCreditLink mustBe "https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2"
+    }
+  }
+
 }

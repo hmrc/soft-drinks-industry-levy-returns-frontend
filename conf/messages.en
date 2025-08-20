@@ -45,10 +45,10 @@ error.summary.title = There is a problem
 
 litres.text = Litres
 litres.lowBand = Litres in the low band
-litres.lowBandHint = At least 5 grams of sugar per 100 millilitres
+litres.lowBandHint = At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them.
 litres.lowBand.visuallyHidden = Error
 litres.highBand = Litres in the high band
-litres.highBandHint = At least 8 grams of sugar per 100 millilitres
+litres.highBandHint = At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them.
 litres.highBand.visuallyHidden = Error
 litres.error.lowBand.required = Enter the number of litres in the low band
 litres.error.highBand.required = Enter the number of litres in the high band
@@ -138,9 +138,10 @@ whatCanIClaimCreditForDetailsLink = What can I claim a credit for?
 whatCanIClaimCreditForDetailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
 whatCanIClaimCreditForDetailsContent2 = brand of the liable drinks
 whatCanIClaimCreditForDetailsContent3= supplier or consigner
-whatCanIClaimCreditForDetailsContent4 = customer and destination the liable drinks are supplied to
-whatCanIClaimCreditForDetailsContent5 = method of delivery
-whatCanIClaimCreditForDetailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
+whatCanIClaimCreditForDetailsContent4= disposed of as waste
+whatCanIClaimCreditForDetailsContent5 = customer and destination the liable drinks are supplied to
+whatCanIClaimCreditForDetailsContent6 = method of delivery
+whatCanIClaimCreditForDetailsContentLastParagraph = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
 
 claimCreditsForExports.heading2 = Do you want to claim a credit for liable drinks that have been exported?
 claimCreditsForExports.title = Exported drinks
@@ -168,6 +169,7 @@ claimCreditsForLostDamaged.error.required = Select yes if you want to claim a cr
 howManyCreditsForLostDamaged.title = How many credits do you want to claim for liable drinks which have been lost or destroyed?
 howManyCreditsForLostDamaged.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
 
+creditClaims.info=Returns ending after 1 April 2025 cannot be used to claim credit for levy reported or paid in returns ending before 1 April 2025. Notify HMRC separately to <a class="govuk-link" href="https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2">claim credits for the levy accounted for or paid in returns ending on or before 31 March 2025</a>.
 
 returnChangeRegistration.title = You changed your soft drinks business activity
 returnChangeRegistration.heading = You changed your soft drinks business activity

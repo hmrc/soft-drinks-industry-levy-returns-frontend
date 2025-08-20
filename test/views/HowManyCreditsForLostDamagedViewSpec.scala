@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import forms.HowManyCreditsForLostDamagedFormProvider
 import models.{ CheckMode, LitresInBands, NormalMode }
 import play.api.data.Form
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -75,10 +74,6 @@ class HowManyCreditsForLostDamagedViewSpec extends ViewSpecHelper with LitresSpe
             "How many credits do you want to claim for liable drinks which have been lost or destroyed?"
         }
 
-        "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.")
-        }
-
         val expectedDetails = Map(
           "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been: lost destroyed disposed of as waste reprocessed spilled and cannot be used To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.")
 
@@ -101,6 +96,7 @@ class HowManyCreditsForLostDamagedViewSpec extends ViewSpecHelper with LitresSpe
         validateTimeoutDialog(document)
         validateTechnicalHelpLinkPresent(document)
         validateAccessibilityStatementLinkPresent(document)
+        validateCreditClaim(document)
       }
     }
   }

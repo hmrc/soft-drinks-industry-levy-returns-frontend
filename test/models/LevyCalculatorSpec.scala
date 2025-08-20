@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import models.LevyCalculator._
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import models.TaxRateUtil._
 
 import java.time.LocalDate
 
@@ -29,8 +30,6 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
   override lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "getTaxYear" - {
-    val janToMarInt = Gen.choose(1, 3)
-    val aprToDecInt = Gen.choose(4, 12)
 
     (2018 to 2024).foreach(year => {
       s"return Pre2025 when in April - December $year" in {
@@ -82,7 +81,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
       val bandRates: BandRates = getBandRates(TaxYear.fromYear(taxYear))(frontendAppConfig)
 
       s"return 0.18 for lower band when tax year is $taxYear" in {
-        bandRates.lowerBandCostPerLites mustBe BigDecimal("0.18")
+        bandRates.lowerBandCostPerLitre mustBe BigDecimal("0.18")
       }
 
       s"return 0.24 for higher band when tax year is $taxYear" in {
@@ -92,7 +91,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
 
     "return 0.194 for lower band when tax year is 2025" in {
       val bandRates: BandRates = getBandRates(TaxYear.fromYear(2025))(frontendAppConfig)
-      bandRates.lowerBandCostPerLites mustBe BigDecimal("0.194")
+      bandRates.lowerBandCostPerLitre mustBe BigDecimal("0.194")
     }
 
     "return 0.259 for higher band when tax year is 2025" in {
@@ -105,13 +104,8 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
 
     val smallPosInts = Gen.choose(0, 1000)
     val largePosInts = Gen.choose(1000, 10000000)
-    val janToMarInt = Gen.choose(1, 3)
-    val aprToDecInt = Gen.choose(4, 12)
 
     (2018 to 2024).foreach(year => {
-
-      val lowerBandCostPerLitre = BigDecimal("0.18")
-      val higherBandCostPerLitre = BigDecimal("0.24")
 
       s"calculate low levy, high levy, and total correctly with zero litres totals using original rates for Apr - Dec $year" in {
         forAll(aprToDecInt) { month =>
@@ -205,9 +199,6 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
     })
 
     (2025 to 2025).foreach(year => {
-
-      val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
-      val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
 
       s"calculate low levy, high levy, and total correctly with zero litres totals using $year rates for Apr - Dec $year" in {
         forAll(aprToDecInt) { month =>

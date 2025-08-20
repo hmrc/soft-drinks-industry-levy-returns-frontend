@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import forms.HowManyCreditsForExportFormProvider
 import models.{ CheckMode, LitresInBands, NormalMode }
 import play.api.data.Form
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -75,12 +74,8 @@ class HowManyCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHel
             "How many credits do you want to claim for liable drinks that have been exported?"
         }
 
-        "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.")
-        }
-
         val expectedDetails = Map(
-          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
+          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner disposed of as waste customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
@@ -101,6 +96,7 @@ class HowManyCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHel
         validateTimeoutDialog(document)
         validateTechnicalHelpLinkPresent(document)
         validateAccessibilityStatementLinkPresent(document)
+        validateCreditClaim(document)
       }
     }
   }

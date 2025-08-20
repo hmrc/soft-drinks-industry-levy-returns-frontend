@@ -25,7 +25,8 @@
         govukDetails: GovukDetails,
         lowAndHighBandInputs: lowAndHighBandInputs,
         saveAndContinueButton: saveAndContinueButton,
-        claimCreditsForLostDamaged: claimCreditsForLostDamaged
+        claimCreditsForLostDamaged: claimCreditsForLostDamaged,
+        creditClaimsInset: creditClaimsInset
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -39,8 +40,7 @@
         }
 
         <h1 class="govuk-heading-l">@messages("howManyCreditsForLostDamaged.title")</h1>
-        <p class="govuk-body">@messages("howManyCreditsForLostDamaged.subtext")</p>
-
+        @creditClaimsInset(messages)
         @lowAndHighBandInputs(form)(messages)
         @claimCreditsForLostDamaged(form)(messages)
         @saveAndContinueButton(messages)
