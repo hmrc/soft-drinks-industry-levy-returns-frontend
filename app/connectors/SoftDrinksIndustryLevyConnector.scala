@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.retrieved.{ OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription }
 import models.{ FinancialLineItem, ReturnPeriod, ReturnsVariation, SdilReturn }
 import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
 import repositories.{ SDILSessionCache, SDILSessionKeys }
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2

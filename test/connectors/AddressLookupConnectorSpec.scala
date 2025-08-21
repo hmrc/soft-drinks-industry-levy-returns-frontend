@@ -16,17 +16,17 @@
 
 package connectors
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import connectors.httpParsers.AddressLookupHttpParser.AddressLookupInitJourneyReads
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import mocks.MockHttp
 import models.alf.AlfResponse
-import models.alf.init.{ JourneyConfig, JourneyOptions }
+import models.alf.init.{JourneyConfig, JourneyOptions}
 import models.core.ErrorModel
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
-import play.api.test.Helpers.{ await, defaultAwaitTimeout }
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.http.HttpResponse
 
