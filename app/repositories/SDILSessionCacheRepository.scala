@@ -29,6 +29,7 @@ import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
+import org.mongodb.scala.SingleObservableFuture
 
 @Singleton
 class SDILSessionCacheRepository @Inject() (
@@ -43,7 +44,7 @@ class SDILSessionCacheRepository @Inject() (
       IndexOptions()
         .name("sdil-session-cache-expiry")
         .expireAfter(
-          appConfig.sdilCacheTTL,
+          appConfig.sdilCacheTTL.toLong,
           TimeUnit.SECONDS)),
     IndexModel(
       Indexes.ascending("id"),
@@ -71,7 +72,7 @@ class SDILSessionCacheRepository @Inject() (
 
   def get(id: String): Future[Option[CacheMap]] = {
     collection.find(equal("id", id)).headOption().map { datedCacheMap =>
-      datedCacheMap.map { value: DatedCacheMap =>
+      datedCacheMap.map { (value: DatedCacheMap) =>
         CacheMap(value.id, value.data)
       }
     }

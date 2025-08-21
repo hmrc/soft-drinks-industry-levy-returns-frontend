@@ -20,7 +20,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% s"bootstrap-test-$playVersion"  % bootstrapVersion,
     "uk.gov.hmrc.mongo"       %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion,
     "org.jsoup"               %  "jsoup"                         % "1.18.1",
-    "org.mockito"             %% "mockito-scala-scalatest"       % "1.17.37",
+    "org.scalatestplus"       %% "mockito-5-18"                  % "3.2.19.0",
     "org.scalatestplus"       %% "scalacheck-1-17"               % "3.2.18.0",
     "io.github.wolfendale"    %% "scalacheck-gen-regexp"         % "1.1.0"
   ).map(_ % "test, it")
