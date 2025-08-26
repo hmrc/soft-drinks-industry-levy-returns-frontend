@@ -25,7 +25,9 @@ import models.{ NormalMode, UserAnswers }
 import navigation.{ FakeNavigator, Navigator }
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{ ArgumentMatchers, MockitoSugar }
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.*
+import org.scalatestplus.mockito.MockitoSugar
 import pages.RemoveSmallProducerConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages

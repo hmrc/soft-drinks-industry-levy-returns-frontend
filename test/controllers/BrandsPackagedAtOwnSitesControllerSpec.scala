@@ -24,7 +24,9 @@ import helpers.LoggerHelper
 import models.{ LitresInBands, NormalMode }
 import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{ ArgumentMatchers, MockitoSugar }
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.*
+import org.scalatestplus.mockito.MockitoSugar
 import pages.BrandsPackagedAtOwnSitesPage
 import play.api.inject.bind
 import play.api.libs.json.Json

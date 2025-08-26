@@ -24,7 +24,7 @@ import models.{ Amounts, NormalMode }
 import orchestrators.ReturnsOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

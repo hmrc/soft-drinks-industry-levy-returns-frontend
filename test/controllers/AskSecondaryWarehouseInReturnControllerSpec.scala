@@ -16,20 +16,22 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import forms.AskSecondaryWarehouseInReturnFormProvider
 import models.NormalMode
-import navigation.{ FakeNavigator, Navigator }
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{ ArgumentMatchers, MockitoSugar }
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.*
+import org.scalatestplus.mockito.MockitoSugar
 import pages.AskSecondaryWarehouseInReturnPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{ AddressLookupService, WarehouseDetails }
+import services.{AddressLookupService, WarehouseDetails}
 import views.html.AskSecondaryWarehouseInReturnView
 
 import scala.concurrent.Future

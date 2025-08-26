@@ -20,7 +20,7 @@ import base.SpecBase
 import models.ReturnPeriod
 import models.requests.DataRequest
 import org.scalatest.Inside.inside
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Result
 import play.api.test.FakeRequest

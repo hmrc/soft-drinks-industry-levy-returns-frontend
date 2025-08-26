@@ -17,18 +17,18 @@
 package mocks
 
 import connectors.HttpClientV2Helper
-import org.mockito.MockitoSugar.when
-import org.mockito.stubbing.ScalaOngoingStubbing
+import org.mockito.Mockito.when
+import org.mockito.stubbing.OngoingStubbing
 
 import scala.concurrent.Future
 
 trait MockHttp extends HttpClientV2Helper {
-  def setupMockHttpGet[T](response: T): ScalaOngoingStubbing[Future[T]] =
+  def setupMockHttpGet[T](response: T): OngoingStubbing[Future[T]] =
     when(requestBuilderExecute[T]).thenReturn(Future.successful(response))
 
-  def setupMockHttpPost[O](response: O): ScalaOngoingStubbing[Future[O]] =
+  def setupMockHttpPost[O](response: O): OngoingStubbing[Future[O]] =
     when(requestBuilderExecute[O]).thenReturn(Future.successful(response))
 
-  def setupMockHttpPut[O](response: O): ScalaOngoingStubbing[Future[O]] =
+  def setupMockHttpPut[O](response: O): OngoingStubbing[Future[O]] =
     when(requestBuilderExecute[O]).thenReturn(Future.successful(response))
 }

@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
@@ -25,19 +25,22 @@ import helpers.LoggerHelper
 import models.NormalMode
 import models.backend.UkAddress
 import models.retrieved.RetrievedSubscription
-import navigation.{ FakeNavigator, Navigator }
+import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{ any, anyString, eq => matching }
-import org.mockito.{ ArgumentMatchers, MockitoSugar }
+import org.mockito.ArgumentMatchers.{any, anyString, eq as matching}
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.*
+import org.scalatest.matchers.should.Matchers.should
+import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{ AddressLookupService, PackingDetails }
+import services.{AddressLookupService, PackingDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import util.GenericLogger
 import views.html.PackAtBusinessAddressView
@@ -128,7 +131,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
         page.title() must include(Messages("packAtBusinessAddress.title"))
         page.getElementsByTag("h1").text() mustEqual Messages("packAtBusinessAddress.title")
         //noinspection ComparingUnrelatedTypes
-        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString should not be empty
       }
     }
 
@@ -188,9 +191,9 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
           contentAsString(result) mustEqual view(boundForm, HtmlContent(formattedAddress), NormalMode)(request, messages(application)).toString
 
           //noinspection ComparingUnrelatedTypes
-          page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+          page.getElementsContainingText(usersRetrievedSubscription.orgName).toString should not be empty
           //noinspection ComparingUnrelatedTypes
-          page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
+          page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() should not be empty
           page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.error.required"))
 
         }

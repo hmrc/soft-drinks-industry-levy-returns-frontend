@@ -23,8 +23,8 @@ import models.backend.{ Site, UkAddress }
 import models.{ CheckMode, NormalMode }
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import org.mockito.MockitoSugar
+import org.scalatest.matchers.should.Matchers.*
+import org.scalatestplus.mockito.MockitoSugar
 import pages.behaviours.PageBehaviours
 import play.api.test.FakeRequest
 import play.test.Helpers.contentAsString

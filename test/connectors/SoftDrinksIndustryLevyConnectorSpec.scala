@@ -20,7 +20,7 @@ import base.ReturnsTestData._
 import models.retrieved.{ OptRetrievedSubscription, RetrievedSubscription }
 import models.{ FinancialLineItem, ReturnPeriod, SdilReturn }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import play.api.http.Status.OK
 import repositories.SDILSessionCache
 import uk.gov.hmrc.http.HttpResponse
@@ -168,7 +168,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
         packSmall = List(),
         importLarge = (1L, 1L),
         importSmall = (1L, 1L),
-        export = (1L, 1L),
+        `export` = (1L, 1L),
         wastage = (1L, 1L),
         submittedOn = None)
 
