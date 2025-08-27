@@ -19,7 +19,6 @@ package util
 import base.ReturnsTestData.emptyUserAnswers
 import base.SpecBase
 import config.FrontendAppConfig
-import models.LevyCalculator._
 import models.{ ReturnPeriod, SmallProducer, UserAnswers }
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

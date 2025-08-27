@@ -20,7 +20,6 @@ import base.ReturnsTestData.emptyUserAnswers
 import base.SpecBase
 import models.{ CheckMode, NormalMode, SmallProducer }
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import views.helpers.returnDetails.SmallProducerDetailsSummary
 
 class SmallProducerDetailsSummarySpec extends SpecBase {
   val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))

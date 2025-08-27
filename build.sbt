@@ -41,6 +41,7 @@ lazy val root = (project in file("."))
         scalacOptions ++= Seq(
       "-feature",
       "-Wconf:msg=Flag.*repeatedly:s",
+       "-Wconf:msg=exhaustive*:s",
       "-Wconf:msg=unused explicit parameter*:s",
       "-Wconf:msg=unused private member*:s",
       "-Wconf:msg=unused implicit parameter*:s",
