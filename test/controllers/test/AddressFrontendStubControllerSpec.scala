@@ -17,7 +17,7 @@
 package controllers.test
 
 import base.SpecBase
-import play.api.libs.json.Json
+import play.api.libs.json.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
