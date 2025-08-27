@@ -5,6 +5,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class HowManyAsAContractPackerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "PackagedContractPackerController" should {
@@ -12,7 +13,7 @@ class HowManyAsAContractPackerIntegrationSpec extends ControllerITTestHelper wit
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       val userAnswers = howManyAsContractPackerPartialAnswers.success.value
       setUpData(userAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -38,7 +39,7 @@ class HowManyAsAContractPackerIntegrationSpec extends ControllerITTestHelper wit
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
         ))
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = howManyAsContractPackerFullAnswers.success.value

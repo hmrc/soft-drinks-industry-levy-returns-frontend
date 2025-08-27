@@ -5,6 +5,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class HowManyCreditsForExportControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "HowManyCreditsForExportController" should {
@@ -13,7 +14,7 @@ class HowManyCreditsForExportControllerIntegrationSpec extends ControllerITTestH
       val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
       setUpData(userAnswers)
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -35,7 +36,7 @@ class HowManyCreditsForExportControllerIntegrationSpec extends ControllerITTestH
           "howManyCreditsForExport" -> Json.obj("lowBand" -> 1000, "highBand" ->1000)
         ))
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
 

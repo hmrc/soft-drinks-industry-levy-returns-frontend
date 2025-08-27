@@ -9,7 +9,7 @@ import org.scalatestplus.play.PlaySpec
 trait Specifications extends PlaySpec with AnyWordSpecLike with ScalaFutures {
   this: TestConfiguration =>
 
-  implicit val `given` = new PreconditionBuilder
+  val build = new PreconditionBuilder
   lazy val user = new ActionsBuilder(baseUrl)
 
 }

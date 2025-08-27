@@ -6,6 +6,7 @@ import play.api.libs.ws.DefaultWSCookie
 import play.api.test.Helpers.await
 import play.api.test.WsTestClient
 import repositories.SDILSessionKeys
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 
 class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper {
@@ -18,7 +19,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, amountsZero))
         val nilReturnUserAnswers = emptyUserAnswers.copy(isNilReturn = true, submitted = true)
         setUpData(nilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/return-sent")
             .withFollowRedirects(false)
@@ -42,7 +43,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, Amounts(0, 1000, -1000)))
         val nilReturnUserAnswers = emptyUserAnswers.copy(isNilReturn = true, submitted = true)
         setUpData(nilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/return-sent")
             .withFollowRedirects(false)
@@ -66,7 +67,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, Amounts(0, -1000, 1000)))
         val nilReturnUserAnswers = emptyUserAnswers.copy(isNilReturn = true, submitted = true)
         setUpData(nilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/return-sent")
             .withFollowRedirects(false)
@@ -88,7 +89,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
       "all answers are no and amounts of zero" in {
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, amountsZero))
         setUpData(checkYourAnswersFullAnswersAllNo.copy(submitted = true))
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/return-sent")
             .withFollowRedirects(false)
@@ -111,7 +112,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
       "all answers are no and amounts of have account in credit" in {
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, Amounts(0, 1000, -1000)))
         setUpData(checkYourAnswersFullAnswersAllNo.copy(submitted = true))
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/return-sent")
             .withFollowRedirects(false)
@@ -134,7 +135,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
       "all answers are no and amounts already owed" in {
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, Amounts(0, -1000, 1000)))
         setUpData(checkYourAnswersFullAnswersAllNo.copy(submitted = true))
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
         WsTestClient.withClient { client =>
           val result1 = client.url(s"$baseUrl/return-sent")
             .withFollowRedirects(false)
@@ -157,7 +158,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
       "all answers equal yes with litres were submitted and the balance brought forward is 0" in {
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, Amounts(420, 0, 420)))
         setUpData(checkYourAnswersFullAnswers.copy(submitted = true))
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryNone(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -182,7 +183,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, Amounts(420, -1000, 1420)))
 
         setUpData(checkYourAnswersFullAnswers.copy(submitted = true))
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryInCredit(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -207,7 +208,7 @@ class ReturnSentControllerIntegrationSpec extends ReturnSentPageValidationHelper
         await(sdilSessionCache.save[Amounts](sdilNumber, SDILSessionKeys.AMOUNTS, Amounts(420, 2000, -1580)))
 
         setUpData(checkYourAnswersFullAnswers.copy(submitted = true))
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistory(sdilNumber)
 
         WsTestClient.withClient { client =>

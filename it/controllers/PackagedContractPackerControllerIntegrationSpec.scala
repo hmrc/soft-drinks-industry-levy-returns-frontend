@@ -5,6 +5,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class PackagedContractPackerControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "PackagedContractPackerController" should {
@@ -15,7 +16,7 @@ class PackagedContractPackerControllerIntegrationSpec extends ControllerITTestHe
       "user entered No on own brand page" in {
         val userAnswers = ownBrandPageFalseAnswers.success.value
         setUpData(userAnswers)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
@@ -34,7 +35,7 @@ class PackagedContractPackerControllerIntegrationSpec extends ControllerITTestHe
       "user entered Yes on own brand page " in {
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
@@ -64,7 +65,7 @@ class PackagedContractPackerControllerIntegrationSpec extends ControllerITTestHe
 
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
@@ -95,7 +96,7 @@ class PackagedContractPackerControllerIntegrationSpec extends ControllerITTestHe
 
         val userAnswers = brandPackagedOwnSiteAnswers.success.value
         setUpData(userAnswers)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>

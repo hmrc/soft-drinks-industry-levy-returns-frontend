@@ -5,6 +5,7 @@ import play.api.http.HeaderNames
 import play.api.libs.json.JsValue
 import play.api.libs.ws.{DefaultWSCookie, WSClient, WSResponse}
 import play.api.test.WsTestClient
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import scala.concurrent.Future
 
@@ -29,7 +30,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
   def testUnauthorisedUser(url: String, optJson: Option[JsValue] = None, requiresSubscription: Boolean = true): Unit = {
     "the user is unauthenticated" should {
       "redirect to gg-signin" in {
-        given.unauthorisedPrecondition
+        build.unauthorisedPrecondition
 
         WsTestClient.withClient { client =>
           val result1 = optJson match {
@@ -47,7 +48,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
 
       "redirect to the account home page" should {
         "the user is authorised with UTR but has no sdilSubscription" in {
-          given.authorisedWithNoSubscriptionPrecondition
+          build.authorisedWithNoSubscriptionPrecondition
           WsTestClient.withClient { client =>
             val result1 = optJson match {
               case Some(json) => createClientRequestPOST(client, url, json)
@@ -62,7 +63,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
         }
 
         "the user is authorised with SdilRef but has no sdilSubscription" in {
-          given.authorisedWithNoSubscriptionPreconditionWithSDilRef
+          build.authorisedWithNoSubscriptionPreconditionWithSDilRef
           WsTestClient.withClient { client =>
             val result1 = optJson match {
               case Some(json) => createClientRequestPOST(client, url, json)
@@ -77,7 +78,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
         }
 
         "the user is authorised but has no enrolment" in {
-          given.authorisedButNoEnrolmentsPrecondition
+          build.authorisedButNoEnrolmentsPrecondition
           WsTestClient.withClient { client =>
             val result1 = optJson match {
               case Some(json) => createClientRequestPOST(client, url, json)
@@ -94,7 +95,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
 
     "the user is authorised but has no identifer" should {
       "render the error page" in {
-        given.authorisedButInternalIdPrecondition
+        build.authorisedButInternalIdPrecondition
 
         WsTestClient.withClient { client =>
           val result1 = optJson match {

@@ -9,6 +9,7 @@ import play.api.test.Helpers.await
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 import repositories.SDILSessionKeys
+import play.api.libs.ws.DefaultBodyWritables.*
 
 class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourAnswersPageValidationHelper {
 
@@ -23,7 +24,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryNone(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -47,7 +48,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
 
           .sdilBackend.balanceHistoryInCredit(sdilNumber)
 
@@ -72,7 +73,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistory(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -95,7 +96,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryNone(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -118,7 +119,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryInCredit(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -141,7 +142,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistory(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -165,7 +166,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryNone(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -188,7 +189,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryInCredit(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -211,7 +212,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistory(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -234,7 +235,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryNone(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -257,7 +258,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistoryInCredit(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -280,7 +281,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.balanceHistory(sdilNumber)
 
         WsTestClient.withClient { client =>
@@ -309,7 +310,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryNone))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
 
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
@@ -338,7 +339,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryCredit))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -366,7 +367,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistory))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -393,7 +394,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryNone))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -420,7 +421,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryCredit))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -447,7 +448,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistory))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -475,7 +476,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryNone))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -502,7 +503,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryCredit))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -529,7 +530,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistory))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -556,7 +557,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryNone))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -583,7 +584,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistoryCredit))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -610,7 +611,7 @@ class CheckYourAnswersControllerBalanceHistoryIntegrationSpec extends CheckYourA
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[Seq[FinancialLineItem]](sdilNumber, SDILSessionKeys.balanceHistory(false), balanceHistory))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 

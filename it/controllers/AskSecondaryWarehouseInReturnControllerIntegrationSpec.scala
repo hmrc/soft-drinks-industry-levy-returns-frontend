@@ -7,12 +7,13 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends ControllerITTestHelper {
   "AskSecondaryWarehouseInReturnController" should {
     "Ask for if user wants to register any UK warehouses where user used to store liable drinks" in {
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -103,7 +104,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends ControllerI
 
       val alfOnRampURL: String = "http://onramp.com"
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
@@ -130,7 +131,7 @@ class AskSecondaryWarehouseInReturnControllerIntegrationSpec extends ControllerI
       val warehouseToBeWiped = Map("foo" -> Site(UkAddress(List.empty, "", None), tradingName = None))
       setUpData(emptyUserAnswers.copy(warehouseList = warehouseToBeWiped))
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       val expectedResult: Some[JsObject] = Some(

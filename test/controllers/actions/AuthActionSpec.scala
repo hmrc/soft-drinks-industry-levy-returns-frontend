@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.routes
-import play.api.mvc.{AnyContent, BodyParsers, Results, Request}
+import play.api.mvc.{ AnyContent, BodyParsers, Results, Request }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._

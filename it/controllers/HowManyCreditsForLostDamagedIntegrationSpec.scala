@@ -2,13 +2,14 @@ package controllers
 
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class HowManyCreditsForLostDamagedIntegrationSpec extends ControllerITTestHelper {
 
   "controller" should {
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>

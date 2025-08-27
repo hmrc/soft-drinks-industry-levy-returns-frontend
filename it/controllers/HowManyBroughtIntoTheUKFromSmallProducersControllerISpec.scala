@@ -5,13 +5,14 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class HowManyBroughtIntoTheUKFromSmallProducersControllerISpec extends ControllerITTestHelper with TryValues {
 
   "HowManyBroughtIntoTheUKFromSmallProducersController" should {
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       setUpData(broughtIntoUkFullAnswers.success.value)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -38,7 +39,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerISpec extends Controlle
           "howManyBroughtIntoTheUKFromSmallProducers"-> Json.obj("lowBand" -> 1000, "highBand" -> 1000)
         ))
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = howManyAsContractPackerFullAnswers.success.value

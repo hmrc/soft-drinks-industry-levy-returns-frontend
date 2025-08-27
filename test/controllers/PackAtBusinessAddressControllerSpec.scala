@@ -30,7 +30,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString, eq as matching}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
-import org.scalatest.matchers.should.Matchers.should
+import org.scalatest.matchers.should.Matchers.{should, shouldBe}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.PackAtBusinessAddressPage
 import play.api.data.Form
@@ -191,9 +191,12 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar wit
           contentAsString(result) mustEqual view(boundForm, HtmlContent(formattedAddress), NormalMode)(request, messages(application)).toString
 
           //noinspection ComparingUnrelatedTypes
-          page.getElementsContainingText(usersRetrievedSubscription.orgName).toString should not be empty
+          page.getElementsContainingText(usersRetrievedSubscription.orgName).text() must include(usersRetrievedSubscription.orgName)
           //noinspection ComparingUnrelatedTypes
-          page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() should not be empty
+          val addressText = page.select("#businessAddress").text()
+          usersRetrievedSubscription.address.lines.foreach { line =>
+            addressText must include(line)
+          }
           page.getElementsByTag("a").text() must include(Messages("packAtBusinessAddress.error.required"))
 
         }

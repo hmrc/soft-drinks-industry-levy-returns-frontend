@@ -6,6 +6,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class ClaimCreditsForExportsControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "ClaimCreditsForExportsController" should {
@@ -13,7 +14,7 @@ class ClaimCreditsForExportsControllerIntegrationSpec extends ControllerITTestHe
     "Ask if user is needing to claim a credit for liable drinks that have been exported" in {
       val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value
       setUpData(userAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -32,7 +33,7 @@ class ClaimCreditsForExportsControllerIntegrationSpec extends ControllerITTestHe
     "Post the brought into UK " when {
       "user selected yes " in {
         val expectedResult: Some[JsObject] = Some(Json.obj("claimCreditsForExports"-> true))
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers)
 
@@ -57,7 +58,7 @@ class ClaimCreditsForExportsControllerIntegrationSpec extends ControllerITTestHe
       "user selected no " in {
 
         val expectedResult: Some[JsObject] = Some(Json.obj("claimCreditsForExports"-> false))
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers)
 
@@ -80,7 +81,7 @@ class ClaimCreditsForExportsControllerIntegrationSpec extends ControllerITTestHe
         }
       }
       "user selected no and has litres in bands" in {
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = claimCreditsForLostDamagedPageWithLitresFullAnswers.success.value

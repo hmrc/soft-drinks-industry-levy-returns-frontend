@@ -6,6 +6,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
@@ -22,7 +23,7 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
     "Ask user to input a registered small producer's details" in {
       val userAnswers = addASmallProducerPartialAnswers.success.value
       setUpData(userAnswers)
-      given.commonPreconditionChangeSubscription(aSubscription)
+      build.commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/add-small-producer")
@@ -42,7 +43,7 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
       val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = "Super Cola Ltd" ,
         sdilRef = "XZSDIL000000234", litreage = (1000L,1000L))))
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = addASmallProducerFullAnswers.success.value
@@ -76,7 +77,7 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
 
       setUpData(updatedUserAnswers)
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -97,7 +98,7 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
       val amendedLowBand = "1000"
       val amendedHighBand = "5000"
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = addASmallProducerFullAnswers.success.value
@@ -141,7 +142,7 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
       val amendedLowBand = "1000"
       val amendedHighBand = "5000"
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = addASmallProducerFullAnswers.success.value

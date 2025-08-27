@@ -5,6 +5,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class BroughtIntoUKControllerIntegrationSpec extends ControllerITTestHelper with TryValues{
   "BroughtIntoUKController" should {
@@ -14,7 +15,7 @@ class BroughtIntoUKControllerIntegrationSpec extends ControllerITTestHelper with
     "Ask for are you reporting liable drinks brought into uk from outside uk" in {
       val userAnswers = broughtIntoUkPartialAnswers.success.value
       setUpData(userAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result1 = client.url(s"$baseUrl/$broughtIntoUkUrl")
@@ -31,7 +32,7 @@ class BroughtIntoUKControllerIntegrationSpec extends ControllerITTestHelper with
 
     "Post the brought into UK " when {
       "user selected yes " in {
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         val expectedResult: Some[JsObject] = Some(Json.obj("broughtIntoUK" ->  true))
@@ -58,7 +59,7 @@ class BroughtIntoUKControllerIntegrationSpec extends ControllerITTestHelper with
       }
 
       "user selected no " in {
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value

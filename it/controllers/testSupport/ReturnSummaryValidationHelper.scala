@@ -4,13 +4,18 @@ import models.Amounts
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.TryValues
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.FakeRequest
 import util.CurrencyFormatter
 
 trait ReturnSummaryValidationHelper extends Specifications
   with TestConfiguration
   with ITCoreTestData
   with TryValues {
+
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+
 
   val headingIds = Array(
     "ownBrandsPackagedAtYourOwnSite",

@@ -20,7 +20,7 @@ import base.ReturnsTestData.*
 import base.SpecBase
 import forms.AskSecondaryWarehouseInReturnFormProvider
 import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
+import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
@@ -31,7 +31,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{AddressLookupService, WarehouseDetails}
+import services.{ AddressLookupService, WarehouseDetails }
 import views.html.AskSecondaryWarehouseInReturnView
 
 import scala.concurrent.Future

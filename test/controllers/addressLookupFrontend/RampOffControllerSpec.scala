@@ -33,8 +33,8 @@
 package controllers.addressLookupFrontend
 import base.ReturnsTestData.*
 import base.SpecBase
-import models.alf.{AlfAddress, AlfResponse}
-import models.{NormalMode, UserAnswers}
+import models.alf.{ AlfAddress, AlfResponse }
+import models.{ NormalMode, UserAnswers }
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -43,7 +43,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{AddressLookupService, PackingDetails, WarehouseDetails}
+import services.{ AddressLookupService, PackingDetails, WarehouseDetails }
 
 import scala.concurrent.Future
 

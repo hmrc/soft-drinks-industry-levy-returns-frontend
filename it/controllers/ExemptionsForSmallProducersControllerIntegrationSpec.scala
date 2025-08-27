@@ -6,6 +6,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "ExemptionsForSmallProducersController" should {
@@ -13,7 +14,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITT
     "Ask for if user need to claim an exemption for any of the liable drinks they have packaged for registered small producers" in {
       val userAnswers = exemptionsForSmallProducersPartialAnswers.success.value
       setUpData(userAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -43,7 +44,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITT
           ))
 
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
@@ -79,7 +80,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITT
             "exemptionsForSmallProducers" -> false
           ))
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = exemptionsForSmallProducersFullAnswers.success.value
@@ -107,7 +108,7 @@ class ExemptionsForSmallProducersControllerIntegrationSpec extends ControllerITT
     }
     "Post the new form data with an empty SmallProducerList when a previously answered yes is changed to no " in {
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("","",(1L, 1L))))

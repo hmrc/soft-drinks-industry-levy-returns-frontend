@@ -7,6 +7,7 @@ import play.api.libs.json._
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 
 class SecondaryWarehouseDetailsControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
@@ -14,7 +15,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends ControllerITTes
     "Ask for if user wants to add more warehouses" in {
 
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -101,7 +102,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends ControllerITTes
       val alfOnRampURL: String = "http://onramp.com"
 
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
@@ -132,7 +133,7 @@ class SecondaryWarehouseDetailsControllerIntegrationSpec extends ControllerITTes
         ))
 
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>

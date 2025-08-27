@@ -27,7 +27,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       "redirect to next page when request is valid and address is returned from ALF" when {
         "no address exists in DB currently for SDILID provided" in {
           setUpData(emptyUserAnswers)
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
             .alf.getAddress(alfId)
 
@@ -55,7 +55,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         "an address already exists in DB currently for SDILID provided" in {
           val userAnswersBefore = emptyUserAnswers.copy(warehouseList = Map(siteId -> Site(UkAddress(List.empty, "foo", Some("wizz")), tradingName = None)))
           setUpData(userAnswersBefore)
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
             .alf.getAddress(alfId)
 
@@ -83,7 +83,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       s"return $INTERNAL_SERVER_ERROR" when {
         "alf returns error" in {
           setUpData(emptyUserAnswers)
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
             .alf.getBadAddress(alfId)
 
@@ -117,7 +117,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       "redirect to next page when request is valid and address is returned from ALF" when {
         "no address exists in DB currently for SDILID provided" in {
           setUpData(emptyUserAnswers)
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
             .alf.getAddress(alfId)
 
@@ -146,7 +146,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
         "an address already exists in DB currently for SDILID provided" in {
           val userAnswersBefore = emptyUserAnswers.copy(packagingSiteList = Map(siteId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
           setUpData(userAnswersBefore)
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
             .alf.getAddress(alfId)
 
@@ -175,7 +175,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       s"return $INTERNAL_SERVER_ERROR" when {
         "alf returns error" in {
           setUpData(emptyUserAnswers)
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
             .alf.getBadAddress(alfId)
 

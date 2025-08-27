@@ -6,6 +6,8 @@ import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.Helpers.{CONTENT_TYPE, JSON, LOCATION}
 import play.api.test.WsTestClient
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import play.api.libs.ws.DefaultBodyReadables.readableAsByteArray
 
 class AddressFrontendStubControllerIntegrationSpec extends Specifications
   with TestConfiguration with ITCoreTestData with TryValues {

@@ -8,13 +8,15 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.DefaultBodyWritables._
+import play.api.libs.ws.JsonBodyWritables._
 
 class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData {
 
   "GET" should {
     "return view" in {
       setUpData(newPackerPartialAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -37,7 +39,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
     "take user to pack at business address only if new packer and there are no production sites in the retrieved subscription" in {
       setUpData(newPackerPartialAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription.copy(productionSites = List.empty))
 
       WsTestClient.withClient { client =>
@@ -62,7 +64,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
       val activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true,
         importer = false, voluntaryRegistration = false)
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription.copy(activity = activity,productionSites = List.empty))
 
       WsTestClient.withClient { client =>
@@ -83,7 +85,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
     "take user to add warehouse if new packer and at least one production site exists in the retrieved subscription" in {
       setUpData(newPackerPartialAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -104,7 +106,7 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
 
     s"take user to next destination successfully if new packer is false and new importer is true" in {
       setUpData(newImporterAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
