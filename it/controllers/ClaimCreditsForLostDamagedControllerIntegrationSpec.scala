@@ -5,13 +5,14 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTestHelper with TryValues{
   "ClaimCreditsForLostDamagedController" should {
 
     "Ask for if user want to claim a credit for liable drinks which they been lost or destroyed" in {
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
       setUpData(emptyUserAnswers)
 
@@ -34,7 +35,7 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTe
 
         val expectedResult:Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged"-> true))
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers
         )
@@ -62,7 +63,7 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTe
       "user selected no " in {
         val expectedResult:Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged"-> false))
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
         setUpData(emptyUserAnswers)
 

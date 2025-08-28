@@ -12,6 +12,8 @@ import play.api.test.Helpers.await
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 import repositories.SDILSessionKeys
+import play.api.libs.ws.DefaultBodyWritables.*
+import play.api.libs.ws.JsonBodyWritables.*
 
 class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper with CheckYourAnswersPageValidationHelper {
 
@@ -24,8 +26,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       "Load when NIL return" in {
         setUpData(defaultNilReturnUserAnswers)
 
-        given.commonPreconditionChangeSubscription(aSubscription)
-        given.sdilBackend.balance(emptyUserAnswers.id, false)
+        build.commonPreconditionChangeSubscription(aSubscription)
+        build.sdilBackend.balance(emptyUserAnswers.id, false)
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
@@ -57,8 +59,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswersStandardFlow)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, true, true)))
-        given.sdilBackend.balance(userAnswersStandardFlow.id, false)
+        build.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, true, true)))
+        build.sdilBackend.balance(userAnswersStandardFlow.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -93,10 +95,10 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswersAllPages)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(
+        build.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(false, false, false, false, false),
           warehouseSites = List.empty))
-        given.sdilBackend.balance(userAnswersAllPages.id, false)
+        build.sdilBackend.balance(userAnswersAllPages.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -130,10 +132,10 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswersAllPages)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(
+        build.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = true, false, false, false, false),
           warehouseSites = List.empty))
-        given.sdilBackend.balance(userAnswersAllPages.id, false)
+        build.sdilBackend.balance(userAnswersAllPages.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -158,10 +160,10 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswersAllPages)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(
+        build.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = true, true, true, true, true),
           warehouseSites = List.empty))
-        given.sdilBackend.balance(userAnswersAllPages.id, false)
+        build.sdilBackend.balance(userAnswersAllPages.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -185,10 +187,10 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswerMissing)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(
+        build.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = true, largeProducer = false, true, true, true),
           warehouseSites = List.empty))
-        given.sdilBackend.balance(userAnswerMissing.id, false)
+        build.sdilBackend.balance(userAnswerMissing.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -213,7 +215,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswerMissing)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(
+        build.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = false, true, true, true, true),
           warehouseSites = List.empty))
 
@@ -251,8 +253,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswers)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, false, true, true)))
-        given.sdilBackend.balance(userAnswers.id, false)
+        build.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, false, true, true)))
+        build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -288,8 +290,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswers)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, false, true, true)))
-        given.sdilBackend.balance(userAnswers.id, false)
+        build.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, false, true, true)))
+        build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -328,8 +330,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswers)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, false, true)))
-        given.sdilBackend.balance(userAnswers.id, false)
+        build.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, false, true)))
+        build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -363,8 +365,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswers)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, false, true)))
-        given.sdilBackend.balance(userAnswers.id, false)
+        build.commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(true, true, true, false, true)))
+        build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
           val result = client.url(s"$baseUrl/check-your-answers")
@@ -389,7 +391,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         setUpData(defaultNilReturnUserAnswers)
 
         setUpDataWithBackendCallsForAmountsCached(defaultNilReturnUserAnswers)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns(aSubscription.utr)
           .sdilBackend.submitVariations(defaultNilReturnUserAnswers.id)
@@ -430,7 +432,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(false, false, false, false, false),
           warehouseSites = List.empty))
@@ -463,7 +465,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription.copy(
             activity = RetrievedActivity(true, true, true, true, true),
             warehouseSites = List.empty))
@@ -504,7 +506,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription.copy(
             activity = RetrievedActivity(smallProducer = true, false, false, false, false),
             warehouseSites = List.empty))
@@ -536,7 +538,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswerMissing)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(
+        build.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = false, true, true, true, true),
           warehouseSites = List.empty))
 
@@ -565,7 +567,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
         setUpData(userAnswerMissing)
 
-        given.commonPreconditionChangeSubscription(aSubscription.copy(
+        build.commonPreconditionChangeSubscription(aSubscription.copy(
           activity = RetrievedActivity(smallProducer = true, true, true, true, true),
           warehouseSites = List.empty))
 
@@ -595,7 +597,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
 
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
@@ -624,7 +626,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
 
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
@@ -653,7 +655,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
 
         setUpData(defaultNilReturnUserAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
 
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
@@ -681,7 +683,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -708,7 +710,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -735,7 +737,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -763,7 +765,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -790,7 +792,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -817,7 +819,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -844,7 +846,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -871,7 +873,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 
@@ -898,7 +900,7 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
           SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswers)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        build.commonPreconditionChangeSubscription(aSubscription)
           .sdilBackend.submitReturns()
           .sdilBackend.submitVariations()
 

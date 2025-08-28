@@ -8,6 +8,9 @@ import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import org.scalatest.matchers.should.Matchers._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import play.api.libs.ws.DefaultBodyReadables.*
 
 class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues  {
 
@@ -18,7 +21,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
         "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
 
       setUpData(newPackerPartialAnswers.copy( warehouseList = twoWarehouses))
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -29,8 +32,8 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
 
         whenReady(result) { res =>
           res.status mustBe OK
-          res.body must include ("ABC Ltd<br>33 Rhes Priordy, East London, Line 3, Line 4, WR53 7CX")
-          res.body must include ("Are you sure you want to remove this warehouse?")
+          res.body[String] must include ("ABC Ltd<br>33 Rhes Priordy, East London, Line 3, Line 4, WR53 7CX")
+          res.body[String] must include ("Are you sure you want to remove this warehouse?")
         }
 
       }
@@ -42,7 +45,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
         "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
       val removedWarehouseMap: Map[String, Site] = Map("2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), tradingName = Some("Super Cola Ltd")))
       setUpData(newPackerPartialAnswers.copy(id = sdilNumber , warehouseList = twoWarehouses))
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -66,7 +69,7 @@ class RemovingWarehouseConfirmControllerIntegrationSpec extends Specifications w
   "user inputs remove on index that doesn't exist" in {
 
     setUpData(newPackerPartialAnswers)
-    given
+    build
       .commonPreconditionChangeSubscription(aSubscription)
 
     WsTestClient.withClient { client =>

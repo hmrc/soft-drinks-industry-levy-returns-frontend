@@ -8,7 +8,7 @@ import pages._
 import play.api.libs.json.Json
 
 import java.time.LocalDate
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.util.Failure
 
 object ITCoreTestData extends ITCoreTestData
@@ -68,7 +68,7 @@ trait ITCoreTestData extends TryValues {
 
   val warehouse: Site = Site(UkAddress(List("34 Rhes Priordy", "East London"), "E73 2RP"), tradingName = None)
 
-  implicit val duration = 5.seconds
+  implicit val duration: FiniteDuration = 5.seconds
 
   def requestReturnPeriod = ReturnPeriod(2018, 1)
   def diffReturnPeriod = ReturnPeriod(2021, 1)

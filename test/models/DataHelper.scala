@@ -34,7 +34,7 @@ trait DataHelper {
       packSmall = packSmall,
       importLarge = (importLarge._1, importLarge._2),
       importSmall = (importSmall._1, importSmall._2),
-      export = (export._1, export._2),
+      `export` = (`export`._1, `export`._2),
       wastage = (wastage._1, wastage._2))
   }
 

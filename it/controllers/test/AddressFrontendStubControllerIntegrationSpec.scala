@@ -6,6 +6,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.Helpers.{CONTENT_TYPE, JSON, LOCATION}
 import play.api.test.WsTestClient
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class AddressFrontendStubControllerIntegrationSpec extends Specifications
   with TestConfiguration with ITCoreTestData with TryValues {
@@ -46,7 +47,7 @@ class AddressFrontendStubControllerIntegrationSpec extends Specifications
             "\"country\":{\"code\":\"GB\",\"name\":\"United Kingdom\"}}}"
         whenReady(result1) { res =>
           res.status mustBe 200
-          res.body mustEqual addressConfirmed
+          Json.parse(res.body) mustEqual Json.parse(addressConfirmed)
         }
       }
     }

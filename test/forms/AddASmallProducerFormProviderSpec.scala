@@ -22,7 +22,7 @@ import controllers.routes
 import forms.behaviours.{ LongFieldBehaviour, SDILReferenceFieldBehaviours, StringFieldBehaviours }
 import models.NormalMode
 
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 
 class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFieldBehaviours with SDILReferenceFieldBehaviours with SpecBase with MockitoSugar {

@@ -8,6 +8,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class PackAtBusinessAddressControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
@@ -16,7 +17,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends ControllerITTestHel
     "Ask the user if the address shown, is a UK packaging site they operate to produce liable drinks " in {
 
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -104,7 +105,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends ControllerITTestHel
       val alfOnRampURL: String = "http://onramp.com"
 
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
@@ -137,7 +138,7 @@ class PackAtBusinessAddressControllerIntegrationSpec extends ControllerITTestHel
       val testSite = Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)
 
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>

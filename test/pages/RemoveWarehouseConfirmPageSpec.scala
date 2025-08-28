@@ -21,7 +21,7 @@ import forms.RemoveWarehouseConfirmFormProvider
 import messages.RemoveWarehouseConfirmMessages
 import models.{ CheckMode, NormalMode }
 import org.jsoup.nodes.Document
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import pages.behaviours.PageBehaviours
 import play.api.i18n.{ Messages, MessagesApi }
 import play.api.test.FakeRequest

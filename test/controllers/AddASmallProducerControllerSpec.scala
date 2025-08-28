@@ -25,7 +25,8 @@ import helpers.LoggerHelper
 import models.{ BlankMode, CheckMode, NormalMode, ReturnPeriod, UserAnswers }
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.*
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call

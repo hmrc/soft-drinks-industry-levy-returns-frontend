@@ -25,7 +25,8 @@ import models.NormalMode
 import navigation.{ FakeNavigator, Navigator }
 import org.mockito.ArgumentMatchers.any
 
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.*
+import org.scalatestplus.mockito.MockitoSugar
 import pages.ExemptionsForSmallProducersPage
 import play.api.data.Form
 import play.api.inject.bind

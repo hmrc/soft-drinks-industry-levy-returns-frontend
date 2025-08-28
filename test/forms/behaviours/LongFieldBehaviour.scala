@@ -54,7 +54,7 @@ class LongFieldBehaviour extends FieldBehaviours {
     s"not bind long above $maximum" in {
 
       forAll(longAboveValue(maximum) -> "outOfMaxVal") {
-        number: Long =>
+        (number: Long) =>
           val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
           result.errors must contain only expectedError
       }

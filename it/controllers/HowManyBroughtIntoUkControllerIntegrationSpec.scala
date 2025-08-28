@@ -5,6 +5,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class HowManyBroughtIntoUkControllerIntegrationSpec extends ControllerITTestHelper with TryValues{
   "HowManyBroughtIntoUkController" should {
@@ -13,7 +14,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends ControllerITTestHelp
 
       val userAnswers = broughtIntoUkFullAnswers.success.value
       setUpData(userAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -45,7 +46,7 @@ class HowManyBroughtIntoUkControllerIntegrationSpec extends ControllerITTestHelp
       val userAnswers = howManyBroughtIntoUkFullAnswers.success.value
       setUpData(userAnswers)
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
 

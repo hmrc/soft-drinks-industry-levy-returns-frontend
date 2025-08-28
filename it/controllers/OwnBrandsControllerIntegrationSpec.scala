@@ -4,6 +4,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class OwnBrandsControllerIntegrationSpec extends ControllerITTestHelper {
   "OwnBrandsController" should {
@@ -11,7 +12,7 @@ class OwnBrandsControllerIntegrationSpec extends ControllerITTestHelper {
     "Ask if user is reporting liable drinks they have packaged as a third party or contract packer at UK sites user operates" in {
 
       setUpData(emptyUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -35,7 +36,7 @@ class OwnBrandsControllerIntegrationSpec extends ControllerITTestHelper {
             "ownBrands" -> true
           ))
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
@@ -64,7 +65,7 @@ class OwnBrandsControllerIntegrationSpec extends ControllerITTestHelper {
             "ownBrands" -> false
           ))
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>

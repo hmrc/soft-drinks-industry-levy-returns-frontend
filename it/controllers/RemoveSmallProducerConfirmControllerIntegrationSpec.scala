@@ -6,6 +6,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class RemoveSmallProducerConfirmControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
@@ -23,7 +24,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends ControllerITTe
       val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
       val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre))))
         setUpData(updatedUserAnswers)
-      given
+      build
       .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -43,7 +44,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends ControllerITTe
 
       "user selected yes " in {
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         val smallProducerToRemove = SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre))
@@ -76,7 +77,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends ControllerITTe
 
       "user selected yes when last small producer is being removed" in {
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         val userAnswers = removeSmallProducerConfirmPartialAnswers.success.value
@@ -111,7 +112,7 @@ class RemoveSmallProducerConfirmControllerIntegrationSpec extends ControllerITTe
         val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$aliasPartyDrinks",s"$sdilRefPartyDrinks",(smallLitre,largeLitre))))
         setUpData(updatedUserAnswers)
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>

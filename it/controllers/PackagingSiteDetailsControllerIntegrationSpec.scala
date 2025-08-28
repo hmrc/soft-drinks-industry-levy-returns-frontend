@@ -2,13 +2,14 @@ package controllers
 
 import controllers.testSupport.helpers.ALFTestHelper
 import models.UserAnswers
-import models.alf.init._
+import models.alf.init.*
 import models.backend.{Site, UkAddress}
 import org.scalatest.TryValues
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.*
 
 import java.time.LocalDate
 
@@ -90,7 +91,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
         val alfOnRampURL: String = "http://onramp.com"
 
         setUpData(UserAnswers(sdilNumber, requestReturnPeriod, Json.obj("HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)), List.empty))
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
@@ -115,10 +116,12 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
       }
 
       "user selected remove on one of the addresses" in {
-        given
-        .commonPreconditionChangeSubscription(aSubscription)
+        build
+          .commonPreconditionChangeSubscription(aSubscription)
+
         val userAnswers = newPackerPartialAnswers
         setUpData(userAnswers)
+
         WsTestClient.withClient { client =>
           val result =
             client.url(s"$baseUrl/packaging-site-details")
@@ -127,10 +130,11 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
                 "Csrf-Token" -> "nocheck")
               .withFollowRedirects(false)
               .post(Json.obj("value" -> "false"))
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/check-your-answers")
-            }
+            
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/check-your-answers")
+          }
         }
       }
     }
@@ -142,7 +146,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
         val expectedResult: Some[Map[String,Site]] =  Some(Map("4564561" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
           Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
         val userAnswers = newPackerPartialAnswers.copy(packagingSiteList =
           Map("4564561" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
@@ -171,7 +175,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
         val expectedResult: Some[Map[String,Site]] =  Some(Map("6541651568" -> Site(UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"), Some("27"),
           Some("Super Lemonade Group"), Some(LocalDate.of(2017, 4, 23)))))
 
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
         val userAnswers = newPackerPartialNewImporterAnswers.copy(
           packagingSiteList =

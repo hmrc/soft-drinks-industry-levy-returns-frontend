@@ -16,17 +16,17 @@
 
 package controllers.actions
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import models.backend.{ Contact, UkAddress }
 import models.requests.DataRequest
 import models.retrieved.{ RetrievedActivity, RetrievedSubscription }
-import models.{ AddASmallProducer, LitresInBands, NormalMode }
-import pages._
+import models.{ AddASmallProducer, LitresInBands, NormalMode, UserAnswers }
+import pages.*
 import play.api.libs.json.{ Json, Reads }
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -43,7 +43,7 @@ class RequiredUserAnswersSpec extends SpecBase {
     emptyUserAnswers,
     defaultReturnsPeriod)
 
-  val basicJourney = List(
+  val basicJourney: List[RequiredPage[_, _, _]] = List(
     RequiredPage(PackagedContractPackerPage, None)(implicitly[Reads[Boolean]]),
     RequiredPage(
       HowManyAsAContractPackerPage,
@@ -70,7 +70,7 @@ class RequiredUserAnswersSpec extends SpecBase {
       Some(PreviousPage(ClaimCreditsForLostDamagedPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
   val importerFalseJourney = List(RequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
 
-  val smallProducerFalseJourney = List(
+  val smallProducerFalseJourney: List[RequiredPage[_, _, _]] = List(
     RequiredPage(OwnBrandsPage, None)(implicitly[Reads[Boolean]]),
     RequiredPage(
       BrandsPackagedAtOwnSitesPage,
@@ -164,7 +164,7 @@ class RequiredUserAnswersSpec extends SpecBase {
         RequiredPage(ClaimCreditsForLostDamagedPage, None)(implicitly[Reads[Boolean]]))
     }
     "should return SOME missing answers when SOME answers are populated" in {
-      val someAnswersCompleted = emptyUserAnswers.copy(data =
+      val someAnswersCompleted: UserAnswers = emptyUserAnswers.copy(data =
         Json.obj(
           "ownBrands" -> false,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),

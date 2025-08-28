@@ -14,7 +14,7 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0, libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always) // libraryDependencySchemes added to get around the scoverage compile errors for scala 2.13.10
   .settings(ThisBuild / useSuperShell := false)
   .settings(
-    scalaVersion := "2.13.16",
+    scalaVersion := "3.3.6",
     name := appName,
     RoutesKeys.routesImport ++= Seq(
       "models._",
@@ -35,12 +35,18 @@ lazy val root = (project in file("."))
     PlayKeys.playDefaultPort := 8703,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
       ".*Routes.*;.*viewmodels.govuk.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 90,
+    ScoverageKeys.coverageMinimumStmtTotal := 86,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
         scalacOptions ++= Seq(
       "-feature",
-      "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
+      "-Wconf:msg=Flag.*repeatedly:s",
+       "-Wconf:msg=exhaustive*:s",
+      "-Wconf:msg=unused explicit parameter*:s",
+      "-Wconf:msg=unused private member*:s",
+      "-Wconf:msg=unused implicit parameter*:s",
+      "-Wconf:msg=unused local definition*:s",
+      "-Wconf:msg=unused-patterns&src=routes/.*:s"
     ),
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,

@@ -5,6 +5,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends ControllerITTestHelper {
 
@@ -18,7 +19,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Contro
         None))
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSite)
       setUpData(updatedUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -51,7 +52,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Contro
 
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSites)
       setUpData(updatedUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result =
@@ -88,7 +89,7 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Contro
 
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSites)
       setUpData(updatedUserAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result =

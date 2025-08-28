@@ -24,6 +24,7 @@ import repositories._
 import services.AddressLookupService
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
+import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 import java.time.{Clock, ZoneOffset}
 import scala.concurrent.ExecutionContext
@@ -71,8 +72,8 @@ trait TestConfiguration
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
   lazy val sdilSessionCache: SDILSessionCache = app.injector.instanceOf[SDILSessionCache]
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  implicit lazy val messagesAPI = app.injector.instanceOf[MessagesApi]
-  implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
+  lazy val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
+  lazy val messagesProvider: MessagesImpl = MessagesImpl(Lang("en"), messagesAPI)
 
   def setUpData(userAnswers: UserAnswers): Unit  ={
     val res = mongo.set(userAnswers)

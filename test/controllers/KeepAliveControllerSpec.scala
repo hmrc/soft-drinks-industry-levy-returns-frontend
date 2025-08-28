@@ -20,7 +20,9 @@ import base.ReturnsTestData._
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import helpers.LoggerHelper
-import org.mockito.{ ArgumentMatchers, MockitoSugar }
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.*
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

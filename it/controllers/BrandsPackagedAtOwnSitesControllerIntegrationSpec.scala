@@ -5,6 +5,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
@@ -14,7 +15,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends ControllerITTest
     "Ask for many litres of liable drinks have user packaged at UK sites they operate" in {
       val userAnswers = ownBrandPageAnswers.success.value
       setUpData(userAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -34,7 +35,7 @@ class BrandsPackagedAtOwnSitesControllerIntegrationSpec extends ControllerITTest
 
        val expectedResult:Some[JsObject] = Some(Json.obj( "ownBrands" -> true,"brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000)))
 
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       val userAnswers = ownBrandPageAnswers.success.value

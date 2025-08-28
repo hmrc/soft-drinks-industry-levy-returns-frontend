@@ -5,6 +5,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
   def url(nilReturn: Boolean) = s"/submit-return/year/2018/quarter/1/nil-return/$nilReturn"
@@ -21,7 +22,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
       }
       s"setup default/override user answers with no for all pages and redirect to $expectedLocation" when {
         "there is no return period in the cache, the return period is pending and there are no user answers in the database" in {
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
@@ -46,7 +47,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
 
         "there is a return period in the cache that doesn't match the request return period which is pending and there are user answers in the database" in {
           setUpData(broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(returnPeriod = diffReturnPeriod))
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
@@ -73,7 +74,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
           val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(isNilReturn = !isNilReturn)
 
           setUpData(userAnswers.copy(returnPeriod = diffReturnPeriod))
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
@@ -102,7 +103,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
           val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(isNilReturn = isNilReturn, submitted = false)
 
           setUpData(userAnswers)
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
@@ -123,7 +124,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
 
       "should redirect to sdilHome" when {
         "there is no return period in cache and the return period is not pending" in {
-          given
+          build
             .authorisedWithNoPendingReturns(aSubscription)
 
           WsTestClient.withClient { client =>
@@ -144,7 +145,7 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
           val userAnswers = broughtIntoUkFromSmallProducersFullAnswers.success.value.copy(submitted = true)
 
           setUpData(userAnswers)
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>

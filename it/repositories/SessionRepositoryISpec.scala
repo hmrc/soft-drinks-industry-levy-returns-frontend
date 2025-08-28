@@ -4,6 +4,7 @@ import models.backend.{Site, UkAddress}
 import models.{ReturnPeriod, SmallProducer, UserAnswers}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
+import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

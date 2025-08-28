@@ -22,4 +22,6 @@ case class AddASmallProducer(producerName: Option[String], referenceNumber: Stri
 
 object AddASmallProducer {
   implicit val format: OFormat[AddASmallProducer] = Json.format[AddASmallProducer]
+  def unapply(producer: AddASmallProducer): Option[(Option[String], String, Long, Long)] =
+    Some((producer.producerName, producer.referenceNumber, producer.lowBand, producer.highBand))
 }

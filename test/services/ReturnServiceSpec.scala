@@ -21,11 +21,12 @@ import base.{ SpecBase, UserAnswersTestData }
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import models.{ ReturnPeriod, SdilReturn }
-import org.mockito.ArgumentMatchers.{ any, argThat }
-import org.mockito.MockitoSugar.{ mock, reset, when }
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.{ reset, when }
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.ArgumentMatchers.{ eq => eqTo }
 import org.scalatest.BeforeAndAfterEach
 
 import scala.concurrent.Future

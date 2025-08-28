@@ -8,13 +8,14 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "SmallProducerDetailsController" should {
     "Ask for if user wants to add more small producer" in {
       val userAnswers = smallProducerDetaisPartialAnswers.success.value
       setUpData(userAnswers)
-      given
+      build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
@@ -34,7 +35,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
         val userAnswers = smallProducerDetaisPartialAnswers.success.value
           .set(SmallProducerDetailsPage, true).success.value
         setUpData(userAnswers)
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
@@ -68,7 +69,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
               "smallProducerDetails" -> true
             ))
 
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
 
           val userAnswers = addASmallProducerFullAnswers.success.value
@@ -104,7 +105,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
               "smallProducerDetails" -> false
             ))
 
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
 
           val userAnswers = smallProducerDetaisNoProducerAnswers
@@ -143,7 +144,7 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
               "smallProducerDetails" -> false
             ))
 
-          given
+          build
             .commonPreconditionChangeSubscription(aSubscription)
 
           val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("", "", (1L, 1L))))

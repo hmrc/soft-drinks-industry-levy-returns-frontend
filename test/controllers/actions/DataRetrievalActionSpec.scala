@@ -19,7 +19,8 @@ package controllers.actions
 import base.ReturnsTestData._
 import base.SpecBase
 import models.requests.{ IdentifierRequest, OptionalDataRequest }
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import repositories.{ SDILSessionCache, SessionRepository }
 

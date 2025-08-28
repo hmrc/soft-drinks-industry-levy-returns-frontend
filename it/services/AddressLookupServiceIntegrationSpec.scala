@@ -8,18 +8,18 @@ import models.alf.{AlfAddress, AlfResponse}
 import models.core.ErrorModel
 import org.scalatest.TryValues
 import play.api.http.Status
-import play.api.i18n.{Lang, MessagesApi}
+import play.api.i18n.{Lang, MessagesApi, Messages}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class AddressLookupServiceIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues with FutureAwaits with DefaultAwaitTimeout {
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit lazy val messages = messagesApi.preferred(Seq(Lang("en")))
+  implicit lazy val messages: Messages = messagesApi.preferred(Seq(Lang("en")))
 
   "getAddress" should {
 
-    "find the address in alf from the id given from alf" in {
+    "find the address in alf from the id build from alf" in {
 
       val addressFromAlf = AlfResponse(AlfAddress(
         organisation = Some("soft drinks ltd"),
@@ -29,7 +29,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       ))
 
       val id = "001"
-      given.alf.getAddress(id)
+      build.alf.getAddress(id)
       val res = service.getAddress(id)
       whenReady(res) { result =>
         result mustBe addressFromAlf
@@ -40,7 +40,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     "return exception if json doesn't match AlfResponse" in {
 
       val id = "001"
-      given.alf.getBadAddress(id)
+      build.alf.getBadAddress(id)
       val res = service.getAddress(id)
       intercept[Exception](await(res))
     }
@@ -48,7 +48,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     "return exception if a response other than 200 is received" in {
 
       val id = "001"
-      given.alf.getBadResponse(id)
+      build.alf.getBadResponse(id)
       val res = service.getAddress(id)
       intercept[Exception](await(res))
     }
@@ -57,7 +57,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     val journeyConfig = JourneyConfig(1, JourneyOptions(""), None, None)
 
     "return successful response with successful response from ALF" in {
-      given.alf.getSuccessResponseFromALFInit(locationHeaderReturned ="foo")
+      build.alf.getSuccessResponseFromALFInit(locationHeaderReturned ="foo")
 
       whenReady(service.initJourney(journeyConfig)) { result =>
         result mustBe Right("foo")
@@ -66,7 +66,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
     }
 
     "return error when error response returned from ALF" in {
-      given.alf.getFailResponseFromALFInit( Status.INTERNAL_SERVER_ERROR)
+      build.alf.getFailResponseFromALFInit( Status.INTERNAL_SERVER_ERROR)
 
       whenReady(service.initJourney(journeyConfig)) { result =>
         result mustBe Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected error occurred when init journey from ALF"))
@@ -80,7 +80,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       val req = FakeRequest()
       val sdilId: String = "bar"
       val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId, NormalMode)(req, messages)
-      given.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
+      build.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
 
       whenReady(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)) { result =>
         result mustBe "foo"
@@ -91,7 +91,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       val req = FakeRequest()
       val sdilId: String = "bar"
       val journeyConfig = service.createJourneyConfig(WarehouseDetails, sdilId, NormalMode)(req, messages)
-      given.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
+      build.alf.getSuccessResponseFromALFInit(locationHeaderReturned = "foo")
 
       whenReady(service.initJourneyAndReturnOnRampUrl(WarehouseDetails)(implicitly,implicitly, messages, req)) { result =>
         result mustBe "foo"
@@ -102,7 +102,7 @@ class AddressLookupServiceIntegrationSpec extends Specifications with TestConfig
       val req = FakeRequest()
       val sdilId: String = "bar"
       val journeyConfig = service.createJourneyConfig(PackingDetails, sdilId, NormalMode)(req, messages)
-      given.alf.getFailResponseFromALFInit(Status.INTERNAL_SERVER_ERROR)
+      build.alf.getFailResponseFromALFInit(Status.INTERNAL_SERVER_ERROR)
 
       intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly,implicitly, messages, req)))
       ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfig) mustBe true

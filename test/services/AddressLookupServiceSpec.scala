@@ -26,7 +26,8 @@ import models.alf.init._
 import models.backend.{ Site, UkAddress }
 import models.core.ErrorModel
 import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar.{ mock, when }
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.test.{ DefaultAwaitTimeout, FakeRequest, FutureAwaits }
 
 import scala.concurrent.Future

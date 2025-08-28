@@ -27,7 +27,9 @@ import navigation.{ FakeNavigator, Navigator }
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{ ArgumentMatchers, MockitoSugar }
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.*
+import org.scalatestplus.mockito.MockitoSugar
 import pages.SecondaryWarehouseDetailsPage
 import play.api.data.Form
 import play.api.inject.bind

@@ -27,7 +27,7 @@ import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfter
 import pages.Page
 import play.api.i18n.Messages
