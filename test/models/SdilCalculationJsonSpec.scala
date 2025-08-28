@@ -26,8 +26,8 @@ class SdilCalculationJsonSpec extends AnyWordSpec with Matchers {
 
     "round-trip via format" in {
       val m = SdilCalculation(1.5, 3.25)
-      val json = Json.toJson(m)              // uses implicit Writes (from OFormat)
-      json.as[SdilCalculation] shouldBe m    // uses implicit Reads (from OFormat)
+      val json = Json.toJson(m)
+      json.as[SdilCalculation] shouldBe m
     }
 
     "write expected shape" in {
@@ -42,5 +42,13 @@ class SdilCalculationJsonSpec extends AnyWordSpec with Matchers {
     "fail to read when fields have wrong types" in {
       Json.obj("lowBandLevy" -> "x", "highBandLevy" -> true).validate[SdilCalculation].isError shouldBe true
     }
+
+    "cover format/reads/writes and round-trip" in {
+      val m = SdilCalculation(1.5, 3.25)
+      val js = SdilCalculation.writes.writes(m)
+      SdilCalculation.reads.reads(js).get shouldBe m
+      Json.toJson(m)(SdilCalculation.format).as[SdilCalculation](SdilCalculation.format) shouldBe m
+    }
+
   }
 }
