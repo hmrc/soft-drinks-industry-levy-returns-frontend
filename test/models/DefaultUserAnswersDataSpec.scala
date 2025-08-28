@@ -41,8 +41,7 @@ class DefaultUserAnswersDataSpec extends AnyWordSpec with Matchers {
         broughtIntoUK = true,
         broughtIntoUkFromSmallProducers = true,
         claimCreditsForExports = true,
-        claimCreditsForLostDamaged = true
-      )
+        claimCreditsForLostDamaged = true)
 
       val json = Json.toJson(data)
       val parsed = json.as[DefaultUserAnswersData]
@@ -56,8 +55,7 @@ class DefaultUserAnswersDataSpec extends AnyWordSpec with Matchers {
         largeProducer = false,
         contractPacker = false,
         importer = false,
-        voluntaryRegistration = false
-      )
+        voluntaryRegistration = false)
 
       val subscription = RetrievedSubscription(
         utr = "1234567890",
@@ -69,8 +67,7 @@ class DefaultUserAnswersDataSpec extends AnyWordSpec with Matchers {
         productionSites = List(dummySite),
         warehouseSites = List(dummySite),
         contact = dummyContact,
-        deregDate = None
-      )
+        deregDate = None)
 
       val result = new DefaultUserAnswersData(subscription)
 
@@ -81,8 +78,7 @@ class DefaultUserAnswersDataSpec extends AnyWordSpec with Matchers {
         broughtIntoUK = false,
         broughtIntoUkFromSmallProducers = false,
         claimCreditsForExports = false,
-        claimCreditsForLostDamaged = false
-      )
+        claimCreditsForLostDamaged = false)
     }
 
     "populate correctly from RetrievedSubscription with smallProducer = false" in {
@@ -91,8 +87,7 @@ class DefaultUserAnswersDataSpec extends AnyWordSpec with Matchers {
         largeProducer = true,
         contractPacker = true,
         importer = true,
-        voluntaryRegistration = false
-      )
+        voluntaryRegistration = false)
 
       val subscription = RetrievedSubscription(
         utr = "1234567890",
@@ -104,8 +99,7 @@ class DefaultUserAnswersDataSpec extends AnyWordSpec with Matchers {
         productionSites = List(dummySite),
         warehouseSites = List(dummySite),
         contact = dummyContact,
-        deregDate = None
-      )
+        deregDate = None)
 
       val result = new DefaultUserAnswersData(subscription)
 
@@ -116,8 +110,7 @@ class DefaultUserAnswersDataSpec extends AnyWordSpec with Matchers {
         broughtIntoUK = false,
         broughtIntoUkFromSmallProducers = false,
         claimCreditsForExports = false,
-        claimCreditsForLostDamaged = false
-      )
+        claimCreditsForLostDamaged = false)
     }
   }
 }

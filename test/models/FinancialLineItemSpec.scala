@@ -91,8 +91,7 @@ class FinancialLineItemSpec extends SpecBase {
         OfficerAssessment(LocalDate.of(2023, 9, 1), BigDecimal(300)),
         OfficerAsstInterest(LocalDate.of(2023, 10, 1), BigDecimal(35)),
         PaymentOnAccount(LocalDate.of(2023, 11, 1), "POA123", BigDecimal(400)),
-        Unknown(LocalDate.of(2023, 12, 1), "Some unknown title", BigDecimal(10))
-      )
+        Unknown(LocalDate.of(2023, 12, 1), "Some unknown title", BigDecimal(10)))
 
       items.foreach { item =>
         val json = Json.toJson(item)
