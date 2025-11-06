@@ -46,7 +46,8 @@ lazy val root = (project in file("."))
       "-Wconf:msg=unused private member*:s",
       "-Wconf:msg=unused implicit parameter*:s",
       "-Wconf:msg=unused local definition*:s",
-      "-Wconf:msg=unused-patterns&src=routes/.*:s"
+      "-Wconf:msg=unused-patterns&src=routes/.*:s",
+          "-Wconf:msg=unused import*:s"
     ),
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,
@@ -58,7 +59,6 @@ lazy val root = (project in file("."))
         ))
     ),
     scalacOptions += "-deprecation",
-    scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "off"),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(uglify),
