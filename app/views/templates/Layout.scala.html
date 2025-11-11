@@ -78,8 +78,8 @@
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = Some(appConfig.sdilHomeUrl),
-        signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut().url) else None,
-    )),
+        signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut().url) else None
+)),
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
     scriptsBlock       = Some(hmrcScripts(

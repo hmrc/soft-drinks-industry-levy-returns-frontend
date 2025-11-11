@@ -87,10 +87,7 @@ class PackagingSiteDetailsController @Inject() (
                     } else {
                       Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
                     }
-                  case (_, Some(subscription)) =>
-                    genericLogger.logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
-                    Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
-                  case _ =>
+                  case null =>
                     genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
                     Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
                 })
