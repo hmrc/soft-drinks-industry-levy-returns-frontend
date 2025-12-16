@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.addressLookupFrontend
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
@@ -15,11 +31,11 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
   val modes = List(NormalMode, CheckMode)
 
   val siteId: String = "foo"
-  val alfId: String = "bar"
+  val alfId:  String = "bar"
 
   modes.foreach { case mode =>
     s"ramp off $WarehouseDetails when in $mode" should {
-      val path = if(mode == NormalMode) {
+      val path = if mode == NormalMode then {
         s"$baseUrl/off-ramp/secondary-warehouses/$siteId?id=$alfId"
       } else {
         s"$baseUrl/off-ramp/change-secondary-warehouses/$siteId?id=$alfId"
@@ -29,10 +45,12 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           setUpData(emptyUserAnswers)
           build
             .commonPreconditionChangeSubscription(aSubscription)
-            .alf.getAddress(alfId)
+            .alf
+            .getAddress(alfId)
 
           WsTestClient.withClient { client =>
-            val result = client.url(path)
+            val result = client
+              .url(path)
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -44,7 +62,12 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
               updatedUserAnswers.packagingSiteList mustBe emptyUserAnswers.packagingSiteList
               updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
               updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
-              updatedUserAnswers.warehouseList mustBe Map(siteId -> Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), tradingName = Some("soft drinks ltd")))
+              updatedUserAnswers.warehouseList mustBe Map(
+                siteId -> Site(
+                  UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)),
+                  tradingName = Some("soft drinks ltd")
+                )
+              )
 
               res.status mustBe SEE_OTHER
               res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
@@ -53,14 +76,17 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           }
         }
         "an address already exists in DB currently for SDILID provided" in {
-          val userAnswersBefore = emptyUserAnswers.copy(warehouseList = Map(siteId -> Site(UkAddress(List.empty, "foo", Some("wizz")), tradingName = None)))
+          val userAnswersBefore =
+            emptyUserAnswers.copy(warehouseList = Map(siteId -> Site(UkAddress(List.empty, "foo", Some("wizz")), tradingName = None)))
           setUpData(userAnswersBefore)
           build
             .commonPreconditionChangeSubscription(aSubscription)
-            .alf.getAddress(alfId)
+            .alf
+            .getAddress(alfId)
 
           WsTestClient.withClient { client =>
-            val result = client.url(path)
+            val result = client
+              .url(path)
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -72,7 +98,12 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
               updatedUserAnswers.packagingSiteList mustBe emptyUserAnswers.packagingSiteList
               updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
               updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
-              updatedUserAnswers.warehouseList mustBe Map(siteId -> Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), tradingName = Some("soft drinks ltd")))
+              updatedUserAnswers.warehouseList mustBe Map(
+                siteId -> Site(
+                  UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)),
+                  tradingName = Some("soft drinks ltd")
+                )
+              )
 
               res.status mustBe SEE_OTHER
               res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
@@ -85,10 +116,12 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           setUpData(emptyUserAnswers)
           build
             .commonPreconditionChangeSubscription(aSubscription)
-            .alf.getBadAddress(alfId)
+            .alf
+            .getBadAddress(alfId)
 
           WsTestClient.withClient { client =>
-            val result = client.url(path)
+            val result = client
+              .url(path)
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -109,7 +142,7 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
       }
     }
     s"ramp off $PackingDetails when in $mode" should {
-      val path = if (mode == NormalMode) {
+      val path = if mode == NormalMode then {
         s"$baseUrl/off-ramp/packing-site-details/$siteId?id=$alfId"
       } else {
         s"$baseUrl/off-ramp/change-packing-site-details/$siteId?id=$alfId"
@@ -119,10 +152,12 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           setUpData(emptyUserAnswers)
           build
             .commonPreconditionChangeSubscription(aSubscription)
-            .alf.getAddress(alfId)
+            .alf
+            .getAddress(alfId)
 
           WsTestClient.withClient { client =>
-            val result = client.url(path)
+            val result = client
+              .url(path)
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -131,8 +166,10 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
               val updatedUserAnswers = getAnswers(emptyUserAnswers.id).get
               updatedUserAnswers.id mustBe emptyUserAnswers.id
               updatedUserAnswers.data mustBe emptyUserAnswers.data
-              updatedUserAnswers.packagingSiteList mustBe Map(siteId ->
-                Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None))
+              updatedUserAnswers.packagingSiteList mustBe Map(
+                siteId ->
+                  Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None)
+              )
               updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
               updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
               updatedUserAnswers.warehouseList mustBe emptyUserAnswers.warehouseList
@@ -144,14 +181,17 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           }
         }
         "an address already exists in DB currently for SDILID provided" in {
-          val userAnswersBefore = emptyUserAnswers.copy(packagingSiteList = Map(siteId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
+          val userAnswersBefore =
+            emptyUserAnswers.copy(packagingSiteList = Map(siteId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
           setUpData(userAnswersBefore)
           build
             .commonPreconditionChangeSubscription(aSubscription)
-            .alf.getAddress(alfId)
+            .alf
+            .getAddress(alfId)
 
           WsTestClient.withClient { client =>
-            val result = client.url(path)
+            val result = client
+              .url(path)
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -160,8 +200,10 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
               val updatedUserAnswers = getAnswers(emptyUserAnswers.id).get
               updatedUserAnswers.id mustBe emptyUserAnswers.id
               updatedUserAnswers.data mustBe emptyUserAnswers.data
-              updatedUserAnswers.packagingSiteList mustBe Map(siteId ->
-                Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None))
+              updatedUserAnswers.packagingSiteList mustBe Map(
+                siteId ->
+                  Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None)
+              )
               updatedUserAnswers.submitted mustBe emptyUserAnswers.submitted
               updatedUserAnswers.smallProducerList mustBe emptyUserAnswers.smallProducerList
               updatedUserAnswers.warehouseList mustBe emptyUserAnswers.warehouseList
@@ -177,10 +219,12 @@ class RampOffControllerIntegrationSpec extends Specifications with TestConfigura
           setUpData(emptyUserAnswers)
           build
             .commonPreconditionChangeSubscription(aSubscription)
-            .alf.getBadAddress(alfId)
+            .alf
+            .getBadAddress(alfId)
 
           WsTestClient.withClient { client =>
-            val result = client.url(path)
+            val result = client
+              .url(path)
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()

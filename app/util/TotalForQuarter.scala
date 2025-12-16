@@ -18,42 +18,42 @@ package util
 
 import config.FrontendAppConfig
 import models.LevyCalculator.getLevyCalculation
-import models.{ LevyCalculation, UserAnswers }
-import pages._
+import models.{LevyCalculation, UserAnswers}
+import pages.*
 
 object TotalForQuarter {
 
   def calculateTotal(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig) = {
-    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
+    val totalLowBandLitres  = getTotalLowBandLitres(userAnswers, smallProducer)
     val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
-    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(config)
+    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(using config)
     levyCalculation.totalRoundedDown
   }
 
   private[util] def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
-    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
+    val litresPackedAtOwnSite  = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand)
-    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.lowBand)
-    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.lowBand)
+    val litresExported         = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.lowBand)
+    val litresLostOrDamaged    = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.lowBand)
 
-    val total = litresBroughtIntoTheUk + litresAsContractPacker
+    val total        = litresBroughtIntoTheUk + litresAsContractPacker
     val totalCredits = litresExported + litresLostOrDamaged
 
-    total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
+    total - totalCredits + (if smallProducer then 0 else litresPackedAtOwnSite)
   }
 
   private[util] def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
-    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
+    val litresPackedAtOwnSite  = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
     val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
     val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.highBand)
-    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.highBand)
-    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.highBand)
+    val litresExported         = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.highBand)
+    val litresLostOrDamaged    = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.highBand)
 
-    val total = litresBroughtIntoTheUk + litresAsContractPacker
+    val total        = litresBroughtIntoTheUk + litresAsContractPacker
     val totalCredits = litresExported + litresLostOrDamaged
 
-    total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
+    total - totalCredits + (if smallProducer then 0 else litresPackedAtOwnSite)
   }
 
 }

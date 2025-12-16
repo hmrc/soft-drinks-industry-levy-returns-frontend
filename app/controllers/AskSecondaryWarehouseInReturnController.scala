@@ -16,69 +16,68 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.AskSecondaryWarehouseInReturnFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{ AddressLookupService, WarehouseDetails }
+import services.{AddressLookupService, WarehouseDetails}
 import util.GenericLogger
 import views.html.AskSecondaryWarehouseInReturnView
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class AskSecondaryWarehouseInReturnController @Inject() (
   override val messagesApi: MessagesApi,
-  val sessionRepository: SessionRepository,
-  val navigator: Navigator,
-  val errorHandler: ErrorHandler,
-  val genericLogger: GenericLogger,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  checkReturnSubmission: CheckingSubmissionAction,
-  formProvider: AskSecondaryWarehouseInReturnFormProvider,
-  addressLookupService: AddressLookupService,
+  val sessionRepository:    SessionRepository,
+  val navigator:            Navigator,
+  val errorHandler:         ErrorHandler,
+  val genericLogger:        GenericLogger,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  checkReturnSubmission:    CheckingSubmissionAction,
+  formProvider:             AskSecondaryWarehouseInReturnFormProvider,
+  addressLookupService:     AddressLookupService,
   val controllerComponents: MessagesControllerComponents,
-  view: AskSecondaryWarehouseInReturnView)(implicit ec: ExecutionContext) extends ControllerHelper {
+  view:                     AskSecondaryWarehouseInReturnView
+)(implicit ec: ExecutionContext)
+    extends ControllerHelper {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-    implicit request =>
-
-      val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+    val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
+    Ok(view(preparedForm, mode))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
 
     implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value))
-            onwardUrl <- if (value) {
-              updateDatabaseWithoutRedirect(updatedAnswers, AskSecondaryWarehouseInReturnPage).flatMap(_ =>
-                addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
-            } else {
-              updateDatabaseWithoutRedirect(updatedAnswers.copy(warehouseList = Map.empty), AskSecondaryWarehouseInReturnPage).flatMap(_ =>
-                Future.successful(routes.CheckYourAnswersController.onPageLoad.url))
-            }
-          } yield {
-            Redirect(onwardUrl)
-          })
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value))
+              onwardUrl      <- if value then {
+                             updateDatabaseWithoutRedirect(updatedAnswers, AskSecondaryWarehouseInReturnPage)
+                               .flatMap(_ => addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails))
+                           } else {
+                             updateDatabaseWithoutRedirect(updatedAnswers.copy(warehouseList = Map.empty), AskSecondaryWarehouseInReturnPage)
+                               .flatMap(_ => Future.successful(routes.CheckYourAnswersController.onPageLoad.url))
+                           }
+            } yield Redirect(onwardUrl)
+        )
   }
 }

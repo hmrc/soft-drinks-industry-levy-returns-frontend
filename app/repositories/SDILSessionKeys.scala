@@ -21,15 +21,15 @@ import models.ReturnPeriod
 object SDILSessionKeys {
 
   val SUBSCRIPTION = "SUBSCRIPTION"
-  val AMOUNTS = "AMOUNTS"
+  val AMOUNTS      = "AMOUNTS"
 
-  def balanceHistory(withAssessment: Boolean) = if (withAssessment) {
+  def balanceHistory(withAssessment: Boolean) = if withAssessment then {
     "BALANCE_HISTORY_WITH_ASSESSMENT"
   } else {
     "BALANCE_HISTORY_WITH_NO_ASSESSMENT"
   }
 
-  def balance(withAssessment: Boolean) = if (withAssessment) {
+  def balance(withAssessment: Boolean) = if withAssessment then {
     "BALANCE_WITH_ASSESSMENT"
   } else {
     "BALANCE_WITH_NO_ASSESSMENT"

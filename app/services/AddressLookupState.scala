@@ -21,4 +21,3 @@ sealed trait AddressLookupState
 case object PackingDetails extends AddressLookupState
 
 case object WarehouseDetails extends AddressLookupState
-

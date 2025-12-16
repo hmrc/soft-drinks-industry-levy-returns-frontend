@@ -28,9 +28,9 @@
     whatIsASmallProducer: whatIsASmallProducer
 )
 
-@(form: Form[_],
+@(form: Form[?],
   mode: Mode,
-  sdilReference: Option[String] = None)(implicit request: Request[_], messages: Messages)
+  sdilReference: Option[String] = None)(implicit request: Request[?], messages: Messages)
 
 @action = @{if(mode == EditMode || mode == CheckMode) routes.AddASmallProducerController.onEditPageSubmit(mode, sdilReference.getOrElse("")) else routes.AddASmallProducerController.onSubmit(mode)}
 
@@ -60,8 +60,8 @@
         .withHint(Hint(content = Text(messages("addASmallProducer.hint2"))))
         )
 
-        @lowAndHighBandInputs(form)(messages)
-        @saveAndContinueButton(messages)
+        @lowAndHighBandInputs(form)(using messages)
+        @saveAndContinueButton(using messages)
 
     }
 }

@@ -18,13 +18,13 @@ package views
 
 import config.FrontendAppConfig
 import forms.HowManyBroughtIntoTheUKFromSmallProducersFormProvider
-import models.{ CheckMode, LitresInBands, NormalMode }
+import models.{CheckMode, LitresInBands, NormalMode}
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.HowManyBroughtIntoTheUKFromSmallProducersView
 
 class HowManyBroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with LitresSpecHelper {
@@ -32,21 +32,21 @@ class HowManyBroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with
   val howManyBroughtIntoTheUKFromSmallProducersView: HowManyBroughtIntoTheUKFromSmallProducersView =
     application.injector.instanceOf[HowManyBroughtIntoTheUKFromSmallProducersView]
 
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   val formProvider = new HowManyBroughtIntoTheUKFromSmallProducersFormProvider()
-  val form: Form[LitresInBands] = formProvider.apply()
-  val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
-  val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
-  val formWithHighBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
-  val formEmpty: Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
-  val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
-  val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
-  val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
+  val form:                     Form[LitresInBands] = formProvider.apply()
+  val formWithHighAndLowBands:  Form[LitresInBands] = form.fill(litresInBands)
+  val formWithLowBandOnly:      Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
+  val formWithHighBandOnly:     Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
+  val formEmpty:                Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
+  val formWithNoNumeric:        Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
+  val formWithNegativeNumber:   Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
+  val formWithDecimalNumber:    Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
 
-  "How Many Packaged As Contract Packer View" - {
+  "How Many Packaged As Contract Packer View" -
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyBroughtIntoTheUKFromSmallProducersView(form, mode)
@@ -77,11 +77,14 @@ class HowManyBroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("Include your own brands of liable drinks produced outside of the UK.")
+          document.getElementsByClass(Selectors.body).first().text() mustBe Messages(
+            "Include your own brands of liable drinks produced outside of the UK."
+          )
         }
 
         val expectedDetails = Map(
-          "Liable drinks from small producers" -> "If you are a registered small producer and you bring your own brand of liable drinks into the UK, you still need to report them but you will not pay the levy on them. If you bring liable drinks into the UK from someone else who would be considered a small producer, you need to get evidence of the: contact details, EU VAT number (if they have one) and website of the business amount of litres of liable drinks packaged globally for brands the business owns in the past 12 months signature of someone from the business, their position and the date of the signature")
+          "Liable drinks from small producers" -> "If you are a registered small producer and you bring your own brand of liable drinks into the UK, you still need to report them but you will not pay the levy on them. If you bring liable drinks into the UK from someone else who would be considered a small producer, you need to get evidence of the: contact details, EU VAT number (if they have one) and website of the business amount of litres of liable drinks packaged globally for brands the business owns in the past 12 months signature of someone from the business, their position and the date of the signature"
+        )
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
@@ -104,5 +107,4 @@ class HowManyBroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with
         validateAccessibilityStatementLinkPresent(document)
       }
     }
-  }
 }

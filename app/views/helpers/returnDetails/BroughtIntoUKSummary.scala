@@ -17,16 +17,16 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{ CheckMode, LitresInBands }
-import pages.{ BroughtIntoUKPage, HowManyBroughtIntoUkPage, QuestionPage }
+import models.{CheckMode, LitresInBands}
+import pages.{BroughtIntoUKPage, HowManyBroughtIntoUkPage, QuestionPage}
 
 object BroughtIntoUKSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override val page: QuestionPage[Boolean] = BroughtIntoUKPage
+  override val page:          QuestionPage[Boolean]               = BroughtIntoUKPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoUkPage)
-  override val summaryLitres: SummaryListRowLitresHelper = HowManyBroughtIntoUkSummary
-  override val key: String = "reportingLiableDrinksBroughtIntoTheUK"
-  override val action: String = routes.BroughtIntoUKController.onPageLoad(CheckMode).url
-  override val actionId: String = "change-brought-into-uk"
-  override val hiddenText: String = "broughtIntoUK"
+  override val summaryLitres: SummaryListRowLitresHelper          = HowManyBroughtIntoUkSummary
+  override val key:           String                              = "reportingLiableDrinksBroughtIntoTheUK"
+  override val action:        String                              = routes.BroughtIntoUKController.onPageLoad(CheckMode).url
+  override val actionId:      String                              = "change-brought-into-uk"
+  override val hiddenText:    String                              = "broughtIntoUK"
 }

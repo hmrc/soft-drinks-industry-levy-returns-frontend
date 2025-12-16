@@ -16,28 +16,28 @@
 
 package orchestrators
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import errors.NoPendingReturnForGivenPeriod
-import models.requests.{ DataRequest, OptionalDataRequest }
-import models.{ Amounts, ReturnPeriod }
+import models.requests.{DataRequest, OptionalDataRequest}
+import models.{Amounts, ReturnPeriod}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
-import repositories.{ SDILSessionCache, SDILSessionKeys, SessionRepository }
+import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
 import services.ReturnService
 
 import scala.concurrent.Future
 
 class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
-  val mockReturnService = mock[ReturnService]
-  val mockSdilCache = mock[SDILSessionCache]
-  val mockSessionRepository = mock[SessionRepository]
-  val year = 2018
-  val quarter = 1
+  val mockReturnService:     ReturnService     = mock[ReturnService]
+  val mockSdilCache:         SDILSessionCache  = mock[SDILSessionCache]
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val year                = 2018
+  val quarter             = 1
   val requestReturnPeriod = ReturnPeriod(year, quarter)
   val optDataRequestNoData: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest(), sdilReference, aSubscription, None)
   val dataRequest: DataRequest[AnyContent] = DataRequest(FakeRequest(), sdilReference, aSubscription, emptyUserAnswers, requestReturnPeriod)
@@ -48,10 +48,10 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
     "when a return hasn't already been started" - {
       "and the return period is valid" - {
         "should save the return period to cache, setup user answers and return unit" in {
-          when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
+          when(mockReturnService.getPendingReturns(utr)(using hc)).thenReturn(Future.successful(returnPeriods))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = orchestrator.handleReturnRequest(year, quarter, false)(optDataRequestNoData, hc, ec)
+          val res = orchestrator.handleReturnRequest(year, quarter, false)(using optDataRequestNoData, hc, ec)
 
           whenReady(res.value) { result =>
             result mustBe Right((): Unit)
@@ -62,9 +62,9 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
       "when the year and quarter don't match any pending returns" - {
 
         "should return a NoPendingReturnForGivenPeriod" in {
-          when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
+          when(mockReturnService.getPendingReturns(utr)(using hc)).thenReturn(Future.successful(returnPeriods))
 
-          val res = orchestrator.handleReturnRequest(2022, quarter, false)(optDataRequestNoData, hc, ec)
+          val res = orchestrator.handleReturnRequest(2022, quarter, false)(using optDataRequestNoData, hc, ec)
 
           whenReady(res.value) { result =>
             result mustBe Left(NoPendingReturnForGivenPeriod)
@@ -75,9 +75,9 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
       "when there are no pending returns" - {
 
         "should return a NoPendingReturnForGivenPeriod" in {
-          when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(List.empty))
+          when(mockReturnService.getPendingReturns(utr)(using hc)).thenReturn(Future.successful(List.empty))
 
-          val res = orchestrator.handleReturnRequest(year, quarter, false)(optDataRequestNoData, hc, ec)
+          val res = orchestrator.handleReturnRequest(year, quarter, false)(using optDataRequestNoData, hc, ec)
 
           whenReady(res.value) { result =>
             result mustBe Left(NoPendingReturnForGivenPeriod)
@@ -91,10 +91,10 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
         val returnPeriod = ReturnPeriod(year, quarter)
         "and there are useranswers for a nil return that haven't been submitted" - {
           val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = false, isNilReturn = true)
-          val request = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
+          val request     = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
           "should not update anything and return unit when a nil return was requested" in {
 
-            val res = orchestrator.handleReturnRequest(year, quarter, true)(request, hc, ec)
+            val res = orchestrator.handleReturnRequest(year, quarter, true)(using request, hc, ec)
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -102,10 +102,10 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
           }
 
           "should check the return period and generate new useranswers when a non nil return selected" in {
-            when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
+            when(mockReturnService.getPendingReturns(utr)(using hc)).thenReturn(Future.successful(returnPeriods))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
-            val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
+            val res = orchestrator.handleReturnRequest(year, quarter, false)(using request, hc, ec)
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -115,10 +115,10 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
         "and there are useranswers for a non nil return that haven't been submitted" - {
           val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = false, isNilReturn = false)
-          val request = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
+          val request     = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
           "should not update anything and return unit when a non nil return was requested" in {
 
-            val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
+            val res = orchestrator.handleReturnRequest(year, quarter, false)(using request, hc, ec)
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -126,10 +126,10 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
           }
 
           "should check the return period and generate new useranswers when a nil return selected" in {
-            when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
+            when(mockReturnService.getPendingReturns(utr)(using hc)).thenReturn(Future.successful(returnPeriods))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
-            val res = orchestrator.handleReturnRequest(year, quarter, true)(request, hc, ec)
+            val res = orchestrator.handleReturnRequest(year, quarter, true)(using request, hc, ec)
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -139,9 +139,9 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
         "and there are useranswers for a return that has been submitted" - {
           val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = true)
-          val request = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
+          val request     = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
           "should return a NoPendingReturnForGivenPeriod" in {
-            val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
+            val res = orchestrator.handleReturnRequest(year, quarter, false)(using request, hc, ec)
 
             whenReady(res.value) { result =>
               result mustBe Left(NoPendingReturnForGivenPeriod)
@@ -152,13 +152,13 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
       "for the a different return period" - {
         val returnPeriod = ReturnPeriod(year, quarter).next
-        val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = true)
-        val request = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
+        val userAnswers  = emptyUserAnswers.copy(returnPeriod = returnPeriod, submitted = true)
+        val request      = optDataRequestNoData.copy(userAnswers = Some(userAnswers))
         "should check the return period and generate new useranswers" in {
-          when(mockReturnService.getPendingReturns(utr)(hc)).thenReturn(Future.successful(returnPeriods))
+          when(mockReturnService.getPendingReturns(utr)(using hc)).thenReturn(Future.successful(returnPeriods))
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = orchestrator.handleReturnRequest(year, quarter, false)(request, hc, ec)
+          val res = orchestrator.handleReturnRequest(year, quarter, false)(using request, hc, ec)
 
           whenReady(res.value) { result =>
             result mustBe Right((): Unit)
@@ -170,7 +170,8 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
   "calculateAmounts" - {
     "should call the returns service and return the amounts" in {
-      when(mockReturnService.calculateAmounts(sdilReference, emptyUserAnswers, requestReturnPeriod)(hc, ec)).thenReturn(Future.successful(amounts))
+      when(mockReturnService.calculateAmounts(sdilReference, emptyUserAnswers, requestReturnPeriod)(using hc, ec))
+        .thenReturn(Future.successful(amounts))
       val res = orchestrator.calculateAmounts(sdilReference, emptyUserAnswers, requestReturnPeriod)
 
       whenReady(res) { result =>
@@ -182,11 +183,12 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
   "completeReturnAndUpdateUserAnswers" - {
     "should calculate amounts, submit return and update user answers to submitted" - {
       "when successful" in {
-        when(mockReturnService.calculateAmounts(aSubscription.sdilRef, emptyUserAnswers, requestReturnPeriod)(hc, ec)).thenReturn(Future.successful(amounts))
+        when(mockReturnService.calculateAmounts(aSubscription.sdilRef, emptyUserAnswers, requestReturnPeriod)(using hc, ec))
+          .thenReturn(Future.successful(amounts))
         when(mockSdilCache.save[Amounts](aSubscription.sdilRef, SDILSessionKeys.AMOUNTS, amounts)).thenReturn(Future.successful(true))
-        when(mockReturnService.sendReturn(aSubscription, requestReturnPeriod, emptyUserAnswers)(hc, ec)).thenReturn(Future.successful((): Unit))
+        when(mockReturnService.sendReturn(aSubscription, requestReturnPeriod, emptyUserAnswers)(using hc, ec)).thenReturn(Future.successful((): Unit))
         when(mockSessionRepository.set(emptyUserAnswers.copy(submitted = true))).thenReturn(Future.successful(Right(true)))
-        val res = orchestrator.completeReturnAndUpdateUserAnswers()(dataRequest, hc, ec)
+        val res = orchestrator.completeReturnAndUpdateUserAnswers()(using dataRequest, hc, ec)
 
         whenReady(res) { result =>
           result mustBe (): Unit
@@ -211,7 +213,8 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
     "when the calculated amounts are not in the cache" - {
       "should call the returnsService to calculate amounts and return the amounts" in {
         when(mockSdilCache.fetchEntry[Amounts](sdilReference, SDILSessionKeys.AMOUNTS)).thenReturn(Future.successful(None))
-        when(mockReturnService.calculateAmounts(sdilReference, emptyUserAnswers, requestReturnPeriod)(hc, ec)).thenReturn(Future.successful(amounts))
+        when(mockReturnService.calculateAmounts(sdilReference, emptyUserAnswers, requestReturnPeriod)(using hc, ec))
+          .thenReturn(Future.successful(amounts))
         val res = orchestrator.getCalculatedAmountsForReturnSent(sdilReference, emptyUserAnswers, requestReturnPeriod)
 
         whenReady(res) { result =>

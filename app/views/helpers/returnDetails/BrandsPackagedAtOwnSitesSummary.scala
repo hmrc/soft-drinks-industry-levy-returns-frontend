@@ -21,8 +21,8 @@ import models.CheckMode
 
 object BrandsPackagedAtOwnSitesSummary extends SummaryListRowLitresHelper {
 
-  override val actionUrl: String = routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url
+  override val actionUrl:       String = routes.BrandsPackagedAtOwnSitesController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "own-site"
-  override val bandHiddenKey: String = "ownBrandsPackagedAtYourOwnSite"
+  override val bandHiddenKey:   String = "ownBrandsPackagedAtYourOwnSite"
 
 }

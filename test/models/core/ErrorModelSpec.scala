@@ -18,15 +18,15 @@ package models.core
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import play.api.libs.json._
+import play.api.libs.json.*
 
 class ErrorModelSpec extends AnyWordSpec with Matchers {
 
   "ErrorModel JSON format" should {
     "write and read correctly" in {
       val model = ErrorModel(400, "Bad request")
-      val json = Json.toJson(model)
-      json shouldBe Json.obj("status" -> 400, "message" -> "Bad request")
+      val json  = Json.toJson(model)
+      json                shouldBe Json.obj("status" -> 400, "message" -> "Bad request")
       json.as[ErrorModel] shouldBe model
     }
 
@@ -39,8 +39,8 @@ class ErrorModelSpec extends AnyWordSpec with Matchers {
   "Error ADT" should {
     "include AddressValidationError as distinct from ErrorModel" in {
       AddressValidationError.isInstanceOf[Error] shouldBe true
-      ErrorModel(1, "x").isInstanceOf[Error] shouldBe true
-      AddressValidationError should not be ErrorModel(1, "x")
+      ErrorModel(1, "x").isInstanceOf[Error]     shouldBe true
+      AddressValidationError                       should not be ErrorModel(1, "x")
     }
   }
 }

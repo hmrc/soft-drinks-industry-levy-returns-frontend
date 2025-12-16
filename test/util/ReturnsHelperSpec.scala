@@ -17,7 +17,7 @@
 package util
 
 import base.SpecBase
-import models.{ FinancialLineItem, PaymentOnAccount, ReturnCharge, ReturnPeriod }
+import models.{FinancialLineItem, PaymentOnAccount, ReturnCharge, ReturnPeriod}
 import util.ReturnsHelper.listItemsWithTotal
 
 import java.time.LocalDate
@@ -29,15 +29,15 @@ class ReturnsHelperSpec extends SpecBase {
   val date2: LocalDate = LocalDate.of(year, 6, 1)
 
   val fi1: PaymentOnAccount = PaymentOnAccount(date1, "test", BigDecimal(132.00))
-  val fi2: ReturnCharge = ReturnCharge(ReturnPeriod.apply(date2), BigDecimal(-120.00))
-  val fi3: ReturnCharge = ReturnCharge(ReturnPeriod.apply(date1), BigDecimal(-12.00))
+  val fi2: ReturnCharge     = ReturnCharge(ReturnPeriod.apply(date2), BigDecimal(-120.00))
+  val fi3: ReturnCharge     = ReturnCharge(ReturnPeriod.apply(date1), BigDecimal(-12.00))
 
   "Returns Helper " - {
-    val oneFinancialItem: List[FinancialLineItem] = List(fi1)
-    val twoFinancialItems: List[FinancialLineItem] = List(fi1, fi2)
+    val oneFinancialItem:    List[FinancialLineItem] = List(fi1)
+    val twoFinancialItems:   List[FinancialLineItem] = List(fi1, fi2)
     val threeFinancialItems: List[FinancialLineItem] = List(fi1, fi2, fi3)
-    val expectedResultsOneItem = List((fi1, 132.00))
-    val expectedResultsTwoItems = List((fi2, 12.00), (fi1, 132.00))
+    val expectedResultsOneItem    = List((fi1, 132.00))
+    val expectedResultsTwoItems   = List((fi2, 12.00), (fi1, 132.00))
     val expectedResultsThreeItems = List((fi3, 0.00), (fi2, 12.00), (fi1, 132.00))
 
     "List items with total " - {
@@ -61,10 +61,10 @@ class ReturnsHelperSpec extends SpecBase {
       "Extract total " - {
         "should return the amount at the front of the line items with total list " in {
           val expectedResult = 132.00
-          val result = ReturnsHelper.extractTotal(listItemsWithTotal(oneFinancialItem))
+          val result         = ReturnsHelper.extractTotal(listItemsWithTotal(oneFinancialItem))
 
           val expectedResult2 = 12.00
-          val result2 = ReturnsHelper.extractTotal(listItemsWithTotal(twoFinancialItems))
+          val result2         = ReturnsHelper.extractTotal(listItemsWithTotal(twoFinancialItems))
 
           result mustBe expectedResult
           result2 mustBe expectedResult2

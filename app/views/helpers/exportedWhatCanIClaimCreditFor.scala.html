@@ -16,7 +16,7 @@
 
 @this(govukDetails: GovukDetails)
 
-@(form: Form[_], includeDisposedOfWaste: Boolean)(implicit messages: Messages)
+@(form: Form[?], includeDisposedOfWaste: Boolean)(implicit messages: Messages)
 
 @htmlContent = {
  <p class ="govuk-body">@messages("whatCanIClaimCreditForDetailsContent1")</p>

@@ -16,15 +16,15 @@
 
 package views
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.UserAnswersTestData
 import base.UserAnswersTestData.userIsSmallProducer
 import config.FrontendAppConfig
 import controllers.routes
-import models.{ Amounts, ReturnPeriod }
+import models.{Amounts, ReturnPeriod}
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
-import play.api.mvc.{ Call, Request }
+import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import util.CurrencyFormatter
@@ -37,10 +37,10 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
   val checkYourAnswersView: CheckYourAnswersView =
     application.injector.instanceOf[CheckYourAnswersView]
 
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  val amounts: Amounts = Amounts(1000, 100, 1100)
+  val amounts:         Amounts = Amounts(1000, 100, 1100)
   val isSmallProducer: Boolean = false
 
   val call: Call = routes.CheckYourAnswersController.onSubmit
@@ -58,8 +58,8 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       document.getElementsByClass(Selectors.heading).text() mustEqual Messages("checkYourAnswers.title")
     }
 
-    "should have the expected caption" - {
-      List(0, 1, 2, 3).foreach(quarter => {
+    "should have the expected caption" -
+      List(0, 1, 2, 3).foreach { quarter =>
         val returnPeriodWithQuarter = ReturnPeriod(2022, quarter)
         val html1: HtmlFormat.Appendable =
           checkYourAnswersView(baseAlias, returnPeriodWithQuarter, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
@@ -69,8 +69,7 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
           val returnPeriodString = ReturnPeriodQuarter.formatted(returnPeriodWithQuarter)
           document1.getElementById("cya-returnPeriod").text() mustEqual s"This return is for $baseAlias for $returnPeriodString"
         }
-      })
-    }
+      }
 
     "should include the amount to pay sub header" - {
       "when the amount total is positive" in {
@@ -90,7 +89,10 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
           checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amountsWithNegativeTotal, call, isSmallProducer)
         val document1: Document = doc(html1)
         val expectedResult =
-          Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amountsWithNegativeTotal.total * -1))
+          Messages(
+            "yourSoftDrinksLevyAccountsWillBeCredited",
+            CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amountsWithNegativeTotal.total * -1)
+          )
 
         val element = document1.getElementById("cya-inset-sub-header")
         element.className() mustEqual Selectors.insetSubHeading
@@ -118,21 +120,18 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       }
     }
 
-    UserAnswersTestData.userAnswersModels.foreach {
-      case (key, userAnswers) =>
-        val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
-        val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
-        List(
-          ("pre April 2025 rates", preApril2025ReturnPeriod),
-          ("2025 tax year rates", taxYear2025ReturnPeriod)).foreach(returnPeriodWithKey => {
-            s"when the $key - ${returnPeriodWithKey._1}" - {
-              val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
-              val html1: HtmlFormat.Appendable =
-                checkYourAnswersView(baseAlias, returnPeriod, userAnswersWithReturnPeriod, amounts, call, isSmallProducer)
-              val document1: Document = doc(html1)
-              testSummaryLists(key, document1, userAnswersWithReturnPeriod, isCheckAnswers = true)
-            }
-          })
+    UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
+      val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+      val taxYear2025ReturnPeriod  = ReturnPeriod(2026, 0)
+      List(("pre April 2025 rates", preApril2025ReturnPeriod), ("2025 tax year rates", taxYear2025ReturnPeriod)).foreach(returnPeriodWithKey =>
+        s"when the $key - ${returnPeriodWithKey._1}" - {
+          val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
+          val html1: HtmlFormat.Appendable =
+            checkYourAnswersView(baseAlias, returnPeriod, userAnswersWithReturnPeriod, amounts, call, isSmallProducer)
+          val document1: Document = doc(html1)
+          testSummaryLists(key, document1, userAnswersWithReturnPeriod, isCheckAnswers = true)
+        }
+      )
     }
 
     "should include rounding help text sub header" - {

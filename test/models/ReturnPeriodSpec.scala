@@ -25,10 +25,10 @@ class ReturnPeriodSpec extends SpecBase {
   "ReturnPeriod" - {
     "start returns the start date of the quarter" in {
       val firstSdilReturnPeriod = ReturnPeriod(2018, 1)
-      val quarter1 = ReturnPeriod(year = 2023, quarter = 0)
-      val quarter2 = ReturnPeriod(year = 2023, quarter = 1)
-      val quarter3 = ReturnPeriod(year = 2023, quarter = 2)
-      val quarter4 = ReturnPeriod(year = 2023, quarter = 3)
+      val quarter1              = ReturnPeriod(year = 2023, quarter = 0)
+      val quarter2              = ReturnPeriod(year = 2023, quarter = 1)
+      val quarter3              = ReturnPeriod(year = 2023, quarter = 2)
+      val quarter4              = ReturnPeriod(year = 2023, quarter = 3)
 
       firstSdilReturnPeriod.start mustBe LocalDate.of(2018, 4, 5)
       quarter1.start mustBe LocalDate.of(2023, 1, 1)

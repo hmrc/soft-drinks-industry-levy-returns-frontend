@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import org.scalatest.TryValues
@@ -7,7 +23,7 @@ import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
-class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTestHelper with TryValues{
+class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
   "ClaimCreditsForLostDamagedController" should {
 
     "Ask for if user want to claim a credit for liable drinks which they been lost or destroyed" in {
@@ -17,7 +33,8 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTe
       setUpData(emptyUserAnswers)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/claim-credits-for-lost-damaged")
+        val result1 = client
+          .url(s"$baseUrl/claim-credits-for-lost-damaged")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -33,21 +50,19 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTe
 
       "user selected yes " in {
 
-        val expectedResult:Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged"-> true))
+        val expectedResult: Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged" -> true))
 
         build
           .commonPreconditionChangeSubscription(aSubscription)
-        setUpData(emptyUserAnswers
-        )
+        setUpData(emptyUserAnswers)
         WsTestClient.withClient { client =>
           val result =
-            client.url(s"$baseUrl/claim-credits-for-lost-damaged")
+            client
+              .url(s"$baseUrl/claim-credits-for-lost-damaged")
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                "Csrf-Token" -> "nocheck")
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
               .withFollowRedirects(false)
               .post(Json.obj("value" -> true))
-
 
           whenReady(result) { res =>
             res.status mustBe 303
@@ -60,30 +75,29 @@ class ClaimCreditsForLostDamagedControllerIntegrationSpec extends ControllerITTe
 
     }
 
-      "user selected no " in {
-        val expectedResult:Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged"-> false))
+    "user selected no " in {
+      val expectedResult: Some[JsObject] = Some(Json.obj("claimCreditsForLostDamaged" -> false))
 
-        build
-          .commonPreconditionChangeSubscription(aSubscription)
-        setUpData(emptyUserAnswers)
+      build
+        .commonPreconditionChangeSubscription(aSubscription)
+      setUpData(emptyUserAnswers)
 
-        WsTestClient.withClient { client =>
-          val result =
-            client.url(s"$baseUrl/claim-credits-for-lost-damaged")
-              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                "Csrf-Token" -> "nocheck")
-              .withFollowRedirects(false)
-              .post(Json.obj("value" -> false))
+      WsTestClient.withClient { client =>
+        val result =
+          client
+            .url(s"$baseUrl/claim-credits-for-lost-damaged")
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
+            .withFollowRedirects(false)
+            .post(Json.obj("value" -> false))
 
-
-          whenReady(result) { res =>
-            res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some("/soft-drinks-industry-levy-returns-frontend/check-your-answers")
-            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
-          }
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some("/soft-drinks-industry-levy-returns-frontend/check-your-answers")
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
         }
       }
-    testUnauthorisedUser(baseUrl + "/claim-credits-for-lost-damaged")
     }
+    testUnauthorisedUser(baseUrl + "/claim-credits-for-lost-damaged")
+  }
 }

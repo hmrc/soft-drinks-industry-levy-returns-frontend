@@ -17,17 +17,17 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{ CheckMode, LitresInBands }
-import pages.{ ClaimCreditsForExportsPage, HowManyCreditsForExportPage, QuestionPage }
+import models.{CheckMode, LitresInBands}
+import pages.{ClaimCreditsForExportsPage, HowManyCreditsForExportPage, QuestionPage}
 
 object ClaimCreditsForExportsSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override val page: QuestionPage[Boolean] = ClaimCreditsForExportsPage
+  override val page:          QuestionPage[Boolean]               = ClaimCreditsForExportsPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyCreditsForExportPage)
-  override val summaryLitres: SummaryListRowLitresHelper = HowManyCreditsForExportSummary
-  override val key: String = "claimingCreditForExportedLiableDrinks"
-  override val action: String = routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
-  override val actionId: String = "change-exports"
-  override val hiddenText: String = "claimCreditsForExports"
+  override val summaryLitres: SummaryListRowLitresHelper          = HowManyCreditsForExportSummary
+  override val key:           String                              = "claimingCreditForExportedLiableDrinks"
+  override val action:        String                              = routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+  override val actionId:      String                              = "change-exports"
+  override val hiddenText:    String                              = "claimCreditsForExports"
 
 }

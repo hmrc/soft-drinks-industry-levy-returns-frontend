@@ -18,33 +18,33 @@ package views
 
 import config.FrontendAppConfig
 import forms.HowManyCreditsForExportFormProvider
-import models.{ CheckMode, LitresInBands, NormalMode }
+import models.{CheckMode, LitresInBands, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.HowManyCreditsForExportView
 
 class HowManyCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
   val howManyCreditsForExportsView: HowManyCreditsForExportView = application.injector.instanceOf[HowManyCreditsForExportView]
 
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   val formProvider = new HowManyCreditsForExportFormProvider()
-  val form: Form[LitresInBands] = formProvider.apply()
-  val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
-  val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
-  val formWithHighBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
-  val formEmpty: Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
-  val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
-  val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
-  val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
+  val form:                     Form[LitresInBands] = formProvider.apply()
+  val formWithHighAndLowBands:  Form[LitresInBands] = form.fill(litresInBands)
+  val formWithLowBandOnly:      Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
+  val formWithHighBandOnly:     Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
+  val formEmpty:                Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
+  val formWithNoNumeric:        Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
+  val formWithNegativeNumber:   Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
+  val formWithDecimalNumber:    Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
 
-  "How Many Credits For Exports View" - {
+  "How Many Credits For Exports View" -
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyCreditsForExportsView(form, mode)
@@ -75,7 +75,8 @@ class HowManyCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHel
         }
 
         val expectedDetails = Map(
-          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner disposed of as waste customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
+          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner disposed of as waste customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return."
+        )
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
@@ -99,5 +100,4 @@ class HowManyCreditsForExportsViewSpec extends ViewSpecHelper with LitresSpecHel
         validateCreditClaim(document)
       }
     }
-  }
 }

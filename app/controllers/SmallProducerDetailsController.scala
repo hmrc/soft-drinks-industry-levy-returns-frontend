@@ -16,56 +16,57 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.SmallProducerDetailsFormProvider
 import handlers.ErrorHandler
-import models.{ Mode, SmallProducer }
+import models.{Mode, SmallProducer}
 import navigation.Navigator
 import pages.SmallProducerDetailsPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import util.GenericLogger
 import views.html.SmallProducerDetailsView
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class SmallProducerDetailsController @Inject() (
   override val messagesApi: MessagesApi,
-  val sessionRepository: SessionRepository,
-  val navigator: Navigator,
-  val errorHandler: ErrorHandler,
-  val genericLogger: GenericLogger,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  checkReturnSubmission: CheckingSubmissionAction,
-  formProvider: SmallProducerDetailsFormProvider,
+  val sessionRepository:    SessionRepository,
+  val navigator:            Navigator,
+  val errorHandler:         ErrorHandler,
+  val genericLogger:        GenericLogger,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  checkReturnSubmission:    CheckingSubmissionAction,
+  formProvider:             SmallProducerDetailsFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: SmallProducerDetailsView)(implicit ec: ExecutionContext) extends ControllerHelper {
+  view:                     SmallProducerDetailsView
+)(implicit ec: ExecutionContext)
+    extends ControllerHelper {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+    val smallProducerList: List[SmallProducer] = request.userAnswers.smallProducerList
+    val preparedForm = form
 
-      val smallProducerList: List[SmallProducer] = request.userAnswers.smallProducerList
-      val preparedForm = form
-
-      Ok(view(preparedForm, mode, smallProducerList))
+    Ok(view(preparedForm, mode, smallProducerList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
       val spList = request.userAnswers.smallProducerList
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, spList))),
-
-        value => {
-          val updatedUserAnswers = request.userAnswers.set(SmallProducerDetailsPage, value)
-          updateDatabaseAndRedirect(updatedUserAnswers, SmallProducerDetailsPage, mode, true, Some(request.subscription))
-        })
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, spList))),
+          value => {
+            val updatedUserAnswers = request.userAnswers.set(SmallProducerDetailsPage, value)
+            updateDatabaseAndRedirect(updatedUserAnswers, SmallProducerDetailsPage, mode, true, Some(request.subscription))
+          }
+        )
   }
 }

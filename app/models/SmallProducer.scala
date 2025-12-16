@@ -16,19 +16,17 @@
 
 package models
 
-import play.api.libs.json.{ Json, Reads, Writes }
+import play.api.libs.json.{Json, Reads, Writes}
 
 case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
 
   def getNameAndRef: String =
-    if (alias.nonEmpty)
-      alias ++ "</br>" ++ sdilRef
-    else
-      sdilRef
+    if alias.nonEmpty then alias ++ "</br>" ++ sdilRef
+    else sdilRef
 }
 
 object SmallProducer {
   implicit val writes: Writes[SmallProducer] = Json.writes
-  implicit val reads: Reads[SmallProducer] = Json.reads
+  implicit val reads:  Reads[SmallProducer]  = Json.reads
 
 }

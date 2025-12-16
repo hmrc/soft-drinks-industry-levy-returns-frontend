@@ -16,11 +16,11 @@
 
 package pages
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import forms.PackagingSiteDetailsFormProvider
-import models.backend.{ Site, UkAddress }
-import models.{ CheckMode, NormalMode }
+import models.backend.{Site, UkAddress}
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.*
@@ -37,26 +37,21 @@ import views.html.PackagingSiteDetailsView
 class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with SummaryListFluency with PageBehaviours {
 
   val form = new PackagingSiteDetailsFormProvider()
-  val view: PackagingSiteDetailsView = application.injector.instanceOf[PackagingSiteDetailsView]
-  val packagingSummaryList: List[SummaryListRow] =
-    PackagingSiteDetailsSummary.row2(Map.empty)(messages(application))
+  val view:                 PackagingSiteDetailsView = application.injector.instanceOf[PackagingSiteDetailsView]
+  val packagingSummaryList: List[SummaryListRow]     =
+    PackagingSiteDetailsSummary.row2(Map.empty)(using messages(application))
 
-  SummaryListViewModel(
-    rows = packagingSummaryList)
+  SummaryListViewModel(rows = packagingSummaryList)
 
-  val PackagingSite2 = Site(
-    UkAddress(List("29 Station Place", "Cambridge"), "CB1 2FP"),
-    Some("10"),
-    None,
-    None)
+  val PackagingSite2 = Site(UkAddress(List("29 Station Place", "Cambridge"), "CB1 2FP"), Some("10"), None, None)
 
-  val packagingSiteListWith2 = Map(("56454651", PackagingSite1), ("45541277", PackagingSite2))
-  def doc(result: Html): Document = Jsoup.parse(contentAsString(result))
+  val packagingSiteListWith2: Map[String, Site] = Map(("56454651", PackagingSite1), ("45541277", PackagingSite2))
+  def doc(result: Html):      Document          = Jsoup.parse(contentAsString(result))
 
   object Selectors {
-    val body = "govuk-body"
-    val button = "govuk-button"
-    val form = "form"
+    val body           = "govuk-body"
+    val button         = "govuk-button"
+    val form           = "form"
     val summaryListKey = "govuk-summary-list__key"
   }
 
@@ -70,7 +65,7 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
   }
   "have the expected title when there is only 1 packaging site" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith1)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith1)(using FakeRequest(), messages(application))
     val document = doc(html)
 
     document.title() shouldBe "You added 1 packaging site - Soft Drinks Industry Levy - GOV.UK"
@@ -78,7 +73,7 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
   "have the expected heading when there is only 1 packaging site" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith1)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith1)(using FakeRequest(), messages(application))
     val document = doc(html)
 
     document
@@ -88,7 +83,7 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
   "show the correct packaging site in the list when there is only 1 packaging site" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith1)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith1)(using FakeRequest(), messages(application))
     val document = doc(html)
 
     document
@@ -98,7 +93,7 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
   "not show the remove link when there is only 1 packaging site" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith1)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith1)(using FakeRequest(), messages(application))
     val document = doc(html)
 
     val summaryListContents = document.getElementsByClass("govuk-summary-list")
@@ -107,7 +102,7 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
   "have the option to add another UK packaging site" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith1)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith1)(using FakeRequest(), messages(application))
     val document = doc(html)
 
     document
@@ -117,7 +112,7 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
   "have the expected title when there are 2 packaging sites" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith2)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith2)(using FakeRequest(), messages(application))
     val document = doc(html)
 
     document.title() shouldBe "You added 2 packaging sites - Soft Drinks Industry Levy - GOV.UK"
@@ -125,7 +120,7 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
   "have the expected heading when there are 2 packaging sites" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith2)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith2)(using FakeRequest(), messages(application))
     val document = doc(html)
 
     document
@@ -135,31 +130,35 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
 
   "show the correct packaging site in the list when there are 2 packaging sites" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith2)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith2)(using FakeRequest(), messages(application))
     val summaryListContents = doc(html)
       .getElementsByClass("govuk-summary-list__key")
 
-    summaryListContents.size() shouldBe 2
+    summaryListContents.size()     shouldBe 2
     summaryListContents.first.text() should include("Wild Lemonade Group")
-    summaryListContents.last.text() should include("29 Station Place")
+    summaryListContents.last.text()  should include("29 Station Place")
   }
 
   "show the remove link when there are 2 packaging sites" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith2)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith2)(using FakeRequest(), messages(application))
 
     val summaryActions = doc(html).getElementsByClass("govuk-summary-list__actions")
-    summaryActions.size() shouldBe 2
+    summaryActions.size()     shouldBe 2
     summaryActions.first.text() should include("Remove")
-    summaryActions.last.text() should include("Remove")
+    summaryActions.last.text()  should include("Remove")
   }
 
   "remove link should go to proper url" in {
     val html =
-      view(form.apply(), NormalMode, packagingSiteListWith2)(FakeRequest(), messages(application))
+      view(form.apply(), NormalMode, packagingSiteListWith2)(using FakeRequest(), messages(application))
 
-    val removeLink = doc(html).getElementsByClass("govuk-summary-list__actions")
-      .tagName("ul").tagName("li").last().getElementsByClass("govuk-link")
+    val removeLink = doc(html)
+      .getElementsByClass("govuk-summary-list__actions")
+      .tagName("ul")
+      .tagName("li")
+      .last()
+      .getElementsByClass("govuk-link")
     removeLink.attr("href") shouldBe
       "/soft-drinks-industry-levy-returns-frontend/remove-packaging-site-details/45541277"
   }

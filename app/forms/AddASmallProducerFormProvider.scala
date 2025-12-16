@@ -19,17 +19,18 @@ package forms
 import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.Forms._
-import models.{ AddASmallProducer, UserAnswers }
+import play.api.data.Forms.*
+import models.{AddASmallProducer, UserAnswers}
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply(userAnswers: UserAnswers) = {
+  def apply(userAnswers: UserAnswers) =
     Form(
       mapping(
-        "producerName" -> optional(text().verifying(maxLength(160, "addASmallProducer.error.producerName.maxLength"))),
+        "producerName"    -> optional(text().verifying(maxLength(160, "addASmallProducer.error.producerName.maxLength"))),
         "referenceNumber" -> sdilReference("addASmallProducer.error.referenceNumber.required", userAnswers.id),
-        "lowBand" -> litres("lowBand"),
-        "highBand" -> litres("highBand"))(AddASmallProducer.apply)(AddASmallProducer.unapply))
-  }
+        "lowBand"         -> litres("lowBand"),
+        "highBand"        -> litres("highBand")
+      )(AddASmallProducer.apply)(AddASmallProducer.unapply)
+    )
 }

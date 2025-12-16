@@ -16,22 +16,22 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.SmallProducerDetailsFormProvider
 import helpers.LoggerHelper
 import models.NormalMode
-import navigation.{ FakeNavigator, Navigator }
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.mvc.{ AnyContentAsEmpty, Call }
+import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import util.GenericLogger
 import viewmodels.govuk.SummaryListFluency
@@ -55,7 +55,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request = FakeRequest(GET, smallProducerDetailsRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -89,7 +89,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, List())(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, List())(using request, messages(application)).toString
       }
     }
 
@@ -97,13 +97,11 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -123,12 +121,11 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         val mockSessionRepository = mock[SessionRepository]
 
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
         val application =
           applicationBuilder(userAnswers = Some(emptyUserAnswers))
-            .overrides(
-              bind[SessionRepository].toInstance(mockSessionRepository))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
             .build()
 
         running(application) {
@@ -156,11 +153,11 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
-        val result = route(application, request).value
+        val result                    = route(application, request).value
         val smallProducersSummaryList = List()
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, smallProducersSummaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, smallProducersSummaryList)(using request, messages(application)).toString
       }
     }
 
@@ -196,41 +193,41 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
     "must include added small producer SDIL reference on the row" in {
 
-      val userAnswers = emptyUserAnswers.copy(smallProducerList = List(superCola))
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers  = emptyUserAnswers.copy(smallProducerList = List(superCola))
+      val application  = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
       val producerList = List(superCola)
 
       running(application) {
         val request = FakeRequest(GET, smallProducerDetailsRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual expectedView(form, NormalMode, producerList)(request, messages(application)).toString
+        contentAsString(result) mustEqual expectedView(form, NormalMode, producerList)(using request, messages(application)).toString
       }
     }
 
     "must include all added small producer SDIL references on the page in rows" in {
 
       val actualUserAnswers = emptyUserAnswers.copy(smallProducerList = List(superCola, sparkyJuice))
-      val application = applicationBuilder(userAnswers = Some(actualUserAnswers)).build()
+      val application       = applicationBuilder(userAnswers = Some(actualUserAnswers)).build()
 
       val expectedView = application.injector.instanceOf[SmallProducerDetailsView]
       val producerList = List(superCola, sparkyJuice)
 
       running(application) {
         val request = FakeRequest(GET, smallProducerDetailsRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual expectedView(form, NormalMode, producerList)(request, messages(application)).toString
+        contentAsString(result) mustEqual expectedView(form, NormalMode, producerList)(using request, messages(application)).toString
       }
     }
 
     "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))).thenReturn(Future.successful(Right(true)))
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
@@ -248,7 +245,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
 
     "should log an error message when internal server error is returned when getting user answers is not resolved" in {
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))).thenReturn(Future.successful(Right(true)))
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
@@ -256,18 +253,19 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, smallProducerDetailsRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to resolve user answers while on smallProducerDetails"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val app =
         applicationBuilder(Some(completedUserAnswers))
@@ -278,11 +276,12 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar with
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, smallProducerDetailsRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(app, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on smallProducerDetails"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

@@ -16,56 +16,58 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.BrandsPackagedAtOwnSitesFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.BrandsPackagedAtOwnSitesPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import util.GenericLogger
 import views.html.BrandsPackagedAtOwnSitesView
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class BrandsPackagedAtOwnSitesController @Inject() (
   override val messagesApi: MessagesApi,
-  val sessionRepository: SessionRepository,
-  val navigator: Navigator,
-  val errorHandler: ErrorHandler,
-  val genericLogger: GenericLogger,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  checkReturnSubmission: CheckingSubmissionAction,
-  formProvider: BrandsPackagedAtOwnSitesFormProvider,
+  val sessionRepository:    SessionRepository,
+  val navigator:            Navigator,
+  val errorHandler:         ErrorHandler,
+  val genericLogger:        GenericLogger,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  checkReturnSubmission:    CheckingSubmissionAction,
+  formProvider:             BrandsPackagedAtOwnSitesFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: BrandsPackagedAtOwnSitesView)(implicit ec: ExecutionContext) extends ControllerHelper {
+  view:                     BrandsPackagedAtOwnSitesView
+)(implicit ec: ExecutionContext)
+    extends ControllerHelper {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(BrandsPackagedAtOwnSitesPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+    val preparedForm = request.userAnswers.get(BrandsPackagedAtOwnSitesPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedUserAnswers = request.userAnswers.set(BrandsPackagedAtOwnSitesPage, value)
-          updateDatabaseAndRedirect(updatedUserAnswers, BrandsPackagedAtOwnSitesPage, mode)
-        })
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedUserAnswers = request.userAnswers.set(BrandsPackagedAtOwnSitesPage, value)
+            updateDatabaseAndRedirect(updatedUserAnswers, BrandsPackagedAtOwnSitesPage, mode)
+          }
+        )
   }
 }

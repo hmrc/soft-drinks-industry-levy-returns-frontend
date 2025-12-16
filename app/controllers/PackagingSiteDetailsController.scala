@@ -16,51 +16,51 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.backend.Site
-import models.{ Mode, NormalMode, SdilReturn }
+import models.{Mode, NormalMode, SdilReturn}
 import navigation.Navigator
 import pages.PackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{ AddressLookupService, PackingDetails }
-import util.{ GenericLogger, UserTypeCheck }
+import services.{AddressLookupService, PackingDetails}
+import util.{GenericLogger, UserTypeCheck}
 import views.html.PackagingSiteDetailsView
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class PackagingSiteDetailsController @Inject() (
   override val messagesApi: MessagesApi,
-  val sessionRepository: SessionRepository,
-  val navigator: Navigator,
-  val errorHandler: ErrorHandler,
-  val genericLogger: GenericLogger,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  checkReturnSubmission: CheckingSubmissionAction,
-  formProvider: PackagingSiteDetailsFormProvider,
+  val sessionRepository:    SessionRepository,
+  val navigator:            Navigator,
+  val errorHandler:         ErrorHandler,
+  val genericLogger:        GenericLogger,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  checkReturnSubmission:    CheckingSubmissionAction,
+  formProvider:             PackagingSiteDetailsFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  addressLookupService: AddressLookupService,
-  view: PackagingSiteDetailsView)(implicit ec: ExecutionContext) extends ControllerHelper {
+  addressLookupService:     AddressLookupService,
+  view:                     PackagingSiteDetailsView
+)(implicit ec: ExecutionContext)
+    extends ControllerHelper {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+    val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
 
-      val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
-
-      Ok(view(preparedForm, mode, siteList))
+    Ok(view(preparedForm, mode, siteList))
 
   }
 
@@ -68,32 +68,32 @@ class PackagingSiteDetailsController @Inject() (
     implicit request =>
       val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
-            onwardUrl: String <- if (value) {
-              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
-                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
-            } else {
-              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
-                (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
-                  case (Some(sdilReturn), Some(subscription)) =>
-                    if (UserTypeCheck.isNewImporter(sdilReturn, subscription) && mode == NormalMode) {
-                      Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
-                    } else {
-                      Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
-                    }
-                  case null =>
-                    genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
-                    Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
-                })
-            }
-          } yield {
-            Redirect(onwardUrl)
-          })
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
+              onwardUrl: String <- if value then {
+                                     updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage)
+                                       .flatMap(_ => addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
+                                   } else {
+                                     updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
+                                       (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
+                                         case (Some(sdilReturn), Some(subscription)) =>
+                                           if UserTypeCheck.isNewImporter(sdilReturn, subscription) && mode == NormalMode then {
+                                             Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
+                                           } else {
+                                             Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
+                                           }
+                                         case null =>
+                                           genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
+                                           Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                                       }
+                                     )
+                                   }
+            } yield Redirect(onwardUrl)
+        )
   }
 }

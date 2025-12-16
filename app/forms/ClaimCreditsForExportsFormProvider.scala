@@ -24,6 +24,5 @@ import play.api.data.Form
 class ClaimCreditsForExportsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("claimCreditsForExports.error.required"))
+    Form("value" -> boolean("claimCreditsForExports.error.required"))
 }

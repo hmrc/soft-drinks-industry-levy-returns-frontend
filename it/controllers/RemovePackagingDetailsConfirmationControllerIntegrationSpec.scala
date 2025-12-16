@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import models.backend.{Site, UkAddress}
@@ -11,19 +27,16 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Contro
 
   "GET" should {
     "return view" in {
-      val ref: String = "foo"
-      val packagingSite: Map[String, Site] = Map(ref -> Site(
-        UkAddress(List("a", "b"), "c"),
-        None,
-        Some("trading"),
-        None))
+      val ref:           String            = "foo"
+      val packagingSite: Map[String, Site] = Map(ref -> Site(UkAddress(List("a", "b"), "c"), None, Some("trading"), None))
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSite)
       setUpData(updatedUserAnswers)
       build
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/remove-packaging-site-details/$ref")
+        val result1 = client
+          .url(s"$baseUrl/remove-packaging-site-details/$ref")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -36,19 +49,12 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Contro
   }
   "POST" should {
     "remove packaging site, but not update user answer for page when TRUE" in {
-      val ref: String = "foo"
-      val ref2: String = "foo2"
+      val ref:            String            = "foo"
+      val ref2:           String            = "foo2"
       val packagingSites: Map[String, Site] = Map(
-        ref -> Site(
-          UkAddress(List("a", "b"), "c"),
-          None,
-          Some("trading"),
-          None),
-        ref2 -> Site(
-          UkAddress(List("d", "e"), "f"),
-          None,
-          Some("foobar"),
-          None))
+        ref  -> Site(UkAddress(List("a", "b"), "c"), None, Some("trading"), None),
+        ref2 -> Site(UkAddress(List("d", "e"), "f"), None, Some("foobar"), None)
+      )
 
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSites)
       setUpData(updatedUserAnswers)
@@ -56,10 +62,10 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Contro
         .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result =
-          client.url(s"$baseUrl/remove-packaging-site-details/$ref")
+          client
+            .url(s"$baseUrl/remove-packaging-site-details/$ref")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> updatedUserAnswers.id,
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> updatedUserAnswers.id, "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj("value" -> "true"))
 
@@ -73,19 +79,12 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Contro
       }
     }
     "NOT remove packaging site, and not update user answer for page when FALSE" in {
-      val ref: String = "foo"
-      val ref2: String = "foo2"
+      val ref:            String            = "foo"
+      val ref2:           String            = "foo2"
       val packagingSites: Map[String, Site] = Map(
-        ref -> Site(
-          UkAddress(List("a", "b"), "c"),
-          None,
-          Some("trading"),
-          None),
-        ref2 -> Site(
-          UkAddress(List("d", "e"), "f"),
-          None,
-          Some("foobar"),
-          None))
+        ref  -> Site(UkAddress(List("a", "b"), "c"), None, Some("trading"), None),
+        ref2 -> Site(UkAddress(List("d", "e"), "f"), None, Some("foobar"), None)
+      )
 
       val updatedUserAnswers = emptyUserAnswers.copy(packagingSiteList = packagingSites)
       setUpData(updatedUserAnswers)
@@ -93,10 +92,10 @@ class RemovePackagingDetailsConfirmationControllerIntegrationSpec extends Contro
         .commonPreconditionChangeSubscription(aSubscription)
       WsTestClient.withClient { client =>
         val result =
-          client.url(s"$baseUrl/remove-packaging-site-details/$ref")
+          client
+            .url(s"$baseUrl/remove-packaging-site-details/$ref")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> updatedUserAnswers.id,
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> updatedUserAnswers.id, "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj("value" -> "false"))
 

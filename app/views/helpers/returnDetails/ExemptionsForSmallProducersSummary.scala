@@ -17,18 +17,18 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{ CheckMode, LitresInBands }
-import pages.{ ExemptionsForSmallProducersPage, QuestionPage }
+import models.{CheckMode, LitresInBands}
+import pages.{ExemptionsForSmallProducersPage, QuestionPage}
 
 object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override val page: QuestionPage[Boolean] = ExemptionsForSmallProducersPage
-  override val key: String = "exemptionForRegisteredSmallProducers"
-  override val action: String = routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
-  override val actionId: String = "change-exemption-small-producers"
-  override val hiddenText: String = "exemptionsForSmallProducers"
-  override val optLitresPage: Option[QuestionPage[LitresInBands]] = None
-  override val summaryLitres: SummaryListRowLitresHelper = SmallProducerDetailsSummary
-  override val isSmallProducerLitres: Boolean = true
+  override val page:                  QuestionPage[Boolean]               = ExemptionsForSmallProducersPage
+  override val key:                   String                              = "exemptionForRegisteredSmallProducers"
+  override val action:                String                              = routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+  override val actionId:              String                              = "change-exemption-small-producers"
+  override val hiddenText:            String                              = "exemptionsForSmallProducers"
+  override val optLitresPage:         Option[QuestionPage[LitresInBands]] = None
+  override val summaryLitres:         SummaryListRowLitresHelper          = SmallProducerDetailsSummary
+  override val isSmallProducerLitres: Boolean                             = true
 
 }

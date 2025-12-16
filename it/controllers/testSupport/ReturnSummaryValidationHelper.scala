@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.testSupport
 
 import models.Amounts
@@ -8,14 +24,10 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import util.CurrencyFormatter
 
-trait ReturnSummaryValidationHelper extends Specifications
-  with TestConfiguration
-  with ITCoreTestData
-  with TryValues {
+trait ReturnSummaryValidationHelper extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
 
   given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  given messages: Messages = messagesApi.preferred(FakeRequest())
-
+  given messages:    Messages    = messagesApi.preferred(FakeRequest())
 
   val headingIds = Array(
     "ownBrandsPackagedAtYourOwnSite",
@@ -44,7 +56,7 @@ trait ReturnSummaryValidationHelper extends Specifications
     summaryLists.size() mustBe summaryKeys.size
     summaryKeys.zipWithIndex.foreach { case (summaryKey, index) =>
       val summaryRows = summaryLists.get(index).getElementsByClass("govuk-summary-list__row")
-      if (headingIds(index) == "amount-to-pay-title") {
+      if headingIds(index) == "amount-to-pay-title" then {
         val heading = details.getElementById("amount-to-pay-title").text()
         testAmountToPaySummary(summaryRows, heading, amounts)
       } else {
@@ -52,7 +64,7 @@ trait ReturnSummaryValidationHelper extends Specifications
         summaryRows.size() mustBe 1
         summaryRows.get(0).text() must include(Messages(summaryKey))
         summaryRows.get(0).text() must include("No")
-        summaryRows.get(0).getElementsByClass("govuk-link").size > 0  mustBe isCheckAnswers
+        summaryRows.get(0).getElementsByClass("govuk-link").size > 0 mustBe isCheckAnswers
       }
     }
   }
@@ -62,28 +74,29 @@ trait ReturnSummaryValidationHelper extends Specifications
     summaryLists.size() mustBe summaryKeys.size + 2
     summaryKeys.zipWithIndex.foreach { case (summaryKey, index) =>
       val summaryRows = summaryLists.get(index).getElementsByClass("govuk-summary-list__row")
-      if (headingIds(index) == "amount-to-pay-title") {
+      if headingIds(index) == "amount-to-pay-title" then {
         val heading = details.getElementById("amount-to-pay-title").text()
         testAmountToPaySummary(summaryRows, heading, amounts)
       } else {
         details.getElementById(headingIds(index)).text() mustBe Messages(headingIds(index))
         summaryRows.size() mustBe 5
-        val (expectedLowlevy, expectedHighLevy) = if(List("exemptionForRegisteredSmallProducers", "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers").contains(summaryKey)) {
-          ("£0.00", "£0.00")
-        } else {
-          if(List("claimingCreditForExportedLiableDrinks", "claimingCreditForLostOrDestroyedLiableDrinks").contains(summaryKey)) {
-            ("−£180.00", "−£240.00")
+        val (expectedLowlevy, expectedHighLevy) =
+          if List("exemptionForRegisteredSmallProducers", "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers").contains(summaryKey) then {
+            ("£0.00", "£0.00")
           } else {
-            ("£180.00", "£240.00")
+            if List("claimingCreditForExportedLiableDrinks", "claimingCreditForLostOrDestroyedLiableDrinks").contains(summaryKey) then {
+              ("−£180.00", "−£240.00")
+            } else {
+              ("£180.00", "£240.00")
+            }
           }
-        }
         summaryRows.get(0).text() must include(Messages(summaryKey))
         summaryRows.get(0).text() must include("Yes")
         summaryRows.get(1).text() must include("1000")
         summaryRows.get(2).text() must include(expectedLowlevy)
         summaryRows.get(3).text() must include("1000")
         summaryRows.get(4).text() must include(expectedHighLevy)
-        summaryRows.get(0).getElementsByClass("govuk-link").size > 0  mustBe isCheckAnswers
+        summaryRows.get(0).getElementsByClass("govuk-link").size > 0 mustBe isCheckAnswers
       }
     }
   }

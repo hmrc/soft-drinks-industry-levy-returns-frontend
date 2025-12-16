@@ -16,13 +16,13 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.BrandsPackagedAtOwnSitesFormProvider
 import helpers.LoggerHelper
-import models.{ LitresInBands, NormalMode }
-import navigation.{ FakeNavigator, Navigator }
+import models.{LitresInBands, NormalMode}
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
@@ -32,7 +32,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import util.GenericLogger
 import views.html.BrandsPackagedAtOwnSitesView
@@ -44,7 +44,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new BrandsPackagedAtOwnSitesFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   val value1max: Long = 100000000000000L
   val value1 = value1max - 1
@@ -54,11 +54,8 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
 
   lazy val brandsPackagedAtOwnSitesRoute = routes.BrandsPackagedAtOwnSitesController.onPageLoad(NormalMode).url
 
-  val userAnswers = emptyUserAnswers.copy(data =
-    Json.obj(
-      BrandsPackagedAtOwnSitesPage.toString -> Json.obj(
-        "lowBand" -> value1,
-        "highBand" -> value2)))
+  val userAnswers =
+    emptyUserAnswers.copy(data = Json.obj(BrandsPackagedAtOwnSitesPage.toString -> Json.obj("lowBand" -> value1, "highBand" -> value2)))
 
   "BrandsPackagedAtOwnSites Controller" - {
 
@@ -67,7 +64,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
 
       running(application) {
         val request = FakeRequest(GET, brandsPackagedAtOwnSitesRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -101,7 +98,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -117,7 +114,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LitresInBands(value1, value2)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(value1, value2)), NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -125,13 +122,11 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -163,7 +158,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
 
         status(result) mustEqual BAD_REQUEST
 
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -200,7 +195,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
     "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))).thenReturn(Future.successful(Right(true)))
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
@@ -218,7 +213,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
 
     "should log an error message when internal server error is returned when getting user answers is not resolved" in {
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))).thenReturn(Future.successful(Right(true)))
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
@@ -227,11 +222,12 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
           val request = FakeRequest(POST, brandsPackagedAtOwnSitesRoute)
             .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustEqual ("ERROR")
-              event.getMessage mustEqual ("Failed to resolve user answers while on brandsPackagedAtOwnSites")
-          }.getOrElse(fail("No logging captured"))
+          events
+            .collectFirst { case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to resolve user answers while on brandsPackagedAtOwnSites"
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }
@@ -239,7 +235,7 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(Some(completedUserAnswers))
@@ -251,11 +247,12 @@ class BrandsPackagedAtOwnSitesControllerSpec extends SpecBase with MockitoSugar 
           val request = FakeRequest(POST, brandsPackagedAtOwnSitesRoute)
             .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustEqual ("ERROR")
-              event.getMessage mustEqual ("Failed to set value in session repository while attempting set on brandsPackagedAtOwnSites")
-          }.getOrElse(fail("No logging captured"))
+          events
+            .collectFirst { case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on brandsPackagedAtOwnSites"
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

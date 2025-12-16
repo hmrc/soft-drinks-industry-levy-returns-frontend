@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.test
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
@@ -8,16 +24,16 @@ import play.api.test.Helpers.{CONTENT_TYPE, JSON, LOCATION}
 import play.api.test.WsTestClient
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
-class AddressFrontendStubControllerIntegrationSpec extends Specifications
-  with TestConfiguration with ITCoreTestData with TryValues {
+class AddressFrontendStubControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData with TryValues {
 
   val initialisePath = "/test-only/api/init"
-  val addressesPath = "/test-only/api/confirmed?id=1234567890"
+  val addressesPath  = "/test-only/api/confirmed?id=1234567890"
 
   s"POST $initialisePath" should {
-    "return Accepted with a rampOn url in the header" in {
+    "return Accepted with a rampOn url in the header" in
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl$initialisePath")
+        val result1 = client
+          .url(s"$baseUrl$initialisePath")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .addHttpHeaders((CONTENT_TYPE, JSON))
@@ -28,14 +44,13 @@ class AddressFrontendStubControllerIntegrationSpec extends Specifications
           res.header(LOCATION) mustBe Some("foo?id=foobarwizzbang")
         }
       }
-    }
   }
 
-
   s"GET $addressesPath" should {
-    "return Ok with the confirmed address" in {
+    "return Ok with the confirmed address" in
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl$addressesPath")
+        val result1 = client
+          .url(s"$baseUrl$addressesPath")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -50,7 +65,6 @@ class AddressFrontendStubControllerIntegrationSpec extends Specifications
           Json.parse(res.body) mustEqual Json.parse(addressConfirmed)
         }
       }
-    }
   }
 
 }

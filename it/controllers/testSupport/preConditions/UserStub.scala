@@ -1,13 +1,27 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.testSupport.preConditions
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 
-case class UserStub
-()
-(implicit builder: PreconditionBuilder) {
+case class UserStub()(implicit builder: PreconditionBuilder) {
 
   val identifier = "some-id"
-  val UTR = "0000001611"
+  val UTR        = "0000001611"
   val sdilNumber = "XKSDIL000000022"
 
   def isAuthorised: PreconditionBuilder = {
@@ -68,7 +82,8 @@ case class UserStub
   def isNotAuthorised(reason: String = "MissingBearerToken"): PreconditionBuilder = {
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))
-        .willReturn(unauthorized().withHeader("WWW-Authenticate", s"""MDTP detail="$reason"""")))
+        .willReturn(unauthorized().withHeader("WWW-Authenticate", s"""MDTP detail="$reason""""))
+    )
 
     builder
   }
@@ -212,7 +227,6 @@ case class UserStub
     builder
 
   }
-
 
   def isAuthorisedButInvalidAffinity: PreconditionBuilder = {
     stubFor(

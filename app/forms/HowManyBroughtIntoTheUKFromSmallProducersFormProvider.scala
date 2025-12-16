@@ -19,15 +19,12 @@ package forms
 import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.*
 import models.LitresInBands
 
 class HowManyBroughtIntoTheUKFromSmallProducersFormProvider @Inject() extends Mappings {
 
   def apply(): Form[LitresInBands] = Form(
-    mapping(
-      "lowBand" -> litres(
-        "lowBand"),
-      "highBand" -> litres(
-        "highBand"))(LitresInBands.apply)(LitresInBands.unapply))
+    mapping("lowBand" -> litres("lowBand"), "highBand" -> litres("highBand"))(LitresInBands.apply)(LitresInBands.unapply)
+  )
 }

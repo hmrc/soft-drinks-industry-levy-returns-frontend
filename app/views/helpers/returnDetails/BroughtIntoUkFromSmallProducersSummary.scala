@@ -17,16 +17,16 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{ CheckMode, LitresInBands }
-import pages.{ BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoTheUKFromSmallProducersPage, QuestionPage }
+import models.{CheckMode, LitresInBands}
+import pages.{BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoTheUKFromSmallProducersPage, QuestionPage}
 
 object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override val page: QuestionPage[Boolean] = BroughtIntoUkFromSmallProducersPage
+  override val page:          QuestionPage[Boolean]               = BroughtIntoUkFromSmallProducersPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoTheUKFromSmallProducersPage)
-  override val summaryLitres: SummaryListRowLitresHelper = HowManyBroughtIntoTheUKFromSmallProducersSummary
-  override val key: String = "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers"
-  override val action: String = routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
-  override val actionId: String = "change-brought-into-uk-small-producers"
-  override val hiddenText: String = "broughtIntoUkFromSmallProducers"
+  override val summaryLitres: SummaryListRowLitresHelper          = HowManyBroughtIntoTheUKFromSmallProducersSummary
+  override val key:           String                              = "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers"
+  override val action:        String                              = routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+  override val actionId:      String                              = "change-brought-into-uk-small-producers"
+  override val hiddenText:    String                              = "broughtIntoUkFromSmallProducers"
 }

@@ -22,7 +22,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, addressRef: String, packagingSite: Html)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, addressRef: String, packagingSite: Html)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = title(form, messages("removePackagingDetailsConfirmation.title"))) {
 

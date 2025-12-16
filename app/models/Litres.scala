@@ -16,14 +16,10 @@
 
 package models
 
-import play.api.libs.json.{ Format, Json }
+import play.api.libs.json.{Format, Json}
 
-case class Litres(
-  lower: Long,
-  higher: Long) {
-  def this(litresInBands: LitresInBands) = this(
-    lower = litresInBands.lowBand,
-    higher = litresInBands.highBand)
+case class Litres(lower: Long, higher: Long) {
+  def this(litresInBands: LitresInBands) = this(lower = litresInBands.lowBand, higher = litresInBands.highBand)
 }
 
 object Litres {

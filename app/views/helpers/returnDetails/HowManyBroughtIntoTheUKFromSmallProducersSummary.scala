@@ -22,8 +22,8 @@ import models.CheckMode
 object HowManyBroughtIntoTheUKFromSmallProducersSummary extends SummaryListRowLitresHelper {
 
   override val actionUrl = routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(CheckMode).url
-  override val bandActionIdKey: String = "brought-into-uk-small-producers"
-  override val bandHiddenKey: String = "broughtIntoTheUKFromSmallProducers"
-  override val hasZeroLevy: Boolean = true
+  override val bandActionIdKey: String  = "brought-into-uk-small-producers"
+  override val bandHiddenKey:   String  = "broughtIntoTheUKFromSmallProducers"
+  override val hasZeroLevy:     Boolean = true
 
 }

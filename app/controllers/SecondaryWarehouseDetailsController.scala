@@ -16,74 +16,73 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
 import pages.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{ AddressLookupService, WarehouseDetails }
+import services.{AddressLookupService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import util.GenericLogger
-import viewmodels.govuk.summarylist._
+import viewmodels.govuk.summarylist.*
 import views.helpers.returnDetails.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryWarehouseDetailsController @Inject() (
   override val messagesApi: MessagesApi,
-  val sessionRepository: SessionRepository,
-  val navigator: Navigator,
-  val errorHandler: ErrorHandler,
-  val genericLogger: GenericLogger,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  formProvider: SecondaryWarehouseDetailsFormProvider,
-  checkReturnSubmission: CheckingSubmissionAction,
-  addressLookupService: AddressLookupService,
+  val sessionRepository:    SessionRepository,
+  val navigator:            Navigator,
+  val errorHandler:         ErrorHandler,
+  val genericLogger:        GenericLogger,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  formProvider:             SecondaryWarehouseDetailsFormProvider,
+  checkReturnSubmission:    CheckingSubmissionAction,
+  addressLookupService:     AddressLookupService,
   val controllerComponents: MessagesControllerComponents,
-  view: SecondaryWarehouseDetailsView)(implicit ec: ExecutionContext) extends ControllerHelper {
+  view:                     SecondaryWarehouseDetailsView
+)(implicit ec: ExecutionContext)
+    extends ControllerHelper {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+    val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val siteList: SummaryList = SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList))
 
-      val siteList: SummaryList = SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList))
-
-      Ok(view(preparedForm, mode, siteList))
+    Ok(view(preparedForm, mode, siteList))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      val siteList: SummaryList = SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList))
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))
-            _ <- updateDatabaseWithoutRedirect(updatedAnswers, SecondaryWarehouseDetailsPage)
-            onwardUrl <- if (value) {
-              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)
-            } else {
-              Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
-            }
-          } yield Redirect(onwardUrl))
+      val siteList: SummaryList = SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList))
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))
+              _              <- updateDatabaseWithoutRedirect(updatedAnswers, SecondaryWarehouseDetailsPage)
+              onwardUrl      <- if value then {
+                             addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)
+                           } else {
+                             Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
+                           }
+            } yield Redirect(onwardUrl)
+        )
   }
 }

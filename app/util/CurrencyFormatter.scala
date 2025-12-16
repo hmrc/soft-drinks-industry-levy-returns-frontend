@@ -22,7 +22,6 @@ object CurrencyFormatter {
 
   private val currencyFormatter = java.text.NumberFormat.getCurrencyInstance(Locale.UK)
 
-  def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String = {
+  def formatAmountOfMoneyWithPoundSign(d: BigDecimal): String =
     currencyFormatter.format(d)
-  }
 }

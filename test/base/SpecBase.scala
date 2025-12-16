@@ -19,40 +19,34 @@ package base
 import base.ReturnsTestData.defaultReturnsPeriod
 import cats.data.EitherT
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import errors.ReturnsErrors
 import models.retrieved.RetrievedSubscription
-import models.{ ReturnPeriod, UserAnswers }
-import org.scalatest.concurrent.{ IntegrationPatience, ScalaFutures }
+import models.{ReturnPeriod, UserAnswers}
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{ BeforeAndAfterEach, OptionValues, TryValues }
-import play.api.i18n.{ Lang, Messages, MessagesApi, MessagesImpl }
+import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubControllerComponents
-import play.api.{ Application, Play }
+import play.api.{Application, Play}
 import service.ReturnResult
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ ExecutionContext, Future }
-trait SpecBase
-  extends AnyFreeSpec
-  with Matchers
-  with TryValues
-  with OptionValues
-  with ScalaFutures
-  with IntegrationPatience with BeforeAndAfterEach {
+import scala.concurrent.{ExecutionContext, Future}
+trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures with IntegrationPatience with BeforeAndAfterEach {
 
-  lazy val application: Application = applicationBuilder(userAnswers = None).build()
-  implicit lazy val messagesAPI: MessagesApi = application.injector.instanceOf[MessagesApi]
-  implicit lazy val messagesProvider: MessagesImpl = MessagesImpl(Lang("en"), messagesAPI)
-  lazy val mcc: MessagesControllerComponents = application.injector.instanceOf[MessagesControllerComponents]
-  lazy val frontendAppConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
-  implicit lazy val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
+  lazy val application:               Application                  = applicationBuilder(userAnswers = None).build()
+  implicit lazy val messagesAPI:      MessagesApi                  = application.injector.instanceOf[MessagesApi]
+  implicit lazy val messagesProvider: MessagesImpl                 = MessagesImpl(Lang("en"), messagesAPI)
+  lazy val mcc:                       MessagesControllerComponents = application.injector.instanceOf[MessagesControllerComponents]
+  lazy val frontendAppConfig:         FrontendAppConfig            = application.injector.instanceOf[FrontendAppConfig]
+  implicit lazy val hc:               HeaderCarrier                = HeaderCarrier()
+  implicit lazy val ec:               ExecutionContext             = application.injector.instanceOf[ExecutionContext]
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
@@ -61,15 +55,17 @@ trait SpecBase
     super.afterEach()
   }
   protected def applicationBuilder(
-    userAnswers: Option[UserAnswers] = None,
+    userAnswers:  Option[UserAnswers] = None,
     returnPeriod: Option[ReturnPeriod] = Some(defaultReturnsPeriod),
-    subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
+    subscription: Option[RetrievedSubscription] = None
+  ): GuiceApplicationBuilder = {
     val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].toInstance(new FakeIdentifierAction(subscription, bodyParsers)),
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod)))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
+      )
   }
 
   def createSuccessReturnResult[T](result: T): ReturnResult[T] =

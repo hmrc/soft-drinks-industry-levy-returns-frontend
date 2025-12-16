@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import play.api.libs.json.{JsObject, Json}
@@ -16,7 +32,8 @@ class OwnBrandsControllerIntegrationSpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
+        val result1 = client
+          .url(s"$baseUrl/own-brands-packaged-at-own-sites")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -31,23 +48,23 @@ class OwnBrandsControllerIntegrationSpec extends ControllerITTestHelper {
     "Post the Own brand packaged at own sites " when {
       "user selected yes" in {
         setUpData(emptyUserAnswers)
-        val expectedResult:Some[JsObject] = Some(
+        val expectedResult: Some[JsObject] = Some(
           Json.obj(
             "ownBrands" -> true
-          ))
+          )
+        )
 
         build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
-            client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
+            client
+              .url(s"$baseUrl/own-brands-packaged-at-own-sites")
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                "Csrf-Token" -> "nocheck")
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
               .withFollowRedirects(false)
               .post(Json.obj("value" -> true))
-
 
           whenReady(result) { res =>
             res.status mustBe 303
@@ -63,20 +80,20 @@ class OwnBrandsControllerIntegrationSpec extends ControllerITTestHelper {
         val expectedResult: Some[JsObject] = Some(
           Json.obj(
             "ownBrands" -> false
-          ))
+          )
+        )
 
         build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
           val result =
-            client.url(s"$baseUrl/own-brands-packaged-at-own-sites")
+            client
+              .url(s"$baseUrl/own-brands-packaged-at-own-sites")
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                "Csrf-Token" -> "nocheck")
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
               .withFollowRedirects(false)
               .post(Json.obj("value" -> false))
-
 
           whenReady(result) { res =>
             res.status mustBe 303

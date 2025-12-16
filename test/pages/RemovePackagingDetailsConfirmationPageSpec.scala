@@ -17,7 +17,7 @@
 package pages
 
 import forms.RemovePackagingDetailsConfirmationFormProvider
-import models.{ CheckMode, NormalMode }
+import models.{CheckMode, NormalMode}
 import pages.behaviours.PageBehaviours
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -27,7 +27,7 @@ import views.html.RemovePackagingDetailsConfirmationView
 
 class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with PageBehaviours {
 
-  lazy val view: RemovePackagingDetailsConfirmationView = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
+  lazy val view: RemovePackagingDetailsConfirmationView         = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
   lazy val form: RemovePackagingDetailsConfirmationFormProvider = application.injector.instanceOf[RemovePackagingDetailsConfirmationFormProvider]
   implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
@@ -42,7 +42,10 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
     "display correctly without form errors" in {
       val result = doc(view(form(), NormalMode, "foo", Html("foo2")))
       result.getElementById("value-hint").text() mustBe "foo2"
-      result.getElementsByTag("title").first().text() mustBe "Are you sure you want to remove this packaging site? - Soft Drinks Industry Levy - GOV.UK"
+      result
+        .getElementsByTag("title")
+        .first()
+        .text() mustBe "Are you sure you want to remove this packaging site? - Soft Drinks Industry Levy - GOV.UK"
       result.getElementsByTag("h1").first().attr("class") mustBe "govuk-fieldset__heading"
       result.getElementsByTag("h1").first().text() mustBe "Are you sure you want to remove this packaging site?"
       result.getElementsByClass("hmrc-sign-out-nav__link").first().attr("href") mustBe controllers.auth.routes.AuthController.signOut().url
@@ -50,13 +53,18 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
       result.getElementsByClass("govuk-radios__item").last().text() mustBe "No"
       result.getElementsByTag("button").first().text() mustBe "Continue"
       result.getElementsByClass("govuk-back-link").text() mustBe "Back"
-      result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, "foo").url
+      result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController
+        .onSubmit(NormalMode, "foo")
+        .url
     }
 
     "display correctly with form errors" in {
       val result = doc(view(form().bind(Map("value" -> "")), NormalMode, "foo", Html("foo2")))
       result.getElementById("value-hint").text() mustBe "foo2"
-      result.getElementsByTag("title").first().text() mustBe "Error: Are you sure you want to remove this packaging site? - Soft Drinks Industry Levy - GOV.UK"
+      result
+        .getElementsByTag("title")
+        .first()
+        .text() mustBe "Error: Are you sure you want to remove this packaging site? - Soft Drinks Industry Levy - GOV.UK"
       result.getElementsByTag("h1").first().attr("class") mustBe "govuk-fieldset__heading"
       result.getElementsByTag("h1").first().text() mustBe "Are you sure you want to remove this packaging site?"
       result.getElementsByClass("hmrc-sign-out-nav__link").first().attr("href") mustBe controllers.auth.routes.AuthController.signOut().url
@@ -64,7 +72,9 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
       result.getElementsByClass("govuk-radios__item").last().text() mustBe "No"
       result.getElementsByTag("button").first().text() mustBe "Continue"
       result.getElementsByClass("govuk-back-link").text() mustBe "Back"
-      result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, "foo").url
+      result.getElementsByTag("form").first().attr("action") mustBe controllers.routes.RemovePackagingDetailsConfirmationController
+        .onSubmit(NormalMode, "foo")
+        .url
       result.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
       result.getElementById("value-error").text() mustBe "Error: Select yes if you want to remove this packaging site"
     }
@@ -72,11 +82,13 @@ class RemovePackagingDetailsConfirmationPageSpec extends ViewSpecHelper with Pag
 
   "should contain the correct url" - {
     "when in NormalMode" in {
-      RemovePackagingDetailsConfirmationPage.url(NormalMode) mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, "").url
+      RemovePackagingDetailsConfirmationPage
+        .url(NormalMode) mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, "").url
     }
 
     "when in CheckMode" in {
-      RemovePackagingDetailsConfirmationPage.url(CheckMode) mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(CheckMode, "").url
+      RemovePackagingDetailsConfirmationPage
+        .url(CheckMode) mustBe controllers.routes.RemovePackagingDetailsConfirmationController.onPageLoad(CheckMode, "").url
     }
   }
 }

@@ -18,33 +18,33 @@ package views
 
 import config.FrontendAppConfig
 import forms.HowManyCreditsForLostDamagedFormProvider
-import models.{ CheckMode, LitresInBands, NormalMode }
+import models.{CheckMode, LitresInBands, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.HowManyCreditsForLostDamagedView
 
 class HowManyCreditsForLostDamagedViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
   val howManyCreditsForLostDamagedView: HowManyCreditsForLostDamagedView = application.injector.instanceOf[HowManyCreditsForLostDamagedView]
 
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   val formProvider = new HowManyCreditsForLostDamagedFormProvider()
-  val form: Form[LitresInBands] = formProvider.apply()
-  val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
-  val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
-  val formWithHighBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
-  val formEmpty: Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
-  val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
-  val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
-  val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
+  val form:                     Form[LitresInBands] = formProvider.apply()
+  val formWithHighAndLowBands:  Form[LitresInBands] = form.fill(litresInBands)
+  val formWithLowBandOnly:      Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
+  val formWithHighBandOnly:     Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
+  val formEmpty:                Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
+  val formWithNoNumeric:        Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
+  val formWithNegativeNumber:   Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
+  val formWithDecimalNumber:    Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
 
-  "How Many Credits For Exports View" - {
+  "How Many Credits For Exports View" -
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyCreditsForLostDamagedView(form, mode)
@@ -75,7 +75,8 @@ class HowManyCreditsForLostDamagedViewSpec extends ViewSpecHelper with LitresSpe
         }
 
         val expectedDetails = Map(
-          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been: lost destroyed disposed of as waste reprocessed spilled and cannot be used To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.")
+          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been: lost destroyed disposed of as waste reprocessed spilled and cannot be used To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band."
+        )
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
@@ -99,5 +100,4 @@ class HowManyCreditsForLostDamagedViewSpec extends ViewSpecHelper with LitresSpe
         validateCreditClaim(document)
       }
     }
-  }
 }

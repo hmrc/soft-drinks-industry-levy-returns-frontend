@@ -20,7 +20,7 @@
         govukButton: GovukButton
 )
 
-@(urlLink: String)(implicit request: Request[_], messages: Messages)
+@(urlLink: String)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("returnChangeRegistration.title"))) {
     @formHelper(action = routes.ReturnChangeRegistrationController.onSubmit(), Symbol("autoComplete") -> "off") {

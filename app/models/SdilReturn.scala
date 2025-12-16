@@ -16,67 +16,65 @@
 
 package models
 
-import cats.implicits._
+import cats.implicits.*
 import config.FrontendAppConfig
 import models.LevyCalculator.getLevyCalculation
-import models.SdilReturn._
-import pages._
-import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
-import play.api.libs.json.{ Format, JsPath, Json, OFormat }
+import models.SdilReturn.*
+import pages.*
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
 import java.time.LocalDateTime
 
 case class SdilReturn(
-  ownBrand: (Long, Long),
-  packLarge: (Long, Long),
-  packSmall: List[SmallProducer],
+  ownBrand:    (Long, Long),
+  packLarge:   (Long, Long),
+  packSmall:   List[SmallProducer],
   importLarge: (Long, Long),
   importSmall: (Long, Long),
-  `export`: (Long, Long),
-  wastage: (Long, Long),
-  submittedOn: Option[LocalDateTime] = None) {
+  `export`:    (Long, Long),
+  wastage:     (Long, Long),
+  submittedOn: Option[LocalDateTime] = None
+) {
 
-  def totalPacked: (Long, Long) = packLarge |+| packSmall.total
+  def totalPacked:   (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
 
   def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
-    val leviedLitreageForQuarter: (Long, Long) = packLarge |+| importLarge |+| ownBrand
-    val estimatedLowLitreageForYear: Long = 4 * leviedLitreageForQuarter._1
-    val estimatedHighLitreageForYear: Long = 4 * leviedLitreageForQuarter._2
-    val levyCalculation: LevyCalculation = getLevyCalculation(estimatedLowLitreageForYear, estimatedHighLitreageForYear, returnPeriod)(config)
+    val leviedLitreageForQuarter:     (Long, Long) = packLarge |+| importLarge |+| ownBrand
+    val estimatedLowLitreageForYear:  Long         = 4 * leviedLitreageForQuarter._1
+    val estimatedHighLitreageForYear: Long         = 4 * leviedLitreageForQuarter._2
+    val levyCalculation: LevyCalculation = getLevyCalculation(estimatedLowLitreageForYear, estimatedHighLitreageForYear, returnPeriod)(using config)
     levyCalculation.totalRoundedDown
   }
 }
 
 object SdilReturn {
 
-  implicit val longTupleFormatter: Format[(Long, Long)] = (
-    (JsPath \ "lower").format[Long] and
-    (JsPath \ "higher").format[Long])((a: Long, b: Long) => (a, b), unlift({ (x: (Long, Long)) =>
-      Tuple2.unapply(x)
-    }))
+  implicit val longTupleFormatter: Format[(Long, Long)] = ((JsPath \ "lower").format[Long] and
+    (JsPath \ "higher").format[Long])((a: Long, b: Long) => (a, b), unlift((x: (Long, Long)) => Tuple2.unapply(x)))
 
   implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
-  implicit val returnsFormat: OFormat[SdilReturn] = Json.format[SdilReturn]
+  implicit val returnsFormat:     OFormat[SdilReturn]    = Json.format[SdilReturn]
 
   implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
     def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   }
 
   def apply(userAnswers: UserAnswers): SdilReturn = {
-    val lowOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
-    val highOwnBrand = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
-    val lowPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
-    val highPackLarge = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
-    val packSmall = userAnswers.smallProducerList
-    val lowImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
+    val lowOwnBrand     = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.lowBand).getOrElse(0L)
+    val highOwnBrand    = userAnswers.get(BrandsPackagedAtOwnSitesPage).map(_.highBand).getOrElse(0L)
+    val lowPackLarge    = userAnswers.get(HowManyAsAContractPackerPage).map(_.lowBand).getOrElse(0L)
+    val highPackLarge   = userAnswers.get(HowManyAsAContractPackerPage).map(_.highBand).getOrElse(0L)
+    val packSmall       = userAnswers.smallProducerList
+    val lowImportLarge  = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
     val highImportLarge = userAnswers.get(HowManyBroughtIntoUkPage).map(_.highBand).getOrElse(0L)
-    val lowImportSmall = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
+    val lowImportSmall  = userAnswers.get(HowManyBroughtIntoUkPage).map(_.lowBand).getOrElse(0L)
     val highImportSmall = userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(_.highBand).getOrElse(0L)
-    val lowExports = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
-    val highExports = userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
-    val lowWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
-    val highWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
+    val lowExports      = userAnswers.get(HowManyCreditsForExportPage).map(_.lowBand).getOrElse(0L)
+    val highExports     = userAnswers.get(HowManyCreditsForExportPage).map(_.highBand).getOrElse(0L)
+    val lowWastage      = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
+    val highWastage     = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
     SdilReturn(
       ownBrand = (lowOwnBrand, highOwnBrand),
       packLarge = (lowPackLarge, highPackLarge),
@@ -84,7 +82,8 @@ object SdilReturn {
       importLarge = (lowImportLarge, highImportLarge),
       importSmall = (lowImportSmall, highImportSmall),
       `export` = (lowExports, highExports),
-      wastage = (lowWastage, highWastage))
+      wastage = (lowWastage, highWastage)
+    )
 
   }
 

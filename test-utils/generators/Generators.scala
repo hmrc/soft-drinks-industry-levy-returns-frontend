@@ -16,10 +16,10 @@
 
 package generators
 
-import java.time.{ Instant, LocalDate, ZoneOffset }
-import org.scalacheck.Arbitrary._
-import org.scalacheck.Gen._
-import org.scalacheck.{ Gen, Shrink }
+import java.time.{Instant, LocalDate, ZoneOffset}
+import org.scalacheck.Arbitrary.*
+import org.scalacheck.Gen.*
+import org.scalacheck.{Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
@@ -27,24 +27,18 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
   val decimalMax = 100000000000000L
 
-  def genIntersperseString(
-    gen: Gen[String],
-    value: String,
-    frequencyV: Int = 1,
-    frequencyN: Int = 10): Gen[String] = {
+  def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
 
     val genValue: Gen[Option[String]] = Gen.frequency(frequencyN -> None, frequencyV -> Gen.const(Some(value)))
 
     for {
       seq1 <- gen
       seq2 <- Gen.listOfN(seq1.length, genValue)
-    } yield {
-      seq1.toSeq.zip(seq2).foldLeft("") {
-        case (acc, (n, Some(v))) =>
-          acc + n + v
-        case (acc, (n, _)) =>
-          acc + n
-      }
+    } yield seq1.toSeq.zip(seq2).foldLeft("") {
+      case (acc, (n, Some(v))) =>
+        acc + n + v
+      case (acc, (n, _)) =>
+        acc + n
     }
   }
 
@@ -73,9 +67,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def intsAboveValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat (_ > value)
 
-  def longAboveValue(value: Long): Gen[Long] = {
+  def longAboveValue(value: Long): Gen[Long] =
     arbitrary[Long].suchThat(_ >= value)
-  }
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
     arbitrary[Int] suchThat (x => x < min || x > max)
@@ -92,20 +85,20 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def stringsWithMaxLength(maxLength: Int): Gen[String] =
     for {
       length <- choose(1, maxLength)
-      chars <- listOfN(length, arbitrary[Char])
+      chars  <- listOfN(length, arbitrary[Char])
     } yield chars.mkString
 
   def stringsLongerThan(minLength: Int): Gen[String] = for {
     maxLength <- (minLength * 2).max(100)
-    length <- Gen.chooseNum(minLength + 1, maxLength)
-    chars <- listOfN(length, arbitrary[Char])
+    length    <- Gen.chooseNum(minLength + 1, maxLength)
+    chars     <- listOfN(length, arbitrary[Char])
   } yield chars.mkString
 
   def stringsExceptSpecificValues(excluded: Seq[String]): Gen[String] =
     nonEmptyString suchThat (!excluded.contains(_))
 
   def oneOf[T](xs: Seq[Gen[T]]): Gen[T] =
-    if (xs.isEmpty) {
+    if xs.isEmpty then {
       throw new IllegalArgumentException("oneOf called on empty collection")
     } else {
       val vector = xs.toVector
@@ -117,19 +110,18 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     def toMillis(date: LocalDate): Long =
       date.atStartOfDay.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
 
-    Gen.choose(toMillis(min), toMillis(max)).map {
-      millis =>
-        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
+    Gen.choose(toMillis(min), toMillis(max)).map { millis =>
+      Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
   }
 
-  def invalidSdilFormatGen: Gen[String] = {
-    RegexpGen.from("^[A-Z]{0, 20}[0-9]{0, 20}$")
+  def invalidSdilFormatGen: Gen[String] =
+    RegexpGen
+      .from("^[A-Z]{0, 20}[0-9]{0, 20}$")
       .filter(!_.matches("^[A-Z]{6}[0-9]{9}$"))
-  }
 
-  def invalidSDILRefGen: Gen[String] = {
-    RegexpGen.from("^[A-Z]{6}[0-9]{9}$")
+  def invalidSDILRefGen: Gen[String] =
+    RegexpGen
+      .from("^[A-Z]{6}[0-9]{9}$")
       .filter(!_.matches("^X[A-Z]SDIL000[0-9]{6}$"))
-  }
 }

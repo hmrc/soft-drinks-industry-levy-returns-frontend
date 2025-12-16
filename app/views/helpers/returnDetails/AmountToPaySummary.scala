@@ -21,37 +21,44 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import util.CurrencyFormatter
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object AmountToPaySummary {
   def amountToPaySummary(amounts: Amounts)(implicit messages: Messages): SummaryList = {
 
-    val totalForQuarter: BigDecimal = amounts.totalForQuarter
+    val totalForQuarter:       BigDecimal = amounts.totalForQuarter
     val balanceBroughtForward: BigDecimal = amounts.balanceBroughtForward
-    val total: BigDecimal = amounts.total
+    val total:                 BigDecimal = amounts.total
 
     val negatedBalanceBroughtForward = balanceBroughtForward * -1
 
-    SummaryListViewModel(rows = Seq(
-      SummaryListRowViewModel(
-        key = "totalThisQuarter",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(totalForQuarter).replace("-", "&minus;"))).withCssClass("total-for-quarter sdil-right-align--desktop")),
-      SummaryListRowViewModel(
-        key = "balanceBroughtForward",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward).replace("-", "&minus;")))
-          .withCssClass("balance-brought-forward sdil-right-align--desktop")),
-      SummaryListRowViewModel(
-        key = "total",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total).replace("-", "&minus;"))).withCssClass("total sdil-right-align--desktop govuk-!-font-weight-bold"))))
+    SummaryListViewModel(rows =
+      Seq(
+        SummaryListRowViewModel(
+          key = "totalThisQuarter",
+          value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(totalForQuarter).replace("-", "&minus;")))
+            .withCssClass("total-for-quarter sdil-right-align--desktop")
+        ),
+        SummaryListRowViewModel(
+          key = "balanceBroughtForward",
+          value =
+            ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward).replace("-", "&minus;")))
+              .withCssClass("balance-brought-forward sdil-right-align--desktop")
+        ),
+        SummaryListRowViewModel(
+          key = "total",
+          value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total).replace("-", "&minus;")))
+            .withCssClass("total sdil-right-align--desktop govuk-!-font-weight-bold")
+        )
+      )
+    )
   }
 
-  def subheader(total: BigDecimal)(implicit messages: Messages): String = {
-    if (total < 0) {
+  def subheader(total: BigDecimal)(implicit messages: Messages): String =
+    if total < 0 then {
       Messages("yourSoftDrinksLevyAccountsWillBeCredited", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total * -1).replace("-", "&minus;"))
     } else {
       Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total))
     }
-  }
 }
-

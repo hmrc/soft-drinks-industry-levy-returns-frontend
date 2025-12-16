@@ -19,25 +19,25 @@ package views
 import config.FrontendAppConfig
 import controllers.routes
 import forms.BroughtIntoUkFromSmallProducersFormProvider
-import models.{ CheckMode, NormalMode }
+import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.BroughtIntoUkFromSmallProducersView
 
 class BroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
   val view: BroughtIntoUkFromSmallProducersView = application.injector.instanceOf[BroughtIntoUkFromSmallProducersView]
   val formProvider = new BroughtIntoUkFromSmallProducersFormProvider()
-  val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  val form:             Form[Boolean]     = formProvider.apply()
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
   val title = "Are you reporting liable drinks you have brought into the UK from small producers? - Soft Drinks Industry Levy - GOV.UK"
 
   "Brought Into the UK View " - {
-    val html: HtmlFormat.Appendable = view(form, NormalMode)(request, messages(application))
+    val html: HtmlFormat.Appendable = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title " in {
       document.title() mustBe title
@@ -91,7 +91,7 @@ class BroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with Litres
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode)(request, messages(application))
+      val html1     = view(form.fill(true), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -126,7 +126,7 @@ class BroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with Litres
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode)(request, messages(application))
+      val html1     = view(form.fill(false), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -166,42 +166,46 @@ class BroughtIntoUkFromSmallProducersViewSpec extends ViewSpecHelper with Litres
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode)(request, messages(application))
+        val htmlYesSelected     = view(form.fill(true), CheckMode)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode)(request, messages(application))
+        val htmlNoSelected     = view(form.fill(false), CheckMode)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.BroughtIntoUkFromSmallProducersController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.BroughtIntoUkFromSmallProducersController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode)(request, messages(application))
+        val htmlYesSelected     = view(form.fill(true), NormalMode)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode)(request, messages(application))
+        val htmlNoSelected     = view(form.fill(false), NormalMode)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.BroughtIntoUkFromSmallProducersController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.BroughtIntoUkFromSmallProducersController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors     = view(form.bind(Map("value" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

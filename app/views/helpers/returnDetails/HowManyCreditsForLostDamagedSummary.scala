@@ -22,8 +22,8 @@ import models.CheckMode
 object HowManyCreditsForLostDamagedSummary extends SummaryListRowLitresHelper {
 
   override val actionUrl = routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
-  override val bandActionIdKey: String = "lost-destroyed"
-  override val bandHiddenKey: String = "lostOrDestroyed"
-  override val isNegativeLevy: Boolean = true
+  override val bandActionIdKey: String  = "lost-destroyed"
+  override val bandHiddenKey:   String  = "lostOrDestroyed"
+  override val isNegativeLevy:  Boolean = true
 
 }

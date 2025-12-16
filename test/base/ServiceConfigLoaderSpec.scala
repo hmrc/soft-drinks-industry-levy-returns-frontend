@@ -19,7 +19,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.Configuration
 import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigException.{ Missing, WrongType }
+import com.typesafe.config.ConfigException.{Missing, WrongType}
 import config.Service
 
 class ServiceConfigLoaderSpec extends AnyWordSpec with Matchers {
@@ -39,8 +39,8 @@ class ServiceConfigLoaderSpec extends AnyWordSpec with Matchers {
       val service =
         Configuration(ConfigFactory.parseString(confStr)).get[Service]("example-service")
 
-      service.host shouldBe "localhost"
-      service.port shouldBe "8080"
+      service.host     shouldBe "localhost"
+      service.port     shouldBe "8080"
       service.protocol shouldBe "http"
       service.toString shouldBe "http://localhost:8080"
     }

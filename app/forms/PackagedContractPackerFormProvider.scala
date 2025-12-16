@@ -24,6 +24,5 @@ import play.api.data.Form
 class PackagedContractPackerFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("packagedContractPacker.error.required"))
+    Form("value" -> boolean("packagedContractPacker.error.required"))
 }

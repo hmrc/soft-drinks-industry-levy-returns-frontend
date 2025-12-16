@@ -18,33 +18,33 @@ package views
 
 import config.FrontendAppConfig
 import forms.BrandsPackagedAtOwnSitesFormProvider
-import models.{ CheckMode, LitresInBands, NormalMode }
+import models.{CheckMode, LitresInBands, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.BrandsPackagedAtOwnSitesView
 
 class HowManyBrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
   val howManyBrandsPackagedAtOwnSiteView: BrandsPackagedAtOwnSitesView = application.injector.instanceOf[BrandsPackagedAtOwnSitesView]
 
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   val formProvider = new BrandsPackagedAtOwnSitesFormProvider()
-  val form: Form[LitresInBands] = formProvider.apply()
-  val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
-  val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
-  val formWithHighBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
-  val formEmpty: Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
-  val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
-  val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
-  val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
+  val form:                     Form[LitresInBands] = formProvider.apply()
+  val formWithHighAndLowBands:  Form[LitresInBands] = form.fill(litresInBands)
+  val formWithLowBandOnly:      Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
+  val formWithHighBandOnly:     Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
+  val formEmpty:                Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
+  val formWithNoNumeric:        Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
+  val formWithNegativeNumber:   Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
+  val formWithDecimalNumber:    Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
 
-  "Brands Packaged at Own Sites View" - {
+  "Brands Packaged at Own Sites View" -
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyBrandsPackagedAtOwnSiteView(form, mode)
@@ -80,7 +80,8 @@ class HowManyBrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresS
         testAction(document, controllers.routes.BrandsPackagedAtOwnSitesController.onSubmit(mode).url)
 
         "and the form has errors" - {
-          val errorTitle = "Error: " + "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+          val errorTitle =
+            "Error: " + "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)
@@ -94,5 +95,4 @@ class HowManyBrandsPackagedAtOwnSiteViewSpec extends ViewSpecHelper with LitresS
         validateAccessibilityStatementLinkPresent(document)
       }
     }
-  }
 }

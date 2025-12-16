@@ -16,13 +16,13 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.ExemptionsForSmallProducersFormProvider
 import helpers.LoggerHelper
 import models.NormalMode
-import navigation.{ FakeNavigator, Navigator }
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 
 import org.mockito.Mockito.*
@@ -32,7 +32,7 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import util.GenericLogger
 import views.html.ExemptionsForSmallProducersView
@@ -55,7 +55,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
 
       running(application) {
         val request = FakeRequest(GET, exemptionsForSmallProducersRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -89,7 +89,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
         val view = application.injector.instanceOf[ExemptionsForSmallProducersView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -107,7 +107,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -115,13 +115,11 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -152,7 +150,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -190,16 +188,16 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
       running(application) {
         val request = FakeRequest(POST, exemptionsForSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.BroughtIntoUKController.onPageLoad(NormalMode).url
@@ -208,7 +206,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val app =
         applicationBuilder(Some(completedUserAnswers))
@@ -219,11 +217,12 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, exemptionsForSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(app, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on exemptionsForSmallProducers"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

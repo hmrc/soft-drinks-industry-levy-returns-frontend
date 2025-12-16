@@ -16,14 +16,14 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.RemovePackagingDetailsConfirmationFormProvider
 import helpers.LoggerHelper
-import models.backend.{ Site, UkAddress }
-import models.{ CheckMode, Mode, NormalMode }
-import navigation.{ FakeNavigator, Navigator }
+import models.backend.{Site, UkAddress}
+import models.{CheckMode, Mode, NormalMode}
+import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +35,7 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import util.GenericLogger
@@ -60,54 +60,51 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
     }
 
     Map(
-      "No Trading name" -> Site(
-        UkAddress(List("a", "b"), "c"),
-        None,
-        None,
-        None),
-      "Trading Name" -> Site(
-        UkAddress(List("a", "b"), "c"),
-        None,
-        Some("trading"),
-        None),
+      "No Trading name"                                 -> Site(UkAddress(List("a", "b"), "c"), None, None, None),
+      "Trading Name"                                    -> Site(UkAddress(List("a", "b"), "c"), None, Some("trading"), None),
       "Trading Name AND Long Address AND Long Postcode" -> Site(
-        UkAddress(List("abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg"), "abcdefg abcdefg abcdefg abcdefg"),
+        UkAddress(
+          List("abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg"),
+          "abcdefg abcdefg abcdefg abcdefg"
+        ),
         None,
         Some("trading"),
-        None),
+        None
+      ),
       "No Trading Name AND Long Address AND Long Postcode" -> Site(
-        UkAddress(List("abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg"), "abcdefg abcdefg abcdefg abcdefg"),
+        UkAddress(
+          List("abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg abcdefg", "abcdefg abcdefg abcdefg"),
+          "abcdefg abcdefg abcdefg abcdefg"
+        ),
         None,
         None,
-        None),
-      "No Trading Name AND no Lines AND Postcode" -> Site(
-        UkAddress(List.empty, "abcdefg abcdefg abcdefg abcdefg"),
-        None,
-        None,
-        None)).foreach { test =>
-        s"must return OK and the correct view for a GET when packaging site exists for ${test._1}" in {
-          val ref: String = "foo"
-          val htmlExpectedInView: Html = AddressFormattingHelper.addressFormatting(test._2.address, test._2.tradingName)
+        None
+      ),
+      "No Trading Name AND no Lines AND Postcode" -> Site(UkAddress(List.empty, "abcdefg abcdefg abcdefg abcdefg"), None, None, None)
+    ).foreach { test =>
+      s"must return OK and the correct view for a GET when packaging site exists for ${test._1}" in {
+        val ref:                String = "foo"
+        val htmlExpectedInView: Html   = AddressFormattingHelper.addressFormatting(test._2.address, test._2.tradingName)
 
-          val htmlExpectedAfterRender: Html = Html(htmlExpectedInView.body.replace("<br>", " "))
-          val userAnswers = emptyUserAnswers.copy(packagingSiteList = Map(ref -> test._2))
-          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val htmlExpectedAfterRender: Html = Html(htmlExpectedInView.body.replace("<br>", " "))
+        val userAnswers = emptyUserAnswers.copy(packagingSiteList = Map(ref -> test._2))
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-          running(application) {
-            val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
+        running(application) {
+          val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
 
-            val result = route(application, request).value
+          val result = route(application, request).value
 
-            val view = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
+          val view = application.injector.instanceOf[RemovePackagingDetailsConfirmationView]
 
-            status(result) mustEqual OK
-            val contentOfResult: String = contentAsString(result)
+          status(result) mustEqual OK
+          val contentOfResult: String = contentAsString(result)
 
-            contentOfResult mustEqual view(form, NormalMode, ref, htmlExpectedInView)(request, messages(application)).toString
-            commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref)
-          }
+          contentOfResult mustEqual view(form, NormalMode, ref, htmlExpectedInView)(using request, messages(application)).toString
+          commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref)
         }
       }
+    }
 
     "must redirect to returns sent page if return is already submitted" in {
       val ref: String = "foo"
@@ -115,7 +112,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -128,7 +125,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(CheckMode, ref).url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -175,7 +172,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(NormalMode, ref).url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).get mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
       }
@@ -189,7 +186,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
       running(application) {
         val request = FakeRequest(GET, routes.RemovePackagingDetailsConfirmationController.onPageLoad(CheckMode, ref).url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).get mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
@@ -199,13 +196,11 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
       val ref: String = "foo"
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -224,13 +219,11 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
       val ref: String = "foo"
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -246,15 +239,11 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ref: String = "foo"
-      val packagingSite: Map[String, Site] = Map(ref -> Site(
-        UkAddress(List("a", "b"), "c"),
-        None,
-        Some("trading"),
-        None))
-      val htmlExpectedInView = Html("trading<br>a, b, c")
+      val ref:           String            = "foo"
+      val packagingSite: Map[String, Site] = Map(ref -> Site(UkAddress(List("a", "b"), "c"), None, Some("trading"), None))
+      val htmlExpectedInView      = Html("trading<br>a, b, c")
       val htmlExpectedAfterRender = Html("trading a, b, c")
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(packagingSiteList = packagingSite))).build()
+      val application             = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(packagingSiteList = packagingSite))).build()
 
       running(application) {
         val request =
@@ -269,21 +258,17 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
         status(result) mustEqual BAD_REQUEST
         val contentOfResult: String = contentAsString(result)
-        contentOfResult mustEqual view(boundForm, NormalMode, ref, htmlExpectedInView)(request, messages(application)).toString
+        contentOfResult mustEqual view(boundForm, NormalMode, ref, htmlExpectedInView)(using request, messages(application)).toString
         commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref)
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted in check mode" in {
-      val ref: String = "foo"
-      val packagingSite: Map[String, Site] = Map(ref -> Site(
-        UkAddress(List("a", "b"), "c"),
-        None,
-        Some("trading"),
-        None))
-      val htmlExpectedInView = Html("trading<br>a, b, c")
+      val ref:           String            = "foo"
+      val packagingSite: Map[String, Site] = Map(ref -> Site(UkAddress(List("a", "b"), "c"), None, Some("trading"), None))
+      val htmlExpectedInView      = Html("trading<br>a, b, c")
       val htmlExpectedAfterRender = Html("trading a, b, c")
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(packagingSiteList = packagingSite))).build()
+      val application             = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(packagingSiteList = packagingSite))).build()
 
       running(application) {
         val request =
@@ -298,7 +283,7 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
         status(result) mustEqual BAD_REQUEST
         val contentOfResult: String = contentAsString(result)
-        contentOfResult mustEqual view(boundForm, CheckMode, ref, htmlExpectedInView)(request, messages(application)).toString
+        contentOfResult mustEqual view(boundForm, CheckMode, ref, htmlExpectedInView)(using request, messages(application)).toString
         commonAssertionsForPageLoad(htmlExpectedAfterRender, contentOfResult, ref, CheckMode)
       }
     }
@@ -349,22 +334,16 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       // Only sessionRepository.set is tested (verses Try[UserAnswers] on this controller because the onSubmit does not have a userAnswers.set
-      val ref: String = "foo"
-      val packagingSite: Map[String, Site] = Map(ref -> Site(
-        UkAddress(List("a", "b"), "c"),
-        None,
-        Some("trading"),
-        None))
+      val ref:           String            = "foo"
+      val packagingSite: Map[String, Site] = Map(ref -> Site(UkAddress(List("a", "b"), "c"), None, Some("trading"), None))
 
       val userAnswersWithPackagingSites = Some(emptyUserAnswers.copy(packagingSiteList = packagingSite))
-      val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      val mockSessionRepository         = mock[SessionRepository]
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val app =
         applicationBuilder(userAnswersWithPackagingSites)
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(app) {
@@ -372,11 +351,12 @@ class RemovePackagingDetailsConfirmationControllerSpec extends SpecBase with Moc
           val request = FakeRequest(POST, routes.RemovePackagingDetailsConfirmationController.onSubmit(NormalMode, ref).url)
             .withFormUrlEncodedBody(("value", "true"))
           await(route(app, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on removePackagingDetailsConfirmation"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

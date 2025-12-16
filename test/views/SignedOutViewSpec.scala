@@ -26,7 +26,7 @@ class SignedOutViewSpec extends ViewSpecHelper {
   val view = application.injector.instanceOf[SignedOutView]
   "view" - {
     "should be correct" in {
-      val viewBody = Jsoup.parse(view()(FakeRequest(), implicitly).body)
+      val viewBody = Jsoup.parse(view()(using FakeRequest(), implicitly).body)
       viewBody.title() mustBe "For your security, we signed you out - Soft Drinks Industry Levy - GOV.UK"
       viewBody.getElementsByTag("h1").first().text() mustBe "For your security, we signed you out"
       viewBody.getElementsByClass("govuk-body").first().text() mustBe "We did not save your answers."

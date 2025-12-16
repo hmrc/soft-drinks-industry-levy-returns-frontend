@@ -16,13 +16,13 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.AddASmallProducerFormProvider
 import helpers.LoggerHelper
-import models.{ BlankMode, CheckMode, NormalMode, ReturnPeriod, UserAnswers }
+import models.{BlankMode, CheckMode, NormalMode, ReturnPeriod, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.mockito.MockitoSugar
@@ -31,7 +31,7 @@ import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import util.GenericLogger
 
@@ -41,16 +41,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
   val formProvider = new AddASmallProducerFormProvider()
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  def onwardRoute: Call = Call("GET", "/foo")
-  val producerName = "Party Drinks Group"
-  val sdilReference = "XPSDIL000000116"
+  def onwardRoute:           Call              = Call("GET", "/foo")
+  val producerName                   = "Party Drinks Group"
+  val sdilReference                  = "XPSDIL000000116"
   val notASmallProducerSDILReference = "XPSDIL000000478"
-  val bandMax = 100000000000000L
-  val litres = 20L
+  val bandMax                        = 100000000000000L
+  val litres                         = 20L
 
   val userAnswersWithTwoSmallProducers: UserAnswers = emptyUserAnswers.copy(smallProducerList = List(superCola, sparkyJuice))
 
-  lazy val addASmallProducerRoute: String = routes.AddASmallProducerController.onPageLoad(NormalMode).url
+  lazy val addASmallProducerRoute:           String = routes.AddASmallProducerController.onPageLoad(NormalMode).url
   lazy val addASmallProducerEditSubmitRoute: String = routes.AddASmallProducerController.onEditPageSubmit(CheckMode, superCola.sdilRef).url
 
   "AddASmallProducer Controller onPageLoad" - {
@@ -60,7 +60,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -84,13 +84,12 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
     "must return OK with correct page title and header" in {
 
-      val application = {
+      val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      }
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -106,10 +105,10 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
+        val page   = Jsoup.parse(contentAsString(result))
         val labels = page.getElementsByTag("label").text()
         labels must include(Messages("addASmallProducer.hint1"))
         labels must include(Messages("addASmallProducer.referenceNumber"))
@@ -125,10 +124,10 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
+        val page   = Jsoup.parse(contentAsString(result))
         val labels = page.getElementsByTag("label").text()
         labels must include(Messages("addASmallProducer.hint1"))
         labels must include(Messages("addASmallProducer.referenceNumber"))
@@ -160,15 +159,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       lazy val addASmallProducerEditRoute = routes.AddASmallProducerController.onEditPageLoad(CheckMode, sdilReference = superCola.sdilRef).url
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(Some(userAnswersWithTwoSmallProducers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerEditRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -184,19 +184,19 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       lazy val addASmallProducerEditRoute = routes.AddASmallProducerController.onEditPageLoad(CheckMode, sdilReference = sparkyJuice.sdilRef).url
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(Some(emptyUserAnswers.copy(smallProducerList = List(superCola))))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
       val res = running(application) {
         val request = FakeRequest(GET, addASmallProducerEditRoute)
         route(application, request).value
       }
 
-      intercept[RuntimeException](
-        res mustBe an[RuntimeException])
+      intercept[RuntimeException](res mustBe an[RuntimeException])
     }
   }
 
@@ -205,17 +205,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     "must return Redirect(303) when SDIL reference has not been changed" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(true)))
 
-      //noinspection ScalaStyle
+      // noinspection ScalaStyle
       val application =
         applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(year = 2022, quarter = 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+          .build()
 
       running(application) {
         val request = FakeRequest(POST, addASmallProducerEditSubmitRoute)
@@ -223,7 +222,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
             ("producerName", superCola.alias),
             ("referenceNumber", superCola.sdilRef),
             ("lowBand", superCola.litreage._1.toString),
-            ("highBand", superCola.litreage._2.toString))
+            ("highBand", superCola.litreage._2.toString)
+          )
 
         val result = route(application, request).value
 
@@ -235,17 +235,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     "must return Redirect(303) when SDIL reference has been changed and update the existing producer details" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(true)))
 
-      //noinspection ScalaStyle
+      // noinspection ScalaStyle
       val application =
         applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(year = 2022, quarter = 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+          .build()
 
       running(application) {
         val request = FakeRequest(POST, addASmallProducerEditSubmitRoute)
@@ -253,7 +252,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
             ("producerName", superCola.alias),
             ("referenceNumber", "XCSDIL000000069"),
             ("lowBand", superCola.litreage._1.toString),
-            ("highBand", superCola.litreage._2.toString))
+            ("highBand", superCola.litreage._2.toString)
+          )
 
         val result = route(application, request).value
 
@@ -266,17 +266,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       "it's already been added as another small producer" in {
 
         val mockSessionRepository = mock[SessionRepository]
-        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+        val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
 
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(true)))
 
-        //noinspection ScalaStyle
+        // noinspection ScalaStyle
         val application =
           applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(year = 2022, quarter = 3)))
-            .overrides(
-              bind[SessionRepository].toInstance(mockSessionRepository),
-              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+            .build()
 
         running(application) {
           val request = FakeRequest(POST, addASmallProducerEditSubmitRoute)
@@ -284,7 +283,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
               ("producerName", superCola.alias),
               ("referenceNumber", sparkyJuice.sdilRef),
               ("lowBand", superCola.litreage._1.toString),
-              ("highBand", superCola.litreage._2.toString))
+              ("highBand", superCola.litreage._2.toString)
+            )
 
           val result = route(application, request).value
 
@@ -297,19 +297,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     "must return bad request(400) when either producer name, low band or high band values are changed to an invalid value" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(true)))
 
-      //noinspection ScalaStyle
+      // noinspection ScalaStyle
       val application =
-        applicationBuilder(
-          Some(userAnswersWithTwoSmallProducers),
-          Some(ReturnPeriod(year = 2022, quarter = 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(year = 2022, quarter = 3)))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+          .build()
 
       running(application) {
         val request = FakeRequest(POST, addASmallProducerEditSubmitRoute)
@@ -317,7 +314,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
             ("producerName", superCola.alias),
             ("referenceNumber", superCola.sdilRef),
             ("lowBand", "invalid"),
-            ("highBand", superCola.litreage._2.toString))
+            ("highBand", superCola.litreage._2.toString)
+          )
 
         val result = route(application, request).value
 
@@ -331,19 +329,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       "when a SDIL reference number belongs to a producer that is not registered as a small producer" in {
 
         val mockSessionRepository = mock[SessionRepository]
-        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+        val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
 
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(false)))
 
-        //noinspection ScalaStyle
+        // noinspection ScalaStyle
         val application =
-          applicationBuilder(
-            Some(userAnswersWithTwoSmallProducers),
-            Some(ReturnPeriod(2022, 3)))
-            .overrides(
-              bind[SessionRepository].toInstance(mockSessionRepository),
-              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+          applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(2022, 3)))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+            .build()
 
         running(application) {
           val request =
@@ -352,7 +347,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
                 ("producerName", producerName),
                 ("referenceNumber", notASmallProducerSDILReference),
                 ("lowBand", litres.toString),
-                ("highBand", litres.toString))
+                ("highBand", litres.toString)
+              )
 
           val result = route(application, request).value
 
@@ -365,19 +361,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     "must return 303 when producer is actually a small producer (based on the response from the connector)" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(true)))
 
-      //noinspection ScalaStyle
+      // noinspection ScalaStyle
       val application =
-        applicationBuilder(
-          Some(userAnswersWithTwoSmallProducers),
-          Some(ReturnPeriod(2022, 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(2022, 3)))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+          .build()
 
       running(application) {
         val request =
@@ -386,7 +379,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
               ("producerName", superCola.alias),
               ("referenceNumber", notASmallProducerSDILReference),
               ("lowBand", superCola.litreage._1.toString),
-              ("highBand", superCola.litreage._2.toString))
+              ("highBand", superCola.litreage._2.toString)
+            )
 
         val result = route(application, request).value
 
@@ -399,19 +393,16 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     "must return 303 when response from the connector is None (when checking for small producer status)" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(None)
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(None))
 
-      //noinspection ScalaStyle
+      // noinspection ScalaStyle
       val application =
-        applicationBuilder(
-          Some(userAnswersWithTwoSmallProducers),
-          Some(ReturnPeriod(2022, 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+        applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(2022, 3)))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+          .build()
 
       running(application) {
         val request =
@@ -420,7 +411,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
               ("producerName", superCola.alias),
               ("referenceNumber", notASmallProducerSDILReference),
               ("lowBand", superCola.litreage._1.toString),
-              ("highBand", superCola.litreage._2.toString))
+              ("highBand", superCola.litreage._2.toString)
+            )
 
         val result = route(application, request).value
 
@@ -436,25 +428,20 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(true)))
 
-      //noinspection ScalaStyle
+      // noinspection ScalaStyle
       val application =
         applicationBuilder(Some(emptyUserAnswers), Some(ReturnPeriod(2022, 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+          .build()
 
       running(application) {
         val request = FakeRequest(POST, addASmallProducerRoute)
-          .withFormUrlEncodedBody(
-            ("producerName", "Super Cola Ltd"),
-            ("referenceNumber", "XZSDIL000000234"),
-            ("lowBand", "12"),
-            ("highBand", "12"))
+          .withFormUrlEncodedBody(("producerName", "Super Cola Ltd"), ("referenceNumber", "XZSDIL000000234"), ("lowBand", "12"), ("highBand", "12"))
 
         val result = route(application, request).value
 
@@ -466,20 +453,17 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     "must return 400 (bad request) and invalid SDIL reference error when invalid SDIL ref is entered" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
       running(application) {
         val request =
           FakeRequest(POST, addASmallProducerRoute)
-            .withFormUrlEncodedBody(
-              ("producerName", "Super Cola Ltd"),
-              ("referenceNumber", "INVALID ref"),
-              ("lowBand", "12"),
-              ("highBand", "12"))
+            .withFormUrlEncodedBody(("producerName", "Super Cola Ltd"), ("referenceNumber", "INVALID ref"), ("lowBand", "12"), ("highBand", "12"))
 
         val result = route(application, request).value
 
@@ -493,20 +477,17 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       "when same SDIL ref as the logged in user is entered" in {
 
         val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
         val application =
           applicationBuilder(Some(emptyUserAnswers))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
 
         running(application) {
           val request =
             FakeRequest(POST, addASmallProducerRoute)
-              .withFormUrlEncodedBody(
-                ("producerName", "Super Cola Ltd"),
-                ("referenceNumber", sdilNumber),
-                ("lowBand", "12"),
-                ("highBand", "12"))
+              .withFormUrlEncodedBody(("producerName", "Super Cola Ltd"), ("referenceNumber", sdilNumber), ("lowBand", "12"), ("highBand", "12"))
 
           val result = route(application, request).value
 
@@ -520,11 +501,12 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       "when a SDIL reference number matches one of the already entered small producer SDIL references" in {
 
         val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
         val application =
           applicationBuilder(Some(userAnswersWithTwoSmallProducers))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
 
         running(application) {
           val request =
@@ -533,7 +515,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
                 ("producerName", producerName),
                 ("referenceNumber", superCola.sdilRef),
                 ("lowBand", litres.toString),
-                ("highBand", litres.toString))
+                ("highBand", litres.toString)
+              )
 
           val result = route(application, request).value
 
@@ -547,11 +530,12 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       "when a SDIL reference number matches one of the already entered small producer SDIL references" in {
 
         val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
         val application =
           applicationBuilder(Some(userAnswersWithTwoSmallProducers))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
 
         running(application) {
           val request =
@@ -560,7 +544,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
                 ("producerName", producerName),
                 ("referenceNumber", superCola.sdilRef),
                 ("lowBand", litres.toString),
-                ("highBand", litres.toString))
+                ("highBand", litres.toString)
+              )
 
           val result = route(application, request).value
 
@@ -578,20 +563,17 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
       "when a SDIL reference number belongs to a producer that is not registered as a small producer" in {
 
         val notASmallProducerSDILReference = "XPSDIL000000478"
-        val mockSessionRepository = mock[SessionRepository]
-        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+        val mockSessionRepository          = mock[SessionRepository]
+        val mockSdilConnector              = mock[SoftDrinksIndustryLevyConnector]
 
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(false)))
 
-        //noinspection ScalaStyle
+        // noinspection ScalaStyle
         val application =
-          applicationBuilder(
-            Some(userAnswersWithTwoSmallProducers),
-            Some(ReturnPeriod(2022, 3)))
-            .overrides(
-              bind[SessionRepository].toInstance(mockSessionRepository),
-              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+          applicationBuilder(Some(userAnswersWithTwoSmallProducers), Some(ReturnPeriod(2022, 3)))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+            .build()
 
         running(application) {
           val request =
@@ -600,7 +582,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
                 ("producerName", producerName),
                 ("referenceNumber", notASmallProducerSDILReference),
                 ("lowBand", litres.toString),
-                ("highBand", litres.toString))
+                ("highBand", litres.toString)
+              )
 
           val result = route(application, request).value
 
@@ -629,20 +612,17 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     "Small producer reference number must be different to reference currently submitting the returns" in {
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
       running(application) {
         val request =
           FakeRequest(POST, addASmallProducerRoute)
-            .withFormUrlEncodedBody(
-              ("producerName", "Super Cola Ltd"),
-              ("referenceNumber", sdilNumber),
-              ("lowBand", "12"),
-              ("highBand", "12"))
+            .withFormUrlEncodedBody(("producerName", "Super Cola Ltd"), ("referenceNumber", sdilNumber), ("lowBand", "12"), ("highBand", "12"))
 
         val result = route(application, request).value
 
@@ -651,32 +631,28 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar with Lo
     }
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      val mockSdilConnector     = mock[SoftDrinksIndustryLevyConnector]
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(Future.successful(Some(true)))
 
-      //noinspection ScalaStyle
+      // noinspection ScalaStyle
       val app =
         applicationBuilder(Some(emptyUserAnswers), Some(ReturnPeriod(year = 2022, quarter = 3)))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+          .build()
 
       running(app) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, addASmallProducerRoute)
-            .withFormUrlEncodedBody(
-              ("producerName", "Super Cola Ltd"),
-              ("referenceNumber", "XZSDIL000000234"),
-              ("lowBand", "12"),
-              ("highBand", "12"))
+            .withFormUrlEncodedBody(("producerName", "Super Cola Ltd"), ("referenceNumber", "XZSDIL000000234"), ("lowBand", "12"), ("highBand", "12"))
           await(route(app, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on addASmallProducer"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

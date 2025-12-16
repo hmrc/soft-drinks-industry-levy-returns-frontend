@@ -16,8 +16,8 @@
 
 package models
 
-import play.api.mvc.{ Request, WrappedRequest }
-import uk.gov.hmrc.auth.core.{ Enrolment, EnrolmentIdentifier, Enrolments, InternalError }
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, InternalError}
 
 case class User[A](vrn: String, active: Boolean = true, arn: Option[String] = None)(implicit request: Request[A]) extends WrappedRequest[A](request) {
   val isAgent: Boolean = arn.isDefined
@@ -25,7 +25,9 @@ case class User[A](vrn: String, active: Boolean = true, arn: Option[String] = No
 
 object User {
   def apply[A](enrolments: Enrolments)(implicit request: Request[A]): User[A] =
-    enrolments.enrolments.collectFirst {
-      case Enrolment("IR-CT", Seq(EnrolmentIdentifier(_, vatId)), _, _) => User(vatId)
-    }.getOrElse(throw InternalError("VRN Missing"))
+    enrolments.enrolments
+      .collectFirst { case Enrolment("IR-CT", Seq(EnrolmentIdentifier(_, vatId)), _, _) =>
+        User(vatId)
+      }
+      .getOrElse(throw InternalError("VRN Missing"))
 }

@@ -16,7 +16,7 @@
 
 @this(govukDetails: GovukDetails)
 
-@(form: Form[_])(implicit messages: Messages)
+@(form: Form[?])(implicit messages: Messages)
 
 @htmlContent = {
  <p class ="govuk-body">@messages("LiableDrinksBroughtIntoUkFromSmallProducers.DetailsContent1")</p>

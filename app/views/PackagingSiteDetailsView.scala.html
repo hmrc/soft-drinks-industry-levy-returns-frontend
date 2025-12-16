@@ -27,7 +27,7 @@
         saveAndContinueButton: saveAndContinueButton
 )
 
-@(form: Form[_], mode: Mode, siteList: Map[String, Site])(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, siteList: Map[String, Site])(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = title(form, messages("packagingSiteDetails.title.heading", siteList.size, if(siteList.size == 1) "" else "s"))) {
 
@@ -50,6 +50,6 @@
             )
         )
 
-        @saveAndContinueButton(messages)
+        @saveAndContinueButton(using messages)
     }
 }

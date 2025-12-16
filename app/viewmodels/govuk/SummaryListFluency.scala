@@ -17,7 +17,7 @@
 package viewmodels.govuk
 
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 
 object summarylist extends SummaryListFluency
 
@@ -32,60 +32,46 @@ trait SummaryListFluency {
   implicit class FluentSummaryList(list: SummaryList) {
 
     def withoutBorders(): SummaryList =
-      list copy (classes = s"${list.classes} govuk-summary-list--no-border")
+      list.copy(classes = s"${list.classes} govuk-summary-list--no-border")
 
     def withCssClass(className: String): SummaryList =
-      list copy (classes = s"${list.classes} $className")
+      list.copy(classes = s"${list.classes} $className")
 
     def withAttribute(attribute: (String, String)): SummaryList =
-      list copy (attributes = list.attributes + attribute)
+      list.copy(attributes = list.attributes + attribute)
   }
 
   object SummaryListRowViewModel {
 
-    def apply(
-      key: Key,
-      value: Value): SummaryListRow =
-      SummaryListRow(
-        key = key,
-        value = value)
+    def apply(key: Key, value: Value): SummaryListRow =
+      SummaryListRow(key = key, value = value)
 
-    def apply(
-      key: Key,
-      value: Value,
-      actions: Seq[ActionItem]): SummaryListRow =
-      SummaryListRow(
-        key = key,
-        value = value,
-        actions = Some(Actions(items = actions)))
+    def apply(key: Key, value: Value, actions: Seq[ActionItem]): SummaryListRow =
+      SummaryListRow(key = key, value = value, actions = Some(Actions(items = actions)))
   }
 
   implicit class FluentSummaryListRow(row: SummaryListRow) {
 
     def withCssClass(className: String): SummaryListRow =
-      row copy (classes = s"${row.classes} $className")
+      row.copy(classes = s"${row.classes} $className")
   }
 
   object ActionItemViewModel {
 
-    def apply(
-      content: Content,
-      href: String): ActionItem =
-      ActionItem(
-        content = content,
-        href = href)
+    def apply(content: Content, href: String): ActionItem =
+      ActionItem(content = content, href = href)
   }
 
   implicit class FluentActionItem(actionItem: ActionItem) {
 
     def withVisuallyHiddenText(text: String): ActionItem =
-      actionItem copy (visuallyHiddenText = Some(text))
+      actionItem.copy(visuallyHiddenText = Some(text))
 
     def withCssClass(className: String): ActionItem =
-      actionItem copy (classes = s"${actionItem.classes} $className")
+      actionItem.copy(classes = s"${actionItem.classes} $className")
 
     def withAttribute(attribute: (String, String)): ActionItem =
-      actionItem copy (attributes = actionItem.attributes + attribute)
+      actionItem.copy(attributes = actionItem.attributes + attribute)
   }
 
   object KeyViewModel {
@@ -97,7 +83,7 @@ trait SummaryListFluency {
   implicit class FluentKey(key: Key) {
 
     def withCssClass(className: String): Key =
-      key copy (classes = s"${key.classes} $className")
+      key.copy(classes = s"${key.classes} $className")
   }
 
   object ValueViewModel {
@@ -109,6 +95,6 @@ trait SummaryListFluency {
   implicit class FluentValue(value: Value) {
 
     def withCssClass(className: String): Value =
-      value copy (classes = s"${value.classes} $className")
+      value.copy(classes = s"${value.classes} $className")
   }
 }

@@ -24,6 +24,5 @@ import play.api.data.Form
 class BroughtIntoUKFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("broughtIntoUK.error.required"))
+    Form("value" -> boolean("broughtIntoUK.error.required"))
 }

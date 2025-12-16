@@ -16,10 +16,10 @@
 
 package views
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.UserAnswersTestData
 import config.FrontendAppConfig
-import models.{ Amounts, ReturnPeriod }
+import models.{Amounts, ReturnPeriod}
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -33,15 +33,16 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
   val returnSentView: ReturnSentView =
     application.injector.instanceOf[ReturnSentView]
 
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   val amounts: Amounts = Amounts(1000, 100, 1100)
 
   val amountsLists: Map[String, Amounts] = Map(
     "total owed for this quarter is positive" -> amounts,
-    "total owed for this quarter is 0" -> amounts.copy(total = 0),
-    "total owed for this quarter is negative" -> amounts.copy(total = -1000))
+    "total owed for this quarter is 0"        -> amounts.copy(total = 0),
+    "total owed for this quarter is negative" -> amounts.copy(total = -1000)
+  )
 
   val amountOwed = "£100"
 
@@ -68,65 +69,64 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
       link.attr("data-module") mustEqual "hmrc-print-link"
     }
 
-    amountsLists.foreach {
-      case (key, amount) =>
-        val html1: HtmlFormat.Appendable =
-          returnSentView(returnPeriod, emptyUserAnswers, amount, aSubscription, amountOwed)
-        val document1: Document = doc(html1)
-        s"when the $key" - {
-          "should include a what to do next section" - {
-            "that has the expected heading" in {
-              val subHeading = document1.getElementById("whatNextHeader")
-              subHeading.text() mustEqual Messages("returnSent.headerOne")
-            }
-            "that has the expected body" - {
-              "which has the expectedText" in {
-                if (amount.total > 0) {
-                  val bodyOne = document1.getElementById("whatNextText")
-                  val expectedTextOne = "You need to pay £100 by 30 July 2022."
-                  bodyOne.text() mustEqual expectedTextOne
-                  val bodyTwo = document1.getElementById("whatNextText-part2")
-                  val expectedTextTwo = "Make sure you include your Soft Drinks Industry Levy reference." +
-                    " XKSDIL000000022 when making a payment." +
-                    " See how to pay the levy (opens in a new tab)" +
+    amountsLists.foreach { case (key, amount) =>
+      val html1: HtmlFormat.Appendable =
+        returnSentView(returnPeriod, emptyUserAnswers, amount, aSubscription, amountOwed)
+      val document1: Document = doc(html1)
+      s"when the $key" - {
+        "should include a what to do next section" - {
+          "that has the expected heading" in {
+            val subHeading = document1.getElementById("whatNextHeader")
+            subHeading.text() mustEqual Messages("returnSent.headerOne")
+          }
+          "that has the expected body" - {
+            "which has the expectedText" in {
+              if amount.total > 0 then {
+                val bodyOne         = document1.getElementById("whatNextText")
+                val expectedTextOne = "You need to pay £100 by 30 July 2022."
+                bodyOne.text() mustEqual expectedTextOne
+                val bodyTwo         = document1.getElementById("whatNextText-part2")
+                val expectedTextTwo = "Make sure you include your Soft Drinks Industry Levy reference." +
+                  " XKSDIL000000022 when making a payment." +
+                  " See how to pay the levy (opens in a new tab)" +
+                  " Your next return will be for July to September 2022." +
+                  " You must send this return and make any payments by 30 October 2022."
+                bodyTwo.text() mustEqual expectedTextTwo
+              } else {
+                val body         = document1.getElementById("whatNextText")
+                val expectedText = if amount.total < 0 then {
+                  "You do not need to do anything else." +
+                    " We will take the payment from your Soft Drinks Industry Levy account shortly." +
                     " Your next return will be for July to September 2022." +
                     " You must send this return and make any payments by 30 October 2022."
-                  bodyTwo.text() mustEqual expectedTextTwo
                 } else {
-                  val body = document1.getElementById("whatNextText")
-                  val expectedText = if (amount.total < 0) {
-                    "You do not need to do anything else." +
-                      " We will take the payment from your Soft Drinks Industry Levy account shortly." +
-                      " Your next return will be for July to September 2022." +
-                      " You must send this return and make any payments by 30 October 2022."
-                  } else {
-                    "You do not need to do anything else." +
-                      " Your next return will be for July to September 2022." +
-                      " You must send this return and make any payments by 30 October 2022."
-                  }
-                  body.text() mustEqual expectedText
+                  "You do not need to do anything else." +
+                    " Your next return will be for July to September 2022." +
+                    " You must send this return and make any payments by 30 October 2022."
                 }
+                body.text() mustEqual expectedText
               }
-              if (amount.total > 0) {
-                "which has the sdil number in bold" in {
-                  document1.getElementById("whatNextText-part2").getElementsByTag("strong").text() mustBe aSubscription.sdilRef
-                }
+            }
+            if amount.total > 0 then {
+              "which has the sdil number in bold" in {
+                document1.getElementById("whatNextText-part2").getElementsByTag("strong").text() mustBe aSubscription.sdilRef
+              }
 
-                "which has the inset rounding help text" in {
-                  val element = document1.getElementById("returnSentRoundingInset")
-                  element.className() mustEqual Selectors.insetSubHeading
-                  element.text() mustEqual Messages("roundingHelpText")
-                }
+              "which has the inset rounding help text" in {
+                val element = document1.getElementById("returnSentRoundingInset")
+                element.className() mustEqual Selectors.insetSubHeading
+                element.text() mustEqual Messages("roundingHelpText")
+              }
 
-                "which has the expected link" in {
-                  val link = document1.getElementById("whatNextText-part2").getElementsByClass(Selectors.link)
-                  link.text() mustEqual "See how to pay the levy (opens in a new tab)"
-                  link.attr("href") mustEqual "https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5"
-                }
+              "which has the expected link" in {
+                val link = document1.getElementById("whatNextText-part2").getElementsByClass(Selectors.link)
+                link.text() mustEqual "See how to pay the levy (opens in a new tab)"
+                link.attr("href") mustEqual "https://www.gov.uk/guidance/pay-the-soft-drinks-industry-levy-notice-5"
               }
             }
           }
         }
+      }
     }
 
     "should include a help with this service section" - {
@@ -147,19 +147,15 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
           .getElementsByTag("li")
           .eachText()
         bulletList.size() mustBe 4
-        val expectedList = List(
-          Messages("returnSent.list1"),
-          Messages("returnSent.list2"),
-          Messages("returnSent.list3"),
-          Messages("returnSent.list4"))
-        expectedList.foreach(listItem =>
-          bulletList must contain(listItem))
+        val expectedList =
+          List(Messages("returnSent.list1"), Messages("returnSent.list2"), Messages("returnSent.list3"), Messages("returnSent.list4"))
+        expectedList.foreach(listItem => bulletList must contain(listItem))
       }
     }
 
     "should include a link back to the homepage" in {
       val returnToDashboardSection = document.getElementById("goToDashboard")
-      val link = returnToDashboardSection.getElementsByClass(Selectors.link)
+      val link                     = returnToDashboardSection.getElementsByClass(Selectors.link)
       link.text() mustEqual Messages("returnSent.help.link")
       link.get(0).attr("href") mustEqual config.sdilHomeUrl
     }
@@ -171,25 +167,21 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
           val details = document.getElementsByClass(Selectors.details).get(0)
           details.getElementsByClass(Selectors.detailsText).text() mustEqual "View the details of your return"
         }
-        "has contains the expected content" - {
-          UserAnswersTestData.userAnswersModels.foreach {
-            case (key, userAnswers) =>
-              val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
-              val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
-              List(
-                ("pre April 2025 rates", preApril2025ReturnPeriod),
-                ("2025 tax year rates", taxYear2025ReturnPeriod)).foreach(returnPeriodWithKey => {
-                  s"when the $key - ${returnPeriodWithKey._1}" - {
-                    val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
-                    val html1: HtmlFormat.Appendable =
-                      returnSentView(returnPeriod, userAnswersWithReturnPeriod, amounts, aSubscription, amountOwed)
-                    val document1: Document = doc(html1)
-                    val details = document1.getElementsByClass(Selectors.details).get(0)
-                    testSummaryLists(key, details, userAnswersWithReturnPeriod, false)
-                  }
-                })
+        "has contains the expected content" -
+          UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
+            val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+            val taxYear2025ReturnPeriod  = ReturnPeriod(2026, 0)
+            List(("pre April 2025 rates", preApril2025ReturnPeriod), ("2025 tax year rates", taxYear2025ReturnPeriod)).foreach(returnPeriodWithKey =>
+              s"when the $key - ${returnPeriodWithKey._1}" - {
+                val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
+                val html1: HtmlFormat.Appendable =
+                  returnSentView(returnPeriod, userAnswersWithReturnPeriod, amounts, aSubscription, amountOwed)
+                val document1: Document = doc(html1)
+                val details = document1.getElementsByClass(Selectors.details).get(0)
+                testSummaryLists(key, details, userAnswersWithReturnPeriod, false)
+              }
+            )
           }
-        }
       }
     }
   }

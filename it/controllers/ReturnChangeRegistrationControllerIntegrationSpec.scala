@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import controllers.testSupport.{ITCoreTestData, Specifications, TestConfiguration}
@@ -8,8 +24,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
-import play.api.libs.ws.DefaultBodyWritables._
-import play.api.libs.ws.JsonBodyWritables._
+import play.api.libs.ws.DefaultBodyWritables.*
 
 class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications with TestConfiguration with ITCoreTestData {
 
@@ -20,7 +35,8 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result = client.url(s"$baseUrl/return-change-registration")
+        val result = client
+          .url(s"$baseUrl/return-change-registration")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -30,7 +46,10 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
           val doc = Jsoup.parse(res.body)
           doc.getElementsByTag("h1").text() mustBe "You changed your soft drinks business activity"
           doc.title() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
-          doc.getElementById("main-content").getElementsByTag("a").attr("href") mustBe "/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer"
+          doc
+            .getElementById("main-content")
+            .getElementsByTag("a")
+            .attr("href") mustBe "/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer"
         }
       }
     }
@@ -43,12 +62,12 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
         .commonPreconditionChangeSubscription(aSubscription.copy(productionSites = List.empty))
 
       WsTestClient.withClient { client =>
-        val result = client.url(s"$baseUrl/return-change-registration")
+        val result = client
+          .url(s"$baseUrl/return-change-registration")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .withFollowRedirects(false)
-          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-            "Csrf-Token" -> "nocheck")
+          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
           .post("")
 
         whenReady(result) { res =>
@@ -61,19 +80,19 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
     "take user to ask secondary warehouse if not new packer and there are no production sites in the retrieved subscription" in {
       setUpData(newPackerPartialAnswers)
 
-      val activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true,
-        importer = false, voluntaryRegistration = false)
+      val activity =
+        RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = false, voluntaryRegistration = false)
 
       build
-        .commonPreconditionChangeSubscription(aSubscription.copy(activity = activity,productionSites = List.empty))
+        .commonPreconditionChangeSubscription(aSubscription.copy(activity = activity, productionSites = List.empty))
 
       WsTestClient.withClient { client =>
-        val result = client.url(s"$baseUrl/return-change-registration")
+        val result = client
+          .url(s"$baseUrl/return-change-registration")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .withFollowRedirects(false)
-          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-            "Csrf-Token" -> "nocheck")
+          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
           .post("")
 
         whenReady(result) { res =>
@@ -89,12 +108,12 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result = client.url(s"$baseUrl/return-change-registration")
+        val result = client
+          .url(s"$baseUrl/return-change-registration")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .withFollowRedirects(false)
-          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-            "Csrf-Token" -> "nocheck")
+          .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
           .post("")
 
         whenReady(result) { res =>
@@ -110,12 +129,12 @@ class ReturnChangeRegistrationControllerIntegrationSpec extends Specifications w
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result = client.url(s"$baseUrl/return-change-registration")
+        val result = client
+          .url(s"$baseUrl/return-change-registration")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .withFollowRedirects(false)
-          .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-            "Csrf-Token" -> "nocheck")
+          .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
           .post("")
 
         whenReady(result) { res =>

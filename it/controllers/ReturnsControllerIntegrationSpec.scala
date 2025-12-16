@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import models.{DefaultUserAnswersData, NormalMode}
@@ -5,17 +21,15 @@ import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
-import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
   def url(nilReturn: Boolean) = s"/submit-return/year/2018/quarter/1/nil-return/$nilReturn"
 
-  val urlsForNilReturnValues = Map(true -> s"${url(true)}",
-    false -> s"${url(false)}")
+  val urlsForNilReturnValues = Map(true -> s"${url(true)}", false -> s"${url(false)}")
 
   urlsForNilReturnValues.foreach { case (isNilReturn, path) =>
     s"GET $path" should {
-      val expectedLocation = if (isNilReturn) {
+      val expectedLocation = if isNilReturn then {
         routes.CheckYourAnswersController.onPageLoad.url
       } else {
         routes.OwnBrandsController.onPageLoad(NormalMode).url
@@ -26,7 +40,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(s"$baseUrl$path")
+            val result1 = client
+              .url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -34,8 +49,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION).value mustBe expectedLocation
-              val userAnswers = getAnswers(sdilNumber)
-              val expectedData = if (isNilReturn) {
+              val userAnswers  = getAnswers(sdilNumber)
+              val expectedData = if isNilReturn then {
                 Json.toJson(new DefaultUserAnswersData(aSubscription))
               } else {
                 Json.obj()
@@ -51,7 +66,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(s"$baseUrl$path")
+            val result1 = client
+              .url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -59,8 +75,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION).value mustBe expectedLocation
-              val userAnswers = getAnswers(sdilNumber)
-              val expectedData = if (isNilReturn) {
+              val userAnswers  = getAnswers(sdilNumber)
+              val expectedData = if isNilReturn then {
                 Json.toJson(new DefaultUserAnswersData(aSubscription))
               } else {
                 Json.obj()
@@ -78,7 +94,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(s"$baseUrl$path")
+            val result1 = client
+              .url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -86,8 +103,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION).value mustBe expectedLocation
-              val updatedUA = getAnswers(sdilNumber)
-              val expectedData = if (isNilReturn) {
+              val updatedUA    = getAnswers(sdilNumber)
+              val expectedData = if isNilReturn then {
                 Json.toJson(new DefaultUserAnswersData(aSubscription))
               } else {
                 Json.obj()
@@ -107,7 +124,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(s"$baseUrl$path")
+            val result1 = client
+              .url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -128,7 +146,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             .authorisedWithNoPendingReturns(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(s"$baseUrl$path")
+            val result1 = client
+              .url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()
@@ -149,7 +168,8 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
             .commonPreconditionChangeSubscription(aSubscription)
 
           WsTestClient.withClient { client =>
-            val result1 = client.url(s"$baseUrl$path")
+            val result1 = client
+              .url(s"$baseUrl$path")
               .withFollowRedirects(false)
               .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
               .get()

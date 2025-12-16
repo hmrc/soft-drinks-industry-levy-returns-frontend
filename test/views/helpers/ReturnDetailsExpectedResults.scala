@@ -19,105 +19,114 @@ package views.helpers
 trait ReturnDetailsExpectedResults {
 
   object SummaryHeadingIds {
-    val ownBrands = "ownBrandsPackagedAtYourOwnSite"
-    val contractPackedAtYourOwnSite = "contractPackedAtYourOwnSite"
+    val ownBrands                                 = "ownBrandsPackagedAtYourOwnSite"
+    val contractPackedAtYourOwnSite               = "contractPackedAtYourOwnSite"
     val contractPackedForRegisteredSmallProducers = "contractPackedForRegisteredSmallProducers"
-    val broughtIntoUK = "broughtIntoUK"
-    val broughtIntoTheUKFromSmallProducers = "broughtIntoTheUKFromSmallProducers"
-    val exported = "exported"
-    val lostOrDestroyed = "lostOrDestroyed"
-    val amountToPay = "amount-to-pay-title"
-    val registeredSites = "registeredUkSites"
+    val broughtIntoUK                             = "broughtIntoUK"
+    val broughtIntoTheUKFromSmallProducers        = "broughtIntoTheUKFromSmallProducers"
+    val exported                                  = "exported"
+    val lostOrDestroyed                           = "lostOrDestroyed"
+    val amountToPay                               = "amount-to-pay-title"
+    val registeredSites                           = "registeredUkSites"
   }
 
   val returnDetailsSummaryListsWithQuestionKey = Map(
-    SummaryHeadingIds.ownBrands -> "reportingOwnBrandsPackagedAtYourOwnSite",
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> "reportingContractPackedAtYourOwnSite",
+    SummaryHeadingIds.ownBrands                                 -> "reportingOwnBrandsPackagedAtYourOwnSite",
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> "reportingContractPackedAtYourOwnSite",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "exemptionForRegisteredSmallProducers",
-    SummaryHeadingIds.broughtIntoUK -> "reportingLiableDrinksBroughtIntoTheUK",
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers",
-    SummaryHeadingIds.exported -> "claimingCreditForExportedLiableDrinks",
-    SummaryHeadingIds.lostOrDestroyed -> "claimingCreditForLostOrDestroyedLiableDrinks",
-    SummaryHeadingIds.registeredSites -> "You have 1 packaging site")
+    SummaryHeadingIds.broughtIntoUK                             -> "reportingLiableDrinksBroughtIntoTheUK",
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> "reportingLiableDrinksBroughtIntoTheUKFromSmallProducers",
+    SummaryHeadingIds.exported                                  -> "claimingCreditForExportedLiableDrinks",
+    SummaryHeadingIds.lostOrDestroyed                           -> "claimingCreditForLostOrDestroyedLiableDrinks",
+    SummaryHeadingIds.registeredSites                           -> "You have 1 packaging site"
+  )
 
   val returnDetailsSummaryListsWithListNames = Map(
-    SummaryHeadingIds.ownBrands -> "own brands",
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> "contract packed at your own site",
+    SummaryHeadingIds.ownBrands                                 -> "own brands",
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> "contract packed at your own site",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "contract packed for registered small producers",
-    SummaryHeadingIds.broughtIntoUK -> "brought into the UK",
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "brought into the UK from small producers",
-    SummaryHeadingIds.exported -> "exported",
-    SummaryHeadingIds.lostOrDestroyed -> "lost or destroyed",
-    SummaryHeadingIds.amountToPay -> "amount to pay",
-    SummaryHeadingIds.registeredSites -> "registered sites")
+    SummaryHeadingIds.broughtIntoUK                             -> "brought into the UK",
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> "brought into the UK from small producers",
+    SummaryHeadingIds.exported                                  -> "exported",
+    SummaryHeadingIds.lostOrDestroyed                           -> "lost or destroyed",
+    SummaryHeadingIds.amountToPay                               -> "amount to pay",
+    SummaryHeadingIds.registeredSites                           -> "registered sites"
+  )
 
   val returnDetailsSummaryListsWithActionHrefsForQuestion = Map(
-    SummaryHeadingIds.ownBrands -> "/change-own-brands-packaged-at-own-sites",
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> "/change-packaged-as-contract-packer",
+    SummaryHeadingIds.ownBrands                                 -> "/change-own-brands-packaged-at-own-sites",
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> "/change-packaged-as-contract-packer",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "/change-exemptions-for-small-producers",
-    SummaryHeadingIds.broughtIntoUK -> "/change-brought-into-uk",
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "/change-brought-into-uk-from-small-producers",
-    SummaryHeadingIds.exported -> "/change-claim-credits-for-exports",
-    SummaryHeadingIds.lostOrDestroyed -> "/change-claim-credits-for-lost-damaged",
-    SummaryHeadingIds.registeredSites -> "/change-packaging-site-details")
+    SummaryHeadingIds.broughtIntoUK                             -> "/change-brought-into-uk",
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> "/change-brought-into-uk-from-small-producers",
+    SummaryHeadingIds.exported                                  -> "/change-claim-credits-for-exports",
+    SummaryHeadingIds.lostOrDestroyed                           -> "/change-claim-credits-for-lost-damaged",
+    SummaryHeadingIds.registeredSites                           -> "/change-packaging-site-details"
+  )
 
   val returnDetailsSummaryListsWithActionHrefsForLitres = Map(
-    SummaryHeadingIds.ownBrands -> "/change-how-many-own-brands-packaged-at-own-sites",
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> "/change-how-many-packaged-as-contract-packer",
+    SummaryHeadingIds.ownBrands                                 -> "/change-how-many-own-brands-packaged-at-own-sites",
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> "/change-how-many-packaged-as-contract-packer",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "/change-small-producer-details",
-    SummaryHeadingIds.broughtIntoUK -> "/change-how-many-brought-into-uk",
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "/change-how-many-into-uk-small-producers",
-    SummaryHeadingIds.exported -> "/change-how-many-credits-for-exports",
-    SummaryHeadingIds.lostOrDestroyed -> "/change-how-many-credits-for-lost-damaged")
+    SummaryHeadingIds.broughtIntoUK                             -> "/change-how-many-brought-into-uk",
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> "/change-how-many-into-uk-small-producers",
+    SummaryHeadingIds.exported                                  -> "/change-how-many-credits-for-exports",
+    SummaryHeadingIds.lostOrDestroyed                           -> "/change-how-many-credits-for-lost-damaged"
+  )
 
   val returnDetailsSummaryListsWithActionIds = Map(
-    SummaryHeadingIds.ownBrands -> "change-own-brands",
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> "change-contract-packer",
+    SummaryHeadingIds.ownBrands                                 -> "change-own-brands",
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> "change-contract-packer",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "change-exemption-small-producers",
-    SummaryHeadingIds.broughtIntoUK -> "change-brought-into-uk",
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "change-brought-into-uk-small-producers",
-    SummaryHeadingIds.exported -> "change-exports",
-    SummaryHeadingIds.lostOrDestroyed -> "change-credits-lost-damaged",
-    SummaryHeadingIds.registeredSites -> "change-packaging-sites")
+    SummaryHeadingIds.broughtIntoUK                             -> "change-brought-into-uk",
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> "change-brought-into-uk-small-producers",
+    SummaryHeadingIds.exported                                  -> "change-exports",
+    SummaryHeadingIds.lostOrDestroyed                           -> "change-credits-lost-damaged",
+    SummaryHeadingIds.registeredSites                           -> "change-packaging-sites"
+  )
 
   val returnDetailsSummaryListsWithActionHiddenKey = Map(
-    SummaryHeadingIds.ownBrands -> "ownBrands",
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> "packagedContractPacker",
+    SummaryHeadingIds.ownBrands                                 -> "ownBrands",
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> "packagedContractPacker",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "exemptionsForSmallProducers",
-    SummaryHeadingIds.broughtIntoUK -> "broughtIntoUK",
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "broughtIntoUkFromSmallProducers",
-    SummaryHeadingIds.exported -> "claimCreditsForExports",
-    SummaryHeadingIds.lostOrDestroyed -> "claimCreditsForLostDamaged",
-    SummaryHeadingIds.registeredSites -> "checkYourAnswers.sites.packing")
+    SummaryHeadingIds.broughtIntoUK                             -> "broughtIntoUK",
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> "broughtIntoUkFromSmallProducers",
+    SummaryHeadingIds.exported                                  -> "claimCreditsForExports",
+    SummaryHeadingIds.lostOrDestroyed                           -> "claimCreditsForLostDamaged",
+    SummaryHeadingIds.registeredSites                           -> "checkYourAnswers.sites.packing"
+  )
 
   val returnDetailsSummaryListsWithLitresActionId = Map(
-    SummaryHeadingIds.ownBrands -> "own-site",
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> "contract-packer",
+    SummaryHeadingIds.ownBrands                                 -> "own-site",
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> "contract-packer",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "small-producers",
-    SummaryHeadingIds.broughtIntoUK -> "brought-into-uk",
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "brought-into-uk-small-producers",
-    SummaryHeadingIds.exported -> "export-credits",
-    SummaryHeadingIds.lostOrDestroyed -> "lost-destroyed")
+    SummaryHeadingIds.broughtIntoUK                             -> "brought-into-uk",
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> "brought-into-uk-small-producers",
+    SummaryHeadingIds.exported                                  -> "export-credits",
+    SummaryHeadingIds.lostOrDestroyed                           -> "lost-destroyed"
+  )
 
   val returnDetailsSummaryListsWithLitresHiddenKey = Map(
-    SummaryHeadingIds.ownBrands -> "ownBrandsPackagedAtYourOwnSite",
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> "contractPackedAtYourOwnSite",
+    SummaryHeadingIds.ownBrands                                 -> "ownBrandsPackagedAtYourOwnSite",
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> "contractPackedAtYourOwnSite",
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> "contractPackedForRegisteredSmallProducers",
-    SummaryHeadingIds.broughtIntoUK -> "broughtIntoUK",
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> "broughtIntoTheUKFromSmallProducers",
-    SummaryHeadingIds.exported -> "exported",
-    SummaryHeadingIds.lostOrDestroyed -> "lostOrDestroyed")
+    SummaryHeadingIds.broughtIntoUK                             -> "broughtIntoUK",
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> "broughtIntoTheUKFromSmallProducers",
+    SummaryHeadingIds.exported                                  -> "exported",
+    SummaryHeadingIds.lostOrDestroyed                           -> "lostOrDestroyed"
+  )
 
   val returnDetailsSummaryListsWithArrayElement = Map(
-    SummaryHeadingIds.ownBrands -> 0,
-    SummaryHeadingIds.contractPackedAtYourOwnSite -> 1,
+    SummaryHeadingIds.ownBrands                                 -> 0,
+    SummaryHeadingIds.contractPackedAtYourOwnSite               -> 1,
     SummaryHeadingIds.contractPackedForRegisteredSmallProducers -> 2,
-    SummaryHeadingIds.broughtIntoUK -> 3,
-    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers -> 4,
-    SummaryHeadingIds.exported -> 5,
-    SummaryHeadingIds.lostOrDestroyed -> 6,
-    SummaryHeadingIds.amountToPay -> 7,
-    SummaryHeadingIds.registeredSites -> 8)
+    SummaryHeadingIds.broughtIntoUK                             -> 3,
+    SummaryHeadingIds.broughtIntoTheUKFromSmallProducers        -> 4,
+    SummaryHeadingIds.exported                                  -> 5,
+    SummaryHeadingIds.lostOrDestroyed                           -> 6,
+    SummaryHeadingIds.amountToPay                               -> 7,
+    SummaryHeadingIds.registeredSites                           -> 8
+  )
 
   def isNegativeLevy(summaryHeadingIds: String): Boolean =
     List(SummaryHeadingIds.exported, SummaryHeadingIds.lostOrDestroyed)

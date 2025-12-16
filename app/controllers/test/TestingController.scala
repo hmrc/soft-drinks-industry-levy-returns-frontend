@@ -16,18 +16,19 @@
 
 package controllers.test
 
-import com.google.inject.{ Inject, Singleton }
+import com.google.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class TestingController @Inject() (
-  sessionRepository: SessionRepository,
-  val controllerComponents: MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class TestingController @Inject() (sessionRepository: SessionRepository, val controllerComponents: MessagesControllerComponents)(implicit
+  ec: ExecutionContext
+) extends FrontendBaseController
+    with I18nSupport {
 
   def resetUserAnswers(sdilRef: String): Action[AnyContent] = Action.async { _ =>
     sessionRepository.clear(sdilRef).map(_ => NoContent)

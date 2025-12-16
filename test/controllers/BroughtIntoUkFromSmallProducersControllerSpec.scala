@@ -16,13 +16,13 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.BroughtIntoUkFromSmallProducersFormProvider
 import helpers.LoggerHelper
 import models.NormalMode
-import navigation.{ FakeNavigator, Navigator }
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
@@ -31,7 +31,7 @@ import pages.BroughtIntoUkFromSmallProducersPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import util.GenericLogger
 import views.html.BroughtIntoUkFromSmallProducersView
@@ -43,7 +43,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new BroughtIntoUkFromSmallProducersFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val broughtIntoUkFromSmallProducersRoute = routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode).url
 
@@ -54,7 +54,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
 
       running(application) {
         val request = FakeRequest(GET, broughtIntoUkFromSmallProducersRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -88,7 +88,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
         val view = application.injector.instanceOf[BroughtIntoUkFromSmallProducersView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -106,7 +106,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -114,13 +114,11 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -151,7 +149,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -189,16 +187,16 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)).build()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
       running(application) {
         val request = FakeRequest(POST, broughtIntoUkFromSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ClaimCreditsForExportsController.onPageLoad(NormalMode).url
@@ -208,7 +206,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
     "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))).thenReturn(Future.successful(Right(true)))
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
@@ -226,7 +224,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
 
     "should log an error message when internal server error is returned when getting user answers is not resolved" in {
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))).thenReturn(Future.successful(Right(true)))
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
@@ -234,18 +232,19 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, broughtIntoUkFromSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustEqual ("ERROR")
-              event.getMessage mustEqual ("Failed to resolve user answers while on broughtIntoUkFromSmallProducers")
-          }.getOrElse(fail("No logging captured"))
+          events
+            .collectFirst { case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to resolve user answers while on broughtIntoUkFromSmallProducers"
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val app =
         applicationBuilder(Some(completedUserAnswers))
@@ -256,11 +255,12 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, broughtIntoUkFromSmallProducersRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(app, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustEqual ("ERROR")
-              event.getMessage mustEqual ("Failed to set value in session repository while attempting set on broughtIntoUkFromSmallProducers")
-          }.getOrElse(fail("No logging captured"))
+          events
+            .collectFirst { case event =>
+              event.getLevel.levelStr mustEqual "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on broughtIntoUkFromSmallProducers"
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

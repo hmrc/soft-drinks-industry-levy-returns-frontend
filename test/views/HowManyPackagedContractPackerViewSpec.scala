@@ -18,34 +18,34 @@ package views
 
 import config.FrontendAppConfig
 import forms.HowManyAsAContractPackerFormProvider
-import models.{ CheckMode, LitresInBands, NormalMode }
+import models.{CheckMode, LitresInBands, NormalMode}
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.HowManyAsAContractPackerView
 
 class HowManyPackagedContractPackerViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
   val howManyPackagedContractPackerView: HowManyAsAContractPackerView = application.injector.instanceOf[HowManyAsAContractPackerView]
 
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   val formProvider = new HowManyAsAContractPackerFormProvider()
-  val form: Form[LitresInBands] = formProvider.apply()
-  val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
-  val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
-  val formWithHighBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
-  val formEmpty: Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
-  val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
-  val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
-  val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
+  val form:                     Form[LitresInBands] = formProvider.apply()
+  val formWithHighAndLowBands:  Form[LitresInBands] = form.fill(litresInBands)
+  val formWithLowBandOnly:      Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
+  val formWithHighBandOnly:     Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
+  val formEmpty:                Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
+  val formWithNoNumeric:        Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
+  val formWithNegativeNumber:   Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
+  val formWithDecimalNumber:    Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
 
-  "How Many Packaged As Contract Packer View" - {
+  "How Many Packaged As Contract Packer View" -
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyPackagedContractPackerView(form, mode)
@@ -76,10 +76,16 @@ class HowManyPackagedContractPackerViewSpec extends ViewSpecHelper with LitresSp
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("Do not include liable drinks you have packaged for registered small producers.")
+          document.getElementsByClass(Selectors.body).first().text() mustBe Messages(
+            "Do not include liable drinks you have packaged for registered small producers."
+          )
         }
 
-        val expectedDetails = Map(Messages("What is a small producer?") -> Messages("A business is a small producer if it: has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days"))
+        val expectedDetails = Map(
+          Messages("What is a small producer?") -> Messages(
+            "A business is a small producer if it: has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days"
+          )
+        )
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
@@ -102,5 +108,4 @@ class HowManyPackagedContractPackerViewSpec extends ViewSpecHelper with LitresSp
         validateAccessibilityStatementLinkPresent(document)
       }
     }
-  }
 }

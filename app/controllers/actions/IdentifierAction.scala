@@ -21,30 +21,34 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.routes
 import models.requests.IdentifierRequest
-import play.api.mvc.Results._
-import play.api.mvc._
+import play.api.mvc.Results.*
+import play.api.mvc.*
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
-  config: FrontendAppConfig,
-  val parser: BodyParsers.Default,
-  sdilConnector: SoftDrinksIndustryLevyConnector)(implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions with ActionHelpers {
+  config:                     FrontendAppConfig,
+  val parser:                 BodyParsers.Default,
+  sdilConnector:              SoftDrinksIndustryLevyConnector
+)(implicit val executionContext: ExecutionContext)
+    extends IdentifierAction
+    with AuthorisedFunctions
+    with ActionHelpers {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
-      val maybeUtr = getUtr(enrolments)
+      val maybeUtr  = getUtr(enrolments)
       val maybeSdil = getSdilEnrolment(enrolments)
       (maybeSdil, maybeUtr) match {
         case (None, None) =>
@@ -56,11 +60,12 @@ class AuthenticatedIdentifierAction @Inject() (
             case None =>
               Future.successful(Redirect(config.sdilHomeUrl))
           }
-        case (None, Some(utr)) => sdilConnector.retrieveSubscription(utr, "utr").flatMap {
-          case Some(sub) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
-          case None =>
-            Future.successful(Redirect(config.sdilHomeUrl))
-        }
+        case (None, Some(utr)) =>
+          sdilConnector.retrieveSubscription(utr, "utr").flatMap {
+            case Some(sub) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
+            case None      =>
+              Future.successful(Redirect(config.sdilHomeUrl))
+          }
       }
     } recover {
       case _: NoActiveSession =>
@@ -70,4 +75,3 @@ class AuthenticatedIdentifierAction @Inject() (
     }
   }
 }
-
