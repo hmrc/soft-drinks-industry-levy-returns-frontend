@@ -19,41 +19,49 @@ package views
 import base.ReturnsTestData.emptyUserAnswers
 import config.FrontendAppConfig
 import forms.AddASmallProducerFormProvider
-import models.{ AddASmallProducer, CheckMode, EditMode, Mode, NormalMode }
+import models.{AddASmallProducer, CheckMode, EditMode, Mode, NormalMode}
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.helpers.{ LitresSpecHelper, ViewSpecHelper }
+import views.helpers.{LitresSpecHelper, ViewSpecHelper}
 import views.html.AddASmallProducerView
 
 class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
 
   val addASmallProducerView: AddASmallProducerView = application.injector.instanceOf[AddASmallProducerView]
 
-  implicit val request: Request[_] = FakeRequest()
-  implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val request: Request[?]        = FakeRequest()
+  implicit val config:  FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  val sdilProducerReference: String = "XKSDIL000000023"
-  val addASmallProducer: AddASmallProducer = AddASmallProducer(Option("PRODUCER"), sdilProducerReference, lowBandValue, highBandValue)
+  val sdilProducerReference: String            = "XKSDIL000000023"
+  val addASmallProducer:     AddASmallProducer = AddASmallProducer(Option("PRODUCER"), sdilProducerReference, lowBandValue, highBandValue)
 
   val formProvider = new AddASmallProducerFormProvider()
 
-  val form: Form[AddASmallProducer] = formProvider.apply(emptyUserAnswers)
-  val formWithHighAndLowBands: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> s"$lowBandValue", "highBand" -> s"$highBandValue"))
-  val formWithLowBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(lowBand = 1, highBand = 0))
+  val form:                    Form[AddASmallProducer] = formProvider.apply(emptyUserAnswers)
+  val formWithHighAndLowBands: Form[AddASmallProducer] = form.bind(
+    Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> s"$lowBandValue", "highBand" -> s"$highBandValue")
+  )
+  val formWithLowBandOnly:  Form[AddASmallProducer] = form.fill(addASmallProducer.copy(lowBand = 1, highBand = 0))
   val formWithHighBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(lowBand = 0, highBand = 1))
-  val emptyForm: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "", "highBand" -> ""))
-  val formWithNoNumeric: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "x", "highBand" -> "y"))
-  val formWithNegativeNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "-1", "highBand" -> "-2"))
-  val formWithDecimalNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "1.8", "highBand" -> "2.3"))
-  val formWithOutOfRangeNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
+  val emptyForm:            Form[AddASmallProducer] =
+    form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "", "highBand" -> ""))
+  val formWithNoNumeric: Form[AddASmallProducer] =
+    form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "x", "highBand" -> "y"))
+  val formWithNegativeNumber: Form[AddASmallProducer] =
+    form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "-1", "highBand" -> "-2"))
+  val formWithDecimalNumber: Form[AddASmallProducer] =
+    form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "1.8", "highBand" -> "2.3"))
+  val formWithOutOfRangeNumber: Form[AddASmallProducer] = form.bind(
+    Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "110000000000000", "highBand" -> "120000000000000")
+  )
 
   "Add a small producer view " - {
     List(NormalMode, CheckMode, EditMode).foreach { mode =>
       "when in " + mode + " mode" - {
-        val sdilRef = if (mode == NormalMode) None else Some(sdilProducerReference)
+        val sdilRef = if mode == NormalMode then None else Some(sdilProducerReference)
         val html: HtmlFormat.Appendable = addASmallProducerView(form, mode, sdilRef)
         val document = doc(html)
         val htmlWithValidData: HtmlFormat.Appendable = addASmallProducerView(formWithHighAndLowBands, mode, sdilRef)
@@ -80,17 +88,16 @@ class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
             "Enter the registered small producer's details"
         }
 
-        def testActionForAddSmallProducer(document: Document, mode: Mode): Unit = {
+        def testActionForAddSmallProducer(document: Document, mode: Mode): Unit =
           "should contains a form with the correct action" in {
             val action = document.select(Selectors.form).attr("action")
-            val route = if (mode != NormalMode) {
+            val route  = if mode != NormalMode then {
               controllers.routes.AddASmallProducerController.onEditPageSubmit(mode, sdilProducerReference).url
             } else {
               controllers.routes.AddASmallProducerController.onSubmit(mode).url
             }
             action mustEqual route
           }
-        }
 
         testActionForAddSmallProducer(documentWithValidData, mode)
         testButton(documentWithValidData)
@@ -117,14 +124,18 @@ class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
         "that includes a field for low band that is not populated" in {
           val lowBandGroup = formGroupsNotPopulated.get(2)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the low band"
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
+          lowBandGroup
+            .getElementById("lowBand-hint")
+            .text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe false
         }
 
         "that includes a field for high band that is not populated" in {
           val highBandGroup = formGroupsNotPopulated.get(3)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the high band"
-          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
+          highBandGroup
+            .getElementById("highBand-hint")
+            .text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           highBandGroup.getElementById("highBand").hasAttr("value") mustBe false
         }
 
@@ -147,7 +158,9 @@ class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
         "that includes a field for low band that is populated" in {
           val lowBandGroup = formGroupsPopulated.get(2)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the low band"
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
+          lowBandGroup
+            .getElementById("lowBand-hint")
+            .text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe true
           lowBandGroup.getElementById("lowBand").attr("value") mustBe lowBandValue.toString
         }
@@ -155,7 +168,9 @@ class AddASmallProducerViewSpec extends ViewSpecHelper with LitresSpecHelper {
         "that includes a field for high band that is populated" in {
           val highBandGroup = formGroupsPopulated.get(3)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the high band"
-          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
+          highBandGroup
+            .getElementById("highBand-hint")
+            .text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           highBandGroup.getElementById("highBand").hasAttr("value") mustBe true
           highBandGroup.getElementById("highBand").attr("value") mustBe highBandValue.toString
         }

@@ -22,7 +22,7 @@
     appConfig: FrontendAppConfig
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[?], messages: Messages)
 
 @signInLink = {
     @{appConfig.loginUrl}?continue=@{appConfig.sdilHomeUrl}

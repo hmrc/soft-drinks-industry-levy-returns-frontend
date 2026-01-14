@@ -20,10 +20,8 @@ import models.SdilReturn
 import models.retrieved.RetrievedSubscription
 
 object UserTypeCheck {
-  def isNewImporter(sdilReturn: SdilReturn, subscription: RetrievedSubscription): Boolean = {
+  def isNewImporter(sdilReturn: SdilReturn, subscription: RetrievedSubscription): Boolean =
     (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && !subscription.activity.importer
-  }
-  def isNewPacker(sdilReturn: SdilReturn, subscription: RetrievedSubscription): Boolean = {
+  def isNewPacker(sdilReturn: SdilReturn, subscription: RetrievedSubscription): Boolean =
     (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && !subscription.activity.contractPacker
-  }
 }

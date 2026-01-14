@@ -17,38 +17,39 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{ Mode, NormalMode }
+import models.{Mode, NormalMode}
 import models.backend.Site
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ Actions, SummaryList }
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, SummaryList}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Key, SummaryListRow }
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.AddressFormattingHelper
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object PackagingSiteDetailsSummary {
 
-  def summaryList(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): SummaryList = {
-    SummaryListViewModel(
-      rows = row2(packagingSiteList, mode))
-  }
+  def summaryList(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): SummaryList =
+    SummaryListViewModel(rows = row2(packagingSiteList, mode))
 
-  def row2(packagingSiteList: Map[String, Site], mode: Mode = NormalMode)(implicit messages: Messages): List[SummaryListRow] = {
-    packagingSiteList.map {
-      site =>
-        SummaryListRow(
-          key = Key(
-            content =
-              HtmlContent(AddressFormattingHelper.addressFormatting(site._2.address, site._2.tradingName)))
-            .withCssClass("govuk-!-font-weight-regular govuk-!-width-full"),
-          actions = if (packagingSiteList.size > 1) {
-            Some(Actions("", Seq(
-              ActionItemViewModel("site.remove", routes.RemovePackagingDetailsConfirmationController.onPageLoad(mode, site._1).url)
-                .withVisuallyHiddenText(messages("packagingSiteDetails.hidden", site._2.tradingName.getOrElse(""), site._2.address.lines.head)))))
-          } else {
-            None
-          })
+  def row2(packagingSiteList: Map[String, Site], mode: Mode = NormalMode)(implicit messages: Messages): List[SummaryListRow] =
+    packagingSiteList.map { site =>
+      SummaryListRow(
+        key = Key(content = HtmlContent(AddressFormattingHelper.addressFormatting(site._2.address, site._2.tradingName)))
+          .withCssClass("govuk-!-font-weight-regular govuk-!-width-full"),
+        actions = if packagingSiteList.size > 1 then {
+          Some(
+            Actions(
+              "",
+              Seq(
+                ActionItemViewModel("site.remove", routes.RemovePackagingDetailsConfirmationController.onPageLoad(mode, site._1).url)
+                  .withVisuallyHiddenText(messages("packagingSiteDetails.hidden", site._2.tradingName.getOrElse(""), site._2.address.lines.head))
+              )
+            )
+          )
+        } else {
+          None
+        }
+      )
     }.toList
-  }
 }

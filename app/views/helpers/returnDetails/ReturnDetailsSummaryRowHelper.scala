@@ -20,19 +20,19 @@ import models.UserAnswers
 import pages.QuestionPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 trait ReturnDetailsSummaryRowHelper {
 
-  val page: QuestionPage[Boolean]
-  val key: String
-  val action: String
-  val actionId: String
+  val page:       QuestionPage[Boolean]
+  val key:        String
+  val action:     String
+  val actionId:   String
   val hiddenText: String
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val value = if (answers.get(page).contains(true)) {
+    val value = if answers.get(page).contains(true) then {
       "site.yes"
     } else {
       "site.no"
@@ -41,14 +41,17 @@ trait ReturnDetailsSummaryRowHelper {
       SummaryListRowViewModel(
         key = key,
         value = ValueViewModel(value).withCssClass("sdil-right-align--desktop"),
-        actions = if (isCheckAnswers) {
+        actions = if isCheckAnswers then {
           Seq(
             ActionItemViewModel("site.change", action)
               .withAttribute(("id", actionId))
-              .withVisuallyHiddenText(messages(s"$hiddenText.change.hidden")))
+              .withVisuallyHiddenText(messages(s"$hiddenText.change.hidden"))
+          )
         } else {
           Seq.empty
-        }))
+        }
+      )
+    )
   }
 
 }

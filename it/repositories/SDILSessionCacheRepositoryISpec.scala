@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package repositories
 
 import org.mongodb.scala.bson.BsonDocument
@@ -6,26 +22,30 @@ import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{Format, JsObject, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import services.Encryption
 import uk.gov.hmrc.crypto.EncryptedValue
 import uk.gov.hmrc.crypto.json.CryptoFormats
-import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
+import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 import java.time.{LocalDateTime, ZoneOffset}
 import java.util.concurrent.TimeUnit
 
-class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
-  with Matchers
-  with ScalaFutures
-  with IntegrationPatience
-  with OptionValues with GuiceOneAppPerSuite with FutureAwaits with DefaultAwaitTimeout with BeforeAndAfterEach {
+class SDILSessionCacheRepositoryISpec
+    extends AnyFreeSpec
+    with Matchers
+    with ScalaFutures
+    with IntegrationPatience
+    with GuiceOneAppPerSuite
+    with FutureAwaits
+    with DefaultAwaitTimeout
+    with BeforeAndAfterEach {
 
-  val encryption: Encryption = app.injector.instanceOf[Encryption]
-  implicit val cryptEncryptedValueFormats: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
+  val encryption:                          Encryption             = app.injector.instanceOf[Encryption]
+  implicit val cryptEncryptedValueFormats: Format[EncryptedValue] = CryptoFormats.encryptedValueFormat
 
   val repository: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
 
@@ -60,7 +80,7 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
 
   ".upsert" - {
     "insert successfully when nothing exists in DB" in {
-      val cacheMap = CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang")))
+      val cacheMap       = CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang")))
       val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
       await(repository.upsert(cacheMap))
       val updatedRecord = await(repository.collection.find[BsonDocument](BsonDocument()).toFuture()).head
@@ -73,7 +93,7 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
         val json = (resultParsedToJson \ "data").as[Map[String, EncryptedValue]]
         json.map(data => data._1 -> Json.parse(encryption.crypto.decrypt(data._2, cacheMap.id)))
       }
-      val id = (resultParsedToJson \ "id").as[String]
+      val id          = (resultParsedToJson \ "id").as[String]
       val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime].toEpochSecond(ZoneOffset.UTC)
       dataDecrypted mustBe cacheMap.data
       id mustBe cacheMap.id
@@ -82,7 +102,7 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
       assert(lastUpdated < timeAfterTest || lastUpdated == timeAfterTest)
     }
     "upsert a record that already exists successfully" in {
-      val cacheMap = CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang")))
+      val cacheMap       = CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang")))
       val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
 
       await(repository.collection.countDocuments().head()) mustBe 0
@@ -96,11 +116,11 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
       val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
 
       val resultParsedToJson = Json.parse(updatedRecord.toJson).as[JsObject]
-      val dataDecrypted = {
+      val dataDecrypted      = {
         val json = (resultParsedToJson \ "data").as[Map[String, EncryptedValue]]
         json.map(data => data._1 -> Json.parse(encryption.crypto.decrypt(data._2, cacheMap.id)))
       }
-      val id = (resultParsedToJson \ "id").as[String]
+      val id          = (resultParsedToJson \ "id").as[String]
       val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime].toEpochSecond(ZoneOffset.UTC)
 
       dataDecrypted mustBe updatedCacheMap.data
@@ -120,6 +140,12 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
       await(repository.removeRecord(cacheMap.id))
       await(repository.collection.countDocuments().head()) mustBe 0
     }
+    "return false when record does not exist" in {
+      await(repository.collection.countDocuments().head()) mustBe 0
+
+      val result = await(repository.removeRecord("missing-id"))
+      result mustBe false
+    }
   }
   ".get" - {
     "get a record successfully" in {
@@ -131,6 +157,12 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
       val result = await(repository.get(cacheMap.id))
       result.get mustBe cacheMap
     }
+    "return None when record does not exist" in {
+      await(repository.collection.countDocuments().head()) mustBe 0
+
+      val result = await(repository.get("does-not-exist"))
+      result mustBe None
+    }
   }
   ".updateLastUpdated" - {
     "update last updated successfully" in {
@@ -138,17 +170,25 @@ class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
       await(repository.upsert(cacheMap))
       await(repository.collection.countDocuments().head()) mustBe 1
       val timeBeforeTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
-      val result = await(repository.updateLastUpdated(cacheMap.id))
+      val result         = await(repository.updateLastUpdated(cacheMap.id))
       result mustBe true
 
       val timeAfterTest = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC)
       val updatedRecord = await(repository.collection.find[BsonDocument](BsonDocument()).toFuture()).head
 
       val resultParsedToJson = Json.parse(updatedRecord.toJson).as[JsObject]
-      val lastUpdated = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime].toEpochSecond(ZoneOffset.UTC)
+      val lastUpdated        = (resultParsedToJson \ "lastUpdated" \ "$date").as[LocalDateTime].toEpochSecond(ZoneOffset.UTC)
 
       assert(lastUpdated > timeBeforeTest || lastUpdated == timeBeforeTest)
       assert(lastUpdated < timeAfterTest || lastUpdated == timeAfterTest)
+    }
+    "acknowledges update even when record does not exist (0 matched)" in {
+      await(repository.collection.countDocuments().head()) mustBe 0
+
+      val result = await(repository.updateLastUpdated("missing-id"))
+      result mustBe true
+
+      await(repository.collection.countDocuments().head()) mustBe 0
     }
   }
 

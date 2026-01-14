@@ -22,7 +22,7 @@ govukRadios: GovukRadios,
 govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, warehouse: Html, index: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, warehouse: Html, index: String)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = title(form, messages("removeWarehouseConfirm.title"))) {
     @formHelper(action = routes.RemoveWarehouseConfirmController.onSubmit(index), Symbol("autoComplete") -> "off") {

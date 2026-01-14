@@ -19,11 +19,11 @@ package pages
 import controllers.routes
 import forms.RemoveWarehouseConfirmFormProvider
 import messages.RemoveWarehouseConfirmMessages
-import models.{ CheckMode, NormalMode }
+import models.{CheckMode, NormalMode}
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.*
 import pages.behaviours.PageBehaviours
-import play.api.i18n.{ Messages, MessagesApi }
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import views.helpers.ViewSpecHelper
@@ -41,23 +41,24 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
     messagesApi.preferred(FakeRequest())
 
   def documentPopForm(isYes: Boolean = true): Document = {
-    val popForm = form.apply()
+    val popForm = form
+      .apply()
       .fill(isYes)
-    val popView = view(popForm, NormalMode, Html(" 33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
+    val popView = view(popForm, NormalMode, Html(" 33 Rhes Priordy East London E73 2RP"), "1")(using FakeRequest(), testMessages)
     doc(popView)
   }
 
   object Selectors {
-    val heading = "govuk-heading-l"
-    val radios = "govuk-radios__item"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--xl"
-    val radioInput = "govuk-radios__input"
-    val radioLabels = "govuk-label govuk-radios__label"
-    val body = "govuk-body-m"
+    val heading           = "govuk-heading-l"
+    val radios            = "govuk-radios__item"
+    val legend            = "govuk-fieldset__legend  govuk-fieldset__legend--xl"
+    val radioInput        = "govuk-radios__input"
+    val radioLabels       = "govuk-label govuk-radios__label"
+    val body              = "govuk-body-m"
     val errorSummaryTitle = "govuk-error-summary__title"
-    val errorSummaryList = "govuk-list govuk-error-summary__list"
-    val button = "govuk-button"
-    val form = "form"
+    val errorSummaryList  = "govuk-list govuk-error-summary__list"
+    val button            = "govuk-button"
+    val form              = "form"
   }
 
   "RemoveWarehouseConfirmView" - {
@@ -69,8 +70,8 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
 
     "the form is not prepopulated and has no error" - {
       val popForm = form.apply()
-      val html =
-        view(popForm, NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
+      val html    =
+        view(popForm, NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(using FakeRequest(), testMessages)
       val document = doc(html)
 
       "have the expected title" in {
@@ -94,16 +95,17 @@ class RemoveWarehouseConfirmPageSpec extends ViewSpecHelper with PageBehaviours 
     }
 
     "the form is not prepopulated and has no error" - {
-      val formWithErrors = form.apply().bind(
-        Map("select-continue" -> ""))
-      val html =
-        view(formWithErrors, NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(FakeRequest(), testMessages)
+      val formWithErrors = form.apply().bind(Map("select-continue" -> ""))
+      val html           =
+        view(formWithErrors, NormalMode, Html("33 Rhes Priordy East London E73 2RP"), "1")(using FakeRequest(), testMessages)
       val document = doc(html)
 
       "have a page title containing error" in {
         val legend = document.getElementsByClass(Selectors.legend)
         legend.size() mustBe 1
-        legend.get(0).getElementsByClass(Selectors.legend)
+        legend
+          .get(0)
+          .getElementsByClass(Selectors.legend)
           .text() mustEqual RemoveWarehouseConfirmMessages.title
       }
 

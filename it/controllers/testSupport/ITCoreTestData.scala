@@ -1,10 +1,26 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.testSupport
 
 import models.backend.{Contact, Site, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import models.{AddASmallProducer, Amounts, DefaultUserAnswersData, LitresInBands, ReturnPeriod, SmallProducer, UserAnswers}
 import org.scalatest.TryValues
-import pages._
+import pages.*
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -14,55 +30,52 @@ import scala.util.Failure
 object ITCoreTestData extends ITCoreTestData
 
 trait ITCoreTestData extends TryValues {
-  val lowBand = 1000L
-  val highBand = 1000L
-  val sdilNumber = "XKSDIL000000022"
+  val lowBand      = 1000L
+  val highBand     = 1000L
+  val sdilNumber   = "XKSDIL000000022"
   val producerName = Some("Super Cola Ltd")
-  val refNumber = "XZSDIL000000234"
+  val refNumber    = "XZSDIL000000234"
 
   val aSubscription = RetrievedSubscription(
     utr = "0000001611",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",
     address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
+    activity =
+      RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
     liabilityDate = LocalDate.of(2018, 4, 19),
     productionSites = List(
-      Site(
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        Some("88"),
-        Some("Wild Lemonade Group"),
-        Some(LocalDate.of(2018, 2, 26))),
+      Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("88"), Some("Wild Lemonade Group"), Some(LocalDate.of(2018, 2, 26))),
       Site(
         UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
         Some("87"),
         Some("Highly Addictive Drinks Plc"),
-        Some(LocalDate.of(2019, 8, 19))),
+        Some(LocalDate.of(2019, 8, 19))
+      ),
       Site(
         UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
         Some("94"),
         Some("Monster Bottle Ltd"),
-        Some(LocalDate.of(2017, 9, 23))),
+        Some(LocalDate.of(2017, 9, 23))
+      ),
       Site(
         UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
         Some("27"),
         Some("Super Lemonade Group"),
-        Some(LocalDate.of(2017, 4, 23))),
+        Some(LocalDate.of(2017, 4, 23))
+      ),
       Site(
         UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
         Some("96"),
         Some("Star Products Ltd"),
-        Some(LocalDate.of(2017, 2, 11)))
+        Some(LocalDate.of(2017, 2, 11))
+      )
     ),
     warehouseSites = List(),
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
   )
-  val PackagingSite1 = Site(
-    UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-    None,
-    Some("Wild Lemonade Group"),
-    None)
+  val PackagingSite1 = Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("Wild Lemonade Group"), None)
 
   val smallProducerListOnlySuperCola: List[SmallProducer] = List(SmallProducer(producerName.get, refNumber, (lowBand, highBand)))
 
@@ -70,10 +83,11 @@ trait ITCoreTestData extends TryValues {
 
   implicit val duration: FiniteDuration = 5.seconds
 
-  def requestReturnPeriod = ReturnPeriod(2018, 1)
-  def diffReturnPeriod = ReturnPeriod(2021, 1)
-  def emptyUserAnswers = UserAnswers(sdilNumber, requestReturnPeriod, Json.obj())
-  def defaultNilReturnUserAnswers = UserAnswers(sdilNumber, requestReturnPeriod, Json.toJsObject(new DefaultUserAnswersData(aSubscription)), isNilReturn = true)
+  def requestReturnPeriod         = ReturnPeriod(2018, 1)
+  def diffReturnPeriod            = ReturnPeriod(2021, 1)
+  def emptyUserAnswers            = UserAnswers(sdilNumber, requestReturnPeriod, Json.obj())
+  def defaultNilReturnUserAnswers =
+    UserAnswers(sdilNumber, requestReturnPeriod, Json.toJsObject(new DefaultUserAnswersData(aSubscription)), isNilReturn = true)
   def submittedAnswers = UserAnswers(sdilNumber, requestReturnPeriod, Json.obj(), submitted = true)
 
   def failedUserAnswers = Failure(new Exception(""))
@@ -85,30 +99,54 @@ trait ITCoreTestData extends TryValues {
     .set(OwnBrandsPage, false)
 
   def brandPackagedOwnSiteAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, true).success.value
+    .set(OwnBrandsPage, true)
+    .success
+    .value
     .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
 
   def howManyAsContractPackerFullAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-    .set(PackagedContractPackerPage, true).success.value
+    .set(OwnBrandsPage, true)
+    .success
+    .value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(PackagedContractPackerPage, true)
+    .success
+    .value
     .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
 
   def howManyAsContractPackerPartialAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
+    .set(OwnBrandsPage, true)
+    .success
+    .value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
     .set(PackagedContractPackerPage, true)
 
   def exemptionsForSmallProducersPartialAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
+    .set(OwnBrandsPage, true)
+    .success
+    .value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
     .set(PackagedContractPackerPage, false)
 
   def exemptionsForSmallProducersFullAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
+    .set(OwnBrandsPage, true)
+    .success
+    .value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(PackagedContractPackerPage, true)
+    .success
+    .value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
     .set(ExemptionsForSmallProducersPage, true)
 
   def broughtIntoUkPartialAnswers = exemptionsForSmallProducersFullAnswers.success.value
@@ -118,37 +156,64 @@ trait ITCoreTestData extends TryValues {
     .set(BroughtIntoUKPage, true)
 
   def broughtIntoUkFromSmallProducersFullAnswers = broughtIntoUkFullAnswers.success.value
-    .set(BroughtIntoUKPage, false).success.value
+    .set(BroughtIntoUKPage, false)
+    .success
+    .value
     .set(BroughtIntoUkFromSmallProducersPage, false)
 
   def creditsForLostDamagedPartialAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
-    .set(BroughtIntoUKPage, true).success.value
-    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(OwnBrandsPage, true)
+    .success
+    .value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(PackagedContractPackerPage, true)
+    .success
+    .value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, false)
+    .success
+    .value
+    .set(BroughtIntoUKPage, true)
+    .success
+    .value
+    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, false)
+    .success
+    .value
     .set(ClaimCreditsForExportsPage, false)
 
   def creditsForCopackerDamagedPartialAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, false).success.value
-    .set(PackagedContractPackerPage, false).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
-    .set(BroughtIntoUKPage, false).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(OwnBrandsPage, false)
+    .success
+    .value
+    .set(PackagedContractPackerPage, false)
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, false)
+    .success
+    .value
+    .set(BroughtIntoUKPage, false)
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, false)
+    .success
+    .value
     .set(ClaimCreditsForExportsPage, false)
 
-  def howManyBroughtIntoUkFullAnswers = broughtIntoUkFullAnswers
-    .success.value
+  def howManyBroughtIntoUkFullAnswers = broughtIntoUkFullAnswers.success.value
     .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
 
   def addASmallProducerPartialAnswers = exemptionsForSmallProducersFullAnswers.success.value
     .set(ExemptionsForSmallProducersPage, true)
 
   def addASmallProducerFullAnswers = addASmallProducerPartialAnswers.success.value
-      .set(AddASmallProducerPage, AddASmallProducer(producerName, refNumber, lowBand, highBand))
+    .set(AddASmallProducerPage, AddASmallProducer(producerName, refNumber, lowBand, highBand))
 
   def smallProducerDetaisPartialAnswers = addASmallProducerFullAnswers.success.value
     .set(AddASmallProducerPage, AddASmallProducer(producerName, refNumber, lowBand, highBand))
@@ -165,84 +230,197 @@ trait ITCoreTestData extends TryValues {
     .set(RemoveSmallProducerConfirmPage, true)
 
   def newPackerPartialAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, false).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
-    .set(BroughtIntoUKPage, false).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-    .set(ClaimCreditsForExportsPage, false).success.value
+    .set(OwnBrandsPage, false)
+    .success
+    .value
+    .set(PackagedContractPackerPage, true)
+    .success
+    .value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, false)
+    .success
+    .value
+    .set(BroughtIntoUKPage, false)
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, false)
+    .success
+    .value
+    .set(ClaimCreditsForExportsPage, false)
+    .success
+    .value
 
   def newPackerPartialNewImporterAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, false).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
-    .set(BroughtIntoUKPage, false).success.value
-    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-    .set(ClaimCreditsForExportsPage, false).success.value
+    .set(OwnBrandsPage, false)
+    .success
+    .value
+    .set(PackagedContractPackerPage, true)
+    .success
+    .value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, false)
+    .success
+    .value
+    .set(BroughtIntoUKPage, false)
+    .success
+    .value
+    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, false)
+    .success
+    .value
+    .set(ClaimCreditsForExportsPage, false)
+    .success
+    .value
 
   def newImporterAnswers = emptyUserAnswers
-    .set(OwnBrandsPage, false).success.value
-    .set(PackagedContractPackerPage, false).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
-    .set(BroughtIntoUKPage, true).success.value
-    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-    .set(ClaimCreditsForExportsPage, false).success.value
+    .set(OwnBrandsPage, false)
+    .success
+    .value
+    .set(PackagedContractPackerPage, false)
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, false)
+    .success
+    .value
+    .set(BroughtIntoUKPage, true)
+    .success
+    .value
+    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, false)
+    .success
+    .value
+    .set(ClaimCreditsForExportsPage, false)
+    .success
+    .value
 
   def checkYourAnswersFullAnswers = emptyUserAnswers
-    .copy(smallProducerList = smallProducerListOnlySuperCola,
-      packagingSiteList = Map("1" -> PackagingSite1),
-      warehouseList = Map("1" -> warehouse))
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ExemptionsForSmallProducersPage, true).success.value
-    .set(AddASmallProducerPage, AddASmallProducer(None, refNumber, lowBand, highBand)).success.value
-    .set(BroughtIntoUKPage, true).success.value
-    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-    .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ClaimCreditsForExportsPage, true).success.value
-    .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ClaimCreditsForLostDamagedPage, true).success.value
-    .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
-    .set(PackAtBusinessAddressPage, true).success.value
-    .set(AskSecondaryWarehouseInReturnPage, true).success.value
+    .copy(smallProducerList = smallProducerListOnlySuperCola, packagingSiteList = Map("1" -> PackagingSite1), warehouseList = Map("1" -> warehouse))
+    .set(OwnBrandsPage, true)
+    .success
+    .value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(PackagedContractPackerPage, true)
+    .success
+    .value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, true)
+    .success
+    .value
+    .set(AddASmallProducerPage, AddASmallProducer(None, refNumber, lowBand, highBand))
+    .success
+    .value
+    .set(BroughtIntoUKPage, true)
+    .success
+    .value
+    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, true)
+    .success
+    .value
+    .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(ClaimCreditsForExportsPage, true)
+    .success
+    .value
+    .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(ClaimCreditsForLostDamagedPage, true)
+    .success
+    .value
+    .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(PackAtBusinessAddressPage, true)
+    .success
+    .value
+    .set(AskSecondaryWarehouseInReturnPage, true)
+    .success
+    .value
 
   def checkYourAnswersFullAnswersAllNo = emptyUserAnswers
-    .set(OwnBrandsPage, false).success.value
-    .set(PackagedContractPackerPage, false).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
-    .set(BroughtIntoUKPage, false).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-    .set(ClaimCreditsForExportsPage, false).success.value
-    .set(ClaimCreditsForLostDamagedPage, false).success.value
+    .set(OwnBrandsPage, false)
+    .success
+    .value
+    .set(PackagedContractPackerPage, false)
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, false)
+    .success
+    .value
+    .set(BroughtIntoUKPage, false)
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, false)
+    .success
+    .value
+    .set(ClaimCreditsForExportsPage, false)
+    .success
+    .value
+    .set(ClaimCreditsForLostDamagedPage, false)
+    .success
+    .value
 
-def claimCreditsForLostDamagedPageWithLitresFullAnswers = newPackerPartialAnswers
-  .set(ClaimCreditsForExportsPage, true).success.value
-  .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+  def claimCreditsForLostDamagedPageWithLitresFullAnswers = newPackerPartialAnswers
+    .set(ClaimCreditsForExportsPage, true)
+    .success
+    .value
+    .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
 
   def returnSentAnswersFullAnswers = submittedAnswers
-    .set(OwnBrandsPage, true).success.value
-    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-    .set(PackagedContractPackerPage, true).success.value
-    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ExemptionsForSmallProducersPage, false).success.value
-    .set(BroughtIntoUKPage, true).success.value
-    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-    .set(ClaimCreditsForExportsPage, true).success.value
-    .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-    .set(ClaimCreditsForLostDamagedPage, true).success.value
-    .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+    .set(OwnBrandsPage, true)
+    .success
+    .value
+    .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(PackagedContractPackerPage, true)
+    .success
+    .value
+    .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, false)
+    .success
+    .value
+    .set(BroughtIntoUKPage, true)
+    .success
+    .value
+    .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, false)
+    .success
+    .value
+    .set(ClaimCreditsForExportsPage, true)
+    .success
+    .value
+    .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
+    .set(ClaimCreditsForLostDamagedPage, true)
+    .success
+    .value
+    .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+    .success
+    .value
 
-
-  val zero = BigDecimal(0.00)
+  val zero        = BigDecimal(0.00)
   val amountsZero = Amounts(zero, zero, zero)
-  val amounts = Amounts(1000, 3000, 2000)
+  val amounts     = Amounts(1000, 3000, 2000)
 
 }

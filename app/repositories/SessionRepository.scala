@@ -17,70 +17,65 @@
 package repositories
 
 import config.FrontendAppConfig
-import errors.{ ReturnsErrors, SessionDatabaseInsertError }
+import errors.{ReturnsErrors, SessionDatabaseInsertError}
 import models.UserAnswers
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model._
+import org.mongodb.scala.model.*
 import services.Encryption
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import java.time.{ Clock, Instant }
+import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionRepository @Inject() (
-  mongoComponent: MongoComponent,
-  appConfig: FrontendAppConfig,
-  clock: Clock)(implicit ec: ExecutionContext, encryption: Encryption)
-  extends PlayMongoRepository[UserAnswers](
-    collectionName = "user-answers",
-    mongoComponent = mongoComponent,
-    domainFormat = UserAnswers.MongoFormats.format,
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl.toLong, TimeUnit.SECONDS)))) {
+class SessionRepository @Inject() (mongoComponent: MongoComponent, appConfig: FrontendAppConfig, clock: Clock)(implicit
+  ec:         ExecutionContext,
+  encryption: Encryption
+) extends PlayMongoRepository[UserAnswers](
+      collectionName = "user-answers",
+      mongoComponent = mongoComponent,
+      domainFormat = UserAnswers.MongoFormats.format,
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("lastUpdatedIdx")
+            .expireAfter(appConfig.cacheTtl.toLong, TimeUnit.SECONDS)
+        )
+      )
+    ) {
 
   private def byId(id: String): Bson = Filters.equal("_id", id)
 
-  def keepAlive(id: String): Future[Either[ReturnsErrors, Boolean]] = {
+  def keepAlive(id: String): Future[Either[ReturnsErrors, Boolean]] =
     collection
-      .updateOne(
-        filter = byId(id),
-        update = Updates.set("lastUpdated", Instant.now(clock)))
+      .updateOne(filter = byId(id), update = Updates.set("lastUpdated", Instant.now(clock)))
       .toFuture()
       .map(_ => Right(true))
-      .recover {
-        case _ => Left(SessionDatabaseInsertError)
+      .recover { case _ =>
+        Left(SessionDatabaseInsertError)
       }
-  }
 
   def get(id: String): Future[Option[UserAnswers]] =
-    keepAlive(id).flatMap {
-      _ =>
-        collection
-          .find(byId(id))
-          .headOption()
+    keepAlive(id).flatMap { _ =>
+      collection
+        .find(byId(id))
+        .headOption()
     }
 
   def set(answers: UserAnswers): Future[Either[ReturnsErrors, Boolean]] = {
 
-    val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
+    val updatedAnswers = answers.copy(lastUpdated = Instant.now(clock))
 
     collection
-      .replaceOne(
-        filter = byId(updatedAnswers.id),
-        replacement = updatedAnswers,
-        options = ReplaceOptions().upsert(true))
+      .replaceOne(filter = byId(updatedAnswers.id), replacement = updatedAnswers, options = ReplaceOptions().upsert(true))
       .toFuture()
       .map(_ => Right(true))
-      .recover {
-        case _ => Left(SessionDatabaseInsertError)
+      .recover { case _ =>
+        Left(SessionDatabaseInsertError)
       }
   }
 

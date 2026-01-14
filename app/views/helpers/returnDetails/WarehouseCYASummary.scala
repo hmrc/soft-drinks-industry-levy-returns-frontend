@@ -17,37 +17,42 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{ CheckMode, UserAnswers }
+import models.{CheckMode, UserAnswers}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ SummaryList, Value }
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object WarehouseCYASummary {
 
-  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryList] = {
+  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryList] =
 
     userAnswers.warehouseList.nonEmpty match {
       case true =>
         Some(
           SummaryListViewModel(
-            rows = Seq(SummaryListRowViewModel(
-              key = if (userAnswers.warehouseList.size > 1) {
-                messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", { userAnswers.warehouseList.size.toString })
-              } else {
-                messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one")
-              },
-              value = Value(),
-              actions = if (isCheckAnswers) {
-                Seq(
-                  ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-                    .withAttribute(("id", "change-warehouses"))
-                    .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden")))
-              } else {
-                Seq.empty
-              }))))
+            rows = Seq(
+              SummaryListRowViewModel(
+                key = if userAnswers.warehouseList.size > 1 then {
+                  messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
+                } else {
+                  messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one")
+                },
+                value = Value(),
+                actions = if isCheckAnswers then {
+                  Seq(
+                    ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
+                      .withAttribute(("id", "change-warehouses"))
+                      .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden"))
+                  )
+                } else {
+                  Seq.empty
+                }
+              )
+            )
+          )
+        )
       case _ => None
     }
-  }
 
 }

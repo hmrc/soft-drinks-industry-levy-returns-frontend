@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import models.SmallProducer
@@ -11,13 +27,13 @@ import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper with TryValues {
 
   val sdilRefSparkyJuice = "XZSDIL000000234"
-  val aliasSparkyJuice = "Sparky Juice"
+  val aliasSparkyJuice   = "Sparky Juice"
 
   val sdilRefSuperCola = "XZSDIL000000235"
-  val aliasSuperCola = "Super Cola"
+  val aliasSuperCola   = "Super Cola"
 
   val litreMax: Long = 100000000000000L
-  val litre: Long = litreMax - 1
+  val litre:    Long = litreMax - 1
 
   "AddASmallProducerController" should {
     "Ask user to input a registered small producer's details" in {
@@ -26,7 +42,8 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
       build.commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/add-small-producer")
+        val result1 = client
+          .url(s"$baseUrl/add-small-producer")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -40,8 +57,8 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
 
     "Post the new form data and navigate to small producer details page " in {
 
-      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = "Super Cola Ltd" ,
-        sdilRef = "XZSDIL000000234", litreage = (1000L,1000L))))
+      val expectedResult: Some[List[SmallProducer]] =
+        Some(List(SmallProducer(alias = "Super Cola Ltd", sdilRef = "XZSDIL000000234", litreage = (1000L, 1000L))))
 
       build
         .commonPreconditionChangeSubscription(aSubscription)
@@ -51,10 +68,10 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(s"$baseUrl/add-small-producer")
+          client
+            .url(s"$baseUrl/add-small-producer")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> "1000", "highBand" -> "1000"))
 
@@ -70,10 +87,8 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
 
     "Load small producer details when producer details in edit mode " in {
 
-      val userAnswers = addASmallProducerPartialAnswers.success.value
-      val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
-        SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre)))
-      )
+      val userAnswers        = addASmallProducerPartialAnswers.success.value
+      val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre))))
 
       setUpData(updatedUserAnswers)
 
@@ -81,7 +96,8 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
+        val result1 = client
+          .url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -95,32 +111,32 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
     "Post the updated details of small producer and check it is updated" in {
 
       val amendedProducerAlias = "Jackson's Breeze"
-      val amendedLowBand = "1000"
-      val amendedHighBand = "5000"
+      val amendedLowBand       = "1000"
+      val amendedHighBand      = "5000"
 
       build
         .commonPreconditionChangeSubscription(aSubscription)
 
-      val userAnswers = addASmallProducerFullAnswers.success.value
-      val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
-        SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre)))
-      )
+      val userAnswers        = addASmallProducerFullAnswers.success.value
+      val updatedUserAnswers = userAnswers.copy(smallProducerList = List(SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre))))
 
       setUpData(updatedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
+          client
+            .url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj(
-              "producerName" -> amendedProducerAlias,
-              "referenceNumber" -> sdilRefSuperCola,
-              "lowBand" -> amendedLowBand,
-              "highBand" -> amendedHighBand
-            ))
+            .post(
+              Json.obj(
+                "producerName"    -> amendedProducerAlias,
+                "referenceNumber" -> sdilRefSuperCola,
+                "lowBand"         -> amendedLowBand,
+                "highBand"        -> amendedHighBand
+              )
+            )
 
         whenReady(result) { res =>
           res.status mustBe 303
@@ -139,33 +155,37 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
 
       val amendedProducerAlias = "Jackson's Breeze"
       val amendedSDILReference = "XCSDIL000000066"
-      val amendedLowBand = "1000"
-      val amendedHighBand = "5000"
+      val amendedLowBand       = "1000"
+      val amendedHighBand      = "5000"
 
       build
         .commonPreconditionChangeSubscription(aSubscription)
 
-      val userAnswers = addASmallProducerFullAnswers.success.value
-      val updatedUserAnswers = userAnswers.copy(smallProducerList = List(
-        SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre)),
-        SmallProducer(s"$aliasSparkyJuice", s"$sdilRefSparkyJuice", (litre, litre)))
+      val userAnswers        = addASmallProducerFullAnswers.success.value
+      val updatedUserAnswers = userAnswers.copy(smallProducerList =
+        List(
+          SmallProducer(s"$aliasSuperCola", s"$sdilRefSuperCola", (litre, litre)),
+          SmallProducer(s"$aliasSparkyJuice", s"$sdilRefSparkyJuice", (litre, litre))
+        )
       )
 
       setUpData(updatedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
+          client
+            .url(s"$baseUrl/add-small-producer-edit?sdilReference=$sdilRefSuperCola")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
-            .post(Json.obj(
-              "producerName" -> amendedProducerAlias,
-              "referenceNumber" -> amendedSDILReference,
-              "lowBand" -> amendedLowBand,
-              "highBand" -> amendedHighBand
-            ))
+            .post(
+              Json.obj(
+                "producerName"    -> amendedProducerAlias,
+                "referenceNumber" -> amendedSDILReference,
+                "lowBand"         -> amendedLowBand,
+                "highBand"        -> amendedHighBand
+              )
+            )
 
         whenReady(result) { res =>
           res.status mustBe 303
@@ -181,4 +201,3 @@ class AddASmallProducerControllerIntegrationSpec extends ControllerITTestHelper 
     testUnauthorisedUser(baseUrl + "/add-small-producer")
   }
 }
-

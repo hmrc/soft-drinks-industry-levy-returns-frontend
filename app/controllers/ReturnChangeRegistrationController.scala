@@ -16,12 +16,12 @@
 
 package controllers
 
-import controllers.actions._
-import models.{ NormalMode, SdilReturn }
+import controllers.actions.*
+import models.{NormalMode, SdilReturn}
 import navigation.Navigator
 import pages.ReturnChangeRegistrationPage
-import play.api.i18n.{ I18nSupport, MessagesApi }
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import util.UserTypeCheck
 import views.html.ReturnChangeRegistrationView
@@ -30,27 +30,35 @@ import javax.inject.Inject
 
 class ReturnChangeRegistrationController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  checkReturnSubmission: CheckingSubmissionAction,
-  navigator: Navigator,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  checkReturnSubmission:    CheckingSubmissionAction,
+  navigator:                Navigator,
   val controllerComponents: MessagesControllerComponents,
-  view: ReturnChangeRegistrationView) extends FrontendBaseController with I18nSupport {
+  view:                     ReturnChangeRegistrationView
+) extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-    implicit request =>
-      if (UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription) &&
-        !UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription)) {
-        Ok(view(routes.BroughtIntoUKController.onPageLoad(NormalMode).url))
-      } else {
-        Ok(view(routes.PackagedContractPackerController.onPageLoad(NormalMode).url))
-      }
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+    if UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription) &&
+      !UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription)
+    then {
+      Ok(view(routes.BroughtIntoUKController.onPageLoad(NormalMode).url))
+    } else {
+      Ok(view(routes.PackagedContractPackerController.onPageLoad(NormalMode).url))
+    }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-    implicit request =>
-      Redirect(navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, request.userAnswers,
-        Some(SdilReturn.apply(request.userAnswers)), Some(request.subscription)))
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+    Redirect(
+      navigator.nextPage(
+        ReturnChangeRegistrationPage,
+        NormalMode,
+        request.userAnswers,
+        Some(SdilReturn.apply(request.userAnswers)),
+        Some(request.subscription)
+      )
+    )
   }
 }

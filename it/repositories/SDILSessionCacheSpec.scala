@@ -1,26 +1,42 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package repositories
 
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.mockito.Mockito._
-import play.api.libs.json._
-import scala.concurrent.Future
+import org.mockito.Mockito.*
+import play.api.libs.json.*
 
+import scala.concurrent.Future
 
 class SDILSessionCacheSpec extends AsyncWordSpec with Matchers with MockitoSugar {
 
   implicit val intFormat: Format[Int] = Format(Reads.IntReads, Writes.IntWrites)
 
-  private val repo    = mock[SDILSessionCacheRepository]
+  private val repo = mock[SDILSessionCacheRepository]
   private val cascade = mock[CascadeUpsert]
-  private val cache   = new SDILSessionCache(repo, cascade)
+  private val cache = new SDILSessionCache(repo, cascade)
 
   "save" should {
     "upsert when cache exists" in {
-      val enrol    = "E1"
+      val enrol = "E1"
       val existing = CacheMap(enrol, Map("a" -> JsString("x")))
-      val updated  = CacheMap(enrol, Map("a" -> JsString("x"), "k" -> JsNumber(1)))
+      val updated = CacheMap(enrol, Map("a" -> JsString("x"), "k" -> JsNumber(1)))
 
       when(repo.get(enrol)).thenReturn(Future.successful(Some(existing)))
       when(cascade.apply("k", 1, existing)).thenReturn(updated)
@@ -36,8 +52,8 @@ class SDILSessionCacheSpec extends AsyncWordSpec with Matchers with MockitoSugar
     }
 
     "create new cache when none exists" in {
-      val enrol   = "E2"
-      val base    = CacheMap(enrol, Map.empty)
+      val enrol = "E2"
+      val base = CacheMap(enrol, Map.empty)
       val updated = CacheMap(enrol, Map("k" -> JsNumber(2)))
 
       when(repo.get(enrol)).thenReturn(Future.successful(None))
@@ -52,83 +68,123 @@ class SDILSessionCacheSpec extends AsyncWordSpec with Matchers with MockitoSugar
         succeed
       }
     }
-  }
 
-  "remove" should {
-    "return false if cache missing" in {
-      when(repo.get("E3")).thenReturn(Future.successful(None))
-      cache.remove("E3", "k").map { r =>
-        r shouldBe false
-        succeed
+    "remove" should {
+      "return false if cache missing" in {
+        when(repo.get("E3")).thenReturn(Future.successful(None))
+        cache.remove("E3", "k").map { r =>
+          r shouldBe false
+          succeed
+        }
+      }
+
+      "remove key and upsert when present" in {
+        val enrol = "E4"
+        val existing = CacheMap(enrol, Map("k" -> JsString("v"), "keep" -> JsString("y")))
+        val expected = CacheMap(enrol, Map("keep" -> JsString("y")))
+
+        when(repo.get(enrol)).thenReturn(Future.successful(Some(existing)))
+        when(repo.upsert(expected)).thenReturn(Future.successful(true))
+
+        cache.remove(enrol, "k").map { res =>
+          res shouldBe true
+          val _ = verify(repo).upsert(expected)
+          succeed
+        }
+      }
+
+      "fail the future if repository.upsert fails when cache present" in {
+        val enrol = "E15"
+        val existing = CacheMap(enrol, Map("k" -> JsString("v")))
+        val expected = CacheMap(enrol, Map.empty)
+
+        when(repo.get(enrol)).thenReturn(Future.successful(Some(existing)))
+        when(repo.upsert(expected)).thenReturn(Future.failed(new RuntimeException("write failed")))
+
+        recoverToExceptionIf[RuntimeException] {
+          cache.remove(enrol, "k")
+        }.map { e =>
+          e.getMessage should include("write failed")
+          verify(repo).upsert(expected)
+          succeed
+        }
       }
     }
 
-    "remove key and upsert when present" in {
-      val enrol    = "E4"
-      val existing = CacheMap(enrol, Map("k" -> JsString("v"), "keep" -> JsString("y")))
-      val expected = CacheMap(enrol, Map("keep" -> JsString("y")))
-
-      when(repo.get(enrol)).thenReturn(Future.successful(Some(existing)))
-      when(repo.upsert(expected)).thenReturn(Future.successful(true))
-
-      cache.remove(enrol, "k").map { res =>
-        res shouldBe true
-        val _ = verify(repo).upsert(expected)
-        succeed
-      }
-    }
-  }
-
-  "removeRecord" should {
-    "delegate to repository" in {
-      when(repo.removeRecord("E5")).thenReturn(Future.successful(true))
-      cache.removeRecord("E5").map { r =>
-        r shouldBe true
-        succeed
-      }
-    }
-  }
-
-  "fetch / fetchEntry" should {
-    "fetch returns cache when present" in {
-      val cm = CacheMap("E6", Map("x" -> JsNumber(10)))
-      when(repo.get("E6")).thenReturn(Future.successful(Some(cm)))
-      cache.fetch("E6").map { got =>
-        got shouldBe Some(cm)
-        succeed
+    "removeRecord" should {
+      "delegate to repository" in {
+        when(repo.removeRecord("E5")).thenReturn(Future.successful(true))
+        cache.removeRecord("E5").map { r =>
+          r shouldBe true
+          succeed
+        }
       }
     }
 
-    "fetchEntry returns Some(value) when key exists" in {
-      val cm = CacheMap("E7", Map("n" -> JsNumber(42)))
-      when(repo.get("E7")).thenReturn(Future.successful(Some(cm)))
+    "fetch / fetchEntry" should {
+      "fetch returns cache when present" in {
+        val cm = CacheMap("E6", Map("x" -> JsNumber(10)))
+        when(repo.get("E6")).thenReturn(Future.successful(Some(cm)))
+        cache.fetch("E6").map { got =>
+          got shouldBe Some(cm)
+          succeed
+        }
+      }
 
-      cache.fetchEntry[Int]("E7", "n").map { got =>
-        got shouldBe Some(42)
-        succeed
+      "fetchEntry returns Some(value) when key exists" in {
+        val cm = CacheMap("E7", Map("n" -> JsNumber(42)))
+        when(repo.get("E7")).thenReturn(Future.successful(Some(cm)))
+
+        cache.fetchEntry[Int]("E7", "n").map { got =>
+          got shouldBe Some(42)
+          succeed
+        }
+      }
+
+      "fetchEntry returns None when key absent or cache missing" in {
+        when(repo.get("E8")).thenReturn(Future.successful(Some(CacheMap("E8", Map.empty))))
+        when(repo.get("E9")).thenReturn(Future.successful(None))
+        for {
+          a <- cache.fetchEntry[Int]("E8", "absent")
+          b <- cache.fetchEntry[Int]("E9", "anything")
+        } yield {
+          a shouldBe None
+          b shouldBe None
+          succeed
+        }
+      }
+      "fail the future if the key exists but cannot be parsed as T" in {
+        val enrol = "E16"
+        val cm = CacheMap(enrol, Map("n" -> JsString("not-an-int")))
+        when(repo.get(enrol)).thenReturn(Future.successful(Some(cm)))
+
+        recoverToExceptionIf[JsResultException] {
+          cache.fetchEntry[Int](enrol, "n")
+        }.map { _ =>
+          succeed
+        }
       }
     }
 
-    "fetchEntry returns None when key absent or cache missing" in {
-      when(repo.get("E8")).thenReturn(Future.successful(Some(CacheMap("E8", Map.empty))))
-      when(repo.get("E9")).thenReturn(Future.successful(None))
-      for {
-        a <- cache.fetchEntry[Int]("E8", "absent")
-        b <- cache.fetchEntry[Int]("E9", "anything")
-      } yield {
-        a shouldBe None
-        b shouldBe None
-        succeed
+    "extendSession" should {
+      "update lastUpdated via repository" in {
+        when(repo.updateLastUpdated("E10")).thenReturn(Future.successful(true))
+        cache.extendSession("E10").map { r =>
+          r shouldBe true
+          succeed
+        }
       }
-    }
-  }
 
-  "extendSession" should {
-    "update lastUpdated via repository" in {
-      when(repo.updateLastUpdated("E10")).thenReturn(Future.successful(true))
-      cache.extendSession("E10").map { r =>
-        r shouldBe true
-        succeed
+      "fail the future if updateLastUpdated fails" in {
+        when(repo.updateLastUpdated("E17")).thenReturn(Future.failed(new RuntimeException("mongo down")))
+
+        recoverToExceptionIf[RuntimeException] {
+          cache.extendSession("E17")
+        }.map { e =>
+          e.getMessage should include("mongo down")
+          verify(repo).updateLastUpdated("E17")
+          succeed
+        }
       }
     }
   }

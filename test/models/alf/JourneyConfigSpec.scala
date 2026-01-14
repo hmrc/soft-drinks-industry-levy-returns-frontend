@@ -16,10 +16,10 @@
 
 package models.alf
 
-import models.alf.init._
+import models.alf.init.*
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.libs.json.{ JsValue, Json }
+import play.api.libs.json.{JsValue, Json}
 
 class JourneyConfigSpec extends AnyFreeSpec with Matchers {
 
@@ -41,24 +41,26 @@ class JourneyConfigSpec extends AnyFreeSpec with Matchers {
           includeHMRCBranding = Some(true),
           ukMode = Some(true),
           allowedCountryCodes = Some(Set("")),
-          selectPageConfig = Some(SelectPageConfig(
-            proposalListLimit = Some(1),
-            showSearchAgainLink = Some(true))),
-          confirmPageConfig = Some(ConfirmPageConfig(
-            showSearchAgainLink = Some(true),
-            showSubHeadingAndInfo = Some(true),
-            showChangeLink = Some(true),
-            showConfirmChangeText = Some(true))),
-          timeoutConfig = Some(TimeoutConfig(
-            timeoutAmount = 1,
-            timeoutUrl = "foo",
-            timeoutKeepAliveUrl = Some("bar"))),
+          selectPageConfig = Some(SelectPageConfig(proposalListLimit = Some(1), showSearchAgainLink = Some(true))),
+          confirmPageConfig = Some(
+            ConfirmPageConfig(
+              showSearchAgainLink = Some(true),
+              showSubHeadingAndInfo = Some(true),
+              showChangeLink = Some(true),
+              showConfirmChangeText = Some(true)
+            )
+          ),
+          timeoutConfig = Some(TimeoutConfig(timeoutAmount = 1, timeoutUrl = "foo", timeoutKeepAliveUrl = Some("bar"))),
           serviceHref = Some("href"),
-          pageHeadingStyle = Some("heading")),
+          pageHeadingStyle = Some("heading")
+        ),
         labels = None,
-        requestedVersion = Some(1))
+        requestedVersion = Some(1)
+      )
       val res: JsValue =
-        Json.parse("""{"version":1,"options":{"continueUrl":"url","homeNavHref":"home","signOutHref":"sign","accessibilityFooterUrl":"footer","phaseFeedbackLink":"feedback","deskProServiceName":"deskpro","showPhaseBanner":true,"alphaPhase":true,"showBackButtons":true,"disableTranslations":true,"includeHMRCBranding":true,"ukMode":true,"allowedCountryCodes":[""],"selectPageConfig":{"proposalListLimit":1,"showSearchAgainLink":true},"confirmPageConfig":{"showSearchAgainLink":true,"showSubHeadingAndInfo":true,"showChangeLink":true,"showConfirmChangeText":true},"timeoutConfig":{"timeoutAmount":1,"timeoutUrl":"foo","timeoutKeepAliveUrl":"bar"},"serviceHref":"href","pageHeadingStyle":"heading"},"requestedVersion":1}""")
+        Json.parse(
+          """{"version":1,"options":{"continueUrl":"url","homeNavHref":"home","signOutHref":"sign","accessibilityFooterUrl":"footer","phaseFeedbackLink":"feedback","deskProServiceName":"deskpro","showPhaseBanner":true,"alphaPhase":true,"showBackButtons":true,"disableTranslations":true,"includeHMRCBranding":true,"ukMode":true,"allowedCountryCodes":[""],"selectPageConfig":{"proposalListLimit":1,"showSearchAgainLink":true},"confirmPageConfig":{"showSearchAgainLink":true,"showSubHeadingAndInfo":true,"showChangeLink":true,"showConfirmChangeText":true},"timeoutConfig":{"timeoutAmount":1,"timeoutUrl":"foo","timeoutKeepAliveUrl":"bar"},"serviceHref":"href","pageHeadingStyle":"heading"},"requestedVersion":1}"""
+        )
       Json.toJson(model) mustBe res
 
     }

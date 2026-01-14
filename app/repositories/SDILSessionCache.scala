@@ -17,54 +17,46 @@
 package repositories
 
 import play.api.libs.json.Format
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SDILSessionCache @Inject() (
-  sdilSessionCacheRepository: SDILSessionCacheRepository,
-  cascadeUpsert: CascadeUpsert)(implicit val ec: ExecutionContext) {
+class SDILSessionCache @Inject() (sdilSessionCacheRepository: SDILSessionCacheRepository, cascadeUpsert: CascadeUpsert)(implicit
+  val ec: ExecutionContext
+) {
 
-  def save[A](sdilEnrolment: String, key: String, value: A)(
-    implicit
-    fmt: Format[A]): Future[Boolean] = {
+  def save[A](sdilEnrolment: String, key: String, value: A)(implicit fmt: Format[A]): Future[Boolean] =
     sdilSessionCacheRepository.get(sdilEnrolment).flatMap { optionalCacheMap =>
-      val updatedCacheMap = cascadeUpsert(
-        key,
-        value,
-        optionalCacheMap.getOrElse(CacheMap(sdilEnrolment, Map())))
+      val updatedCacheMap = cascadeUpsert(key, value, optionalCacheMap.getOrElse(CacheMap(sdilEnrolment, Map())))
       sdilSessionCacheRepository.upsert(updatedCacheMap).map { _ =>
         true
       }
     }
-  }
 
-  def remove(sdilEnrolment: String, key: String): Future[Boolean] = {
+  def remove(sdilEnrolment: String, key: String): Future[Boolean] =
     sdilSessionCacheRepository.get(sdilEnrolment).flatMap { optionalCacheMap =>
       optionalCacheMap.fold(Future(false)) { cacheMap =>
-        val newCacheMap = cacheMap copy (data = cacheMap.data - key)
+        val newCacheMap = cacheMap.copy(data = cacheMap.data - key)
         sdilSessionCacheRepository.upsert(newCacheMap)
       }
     }
-  }
 
-  def removeRecord(sdilEnrolment: String): Future[Boolean] = {
+  def removeRecord(sdilEnrolment: String): Future[Boolean] =
     sdilSessionCacheRepository.removeRecord(sdilEnrolment)
-  }
 
   def fetch(sdilEnrolment: String): Future[Option[CacheMap]] =
     sdilSessionCacheRepository.get(sdilEnrolment)
 
-  def fetchEntry[T](sdilEnrolment: String, key: String)(implicit fmt: Format[T]): Future[Option[T]] = {
+  def fetchEntry[T](sdilEnrolment: String, key: String)(implicit fmt: Format[T]): Future[Option[T]] =
     fetch(sdilEnrolment).map(optCacheMap =>
       optCacheMap.fold[Option[T]](None)(cachedMap =>
-        cachedMap.data.get(key)
-          .map(json =>
-            json.as[T])))
-  }
+        cachedMap.data
+          .get(key)
+          .map(json => json.as[T])
+      )
+    )
 
-  def extendSession(sdilEnrolment: String): Future[Boolean] = {
+  def extendSession(sdilEnrolment: String): Future[Boolean] =
     sdilSessionCacheRepository.updateLastUpdated(sdilEnrolment)
-  }
 
 }

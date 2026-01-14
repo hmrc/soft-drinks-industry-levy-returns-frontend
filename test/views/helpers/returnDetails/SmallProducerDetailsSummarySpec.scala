@@ -18,18 +18,18 @@ package views.helpers.returnDetails
 
 import base.ReturnsTestData.emptyUserAnswers
 import base.SpecBase
-import models.{ CheckMode, NormalMode, SmallProducer }
+import models.{CheckMode, NormalMode, SmallProducer}
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 
 class SmallProducerDetailsSummarySpec extends SpecBase {
-  val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
-  lazy val smallProducerListWithTwoProducers: List[SmallProducer] = List(
-    SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)),
-    SmallProducer("Soft Juice", "XMSDIL000000113", (25, 80)))
+  val smallProducerList:                      List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
+  lazy val smallProducerListWithTwoProducers: List[SmallProducer] =
+    List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)), SmallProducer("Soft Juice", "XMSDIL000000113", (25, 80)))
   lazy val smallProducerListWithThreeProducers: List[SmallProducer] = List(
     SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)),
     SmallProducer("", "XMSDIL000000159", (15, 800)),
-    SmallProducer("Soft Juice", "XMSDIL000000113", (25, 80)))
+    SmallProducer("Soft Juice", "XMSDIL000000113", (25, 80))
+  )
 
   "row" - {
 
@@ -43,7 +43,7 @@ class SmallProducerDetailsSummarySpec extends SpecBase {
       val userAnswersWithSmallProducers = emptyUserAnswers.copy(smallProducerList = smallProducerList)
 
       val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWithSmallProducers.smallProducerList)
-      val rowActionListItems = smallProducerDetailsSummaryRow.rows.head.actions.toList.head.items
+      val rowActionListItems             = smallProducerDetailsSummaryRow.rows.head.actions.toList.head.items
 
       smallProducerDetailsSummaryRow.rows.head.key.content.asHtml.toString mustBe "XCSDIL000000069"
       smallProducerDetailsSummaryRow.rows.head.value.content.asHtml.toString mustBe "Super Cola Plc"
@@ -62,7 +62,7 @@ class SmallProducerDetailsSummarySpec extends SpecBase {
     }
 
     "should have 1 row" in {
-      val userAnswersWithSmallProducers = emptyUserAnswers.copy(smallProducerList = smallProducerList)
+      val userAnswersWithSmallProducers  = emptyUserAnswers.copy(smallProducerList = smallProducerList)
       val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWithSmallProducers.smallProducerList)
 
       smallProducerDetailsSummaryRow.rows.size mustBe 1

@@ -28,7 +28,7 @@ govukSummaryList: GovukSummaryList
   userAnswers: UserAnswers,
   amounts: Amounts,
   isCheckAnswers: Boolean,
-  isSmallProducer: Boolean)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+  isSmallProducer: Boolean)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
  @if(!isSmallProducer) {
   <h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>

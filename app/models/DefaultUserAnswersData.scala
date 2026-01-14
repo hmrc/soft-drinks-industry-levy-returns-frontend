@@ -17,24 +17,26 @@
 package models
 
 import models.retrieved.RetrievedSubscription
-import play.api.libs.json.{ Json, OFormat }
+import play.api.libs.json.{Json, OFormat}
 
 case class DefaultUserAnswersData(
-  ownBrands: Option[Boolean],
-  packagedContractPacker: Boolean,
-  exemptionsForSmallProducers: Boolean,
-  broughtIntoUK: Boolean,
+  ownBrands:                       Option[Boolean],
+  packagedContractPacker:          Boolean,
+  exemptionsForSmallProducers:     Boolean,
+  broughtIntoUK:                   Boolean,
   broughtIntoUkFromSmallProducers: Boolean,
-  claimCreditsForExports: Boolean,
-  claimCreditsForLostDamaged: Boolean) {
+  claimCreditsForExports:          Boolean,
+  claimCreditsForLostDamaged:      Boolean
+) {
   def this(subscription: RetrievedSubscription) = this(
-    ownBrands = if (subscription.activity.smallProducer) None else Some(false),
+    ownBrands = if subscription.activity.smallProducer then None else Some(false),
     packagedContractPacker = false,
     exemptionsForSmallProducers = false,
     broughtIntoUK = false,
     broughtIntoUkFromSmallProducers = false,
     claimCreditsForExports = false,
-    claimCreditsForLostDamaged = false)
+    claimCreditsForLostDamaged = false
+  )
 }
 
 object DefaultUserAnswersData {

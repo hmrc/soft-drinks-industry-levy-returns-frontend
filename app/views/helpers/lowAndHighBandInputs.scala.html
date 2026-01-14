@@ -18,7 +18,7 @@
 
 @this(govukInput: GovukInput, govukDetails: GovukDetails, govukButton: GovukButton)
 
-@(form: Form[_])(implicit messages: Messages)
+@(form: Form[?])(implicit messages: Messages)
 
 @govukInput(
     Input(

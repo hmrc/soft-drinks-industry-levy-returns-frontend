@@ -17,16 +17,16 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{ CheckMode, LitresInBands }
-import pages.{ HowManyAsAContractPackerPage, PackagedContractPackerPage, QuestionPage }
+import models.{CheckMode, LitresInBands}
+import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage, QuestionPage}
 
 object PackagedContractPackerSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override val page: QuestionPage[Boolean] = PackagedContractPackerPage
+  override val page:          QuestionPage[Boolean]               = PackagedContractPackerPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyAsAContractPackerPage)
-  override val summaryLitres: SummaryListRowLitresHelper = HowManyAsAContractPackerSummary
-  override val key: String = "reportingContractPackedAtYourOwnSite"
-  override val action: String = routes.PackagedContractPackerController.onPageLoad(CheckMode).url
-  override val actionId: String = "change-contract-packer"
-  override val hiddenText: String = "packagedContractPacker"
+  override val summaryLitres: SummaryListRowLitresHelper          = HowManyAsAContractPackerSummary
+  override val key:           String                              = "reportingContractPackedAtYourOwnSite"
+  override val action:        String                              = routes.PackagedContractPackerController.onPageLoad(CheckMode).url
+  override val actionId:      String                              = "change-contract-packer"
+  override val hiddenText:    String                              = "packagedContractPacker"
 }

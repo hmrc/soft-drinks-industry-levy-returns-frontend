@@ -18,8 +18,8 @@ package models
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import play.api.libs.json._
-import ReturnsVariation._
+import play.api.libs.json.*
+import ReturnsVariation.*
 
 class ReturnsVariationFormatsSpec extends AnyWordSpec with Matchers {
 

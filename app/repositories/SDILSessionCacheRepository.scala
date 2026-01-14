@@ -20,43 +20,46 @@ import config.FrontendAppConfig
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.Updates.set
-import org.mongodb.scala.model.{ IndexModel, IndexOptions, Indexes, ReplaceOptions }
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes, ReplaceOptions}
 import services.Encryption
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import java.time.Instant
 import java.util.concurrent.TimeUnit
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SDILSessionCacheRepository @Inject() (
-  mongoComponent: MongoComponent,
-  appConfig: FrontendAppConfig)(implicit ec: ExecutionContext, encryption: Encryption) extends PlayMongoRepository[DatedCacheMap](
-  mongoComponent = mongoComponent,
-  collectionName = "sdil-session-cache",
-  domainFormat = DatedCacheMap.MongoFormats.formats,
-  indexes = Seq(
-    IndexModel(
-      ascending("lastUpdated"),
-      IndexOptions()
-        .name("sdil-session-cache-expiry")
-        .expireAfter(
-          appConfig.sdilCacheTTL.toLong,
-          TimeUnit.SECONDS)),
-    IndexModel(
-      Indexes.ascending("id"),
-      IndexOptions()
-        .name("sdilIdentifierIndex")
-        .sparse(true)
-        .unique(true)
-        .background(true))),
-  replaceIndexes = false) {
+class SDILSessionCacheRepository @Inject() (mongoComponent: MongoComponent, appConfig: FrontendAppConfig)(implicit
+  ec:         ExecutionContext,
+  encryption: Encryption
+) extends PlayMongoRepository[DatedCacheMap](
+      mongoComponent = mongoComponent,
+      collectionName = "sdil-session-cache",
+      domainFormat = DatedCacheMap.MongoFormats.formats,
+      indexes = Seq(
+        IndexModel(
+          ascending("lastUpdated"),
+          IndexOptions()
+            .name("sdil-session-cache-expiry")
+            .expireAfter(appConfig.sdilCacheTTL.toLong, TimeUnit.SECONDS)
+        ),
+        IndexModel(
+          Indexes.ascending("id"),
+          IndexOptions()
+            .name("sdilIdentifierIndex")
+            .sparse(true)
+            .unique(true)
+            .background(true)
+        )
+      ),
+      replaceIndexes = false
+    ) {
 
   def upsert(cm: CacheMap): Future[Boolean] = {
     val cmUpdated = DatedCacheMap(cm.id, cm.data)
-    val options = ReplaceOptions().upsert(true)
+    val options   = ReplaceOptions().upsert(true)
     collection
       .replaceOne(equal("id", cm.id), cmUpdated, options)
       .toFuture()
@@ -65,27 +68,22 @@ class SDILSessionCacheRepository @Inject() (
       }
   }
 
-  def removeRecord(id: String): Future[Boolean] = {
+  def removeRecord(id: String): Future[Boolean] =
     collection.deleteOne(equal("id", id)).toFuture().map(_.getDeletedCount > 0)
-  }
 
-  def get(id: String): Future[Option[CacheMap]] = {
+  def get(id: String): Future[Option[CacheMap]] =
     collection.find(equal("id", id)).headOption().map { datedCacheMap =>
       datedCacheMap.map { (value: DatedCacheMap) =>
         CacheMap(value.id, value.data)
       }
     }
-  }
 
-  def updateLastUpdated(id: String): Future[Boolean] = {
+  def updateLastUpdated(id: String): Future[Boolean] =
     collection
-      .updateOne(
-        equal("id", id),
-        set("lastUpdated", Instant.now()))
+      .updateOne(equal("id", id), set("lastUpdated", Instant.now()))
       .toFuture()
       .map { result =>
         result.wasAcknowledged()
       }
-  }
 
 }

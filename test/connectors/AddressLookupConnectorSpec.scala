@@ -22,11 +22,11 @@ import connectors.httpParsers.AddressLookupHttpParser.AddressLookupInitJourneyRe
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import mocks.MockHttp
 import models.alf.AlfResponse
-import models.alf.init.{ JourneyConfig, JourneyOptions }
+import models.alf.init.{JourneyConfig, JourneyOptions}
 import models.core.ErrorModel
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
-import play.api.test.Helpers.{ await, defaultAwaitTimeout }
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.http.HttpResponse
 
@@ -54,7 +54,9 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
     }
     "return correct initAddressUrl correctly" - {
       "when feature switch is disabled" in {
-        testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = false) mustBe s"${frontendAppConfig.addressLookupService}/api/init"
+        testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled =
+          false
+        ) mustBe s"${frontendAppConfig.addressLookupService}/api/init"
       }
       "when feature switch is enabled" in {
         testAddressLookupConnector.initJourneyUrl(addressLookupFrontendTestEnabled = true) mustBe
@@ -64,7 +66,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with MockHtt
 
     "getAddress" - {
 
-      def getAddressResult: Future[HttpResult[AlfResponse]] = testAddressLookupConnector.getAddress(id)(implicitly, implicitly)
+      def getAddressResult: Future[HttpResult[AlfResponse]] = testAddressLookupConnector.getAddress(id)(using implicitly, implicitly)
 
       "return a AlfResponse Model" in {
         setupMockHttpGet(Right(customerAddressMax))

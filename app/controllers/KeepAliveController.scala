@@ -16,33 +16,34 @@
 
 package controllers
 
-import controllers.actions.{ DataRequiredAction, DataRetrievalAction, IdentifierAction }
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import handlers.ErrorHandler
 import navigation.Navigator
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import util.GenericLogger
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class KeepAliveController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  val errorHandler: ErrorHandler,
-  val sessionRepository: SessionRepository,
-  val navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  val genericLogger: GenericLogger)(implicit ec: ExecutionContext) extends ControllerHelper {
+  val errorHandler:         ErrorHandler,
+  val sessionRepository:    SessionRepository,
+  val navigator:            Navigator,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  val genericLogger:        GenericLogger
+)(implicit ec: ExecutionContext)
+    extends ControllerHelper {
 
-  def keepAlive: Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      sessionRepository.keepAlive(request.userAnswers.id).flatMap {
-        case Right(_) => Future.successful(Ok)
-        case Left(_) =>
-          genericLogger.logger.error("Failed to keep the session alive due to error from mongo session repository's keepAlive")
-          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
-      }
+  def keepAlive: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    sessionRepository.keepAlive(request.userAnswers.id).flatMap {
+      case Right(_) => Future.successful(Ok)
+      case Left(_)  =>
+        genericLogger.logger.error("Failed to keep the session alive due to error from mongo session repository's keepAlive")
+        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
+    }
   }
 }

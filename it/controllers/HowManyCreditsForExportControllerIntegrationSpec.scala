@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import org.scalatest.TryValues
@@ -18,7 +34,8 @@ class HowManyCreditsForExportControllerIntegrationSpec extends ControllerITTestH
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/how-many-credits-for-exports")
+        val result1 = client
+          .url(s"$baseUrl/how-many-credits-for-exports")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -31,24 +48,23 @@ class HowManyCreditsForExportControllerIntegrationSpec extends ControllerITTestH
     }
 
     "Post how many claim credits for export " in {
-      val expectedResult:Some[JsObject] = Some(
+      val expectedResult: Some[JsObject] = Some(
         Json.obj(
-          "howManyCreditsForExport" -> Json.obj("lowBand" -> 1000, "highBand" ->1000)
-        ))
+          "howManyCreditsForExport" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000)
+        )
+      )
       setUpData(emptyUserAnswers)
       build
         .commonPreconditionChangeSubscription(aSubscription)
 
-
       WsTestClient.withClient { client =>
         val result =
-          client.url(s"$baseUrl/how-many-credits-for-exports")
+          client
+            .url(s"$baseUrl/how-many-credits-for-exports")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj("lowBand" -> "1000", "highBand" -> "1000"))
-
 
         whenReady(result) { res =>
           res.status mustBe 303

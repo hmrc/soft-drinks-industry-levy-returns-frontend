@@ -23,31 +23,31 @@ import play.api.i18n.Messages
 
 trait LitresSpecHelper extends ViewSpecHelper {
 
-  val lowBandValue: Long = 1000
-  val highBandValue: Long = 2000
+  val lowBandValue:  Long          = 1000
+  val highBandValue: Long          = 2000
   val litresInBands: LitresInBands = LitresInBands(lowBandValue, highBandValue)
 
   object Selectors {
-    val heading = "govuk-heading-l"
-    val legendHeading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
-    val legendSubHeading = "govuk-fieldset__legend  govuk-fieldset__legend--m"
-    val legendHint = "govuk-hint"
-    val body = "govuk-body"
+    val heading           = "govuk-heading-l"
+    val legendHeading     = "govuk-fieldset__heading"
+    val legend            = "govuk-fieldset__legend  govuk-fieldset__legend--l"
+    val legendSubHeading  = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legendHint        = "govuk-hint"
+    val body              = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
-    val errorSummaryList = "govuk-list govuk-error-summary__list"
-    val govukFormGroup = "govuk-form-group"
-    val label = "govuk-label"
-    val radios = "govuk-radios__item"
-    val radioInput = "govuk-radios__input"
-    val radioLabels = "govuk-label govuk-radios__label"
-    val button = "govuk-button"
-    val form = "form"
-    val warningText = "govuk-warning-text__text"
-    val insetText = "govuk-inset-text"
+    val errorSummaryList  = "govuk-list govuk-error-summary__list"
+    val govukFormGroup    = "govuk-form-group"
+    val label             = "govuk-label"
+    val radios            = "govuk-radios__item"
+    val radioInput        = "govuk-radios__input"
+    val radioLabels       = "govuk-label govuk-radios__label"
+    val button            = "govuk-button"
+    val form              = "form"
+    val warningText       = "govuk-warning-text__text"
+    val insetText         = "govuk-inset-text"
   }
 
-  def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
+  def testLitresInBandsWithPrepopulatedData(document: Document): Unit =
     "should include form groups for litres" - {
       "when the form is not prepopulated and has no errors" - {
         val formGroups = document.getElementsByClass(Selectors.govukFormGroup)
@@ -70,9 +70,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testLitresInBandsNoPrepopulatedData(document: Document): Unit = {
+  def testLitresInBandsNoPrepopulatedData(document: Document): Unit =
     "should include form groups for litres" - {
       "when the form is populated and has no errors" - {
         val formGroups = document.getElementsByClass(Selectors.govukFormGroup)
@@ -82,49 +81,50 @@ trait LitresSpecHelper extends ViewSpecHelper {
         "that includes a field for low band that is not populated" in {
           val lowBandGroup = formGroups.get(0)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the low band"
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
+          lowBandGroup
+            .getElementById("lowBand-hint")
+            .text() mustBe "At least 5 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe false
         }
         "that includes a field for high band that is not populated" in {
           val highBandGroup = formGroups.get(1)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe "Litres in the high band"
-          highBandGroup.getElementById("highBand-hint").text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
+          highBandGroup
+            .getElementById("highBand-hint")
+            .text() mustBe "At least 8 grams of sugar per 100 millilitres. Do not include drinks produced for small producers or imported from them."
           highBandGroup.getElementById("highBand").hasAttr("value") mustBe false
         }
       }
     }
-  }
 
-  def testButton(document: Document): Unit = {
+  def testButton(document: Document): Unit =
     "should contain the correct button" in {
       document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
-  }
 
-  def testAction(document: Document, expectedAction: String): Unit = {
+  def testAction(document: Document, expectedAction: String): Unit =
     "should contains a form with the correct action" in {
-      document.select(Selectors.form)
+      document
+        .select(Selectors.form)
         .attr("action") mustEqual expectedAction
     }
-  }
 
   def testDetails(doc: Document, expectedDetails: Map[String, String]): Unit = {
     val expectedNumberOfDetails = expectedDetails.size
-    val details = doc.getElementsByClass("govuk-details")
+    val details                 = doc.getElementsByClass("govuk-details")
     "should include " + expectedNumberOfDetails + " detail sections" in {
       details.size() mustEqual expectedNumberOfDetails
     }
-    expectedDetails.zipWithIndex.foreach {
-      case ((detailsSummary, detailsContent), index) =>
-        "should include the " + detailsSummary + " details summary with expected content" in {
-          val detail = details.get(index)
-          detail.getElementsByClass("govuk-details__summary-text").text() mustBe detailsSummary
-          detail.getElementsByClass("govuk-details__text").text() mustBe detailsContent
-        }
+    expectedDetails.zipWithIndex.foreach { case ((detailsSummary, detailsContent), index) =>
+      "should include the " + detailsSummary + " details summary with expected content" in {
+        val detail = details.get(index)
+        detail.getElementsByClass("govuk-details__summary-text").text() mustBe detailsSummary
+        detail.getElementsByClass("govuk-details__text").text() mustBe detailsContent
+      }
     }
   }
 
-  def testEmptyFormErrors(document: Document, errorTitle: String): Unit = {
+  def testEmptyFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form being empty" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -147,9 +147,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testNoNumericFormErrors(document: Document, errorTitle: String): Unit = {
+  def testNoNumericFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing no numeric values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -170,9 +169,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         error2.select("a").attr("href") mustBe "#highBand"
       }
     }
-  }
 
-  def testNegativeFormErrors(document: Document, errorTitle: String): Unit = {
+  def testNegativeFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing no negative values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -191,9 +189,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         error2.select("a").attr("href") mustBe "#highBand"
       }
     }
-  }
 
-  def testDecimalFormErrors(document: Document, errorTitle: String): Unit = {
+  def testDecimalFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing decimal values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -214,9 +211,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         error2.select("a").attr("href") mustBe "#highBand"
       }
     }
-  }
 
-  def testOutOfMaxValFormErrors(document: Document, errorTitle: String): Unit = {
+  def testOutOfMaxValFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing values out of max range" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -237,10 +233,9 @@ trait LitresSpecHelper extends ViewSpecHelper {
         error2.select("a").attr("href") mustBe "#highBand"
       }
     }
-  }
 
   def validateCreditClaim(document: Document): Unit = {
-    val insetText = document.getElementsByClass(Selectors.insetText)
+    val insetText       = document.getElementsByClass(Selectors.insetText)
     val claimCreditNote = Jsoup.parse(Messages("creditClaims.info")).text()
     val claimCreditLink = insetText.get(0).getElementsByClass("govuk-link").attr("href")
     "should contain the correct credit claim note" in {

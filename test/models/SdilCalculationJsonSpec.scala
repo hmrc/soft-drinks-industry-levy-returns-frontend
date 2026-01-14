@@ -18,14 +18,14 @@ package models
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import play.api.libs.json._
+import play.api.libs.json.*
 
 class SdilCalculationJsonSpec extends AnyWordSpec with Matchers {
 
   "SdilCalculation JSON" should {
 
     "round-trip via format" in {
-      val m = SdilCalculation(1.5, 3.25)
+      val m    = SdilCalculation(1.5, 3.25)
       val json = Json.toJson(m)
       json.as[SdilCalculation] shouldBe m
     }
@@ -44,10 +44,10 @@ class SdilCalculationJsonSpec extends AnyWordSpec with Matchers {
     }
 
     "cover format/reads/writes and round-trip" in {
-      val m = SdilCalculation(1.5, 3.25)
+      val m  = SdilCalculation(1.5, 3.25)
       val js = SdilCalculation.writes.writes(m)
-      SdilCalculation.reads.reads(js).get shouldBe m
-      Json.toJson(m)(SdilCalculation.format).as[SdilCalculation](SdilCalculation.format) shouldBe m
+      SdilCalculation.reads.reads(js).get                                                            shouldBe m
+      Json.toJson(m)(using SdilCalculation.format).as[SdilCalculation](using SdilCalculation.format) shouldBe m
     }
 
   }

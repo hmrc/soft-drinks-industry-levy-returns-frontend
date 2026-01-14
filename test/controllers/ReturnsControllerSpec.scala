@@ -16,36 +16,37 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import config.FrontendAppConfig
 import errors.NoPendingReturnForGivenPeriod
-import models.{ Amounts, NormalMode }
+import models.{Amounts, NormalMode}
 import orchestrators.ReturnsOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 class ReturnsControllerSpec extends SpecBase {
 
-  val zero = BigDecimal(0.00)
+  val zero: BigDecimal = BigDecimal(0.00)
   val amounts = Amounts(zero, zero, zero)
-  val mockReturnsOrchestrator = mock[ReturnsOrchestrator]
+  val mockReturnsOrchestrator: ReturnsOrchestrator = mock[ReturnsOrchestrator]
 
   "onPageLoad" - {
     "a request to submit a return for a valid return period is submitted" - {
       "for a user who has small producer activity" - {
         "should redirect to PackagedContractPacker page" - {
           "when a none nilReturn" in {
-            val application = applicationBuilder(subscription = Some(subscriptionWithSmallProducerActivity)).overrides(
-              bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
+            val application = applicationBuilder(subscription = Some(subscriptionWithSmallProducerActivity))
+              .overrides(bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator))
+              .build()
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false).url)
-              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(using any(), any(), any()))
                 .thenReturn(createSuccessReturnResult((): Unit))
               val result = route(application, request).value
 
@@ -57,12 +58,13 @@ class ReturnsControllerSpec extends SpecBase {
 
         "should redirect to check your answers" - {
           "when a nilReturn" in {
-            val application = applicationBuilder(subscription = Some(subscriptionWithSmallProducerActivity)).overrides(
-              bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
+            val application = applicationBuilder(subscription = Some(subscriptionWithSmallProducerActivity))
+              .overrides(bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator))
+              .build()
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, true).url)
-              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(using any(), any(), any()))
                 .thenReturn(createSuccessReturnResult((): Unit))
               val result = route(application, request).value
 
@@ -74,12 +76,13 @@ class ReturnsControllerSpec extends SpecBase {
 
         "should redirect sdil frontend" - {
           "when there are no pending returns for the given return period" in {
-            val application = applicationBuilder(subscription = Some(subscriptionWithSmallProducerActivity)).overrides(
-              bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
+            val application = applicationBuilder(subscription = Some(subscriptionWithSmallProducerActivity))
+              .overrides(bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator))
+              .build()
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false).url)
-              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(using any(), any(), any()))
                 .thenReturn(createFailureReturnResult(NoPendingReturnForGivenPeriod))
               val result = route(application, request).value
               val config = application.injector.instanceOf[FrontendAppConfig]
@@ -94,12 +97,11 @@ class ReturnsControllerSpec extends SpecBase {
       "for a user who has no small producer activity" - {
         "should redirect to OwnBrands page" - {
           "when a none nilReturn" in {
-            val application = applicationBuilder().overrides(
-              bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
+            val application = applicationBuilder().overrides(bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false).url)
-              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(using any(), any(), any()))
                 .thenReturn(createSuccessReturnResult((): Unit))
               val result = route(application, request).value
 
@@ -111,12 +113,11 @@ class ReturnsControllerSpec extends SpecBase {
 
         "should redirect to check your answers" - {
           "when a nilReturn" in {
-            val application = applicationBuilder().overrides(
-              bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
+            val application = applicationBuilder().overrides(bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, true).url)
-              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(using any(), any(), any()))
                 .thenReturn(createSuccessReturnResult((): Unit))
               val result = route(application, request).value
 
@@ -128,12 +129,11 @@ class ReturnsControllerSpec extends SpecBase {
 
         "should redirect sdil frontend" - {
           "when there are no pending returns for the given return period" in {
-            val application = applicationBuilder().overrides(
-              bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
+            val application = applicationBuilder().overrides(bind[ReturnsOrchestrator].toInstance(mockReturnsOrchestrator)).build()
 
             running(application) {
               val request = FakeRequest(GET, routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false).url)
-              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(any(), any(), any()))
+              when(mockReturnsOrchestrator.handleReturnRequest(any(), any(), any())(using any(), any(), any()))
                 .thenReturn(createFailureReturnResult(NoPendingReturnForGivenPeriod))
               val result = route(application, request).value
               val config = application.injector.instanceOf[FrontendAppConfig]

@@ -1,10 +1,26 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import controllers.testSupport.helpers.ReturnSentTestHelper
 import models.retrieved.{OptSmallProducer, RetrievedActivity}
 import models.{AddASmallProducer, LitresInBands, NormalMode}
 import org.jsoup.Jsoup
-import pages._
+import pages.*
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
@@ -29,7 +45,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         build.commonPreconditionChangeSubscription(aSubscription)
         build.sdilBackend.balance(emptyUserAnswers.id, false)
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -42,20 +59,48 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Load when valid user answers present where all activities are set to true" in {
         val userAnswersStandardFlow = emptyUserAnswers
-          .set(OwnBrandsPage, true).success.value
-          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackagedContractPackerPage, true).success.value
-          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ExemptionsForSmallProducersPage, true).success.value
-          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+          .set(OwnBrandsPage, true)
+          .success
+          .value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackagedContractPackerPage, true)
+          .success
+          .value
+          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, true)
+          .success
+          .value
+          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0))
+          .success
+          .value
+          .set(BroughtIntoUKPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
 
         setUpData(userAnswersStandardFlow)
 
@@ -63,7 +108,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         build.sdilBackend.balance(userAnswersStandardFlow.id, false)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -76,32 +122,65 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Load when valid user answers present where all activities are set to false and user must see all pages in service" in {
         val userAnswersAllPages = emptyUserAnswers
-          .set(OwnBrandsPage, true).success.value
-          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackagedContractPackerPage, true).success.value
-          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ExemptionsForSmallProducersPage, true).success.value
-          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackAtBusinessAddressPage, true).success.value
-          .set(AskSecondaryWarehouseInReturnPage, true).success.value
+          .set(OwnBrandsPage, true)
+          .success
+          .value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackagedContractPackerPage, true)
+          .success
+          .value
+          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, true)
+          .success
+          .value
+          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0))
+          .success
+          .value
+          .set(BroughtIntoUKPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackAtBusinessAddressPage, true)
+          .success
+          .value
+          .set(AskSecondaryWarehouseInReturnPage, true)
+          .success
+          .value
 
         setUpData(userAnswersAllPages)
 
-        build.commonPreconditionChangeSubscription(aSubscription.copy(
-          activity = RetrievedActivity(false, false, false, false, false),
-          warehouseSites = List.empty))
+        build.commonPreconditionChangeSubscription(
+          aSubscription.copy(activity = RetrievedActivity(false, false, false, false, false), warehouseSites = List.empty)
+        )
         build.sdilBackend.balance(userAnswersAllPages.id, false)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -114,59 +193,101 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Load when valid user answers present where all activities are set to false (apart from small producer = true) " +
         "and user must see all pages in service apart from own brands" in {
-        val userAnswersAllPages = emptyUserAnswers
-          .set(PackagedContractPackerPage, true).success.value
-          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ExemptionsForSmallProducersPage, true).success.value
-          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackAtBusinessAddressPage, true).success.value
-          .set(AskSecondaryWarehouseInReturnPage, true).success.value
+          val userAnswersAllPages = emptyUserAnswers
+            .set(PackagedContractPackerPage, true)
+            .success
+            .value
+            .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+            .success
+            .value
+            .set(ExemptionsForSmallProducersPage, true)
+            .success
+            .value
+            .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0))
+            .success
+            .value
+            .set(BroughtIntoUKPage, true)
+            .success
+            .value
+            .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+            .success
+            .value
+            .set(BroughtIntoUkFromSmallProducersPage, true)
+            .success
+            .value
+            .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+            .success
+            .value
+            .set(ClaimCreditsForExportsPage, true)
+            .success
+            .value
+            .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+            .success
+            .value
+            .set(ClaimCreditsForLostDamagedPage, true)
+            .success
+            .value
+            .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+            .success
+            .value
+            .set(PackAtBusinessAddressPage, true)
+            .success
+            .value
+            .set(AskSecondaryWarehouseInReturnPage, true)
+            .success
+            .value
 
-        setUpData(userAnswersAllPages)
+          setUpData(userAnswersAllPages)
 
-        build.commonPreconditionChangeSubscription(aSubscription.copy(
-          activity = RetrievedActivity(smallProducer = true, false, false, false, false),
-          warehouseSites = List.empty))
-        build.sdilBackend.balance(userAnswersAllPages.id, false)
+          build.commonPreconditionChangeSubscription(
+            aSubscription.copy(activity = RetrievedActivity(smallProducer = true, false, false, false, false), warehouseSites = List.empty)
+          )
+          build.sdilBackend.balance(userAnswersAllPages.id, false)
 
-        WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
-            .withFollowRedirects(false)
-            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .get()
+          WsTestClient.withClient { client =>
+            val result = client
+              .url(s"$baseUrl/check-your-answers")
+              .withFollowRedirects(false)
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .get()
 
-          whenReady(result) { res =>
-            res.status mustBe 200
+            whenReady(result) { res =>
+              res.status mustBe 200
+            }
           }
         }
-      }
 
       "Load when minimum amount of pages answered, all activities true" in {
         val userAnswersAllPages = emptyUserAnswers
-          .set(PackagedContractPackerPage, false).success.value
-          .set(ExemptionsForSmallProducersPage, false).success.value
-          .set(BroughtIntoUKPage, false).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-          .set(ClaimCreditsForExportsPage, false).success.value
-          .set(ClaimCreditsForLostDamagedPage, false).success.value
+          .set(PackagedContractPackerPage, false)
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, false)
+          .success
+          .value
+          .set(BroughtIntoUKPage, false)
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, false)
+          .success
+          .value
 
         setUpData(userAnswersAllPages)
 
-        build.commonPreconditionChangeSubscription(aSubscription.copy(
-          activity = RetrievedActivity(smallProducer = true, true, true, true, true),
-          warehouseSites = List.empty))
+        build.commonPreconditionChangeSubscription(
+          aSubscription.copy(activity = RetrievedActivity(smallProducer = true, true, true, true, true), warehouseSites = List.empty)
+        )
         build.sdilBackend.balance(userAnswersAllPages.id, false)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -179,21 +300,32 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Redirect to first missing page when missing answers and small producer = true" in {
         val userAnswerMissing = emptyUserAnswers
-          .set(PackagedContractPackerPage, false).success.value
-          .set(ExemptionsForSmallProducersPage, false).success.value
-          .set(BroughtIntoUKPage, false).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-          .set(ClaimCreditsForExportsPage, false).success.value
+          .set(PackagedContractPackerPage, false)
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, false)
+          .success
+          .value
+          .set(BroughtIntoUKPage, false)
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, false)
+          .success
+          .value
 
         setUpData(userAnswerMissing)
 
-        build.commonPreconditionChangeSubscription(aSubscription.copy(
-          activity = RetrievedActivity(smallProducer = true, largeProducer = false, true, true, true),
-          warehouseSites = List.empty))
+        build.commonPreconditionChangeSubscription(
+          aSubscription.copy(activity = RetrievedActivity(smallProducer = true, largeProducer = false, true, true, true), warehouseSites = List.empty)
+        )
         build.sdilBackend.balance(userAnswerMissing.id, false)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -207,20 +339,31 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Redirect to start page when missing answers and small producer = false" in {
         val userAnswerMissing = emptyUserAnswers
-          .set(PackagedContractPackerPage, false).success.value
-          .set(ExemptionsForSmallProducersPage, false).success.value
-          .set(BroughtIntoUKPage, false).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-          .set(ClaimCreditsForExportsPage, false).success.value
+          .set(PackagedContractPackerPage, false)
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, false)
+          .success
+          .value
+          .set(BroughtIntoUKPage, false)
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, false)
+          .success
+          .value
 
         setUpData(userAnswerMissing)
 
-        build.commonPreconditionChangeSubscription(aSubscription.copy(
-          activity = RetrievedActivity(smallProducer = false, true, true, true, true),
-          warehouseSites = List.empty))
+        build.commonPreconditionChangeSubscription(
+          aSubscription.copy(activity = RetrievedActivity(smallProducer = false, true, true, true, true), warehouseSites = List.empty)
+        )
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -234,20 +377,48 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Contain packaging sites if changed answers mean user is a new packer" in {
         val userAnswersStandardFlow = emptyUserAnswers
-          .set(OwnBrandsPage, true).success.value
-          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackagedContractPackerPage, true).success.value
-          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ExemptionsForSmallProducersPage, true).success.value
-          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+          .set(OwnBrandsPage, true)
+          .success
+          .value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackagedContractPackerPage, true)
+          .success
+          .value
+          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, true)
+          .success
+          .value
+          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0))
+          .success
+          .value
+          .set(BroughtIntoUKPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
 
         val userAnswers = userAnswersStandardFlow.copy(packagingSiteList = Map("x" -> PackagingSite1))
 
@@ -257,7 +428,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -273,18 +445,42 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Clear packaging sites if changed answers mean user is no longer a new packer" in {
         val userAnswersStandardFlow = emptyUserAnswers
-          .set(OwnBrandsPage, true).success.value
-          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackagedContractPackerPage, false).success.value
-          .set(ExemptionsForSmallProducersPage, false).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
+          .set(OwnBrandsPage, true)
+          .success
+          .value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackagedContractPackerPage, false)
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, false)
+          .success
+          .value
+          .set(BroughtIntoUKPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
 
         val userAnswers = userAnswersStandardFlow.copy(packagingSiteList = Map("x" -> PackagingSite1))
 
@@ -294,7 +490,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -310,21 +507,51 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Contain warehouses if user has entered a new warehouse and user is a new importer" in {
         val userAnswersStandardFlow = emptyUserAnswers
-          .set(OwnBrandsPage, true).success.value
-          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackagedContractPackerPage, true).success.value
-          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ExemptionsForSmallProducersPage, true).success.value
-          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
-          .set(AskSecondaryWarehouseInReturnPage, true).success.value
+          .set(OwnBrandsPage, true)
+          .success
+          .value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackagedContractPackerPage, true)
+          .success
+          .value
+          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, true)
+          .success
+          .value
+          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0))
+          .success
+          .value
+          .set(BroughtIntoUKPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(AskSecondaryWarehouseInReturnPage, true)
+          .success
+          .value
 
         val userAnswers = userAnswersStandardFlow.copy(warehouseList = Map("x" -> warehouse))
 
@@ -334,7 +561,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -349,17 +577,39 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Clear warehouses if changed answers mean user is no longer a new importer" in {
         val userAnswersStandardFlow = emptyUserAnswers
-          .set(OwnBrandsPage, true).success.value
-          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackagedContractPackerPage, false).success.value
-          .set(ExemptionsForSmallProducersPage, false).success.value
-          .set(BroughtIntoUKPage, false).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
-          .set(AskSecondaryWarehouseInReturnPage, true).success.value
+          .set(OwnBrandsPage, true)
+          .success
+          .value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackagedContractPackerPage, false)
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, false)
+          .success
+          .value
+          .set(BroughtIntoUKPage, false)
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(AskSecondaryWarehouseInReturnPage, true)
+          .success
+          .value
 
         val userAnswers = userAnswersStandardFlow.copy(warehouseList = Map("x" -> warehouse))
 
@@ -369,7 +619,8 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -384,8 +635,6 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
     }
 
-
-
     "POST" should {
       "Redirect to return sent when NIL return" in {
         setUpData(defaultNilReturnUserAnswers)
@@ -393,14 +642,16 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         setUpDataWithBackendCallsForAmountsCached(defaultNilReturnUserAnswers)
         build
           .commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns(aSubscription.utr)
-          .sdilBackend.submitVariations(defaultNilReturnUserAnswers.id)
+          .sdilBackend
+          .submitReturns(aSubscription.utr)
+          .sdilBackend
+          .submitVariations(defaultNilReturnUserAnswers.id)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> defaultNilReturnUserAnswers.id,
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> defaultNilReturnUserAnswers.id, "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj())
 
@@ -413,37 +664,71 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Redirect to return sent when all answers are complete and retrieved activities are all false" in {
         val userAnswersAllPages = emptyUserAnswers
-          .set(OwnBrandsPage, true).success.value
-          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackagedContractPackerPage, true).success.value
-          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ExemptionsForSmallProducersPage, true).success.value
-          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackAtBusinessAddressPage, true).success.value
-          .set(AskSecondaryWarehouseInReturnPage, true).success.value
+          .set(OwnBrandsPage, true)
+          .success
+          .value
+          .set(BrandsPackagedAtOwnSitesPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackagedContractPackerPage, true)
+          .success
+          .value
+          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, true)
+          .success
+          .value
+          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0))
+          .success
+          .value
+          .set(BroughtIntoUKPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackAtBusinessAddressPage, true)
+          .success
+          .value
+          .set(AskSecondaryWarehouseInReturnPage, true)
+          .success
+          .value
 
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
         build
-          .commonPreconditionChangeSubscription(aSubscription.copy(
-          activity = RetrievedActivity(false, false, false, false, false),
-          warehouseSites = List.empty))
-          .sdilBackend.submitReturns(aSubscription.utr)
-          .sdilBackend.submitVariations(userAnswersAllPages.id)
+          .commonPreconditionChangeSubscription(
+            aSubscription.copy(activity = RetrievedActivity(false, false, false, false, false), warehouseSites = List.empty)
+          )
+          .sdilBackend
+          .submitReturns(aSubscription.utr)
+          .sdilBackend
+          .submitVariations(userAnswersAllPages.id)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> userAnswersAllPages.id,
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> userAnswersAllPages.id, "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj())
 
@@ -456,27 +741,41 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Return OK when all answers are minimally complete and retrieved activities are all true" in {
         val userAnswersAllPages = emptyUserAnswers
-          .set(PackagedContractPackerPage, false).success.value
-          .set(ExemptionsForSmallProducersPage, false).success.value
-          .set(BroughtIntoUKPage, false).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-          .set(ClaimCreditsForExportsPage, false).success.value
-          .set(ClaimCreditsForLostDamagedPage, false).success.value
+          .set(PackagedContractPackerPage, false)
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, false)
+          .success
+          .value
+          .set(BroughtIntoUKPage, false)
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, false)
+          .success
+          .value
 
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
         build
-          .commonPreconditionChangeSubscription(aSubscription.copy(
-            activity = RetrievedActivity(true, true, true, true, true),
-            warehouseSites = List.empty))
-          .sdilBackend.submitReturns(aSubscription.utr)
-          .sdilBackend.submitVariations(userAnswersAllPages.id)
+          .commonPreconditionChangeSubscription(
+            aSubscription.copy(activity = RetrievedActivity(true, true, true, true, true), warehouseSites = List.empty)
+          )
+          .sdilBackend
+          .submitReturns(aSubscription.utr)
+          .sdilBackend
+          .submitVariations(userAnswersAllPages.id)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> userAnswersAllPages.id,
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> userAnswersAllPages.id, "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj())
 
@@ -489,35 +788,65 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Return OK when all answers are complete and retrieved activities are all false (apart from small producer = true)" in {
         val userAnswersAllPages = emptyUserAnswers
-          .set(PackagedContractPackerPage, true).success.value
-          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ExemptionsForSmallProducersPage, true).success.value
-          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0)).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand)).success.value
-          .set(PackAtBusinessAddressPage, true).success.value
-          .set(AskSecondaryWarehouseInReturnPage, true).success.value
+          .set(PackagedContractPackerPage, true)
+          .success
+          .value
+          .set(HowManyAsAContractPackerPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, true)
+          .success
+          .value
+          .set(AddASmallProducerPage, AddASmallProducer(None, "", 0, 0))
+          .success
+          .value
+          .set(BroughtIntoUKPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoTheUKFromSmallProducersPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForExportPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(ClaimCreditsForLostDamagedPage, true)
+          .success
+          .value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(lowBand, highBand))
+          .success
+          .value
+          .set(PackAtBusinessAddressPage, true)
+          .success
+          .value
+          .set(AskSecondaryWarehouseInReturnPage, true)
+          .success
+          .value
 
         setUpData(userAnswersAllPages)
         setUpDataWithBackendCallsForAmountsCached(userAnswersAllPages)
         build
-          .commonPreconditionChangeSubscription(aSubscription.copy(
-            activity = RetrievedActivity(smallProducer = true, false, false, false, false),
-            warehouseSites = List.empty))
-          .sdilBackend.submitReturns(aSubscription.utr)
-          .sdilBackend.submitVariations(userAnswersAllPages.id)
+          .commonPreconditionChangeSubscription(
+            aSubscription.copy(activity = RetrievedActivity(smallProducer = true, false, false, false, false), warehouseSites = List.empty)
+          )
+          .sdilBackend
+          .submitReturns(aSubscription.utr)
+          .sdilBackend
+          .submitVariations(userAnswersAllPages.id)
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> userAnswersAllPages.id,
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> userAnswersAllPages.id, "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj())
 
@@ -530,23 +859,33 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Redirect to start of journey when answers incomplete and small producer = false" in {
         val userAnswerMissing = emptyUserAnswers
-          .set(PackagedContractPackerPage, false).success.value
-          .set(ExemptionsForSmallProducersPage, false).success.value
-          .set(BroughtIntoUKPage, false).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-          .set(ClaimCreditsForExportsPage, false).success.value
+          .set(PackagedContractPackerPage, false)
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, false)
+          .success
+          .value
+          .set(BroughtIntoUKPage, false)
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, false)
+          .success
+          .value
 
         setUpData(userAnswerMissing)
 
-        build.commonPreconditionChangeSubscription(aSubscription.copy(
-          activity = RetrievedActivity(smallProducer = false, true, true, true, true),
-          warehouseSites = List.empty))
+        build.commonPreconditionChangeSubscription(
+          aSubscription.copy(activity = RetrievedActivity(smallProducer = false, true, true, true, true), warehouseSites = List.empty)
+        )
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> userAnswerMissing.id,
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> userAnswerMissing.id, "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj())
 
@@ -559,23 +898,33 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
 
       "Redirect to missing first missing page in the journey when answers incomplete and small producer = true" in {
         val userAnswerMissing = emptyUserAnswers
-          .set(PackagedContractPackerPage, false).success.value
-          .set(ExemptionsForSmallProducersPage, false).success.value
-          .set(BroughtIntoUKPage, false).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-          .set(ClaimCreditsForExportsPage, false).success.value
+          .set(PackagedContractPackerPage, false)
+          .success
+          .value
+          .set(ExemptionsForSmallProducersPage, false)
+          .success
+          .value
+          .set(BroughtIntoUKPage, false)
+          .success
+          .value
+          .set(BroughtIntoUkFromSmallProducersPage, false)
+          .success
+          .value
+          .set(ClaimCreditsForExportsPage, false)
+          .success
+          .value
 
         setUpData(userAnswerMissing)
 
-        build.commonPreconditionChangeSubscription(aSubscription.copy(
-          activity = RetrievedActivity(smallProducer = true, true, true, true, true),
-          warehouseSites = List.empty))
+        build.commonPreconditionChangeSubscription(
+          aSubscription.copy(activity = RetrievedActivity(smallProducer = true, true, true, true, true), warehouseSites = List.empty)
+        )
 
         WsTestClient.withClient { client =>
-          val result = client.url(s"$baseUrl/check-your-answers")
+          val result = client
+            .url(s"$baseUrl/check-your-answers")
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> userAnswerMissing.id,
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> userAnswerMissing.id, "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(Json.obj())
 
@@ -588,27 +937,25 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
     }
   }
 
-
   "POST /check-your-answers" should {
     "send the return and return variation and redirect to returnSent" when {
       "a nil return was submitted and the balance brought forward is 0" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
 
         setUpData(defaultNilReturnUserAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -621,23 +968,22 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "a nil return was submitted and the balance brought forward is positive" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
 
         setUpData(defaultNilReturnUserAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -650,23 +996,22 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "a nil return was submitted and the balance brought forward is negative" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
 
         setUpData(defaultNilReturnUserAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -679,21 +1024,21 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "all answers equal no were submitted and the balance brought forward is 0" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -706,21 +1051,21 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "all answers equal no were submitted and the balance brought forward is positive" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -733,21 +1078,21 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "all answers equal no were submitted and the balance brought forward is negative" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswersAllNo)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -759,23 +1104,22 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
         }
       }
 
-
       "all answers equal yes with litres were submitted and the balance brought forward is 0" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -788,21 +1132,21 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "all answers equal yes with litres were submitted and the balance brought forward is positive" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -815,21 +1159,21 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "all answers equal yes with litres were submitted and the balance brought forward is negative" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(false)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -842,21 +1186,21 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "all answers equal yes with litres were submitted, the balance brought forward is 0 and the user is a small producer" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceZero))
         setUpData(checkYourAnswersFullAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -869,21 +1213,21 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "all answers equal yes with litres were submitted, the balance brought forward is positive and the user is a small producer" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balance))
         setUpData(checkYourAnswersFullAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>
@@ -896,21 +1240,21 @@ class CheckYourAnswersControllerIntegrationSpec extends ControllerITTestHelper w
       }
 
       "all answers equal yes with litres were submitted, the balance brought forward is negative and the user is a small producer" in {
-        await(sdilSessionCache.save[OptSmallProducer](sdilNumber,
-          SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true))))
+        await(
+          sdilSessionCache
+            .save[OptSmallProducer](sdilNumber, SDILSessionKeys.smallProducerForPeriod(requestReturnPeriod), OptSmallProducer(Some(true)))
+        )
         await(sdilSessionCache.save[BigDecimal](sdilNumber, SDILSessionKeys.balance(false), balanceNegative))
         setUpData(checkYourAnswersFullAnswers)
-        build.commonPreconditionChangeSubscription(aSubscription)
-          .sdilBackend.submitReturns()
-          .sdilBackend.submitVariations()
+        build.commonPreconditionChangeSubscription(aSubscription).sdilBackend.submitReturns().sdilBackend.submitVariations()
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/check-your-answers")
+          val result1 = client
+            .url(s"$baseUrl/check-your-answers")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .withFollowRedirects(false)
-            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XGSDIL000001611", "Csrf-Token" -> "nocheck")
             .post("")
 
           whenReady(result1) { res =>

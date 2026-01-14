@@ -17,7 +17,7 @@
 package generators
 
 import org.scalacheck.Arbitrary
-import pages._
+import pages.*
 
 trait PageGenerators {
 

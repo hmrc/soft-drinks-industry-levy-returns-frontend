@@ -34,6 +34,18 @@ Run other services required for running this service via the service manager. (*
 To start the service on local use :
 `sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes`
 
+#### Scalafmt
+
+This repository uses [Scalafmt](https://scalameta.org/scalafmt/), a code formatter for Scala. The formatting rules
+configured for this repository are defined within [.scalafmt.conf](.scalafmt.conf).
+
+To apply formatting to this repository using the configured rules in [.scalafmt.conf](.scalafmt.conf) execute:
+
+ ```
+ sbt scalafmtAll scalafmtSbt
+ ```
+
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

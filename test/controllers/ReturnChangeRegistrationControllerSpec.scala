@@ -16,10 +16,10 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import models.NormalMode
-import navigation.{ FakeNavigator, Navigator }
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 
 import org.mockito.Mockito.*
@@ -27,7 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.ReturnChangeRegistrationView
 
@@ -46,7 +46,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnChangeRegistrationController.onPageLoad().url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -74,12 +74,12 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
       val urlLink: String = routes.PackagedContractPackerController.onPageLoad(NormalMode).url
       running(application) {
         val request = FakeRequest(GET, routes.ReturnChangeRegistrationController.onPageLoad().url)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[ReturnChangeRegistrationView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[ReturnChangeRegistrationView]
 
         status(result) mustEqual OK
         contentAsString(result) must include(routes.PackagedContractPackerController.onPageLoad(NormalMode).url)
-        contentAsString(result) mustEqual view(urlLink)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(urlLink)(using request, messages(application)).toString
         urlLink mustEqual "/soft-drinks-industry-levy-returns-frontend/packaged-as-contract-packer"
       }
     }
@@ -96,7 +96,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
 
         status(result) mustEqual OK
         contentAsString(result) must include(routes.BroughtIntoUKController.onPageLoad(NormalMode).url)
-        contentAsString(result) mustEqual view(urlLink)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(urlLink)(using request, messages(application)).toString
         urlLink mustEqual "/soft-drinks-industry-levy-returns-frontend/brought-into-uk"
       }
     }
@@ -105,13 +105,11 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {

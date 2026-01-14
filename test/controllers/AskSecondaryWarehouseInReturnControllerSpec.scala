@@ -20,18 +20,19 @@ import base.ReturnsTestData.*
 import base.SpecBase
 import forms.AskSecondaryWarehouseInReturnFormProvider
 import models.NormalMode
-import navigation.{ FakeNavigator, Navigator }
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import pages.AskSecondaryWarehouseInReturnPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{ AddressLookupService, WarehouseDetails }
+import services.{AddressLookupService, WarehouseDetails}
 import views.html.AskSecondaryWarehouseInReturnView
 
 import scala.concurrent.Future
@@ -41,9 +42,9 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new AskSecondaryWarehouseInReturnFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val askSecondaryWarehouseInReturnRoute = routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url
+  lazy val askSecondaryWarehouseInReturnRoute: String = routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url
 
   "AskSecondaryWarehouseInReturn Controller" - {
 
@@ -52,7 +53,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request = FakeRequest(GET, askSecondaryWarehouseInReturnRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -86,7 +87,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[AskSecondaryWarehouseInReturnView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -104,20 +105,26 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(using request, messages(application)).toString
       }
     }
 
     "must redirect to alf on ramp when valid data is submitted (true)" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository    = mock[SessionRepository]
       val mockAddressLookupService = mock[AddressLookupService]
-      val onwardUrlForALF = "foobarwizz"
+      val onwardUrlForALF          = "foobarwizz"
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
-        ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+      when(
+        mockAddressLookupService.initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
+          using
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )
+      )
         .thenReturn(Future.successful(onwardUrlForALF))
 
       val application =
@@ -125,7 +132,8 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupService].toInstance(mockAddressLookupService))
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
           .build()
 
       running(application) {
@@ -139,20 +147,28 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
         redirectLocation(result).value mustEqual onwardUrlForALF
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
-          ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          ArgumentMatchers.eq(WarehouseDetails),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
     "must redirect to alf on ramp when valid data is submitted (false), verifying ALF is not called" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository    = mock[SessionRepository]
       val mockAddressLookupService = mock[AddressLookupService]
-      val onwardUrlForALF = "foobarwizz"
+      val onwardUrlForALF          = "foobarwizz"
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
-      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
-        ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+      when(
+        mockAddressLookupService.initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
+          using
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )
+      )
         .thenReturn(Future.successful(onwardUrlForALF))
 
       val application =
@@ -160,7 +176,8 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupService].toInstance(mockAddressLookupService))
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
           .build()
 
       running(application) {
@@ -174,18 +191,26 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
         redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad.url
 
         verify(mockAddressLookupService, times(0)).initJourneyAndReturnOnRampUrl(
-          ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          ArgumentMatchers.eq(WarehouseDetails),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
     "must return error if ALF on ramp call returns error" in {
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository    = mock[SessionRepository]
       val mockAddressLookupService = mock[AddressLookupService]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
-      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
-        ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(
+        mockAddressLookupService.initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
+          using
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )
+      )
         .thenReturn(Future.failed(new Exception("uh oh spaghetio")))
 
       val application =
@@ -193,7 +218,8 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupService].toInstance(mockAddressLookupService))
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
           .build()
 
       running(application) {
@@ -204,8 +230,10 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
         intercept[Exception](await(route(application, request).value))
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
-          ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          ArgumentMatchers.eq(WarehouseDetails),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -225,7 +253,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
   }

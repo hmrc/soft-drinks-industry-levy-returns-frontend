@@ -17,12 +17,12 @@
 package models
 
 import base.SpecBase
-import models.backend.{ Site, UkAddress }
-import play.api.libs.json.{ JsObject, Json }
+import models.backend.{Site, UkAddress}
+import play.api.libs.json.{JsObject, Json}
 import repositories.DatedCacheMap
 import services.Encryption
 
-import java.time.{ Instant, LocalDate }
+import java.time.{Instant, LocalDate}
 
 class ModelEncryptionSpec extends SpecBase {
 
@@ -31,14 +31,17 @@ class ModelEncryptionSpec extends SpecBase {
 
   "encryptUserAnswers" - {
     "should encrypt userAnswers" in {
-      val userAnswers = UserAnswers("id", defaultReturnPeriod,
+      val userAnswers = UserAnswers(
+        "id",
+        defaultReturnPeriod,
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1, 1))),
         Map("foo" -> Site(UkAddress(List("foo"), "foo", Some("foo")), Some("foo"), Some("foo"), Some(LocalDate.now()))),
         Map("foo" -> Site(UkAddress(List("foo"), "foo", Some("foo")), tradingName = Some("foo"))),
         false,
         false,
-        Instant.ofEpochSecond(1))
+        Instant.ofEpochSecond(1)
+      )
 
       val result = ModelEncryption.encryptUserAnswers(userAnswers)
       result._1 mustBe userAnswers.id
@@ -56,14 +59,17 @@ class ModelEncryptionSpec extends SpecBase {
   }
   "decryptUserAnswers" - {
     "should decrypt userAnswers in tuple form" in {
-      val userAnswers = UserAnswers("id", defaultReturnPeriod,
+      val userAnswers = UserAnswers(
+        "id",
+        defaultReturnPeriod,
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1, 1))),
         Map("foo" -> Site(UkAddress(List("foo"), "foo", Some("foo")), Some("foo"), Some("foo"), Some(LocalDate.now()))),
         Map("foo" -> Site(UkAddress(List("foo"), "foo", Some("foo")), tradingName = Some("foo"))),
         false,
         false,
-        Instant.ofEpochSecond(1))
+        Instant.ofEpochSecond(1)
+      )
 
       val result = ModelEncryption.decryptUserAnswers(
         userAnswers.id,
@@ -72,7 +78,10 @@ class ModelEncryptionSpec extends SpecBase {
         encryption.crypto.encrypt(Json.toJson(userAnswers.smallProducerList).toString(), userAnswers.id),
         userAnswers.packagingSiteList.map(site => site._1 -> encryption.crypto.encrypt(Json.toJson(site._2).toString(), userAnswers.id)),
         userAnswers.warehouseList.map(warehouse => warehouse._1 -> encryption.crypto.encrypt(Json.toJson(warehouse._2).toString(), userAnswers.id)),
-        userAnswers.submitted, userAnswers.isNilReturn, userAnswers.lastUpdated)
+        userAnswers.submitted,
+        userAnswers.isNilReturn,
+        userAnswers.lastUpdated
+      )
       result mustBe userAnswers
 
     }
@@ -80,10 +89,7 @@ class ModelEncryptionSpec extends SpecBase {
 
   "encryptDatedCacheMap" - {
     "should encrypt correctly" in {
-      val datedCacheMap: DatedCacheMap = DatedCacheMap(
-        "foo",
-        Map("string" -> Json.obj("foo" -> "bar")),
-        Instant.now())
+      val datedCacheMap: DatedCacheMap = DatedCacheMap("foo", Map("string" -> Json.obj("foo" -> "bar")), Instant.now())
 
       val result = ModelEncryption.encryptDatedCacheMap(datedCacheMap)
       result._1 mustBe datedCacheMap.id
@@ -95,15 +101,13 @@ class ModelEncryptionSpec extends SpecBase {
 
   "decryptDatedCacheMap" - {
     "should decrypt correctly" in {
-      val datedCacheMap: DatedCacheMap = DatedCacheMap(
-        "foo",
-        Map("string" -> Json.obj("foo" -> "bar")),
-        Instant.now())
+      val datedCacheMap: DatedCacheMap = DatedCacheMap("foo", Map("string" -> Json.obj("foo" -> "bar")), Instant.now())
 
       val result = ModelEncryption.decryptDatedCacheMap(
         datedCacheMap.id,
         datedCacheMap.data.map(item => item._1 -> encryption.crypto.encrypt(item._2.toString(), datedCacheMap.id)),
-        datedCacheMap.lastUpdated)
+        datedCacheMap.lastUpdated
+      )
       result mustBe datedCacheMap
     }
   }

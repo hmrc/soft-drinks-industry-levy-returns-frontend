@@ -18,37 +18,41 @@ package views.helpers.returnDetails
 
 import config.FrontendAppConfig
 import models.LevyCalculator.getLevyCalculation
-import models.{ LevyCalculation, LitresInBands, ReturnPeriod }
+import models.{LevyCalculation, LitresInBands, ReturnPeriod}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Actions, SummaryListRow }
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import util.CurrencyFormatter
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 trait SummaryListRowLitresHelper {
 
-  val actionUrl: String
+  val actionUrl:       String
   val bandActionIdKey: String
-  val bandHiddenKey: String
-  val hasZeroLevy: Boolean = false
+  val bandHiddenKey:   String
+  val hasZeroLevy:    Boolean = false
   val isNegativeLevy: Boolean = false
 
-  val lowBand = "lowband"
+  val lowBand  = "lowband"
   val highBand = "highband"
 
-  def rows(litresInBands: LitresInBands, returnPeriod: ReturnPeriod, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+  def rows(litresInBands: LitresInBands, returnPeriod: ReturnPeriod, isCheckAnswers: Boolean)(implicit
+    messages: Messages,
+    config:   FrontendAppConfig
+  ): Seq[SummaryListRow] = {
     val levyCalculation: LevyCalculation = getLevyCalculation(litresInBands.lowBand, litresInBands.highBand, returnPeriod)
     Seq(
       bandRow(litresInBands.lowBand, lowBand, isCheckAnswers),
       bandLevyRow(levyCalculation.lowLevy, lowBand),
       bandRow(litresInBands.highBand, highBand, isCheckAnswers),
-      bandLevyRow(levyCalculation.highLevy, highBand))
+      bandLevyRow(levyCalculation.highLevy, highBand)
+    )
   }
 
   private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
-    val key = if (band == lowBand) {
+    val key = if band == lowBand then {
       "litresInTheLowBand"
     } else {
       "litresInTheHighBand"
@@ -58,11 +62,12 @@ trait SummaryListRowLitresHelper {
       key = key,
       value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),
       classes = "govuk-summary-list__row--no-border",
-      actions = action(isCheckAnswers, band))
+      actions = action(isCheckAnswers, band)
+    )
   }
 
   private def bandLevyRow(levyAmount: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
-    val key = if (band == lowBand) {
+    val key = if band == lowBand then {
       "lowBandLevy"
     } else {
       "highBandLevy"
@@ -73,27 +78,30 @@ trait SummaryListRowLitresHelper {
     SummaryListRow(
       key = key,
       value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),
-      classes = "govuk-summary-list__row--no-actions")
+      classes = "govuk-summary-list__row--no-actions"
+    )
   }
 
-  private def levy(levyAmount: BigDecimal): BigDecimal = {
-    if (hasZeroLevy) {
+  private def levy(levyAmount: BigDecimal): BigDecimal =
+    if hasZeroLevy then {
       0
-    } else if (isNegativeLevy) {
+    } else if isNegativeLevy then {
       levyAmount.toDouble * -1
     } else {
       levyAmount.toDouble
     }
-  }
 
-  def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if (isCheckAnswers) {
-    Some(Actions(
-      "",
-      items =
-        Seq(
+  def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if isCheckAnswers then {
+    Some(
+      Actions(
+        "",
+        items = Seq(
           ActionItemViewModel("site.change", actionUrl)
             .withAttribute(("id", s"change-$band-litreage-$bandActionIdKey"))
-            .withVisuallyHiddenText(messages(s"${bandHiddenKey}.$band.litres.hidden")))))
+            .withVisuallyHiddenText(messages(s"$bandHiddenKey.$band.litres.hidden"))
+        )
+      )
+    )
   } else {
     None
   }

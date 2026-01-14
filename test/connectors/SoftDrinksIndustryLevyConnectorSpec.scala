@@ -16,22 +16,23 @@
 
 package connectors
 
-import base.ReturnsTestData._
-import models.retrieved.{ OptRetrievedSubscription, RetrievedSubscription }
-import models.{ FinancialLineItem, ReturnPeriod, SdilReturn }
+import base.ReturnsTestData.*
+import models.retrieved.{OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription}
+import models.{FinancialLineItem, ReturnPeriod, ReturnsVariation, SdilReturn}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import play.api.http.Status.OK
-import repositories.SDILSessionCache
+import org.mockito.Mockito.{verify, when}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
+import repositories.{SDILSessionCache, SDILSessionKeys}
 import uk.gov.hmrc.http.HttpResponse
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.reset
 
 import scala.concurrent.Future
+import scala.concurrent.Future.never
 
 class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
-
   val (host, localPort) = ("host", "123")
-
-  val mockSDILSessionCache = mock[SDILSessionCache]
+  val mockSDILSessionCache: SDILSessionCache = mock[SDILSessionCache]
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http = mockHttp, frontendAppConfig, mockSDILSessionCache)
 
   val utr: String = "1234567891"
@@ -41,44 +42,39 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
     "when there is a subscription in cache" in {
 
       val identifierType: String = "sdil"
-      val sdilNumber: String = "XKSDIL000000022"
-      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(any())).thenReturn(Future.successful(Some(OptRetrievedSubscription(Some(aSubscription)))))
+      val sdilNumber:     String = "XKSDIL000000022"
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
+        .thenReturn(Future.successful(Some(OptRetrievedSubscription(Some(aSubscription)))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual (Some(aSubscription))
+      whenReady(res) { response =>
+        response mustBe Some(aSubscription)
       }
     }
 
     "when there is no subscription in cache" in {
       val identifierType: String = "sdil"
-      val sdilNumber: String = "XKSDIL000000022"
-      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(any())).thenReturn(Future.successful(None))
+      val sdilNumber:     String = "XKSDIL000000022"
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any())).thenReturn(Future.successful(None))
       when(requestBuilderExecute[Option[RetrievedSubscription]]).thenReturn(Future.successful(Some(aSubscription)))
-      when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(any())).thenReturn(Future.successful(true))
+      when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(using any())).thenReturn(Future.successful(true))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual Some(aSubscription)
+      whenReady(res) { response =>
+        response mustBe Some(aSubscription)
       }
     }
 
     "when there is no subscription in cache and no subscription in the database" in {
       val identifierType: String = "sdil"
-      val sdilNumber: String = "XKSDIL000000022"
-      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(any())).thenReturn(Future.successful(None))
+      val sdilNumber:     String = "XKSDIL000000022"
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any())).thenReturn(Future.successful(None))
       when(requestBuilderExecute[Option[RetrievedSubscription]]).thenReturn(Future.successful(None))
-      when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(any())).thenReturn(Future.successful(true))
+      when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(using any())).thenReturn(Future.successful(true))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual None
+      whenReady(res) { response =>
+        response mustBe None
       }
     }
 
@@ -88,10 +84,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
       when(requestBuilderExecute[Option[Boolean]]).thenReturn(Future.successful(Some(false)))
       val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual Some(false)
+      whenReady(res) { response =>
+        response mustBe Some(false)
       }
 
     }
@@ -102,10 +96,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
       when(requestBuilderExecute[Option[Boolean]]).thenReturn(Future.successful(None))
       val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual None
+      whenReady(res) { response =>
+        response mustBe None
       }
 
     }
@@ -116,10 +108,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
       when(requestBuilderExecute[List[ReturnPeriod]]).thenReturn(Future.successful(List(returnPeriod)))
       val res = softDrinksIndustryLevyConnector.getPendingReturnPeriods(utr)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual List(returnPeriod)
+      whenReady(res) { response =>
+        response mustBe List(returnPeriod)
       }
     }
 
@@ -127,10 +117,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
       when(requestBuilderExecute[BigDecimal]).thenReturn(Future.successful(BigDecimal(1000)))
       val res = softDrinksIndustryLevyConnector.balance(sdilNumber, false)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual BigDecimal(1000)
+      whenReady(res) { response =>
+        response mustBe BigDecimal(1000)
       }
     }
 
@@ -140,10 +128,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
 
       val res = softDrinksIndustryLevyConnector.balanceHistory(sdilNumber, false)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual financialItemList
+      whenReady(res) { response =>
+        response mustBe financialItemList
       }
     }
 
@@ -153,10 +139,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
 
       val res = softDrinksIndustryLevyConnector.getPendingReturnPeriods(utr)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual returnPeriods
+      whenReady(res) { response =>
+        response mustBe returnPeriods
       }
     }
 
@@ -170,19 +154,143 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
         importSmall = (1L, 1L),
         `export` = (1L, 1L),
         wastage = (1L, 1L),
-        submittedOn = None)
+        submittedOn = None
+      )
 
       when(requestBuilderExecute[HttpResponse])
         .thenReturn(Future.successful(HttpResponse(OK, "")))
 
       val res = softDrinksIndustryLevyConnector.returns_update(utr, period, sdilReturn)
 
-      whenReady(
-        res) {
-        response =>
-          response mustEqual Some(OK)
+      whenReady(res) { response =>
+        response mustBe Some(OK)
+      }
+    }
+
+    "when there is a subscription entry in cache but it is cached as None" in {
+      val identifierType: String = "sdil"
+      val sdilNumber:     String = "XKSDIL000000022"
+
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
+        .thenReturn(Future.successful(Some(OptRetrievedSubscription(None))))
+
+      when(requestBuilderExecute[Option[RetrievedSubscription]])
+        .thenThrow(new RuntimeException("HTTP should not be called on cache hit"))
+
+      val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
+
+      whenReady(res) { response =>
+        response mustBe None
+      }
+    }
+
+    "when small producer status is in cache (Some(true))" in {
+      val sdilRef = "XKSDIL000000022"
+      val period  = ReturnPeriod(year = 2022, quarter = 3)
+
+      when(
+        mockSDILSessionCache.fetchEntry[OptSmallProducer](
+          eqTo(sdilRef),
+          eqTo(SDILSessionKeys.smallProducerForPeriod(period))
+        )(using any())
+      ).thenReturn(Future.successful(Some(OptSmallProducer(Some(true)))))
+
+      val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilRef, period)
+
+      whenReady(res) { response =>
+        response mustBe Some(true)
+      }
+    }
+
+    "when small producer status is in cache (Some(false))" in {
+      val sdilRef = "XKSDIL000000022"
+      val period  = ReturnPeriod(year = 2022, quarter = 3)
+
+      when(
+        mockSDILSessionCache.fetchEntry[OptSmallProducer](
+          eqTo(sdilRef),
+          eqTo(SDILSessionKeys.smallProducerForPeriod(period))
+        )(using any())
+      ).thenReturn(Future.successful(Some(OptSmallProducer(Some(false)))))
+
+      val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilRef, period)
+
+      whenReady(res) { response =>
+        response mustBe Some(false)
+      }
+
+    }
+
+    "when small producer status is in cache but cached as None" in {
+      val sdilRef = "XKSDIL000000022"
+      val period  = ReturnPeriod(year = 2022, quarter = 3)
+
+      when(
+        mockSDILSessionCache.fetchEntry[OptSmallProducer](
+          eqTo(sdilRef),
+          eqTo(SDILSessionKeys.smallProducerForPeriod(period))
+        )(using any())
+      ).thenReturn(Future.successful(Some(OptSmallProducer(None))))
+
+      val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilRef, period)
+
+      whenReady(res) { response =>
+        response mustBe None
+      }
+
+    }
+
+    "return balance from cache (withAssessment = false)" in {
+      val sdilRef = "XKSDIL000000022"
+
+      when(
+        mockSDILSessionCache.fetchEntry[BigDecimal](
+          eqTo(sdilRef),
+          eqTo(SDILSessionKeys.balance(false))
+        )(using any())
+      ).thenReturn(Future.successful(Some(BigDecimal(999))))
+
+      val res = softDrinksIndustryLevyConnector.balance(sdilRef, withAssessment = false)
+
+      whenReady(res) { response =>
+        response mustBe BigDecimal(999)
+      }
+    }
+
+    "return balance from cache (withAssessment = true)" in {
+      val sdilRef = "XKSDIL000000022"
+
+      when(
+        mockSDILSessionCache.fetchEntry[BigDecimal](
+          eqTo(sdilRef),
+          eqTo(SDILSessionKeys.balance(true))
+        )(using any())
+      ).thenReturn(Future.successful(Some(BigDecimal(1234))))
+
+      val res = softDrinksIndustryLevyConnector.balance(sdilRef, withAssessment = true)
+
+      whenReady(res) { response =>
+        response mustBe BigDecimal(1234)
+      }
+
+    }
+
+    "return balance history from cache (withAssessment = false)" in {
+      val sdilRef = "XKSDIL000000022"
+      val key     = SDILSessionKeys.balanceHistory(false)
+
+      when(
+        mockSDILSessionCache.fetchEntry[List[FinancialLineItem]](
+          eqTo(sdilRef),
+          eqTo(key)
+        )(using any())
+      ).thenReturn(Future.successful(Some(financialItemList)))
+
+      val res = softDrinksIndustryLevyConnector.balanceHistory(sdilRef, withAssessment = false)
+
+      whenReady(res) { response =>
+        response mustBe financialItemList
       }
     }
   }
-
 }

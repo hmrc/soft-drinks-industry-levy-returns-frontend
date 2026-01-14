@@ -24,6 +24,5 @@ import play.api.data.Form
 class AskSecondaryWarehouseInReturnFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("askSecondaryWarehouseInReturn.error.required"))
+    Form("value" -> boolean("askSecondaryWarehouseInReturn.error.required"))
 }

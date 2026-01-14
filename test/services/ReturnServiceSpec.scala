@@ -16,17 +16,17 @@
 
 package services
 
-import base.ReturnsTestData._
-import base.{ SpecBase, UserAnswersTestData }
+import base.ReturnsTestData.*
+import base.{SpecBase, UserAnswersTestData}
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.{ ReturnPeriod, SdilReturn }
+import models.{ReturnPeriod, SdilReturn}
 import org.mockito.ArgumentMatchers.*
-import org.mockito.Mockito.{ reset, when }
-import play.api.test.Helpers._
+import org.mockito.Mockito.{reset, when}
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderCarrier
 import org.scalatestplus.mockito.MockitoSugar.mock
-import org.mockito.ArgumentMatchers.{ eq => eqTo }
+import org.mockito.ArgumentMatchers.eq as eqTo
 import org.scalatest.BeforeAndAfterEach
 
 import scala.concurrent.Future
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val mockConfig:        FrontendAppConfig               = mock[FrontendAppConfig]
 
   val service: ReturnService = new ReturnService(mockSdilConnector, mockConfig)
 
@@ -48,7 +48,7 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
 
   "getPendingReturns" - {
     "return a list of return periods" in {
-      when(mockSdilConnector.getPendingReturnPeriods("123456789")(hc)).thenReturn(Future.successful(List.empty[ReturnPeriod]))
+      when(mockSdilConnector.getPendingReturnPeriods("123456789")(using hc)).thenReturn(Future.successful(List.empty[ReturnPeriod]))
 
       val res = service.getPendingReturns("123456789")
 
@@ -64,11 +64,12 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
       "when a nil return is being submitted" in {
         val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), None)
 
-        when(mockSdilConnector.returns_update(
-          eqTo(aSubscription.utr),
-          eqTo(returnPeriod),
-          argThat[SdilReturn] { sdilReturn =>
-            sdilReturn.ownBrand == emptyReturn.ownBrand &&
+        when(
+          mockSdilConnector.returns_update(
+            eqTo(aSubscription.utr),
+            eqTo(returnPeriod),
+            argThat[SdilReturn] { sdilReturn =>
+              sdilReturn.ownBrand == emptyReturn.ownBrand &&
               sdilReturn.packLarge == emptyReturn.packLarge &&
               sdilReturn.packSmall == emptyReturn.packSmall &&
               sdilReturn.importLarge == emptyReturn.importLarge &&
@@ -76,11 +77,12 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
               sdilReturn.`export` == emptyReturn.`export` &&
               sdilReturn.wastage == emptyReturn.wastage &&
               sdilReturn.submittedOn.isDefined
-          })(any[HeaderCarrier])).thenReturn(Future.successful(Some(200)))
+            }
+          )(using any[HeaderCarrier])
+        ).thenReturn(Future.successful(Some(200)))
 
-        when(mockSdilConnector.returns_variation(
-          eqTo(aSubscription.sdilRef),
-          eqTo(returnVariationForNilReturn))(any[HeaderCarrier])).thenReturn(Future.successful(Some(204)))
+        when(mockSdilConnector.returns_variation(eqTo(aSubscription.sdilRef), eqTo(returnVariationForNilReturn))(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(Some(204)))
 
         val res = service.sendReturn(aSubscription, returnPeriod, emptyUserAnswers)
 
@@ -90,27 +92,22 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
       }
 
       "when a none nil return is being submitted" in {
-        val userAnswers = UserAnswersTestData.withQuestionsAllTrueAllLitresInAllBands1SmallProducer
-        val returnFromUserAnswers = SdilReturn(
-          (1000, 1000),
-          (1000, 1000),
-          userAnswers.smallProducerList,
-          (1000, 1000),
-          (1000, 1000),
-          (1000, 1000),
-          (1000, 1000),
-          None)
+        val userAnswers           = UserAnswersTestData.withQuestionsAllTrueAllLitresInAllBands1SmallProducer
+        val returnFromUserAnswers =
+          SdilReturn((1000, 1000), (1000, 1000), userAnswers.smallProducerList, (1000, 1000), (1000, 1000), (1000, 1000), (1000, 1000), None)
         val returnVariation = returnVariationForNilReturn.copy(
           importer = (true, (8000, 8000)),
           packer = (true, (8000, 12000)),
           packingSites = userAnswers.packagingSiteList.values.toList,
-          taxEstimation = 5040.00)
+          taxEstimation = 5040.00
+        )
 
-        when(mockSdilConnector.returns_update(
-          eqTo(aSubscription.utr),
-          eqTo(returnPeriod),
-          argThat[SdilReturn] { sdilReturn =>
-            sdilReturn.ownBrand == returnFromUserAnswers.ownBrand &&
+        when(
+          mockSdilConnector.returns_update(
+            eqTo(aSubscription.utr),
+            eqTo(returnPeriod),
+            argThat[SdilReturn] { sdilReturn =>
+              sdilReturn.ownBrand == returnFromUserAnswers.ownBrand &&
               sdilReturn.packLarge == returnFromUserAnswers.packLarge &&
               sdilReturn.packSmall == returnFromUserAnswers.packSmall &&
               sdilReturn.importLarge == returnFromUserAnswers.importLarge &&
@@ -118,11 +115,12 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
               sdilReturn.`export` == returnFromUserAnswers.`export` &&
               sdilReturn.wastage == returnFromUserAnswers.wastage &&
               sdilReturn.submittedOn.isDefined
-          })(any[HeaderCarrier])).thenReturn(Future.successful(Some(200)))
+            }
+          )(using any[HeaderCarrier])
+        ).thenReturn(Future.successful(Some(200)))
 
-        when(mockSdilConnector.returns_variation(
-          eqTo(aSubscription.sdilRef),
-          eqTo(returnVariation))(any[HeaderCarrier])).thenReturn(Future.successful(Some(204)))
+        when(mockSdilConnector.returns_variation(eqTo(aSubscription.sdilRef), eqTo(returnVariation))(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(Some(204)))
 
         val res = service.sendReturn(aSubscription, returnPeriod, userAnswers)
 
@@ -134,11 +132,12 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
       "when a none nil return and all answers no is being submitted" in {
         val userAnswers = UserAnswersTestData.withQuestionsAllFalseAndNoLitres
 
-        when(mockSdilConnector.returns_update(
-          eqTo(aSubscription.utr),
-          eqTo(returnPeriod),
-          argThat[SdilReturn] { sdilReturn =>
-            sdilReturn.ownBrand == emptyReturn.ownBrand &&
+        when(
+          mockSdilConnector.returns_update(
+            eqTo(aSubscription.utr),
+            eqTo(returnPeriod),
+            argThat[SdilReturn] { sdilReturn =>
+              sdilReturn.ownBrand == emptyReturn.ownBrand &&
               sdilReturn.packLarge == emptyReturn.packLarge &&
               sdilReturn.packSmall == emptyReturn.packSmall &&
               sdilReturn.importLarge == emptyReturn.importLarge &&
@@ -146,11 +145,12 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
               sdilReturn.`export` == emptyReturn.`export` &&
               sdilReturn.wastage == emptyReturn.wastage &&
               sdilReturn.submittedOn.isDefined
-          })(any[HeaderCarrier])).thenReturn(Future.successful(Some(200)))
+            }
+          )(using any[HeaderCarrier])
+        ).thenReturn(Future.successful(Some(200)))
 
-        when(mockSdilConnector.returns_variation(
-          eqTo(aSubscription.sdilRef),
-          eqTo(returnVariationForNilReturn))(any[HeaderCarrier])).thenReturn(Future.successful(Some(204)))
+        when(mockSdilConnector.returns_variation(eqTo(aSubscription.sdilRef), eqTo(returnVariationForNilReturn))(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(Some(204)))
 
         val res = service.sendReturn(aSubscription, returnPeriod, userAnswers)
 
@@ -163,10 +163,8 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
     "throw an exception when sending the return fails" in {
       val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
-      when(mockSdilConnector.returns_update(
-        eqTo(aSubscription.utr),
-        eqTo(returnPeriod),
-        eqTo(emptyReturn))(any[HeaderCarrier])).thenReturn(Future.successful(None))
+      when(mockSdilConnector.returns_update(eqTo(aSubscription.utr), eqTo(returnPeriod), eqTo(emptyReturn))(using any[HeaderCarrier]))
+        .thenReturn(Future.successful(None))
 
       lazy val res = service.sendReturn(aSubscription, returnPeriod, emptyUserAnswers)
 

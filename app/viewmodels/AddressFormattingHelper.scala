@@ -17,7 +17,7 @@
 package viewmodels
 
 import models.backend.UkAddress
-import play.twirl.api.{ Html, HtmlFormat }
+import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 object AddressFormattingHelper {
@@ -32,31 +32,17 @@ object AddressFormattingHelper {
   def addressFormatting(address: UkAddress, tradingName: Option[String]): Html = {
     val addressFormat = determineAddressFormat(address, tradingName)
 
-    val commaFormattedSiteAddress = address.lines.map(line => { if (line.isEmpty) "" else line + ", " })
-    val htmlSiteAddress = HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))
-    val htmlPostcode = HtmlFormat.escape(address.postCode)
-    val htmlTradingName = HtmlFormat.escape(tradingName.getOrElse(""))
-    val breakLine = Html("<br>")
+    val commaFormattedSiteAddress = address.lines.map(line => if line.isEmpty then "" else line + ", ")
+    val htmlSiteAddress           = HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))
+    val htmlPostcode              = HtmlFormat.escape(address.postCode)
+    val htmlTradingName           = HtmlFormat.escape(tradingName.getOrElse(""))
+    val breakLine                 = Html("<br>")
 
     addressFormat match {
-      case SeparatePostCodeAddressNoTradingName => HtmlFormat.fill(Seq(
-        htmlSiteAddress,
-        breakLine,
-        htmlPostcode))
-      case AddressNoTradingName => HtmlFormat.fill(Seq(
-        htmlSiteAddress,
-        htmlPostcode))
-      case AddressWithTradingName => HtmlFormat.fill(Seq(
-        htmlTradingName,
-        breakLine,
-        htmlSiteAddress,
-        htmlPostcode))
-      case SeparatePostCodeAddressWithTradingName => HtmlFormat.fill(Seq(
-        htmlTradingName,
-        breakLine,
-        htmlSiteAddress,
-        breakLine,
-        htmlPostcode))
+      case SeparatePostCodeAddressNoTradingName   => HtmlFormat.fill(Seq(htmlSiteAddress, breakLine, htmlPostcode))
+      case AddressNoTradingName                   => HtmlFormat.fill(Seq(htmlSiteAddress, htmlPostcode))
+      case AddressWithTradingName                 => HtmlFormat.fill(Seq(htmlTradingName, breakLine, htmlSiteAddress, htmlPostcode))
+      case SeparatePostCodeAddressWithTradingName => HtmlFormat.fill(Seq(htmlTradingName, breakLine, htmlSiteAddress, breakLine, htmlPostcode))
     }
   }
 
@@ -64,14 +50,14 @@ object AddressFormattingHelper {
 
     val addressLength = address.lines.toString().length
 
-    if (tradingName.getOrElse("") == "") {
-      if ((addressLength > 44 && addressLength < 50) || (addressLength > 97 && addressLength < 104)) {
+    if tradingName.getOrElse("") == "" then {
+      if (addressLength > 44 && addressLength < 50) || (addressLength > 97 && addressLength < 104) then {
         SeparatePostCodeAddressNoTradingName
       } else {
         AddressNoTradingName
       }
     } else {
-      if ((addressLength > 44 && addressLength < 50) || (addressLength > 97 && addressLength < 104)) {
+      if (addressLength > 44 && addressLength < 50) || (addressLength > 97 && addressLength < 104) then {
         SeparatePostCodeAddressWithTradingName
       } else {
         AddressWithTradingName

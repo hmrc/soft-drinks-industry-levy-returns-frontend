@@ -18,27 +18,26 @@ package controllers.actions
 
 import models.requests.DataRequest
 import models.retrieved.RetrievedSubscription
-import models.{ AddASmallProducer, CheckMode, LitresInBands, NormalMode, SdilReturn }
-import pages._
+import models.{AddASmallProducer, CheckMode, LitresInBands, NormalMode, SdilReturn}
+import pages.*
 import play.api.libs.json.Reads
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import util.{ GenericLogger, UserTypeCheck }
+import util.{GenericLogger, UserTypeCheck}
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class RequiredUserAnswers @Inject() (genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
 
-  def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
+  def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[?]): Future[Result] =
     page match {
       case CheckYourAnswersPage => checkYourAnswersRequiredData(action)
-      case _ => action
+      case _                    => action
     }
-  }
 
-  private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(mainRoute)
+  private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[?]): Future[Result] = {
+    val userAnswersMissing: List[RequiredPage[?, ?, ?]] = returnMissingAnswers(mainRoute)
     userAnswersMissing.headOption.map(_.pageRequired.asInstanceOf[Page]) match {
       case Some(page) if List(PackAtBusinessAddressPage, PackagingSiteDetailsPage).contains(page) =>
         genericLogger.logger.info(s"${request.userAnswers.id} now requires packaging sites")
@@ -53,74 +52,77 @@ class RequiredUserAnswers @Inject() (genericLogger: GenericLogger)(implicit val 
     }
   }
 
-  private[controllers] def returnMissingAnswers[A, B](list: List[RequiredPage[_, _, _]])(implicit request: DataRequest[_]): List[RequiredPage[_, _, _]] = {
+  private[controllers] def returnMissingAnswers[A, B](
+    list: List[RequiredPage[?, ?, ?]]
+  )(implicit request: DataRequest[?]): List[RequiredPage[?, ?, ?]] =
     list.filterNot { listItem =>
-      val currentPage: Option[A] = request.userAnswers.get(listItem.pageRequired.asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
+      val currentPage: Option[A] =
+        request.userAnswers.get(listItem.pageRequired.asInstanceOf[QuestionPage[A]])(using listItem.reads.asInstanceOf[Reads[A]])
       (currentPage.isDefined, listItem.basedOnPreviousPage.isDefined) match {
         case (false, true) =>
-          val previousPage: PreviousPage[QuestionPage[B], B] = listItem.basedOnPreviousPage.get.asInstanceOf[PreviousPage[QuestionPage[B], B]]
-          val previousPageAnswer: Option[B] = request.userAnswers.get(previousPage.page)(previousPage.reads)
+          val previousPage:       PreviousPage[QuestionPage[B], B] = listItem.basedOnPreviousPage.get.asInstanceOf[PreviousPage[QuestionPage[B], B]]
+          val previousPageAnswer: Option[B]                        = request.userAnswers.get(previousPage.page)(using previousPage.reads)
           !previousPageAnswer.contains(previousPage.previousPageAnswerRequired)
         case (false, _) => false
-        case _ => true
+        case _          => true
       }
     }
-  }
-  private[controllers] def smallProducerCheck(subscription: RetrievedSubscription): List[RequiredPage[_, _, _]] = {
-    if (subscription.activity.smallProducer) {
+  private[controllers] def smallProducerCheck(subscription: RetrievedSubscription): List[RequiredPage[?, ?, ?]] =
+    if subscription.activity.smallProducer then {
       List.empty
     } else {
       List(
         RequiredPage(OwnBrandsPage, None)(implicitly[Reads[Boolean]]),
-        RequiredPage(
-          BrandsPackagedAtOwnSitesPage,
-          Some(PreviousPage(OwnBrandsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
+        RequiredPage(BrandsPackagedAtOwnSitesPage, Some(PreviousPage(OwnBrandsPage, true)(implicitly[Reads[Boolean]])))(
+          implicitly[Reads[LitresInBands]]
+        )
+      )
     }
-  }
 
-  private[controllers] def mainRoute(implicit dataRequest: DataRequest[_]): List[RequiredPage[_, _, _]] = {
+  private[controllers] def mainRoute(implicit dataRequest: DataRequest[?]): List[RequiredPage[?, ?, ?]] =
     smallProducerCheck(dataRequest.subscription) ++ restOfJourney ++ packingListReturnChange(dataRequest) ++ warehouseListReturnChange(dataRequest)
-  }
 
-  private[controllers] def restOfJourney: List[RequiredPage[_, _, _]] = {
+  private[controllers] def restOfJourney: List[RequiredPage[?, ?, ?]] =
     List(
       RequiredPage(PackagedContractPackerPage, None)(implicitly[Reads[Boolean]]),
-      RequiredPage(
-        HowManyAsAContractPackerPage,
-        Some(PreviousPage(PackagedContractPackerPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+      RequiredPage(HowManyAsAContractPackerPage, Some(PreviousPage(PackagedContractPackerPage, true)(implicitly[Reads[Boolean]])))(
+        implicitly[Reads[LitresInBands]]
+      ),
       RequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
-      RequiredPage(
-        AddASmallProducerPage,
-        Some(PreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[AddASmallProducer]]),
+      RequiredPage(AddASmallProducerPage, Some(PreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(
+        implicitly[Reads[AddASmallProducer]]
+      ),
       RequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
-      RequiredPage(
-        HowManyBroughtIntoUkPage,
-        Some(PreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+      RequiredPage(HowManyBroughtIntoUkPage, Some(PreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(
+        implicitly[Reads[LitresInBands]]
+      ),
       RequiredPage(BroughtIntoUkFromSmallProducersPage, None)(implicitly[Reads[Boolean]]),
       RequiredPage(
         HowManyBroughtIntoTheUKFromSmallProducersPage,
-        Some(PreviousPage(BroughtIntoUkFromSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+        Some(PreviousPage(BroughtIntoUkFromSmallProducersPage, true)(implicitly[Reads[Boolean]]))
+      )(implicitly[Reads[LitresInBands]]),
       RequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]),
-      RequiredPage(
-        HowManyCreditsForExportPage,
-        Some(PreviousPage(ClaimCreditsForExportsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+      RequiredPage(HowManyCreditsForExportPage, Some(PreviousPage(ClaimCreditsForExportsPage, true)(implicitly[Reads[Boolean]])))(
+        implicitly[Reads[LitresInBands]]
+      ),
       RequiredPage(ClaimCreditsForLostDamagedPage, None)(implicitly[Reads[Boolean]]),
-      RequiredPage(
-        HowManyCreditsForLostDamagedPage,
-        Some(PreviousPage(ClaimCreditsForLostDamagedPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
-  }
+      RequiredPage(HowManyCreditsForLostDamagedPage, Some(PreviousPage(ClaimCreditsForLostDamagedPage, true)(implicitly[Reads[Boolean]])))(
+        implicitly[Reads[LitresInBands]]
+      )
+    )
 
-  private[controllers] val packingListReturnChange: DataRequest[_] => List[RequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
-    if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) && request.subscription.productionSites.isEmpty) {
+  private[controllers] val packingListReturnChange: DataRequest[?] => List[RequiredPage[?, ?, ?]] = { (request: DataRequest[?]) =>
+    if UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) && request.subscription.productionSites.isEmpty then {
       List(
         RequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]),
-        RequiredPage(PackagingSiteDetailsPage, None)(implicitly[Reads[Boolean]]))
+        RequiredPage(PackagingSiteDetailsPage, None)(implicitly[Reads[Boolean]])
+      )
     } else {
       List.empty
     }
   }
-  private[controllers] val warehouseListReturnChange: DataRequest[_] => List[RequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
-    if (UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription)) {
+  private[controllers] val warehouseListReturnChange: DataRequest[?] => List[RequiredPage[?, ?, ?]] = { (request: DataRequest[?]) =>
+    if UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription) then {
       List(RequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
     } else {
       List.empty
@@ -128,6 +130,5 @@ class RequiredUserAnswers @Inject() (genericLogger: GenericLogger)(implicit val 
   }
 }
 
-case class RequiredPage[+A >: QuestionPage[C], +B >: PreviousPage[_, _], C](pageRequired: A, basedOnPreviousPage: Option[B])(val reads: Reads[C])
+case class RequiredPage[+A >: QuestionPage[C], +B >: PreviousPage[?, ?], C](pageRequired: A, basedOnPreviousPage: Option[B])(val reads: Reads[C])
 case class PreviousPage[+B >: QuestionPage[C], C](page: B, previousPageAnswerRequired: C)(val reads: Reads[C])
-

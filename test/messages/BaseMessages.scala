@@ -17,12 +17,12 @@
 package messages
 
 trait BaseMessages {
-  val back = "Back"
-  val edit = "Edit"
-  val remove = "Remove"
-  val change = "Change"
-  val no = "No"
-  val yes = "Yes"
-  val continue = "Continue"
+  val back         = "Back"
+  val edit         = "Edit"
+  val remove       = "Remove"
+  val change       = "Change"
+  val no           = "No"
+  val yes          = "Yes"
+  val continue     = "Continue"
   val saveContinue = "Save and continue"
 }

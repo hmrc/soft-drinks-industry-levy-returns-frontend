@@ -16,13 +16,13 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.HowManyBroughtIntoTheUKFromSmallProducersFormProvider
 import helpers.LoggerHelper
-import models.{ LitresInBands, NormalMode, UserAnswers }
-import navigation.{ FakeNavigator, Navigator }
+import models.{LitresInBands, NormalMode, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
@@ -33,7 +33,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import util.GenericLogger
 import views.html.HowManyBroughtIntoTheUKFromSmallProducersView
@@ -48,18 +48,17 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
   val form: Form[LitresInBands] = formProvider()
 
   val value1max: Long = 100000000000000L
-  val value1: Long = value1max - 1
+  val value1:    Long = value1max - 1
 
   val value2max: Long = 100000000000000L
-  val value2: Long = value2max - 1
+  val value2:    Long = value2max - 1
 
-  lazy val howManyBroughtIntoTheUKFromSmallProducersRoute: String = routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(NormalMode).url
+  lazy val howManyBroughtIntoTheUKFromSmallProducersRoute: String =
+    routes.HowManyBroughtIntoTheUKFromSmallProducersController.onPageLoad(NormalMode).url
 
   val userAnswers: UserAnswers = emptyUserAnswers.copy(data =
-    Json.obj(
-      HowManyBroughtIntoTheUKFromSmallProducersPage.toString -> Json.obj(
-        "lowBand" -> value1,
-        "highBand" -> value2)))
+    Json.obj(HowManyBroughtIntoTheUKFromSmallProducersPage.toString -> Json.obj("lowBand" -> value1, "highBand" -> value2))
+  )
 
   "HowManyBroughtIntoTheUKFromSmallProducers Controller" - {
 
@@ -68,7 +67,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
 
       running(application) {
         val request = FakeRequest(GET, howManyBroughtIntoTheUKFromSmallProducersRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -102,7 +101,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -118,7 +117,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LitresInBands(value1, value2)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(value1, value2)), NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -126,13 +125,11 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -163,14 +160,14 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
     "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))).thenReturn(Future.successful(Right(true)))
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
@@ -188,7 +185,7 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
 
     "should log an error message when internal server error is returned when getting user answers is not resolved" in {
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(ArgumentMatchers.eq(completedUserAnswers))).thenReturn(Future.successful(Right(true)))
 
       val application = applicationBuilder(userAnswers = Some(failingUserAnswers)).build()
 
@@ -197,18 +194,19 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
           val request = FakeRequest(POST, howManyBroughtIntoTheUKFromSmallProducersRoute)
             .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to resolve user answers while on howManyBroughtIntoTheUKFromSmallProducers"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val app =
         applicationBuilder(Some(completedUserAnswers))
@@ -220,11 +218,12 @@ class HowManyBroughtIntoTheUKFromSmallProducersControllerSpec extends SpecBase w
           val request = FakeRequest(POST, howManyBroughtIntoTheUKFromSmallProducersRoute)
             .withFormUrlEncodedBody(("lowBand", value1.toString), ("highBand", value2.toString))
           await(route(app, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on howManyBroughtIntoTheUKFromSmallProducers"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

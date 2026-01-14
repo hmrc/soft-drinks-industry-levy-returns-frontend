@@ -26,7 +26,7 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 
 import scala.concurrent.Future
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 
 class CheckSubmissionSpec extends SpecBase with MockitoSugar {
 
@@ -45,9 +45,8 @@ class CheckSubmissionSpec extends SpecBase with MockitoSugar {
 
         result must matchPattern { case Left(_) => }
 
-        inside(result) {
-          case Left(res) =>
-            res.header.status mustEqual SEE_OTHER
+        inside(result) { case Left(res) =>
+          res.header.status mustEqual SEE_OTHER
         }
 
       }
@@ -61,9 +60,8 @@ class CheckSubmissionSpec extends SpecBase with MockitoSugar {
 
         result must matchPattern { case Right(_) => }
 
-        inside(result) {
-          case Right(res) =>
-            res.userAnswers mustEqual (completedUserAnswers)
+        inside(result) { case Right(res) =>
+          res.userAnswers mustEqual completedUserAnswers
         }
       }
     }

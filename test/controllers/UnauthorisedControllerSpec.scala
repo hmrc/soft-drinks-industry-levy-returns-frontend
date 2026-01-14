@@ -18,9 +18,9 @@ package controllers
 
 import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.UnauthorisedView
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 
 class UnauthorisedControllerSpec extends SpecBase {
 
@@ -38,7 +38,7 @@ class UnauthorisedControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UnauthorisedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view()(using request, messages(application)).toString
       }
     }
   }

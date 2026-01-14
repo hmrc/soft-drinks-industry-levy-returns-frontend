@@ -16,17 +16,15 @@
 
 package controllers.actions
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import models.requests.IdentifierRequest
 import models.retrieved.RetrievedSubscription
-import play.api.mvc._
+import play.api.mvc.*
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
-class FakeIdentifierAction @Inject() (
-  subscription: Option[RetrievedSubscription],
-  bodyParsers: BodyParser[AnyContent]) extends IdentifierAction {
+class FakeIdentifierAction @Inject() (subscription: Option[RetrievedSubscription], bodyParsers: BodyParser[AnyContent]) extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
     block(IdentifierRequest(request, "id", subscription.getOrElse(aSubscription)))
@@ -36,4 +34,3 @@ class FakeIdentifierAction @Inject() (
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 }
-

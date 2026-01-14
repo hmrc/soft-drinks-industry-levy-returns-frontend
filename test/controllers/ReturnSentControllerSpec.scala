@@ -16,11 +16,11 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import config.FrontendAppConfig
 import models.retrieved.RetrievedActivity
-import models.{ Amounts, ReturnPeriod, SmallProducer }
+import models.{Amounts, ReturnPeriod, SmallProducer}
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -31,7 +31,7 @@ import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ import scala.concurrent.Future
 class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with BeforeAndAfter {
 
   private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
-  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+  private val taxYear2025ReturnPeriod  = ReturnPeriod(2026, 0)
 
   "ReturnSent Controller" - {
 
@@ -48,31 +48,33 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must not show return sent page as return has not been sent" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
-      val userAnswers = emptyUserAnswers.copy(returnPeriod = returnPeriod, data = userAnswersData, submitted = false)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswers     = emptyUserAnswers.copy(returnPeriod = returnPeriod, data = userAnswersData, submitted = false)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).get mustEqual routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, userAnswers.isNilReturn).url
+        redirectLocation(result).get mustEqual routes.ReturnsController
+          .onPageLoad(returnPeriod.year, returnPeriod.quarter, userAnswers.isNilReturn)
+          .url
       }
 
     }
 
     "must show own brands row with answer no, when answered" in {
       val userAnswersData = Json.obj("ownBrands" -> false)
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -84,18 +86,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show own brands row with answer yes, with calculation when answered - pre April 2025 rates" in {
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val userAnswersData = Json.obj(
-        "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -117,18 +117,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show own brands row with answer yes, with calculation when answered - 2025 tax year rates" in {
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val userAnswersData = Json.obj(
-        "ownBrands" -> true,
-        "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -149,15 +147,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show Contract packed at your own site with answer no, when answered" in {
       val userAnswersData = Json.obj("packagedContractPacker" -> false)
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -169,18 +167,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show Contract packed at your own sites row with answer yes, with calculation when answered - pre April 2025 rates" in {
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val userAnswersData = Json.obj(
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswersData = Json.obj("packagedContractPacker" -> true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -202,18 +198,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show Contract packed at your own sites row with answer yes, with calculation when answered - 2025 tax year rates" in {
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val userAnswersData = Json.obj(
-        "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswersData = Json.obj("packagedContractPacker" -> true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -234,15 +228,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show Exemptions For Small Producers row with answer no, when answered" in {
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> false)
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -255,18 +249,23 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), submitted = true, returnPeriod = preApril2025ReturnPeriod)
+      val superCola       = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
+      val sparkyJuice     = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
+      val userAnswers     = emptyUserAnswers.copy(
+        data = userAnswersData,
+        smallProducerList = List(sparkyJuice, superCola),
+        submitted = true,
+        returnPeriod = preApril2025ReturnPeriod
+      )
 
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -289,18 +288,23 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, smallProducerList = List(sparkyJuice, superCola), submitted = true, returnPeriod = taxYear2025ReturnPeriod)
+      val superCola       = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
+      val sparkyJuice     = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
+      val userAnswers     = emptyUserAnswers.copy(
+        data = userAnswersData,
+        smallProducerList = List(sparkyJuice, superCola),
+        submitted = true,
+        returnPeriod = taxYear2025ReturnPeriod
+      )
 
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -321,15 +325,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show brought into uk with answer no, when answered" in {
       val userAnswersData = Json.obj("broughtIntoUK" -> false)
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -341,18 +345,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show brought into uk row with answer yes, with calculation when answered - pre April 2025 rates" in {
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val userAnswersData = Json.obj(
-        "broughtIntoUK" -> true,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswersData = Json.obj("broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -374,18 +376,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show brought into uk row with answer yes, with calculation when answered - 2025 tax year rates" in {
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val userAnswersData = Json.obj(
-        "broughtIntoUK" -> true,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswersData = Json.obj("broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -406,15 +406,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show brought into the UK from small producers row when present and answer is no" in {
       val userAnswersData = Json.obj("broughtIntoUkFromSmallProducers" -> false)
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -427,17 +427,18 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
-        "broughtIntoUkFromSmallProducers" -> true,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+        "broughtIntoUkFromSmallProducers"           -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
+      )
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -460,17 +461,18 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
-        "broughtIntoUkFromSmallProducers" -> true,
-        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
+        "broughtIntoUkFromSmallProducers"           -> true,
+        "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002)
+      )
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -491,15 +493,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show claim credits for exports row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForExports" -> false)
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -511,18 +513,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val userAnswersData = Json.obj(
-        "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswersData = Json.obj("claimCreditsForExports" -> true, "howManyCreditsForExport" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -544,18 +544,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val userAnswersData = Json.obj(
-        "claimCreditsForExports" -> true,
-        "howManyCreditsForExport" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswersData = Json.obj("claimCreditsForExports" -> true, "howManyCreditsForExport" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -576,15 +574,15 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show show lost or damaged row when present and answer is no" in {
       val userAnswersData = Json.obj("claimCreditsForLostDamaged" -> false)
-      val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true)
+      val application     =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -596,17 +594,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
-      val userAnswersData = Json.obj(
-        "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
+      val userAnswersData =
+        Json.obj("claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -628,17 +625,16 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     "must show lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-      val userAnswersData = Json.obj(
-        "claimCreditsForLostDamaged" -> true,
-        "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
+      val userAnswersData =
+        Json.obj("claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
@@ -659,137 +655,138 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
     "must show correct message to user when nothing is owed" in {
       val userAnswers = emptyUserAnswers.copy(submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amountsZero)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amountsZero))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include("£0.00")
+        page.getElementsByTag("dt").text()              must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text()              must include("£0.00")
       }
     }
 
     "must show correct message to user when user is owed funding" in {
-      val amounts = Amounts(0, 0, -0.01)
+      val amounts     = Amounts(0, 0, -0.01)
       val userAnswers = emptyUserAnswers.copy(submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include(" −£0.01")
+        page.getElementsByTag("dt").text()              must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text()              must include(" −£0.01")
       }
     }
 
     "must show correct message to user when user owes funds" in {
-      val amounts = Amounts(0, 0, 0.01)
+      val amounts     = Amounts(0, 0, 0.01)
       val userAnswers = emptyUserAnswers.copy(submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include("£0.01")
+        page.getElementsByTag("dt").text()              must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text()              must include("£0.01")
       }
     }
 
     "must show correct total for quarter" in {
-      val amounts = Amounts(0.01, 0, 0)
+      val amounts     = Amounts(0.01, 0, 0)
       val userAnswers = emptyUserAnswers.copy(submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include("£0.01")
+        page.getElementsByTag("dt").text()              must include(Messages("totalThisQuarter.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text()              must include("£0.01")
       }
     }
 
     "must show correct balance brought forward" in {
-      val amounts = Amounts(660, 0, 660)
+      val amounts     = Amounts(660, 0, 660)
       val userAnswers = emptyUserAnswers.copy(submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("balanceBroughtForward.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include("£0.00")
-        page.getElementsByTag("dd").text() must include("£660.00")
+        page.getElementsByTag("dt").text()              must include(Messages("balanceBroughtForward.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text()              must include("£0.00")
+        page.getElementsByTag("dd").text()              must include("£660.00")
       }
     }
 
     "must show correct total when non nil return" in {
-      val amounts = Amounts(660, 0, 660)
+      val amounts     = Amounts(660, 0, 660)
       val userAnswers = emptyUserAnswers.copy(submitted = true)
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application =
+        applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
         page.getElementById("amount-to-pay-title").text must include(Messages("summary"))
-        page.getElementsByTag("dt").text() must include(Messages("total.checkYourAnswersLabel"))
-        page.getElementsByTag("dd").text() must include("£660.00")
+        page.getElementsByTag("dt").text()              must include(Messages("total.checkYourAnswersLabel"))
+        page.getElementsByTag("dd").text()              must include("£660.00")
       }
     }
 
     "must display 0 lowband and highband amounts when for own brands and small producer" in {
       val amounts = Amounts(660, 0, 660)
 
-      val userAnswers = emptyUserAnswers.copy(submitted = true)
+      val userAnswers  = emptyUserAnswers.copy(submitted = true)
       val subscription = aSubscription.copy(activity = RetrievedActivity(true, true, false, false, false))
-      val application = applicationBuilder(Some(userAnswers), Some(returnPeriod), Some(subscription)).overrides(
-        bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
+      val application  = applicationBuilder(Some(userAnswers), Some(returnPeriod), Some(subscription))
+        .overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator))
+        .build()
 
-      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(any(), any())) thenReturn Future.successful(amounts)
+      when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
       }

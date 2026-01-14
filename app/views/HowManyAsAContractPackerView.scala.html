@@ -28,7 +28,7 @@
     whatIsASmallProducer: whatIsASmallProducer
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = title(form, messages("howManyAsAContractPacker.title"))) {
 
@@ -41,8 +41,8 @@
         <h1 class="govuk-heading-l">@messages("howManyAsAContractPacker.title")</h1>
         <p class="govuk-body">@messages("howManyAsAContractPacker.subtext")</p>
 
-        @lowAndHighBandInputs(form)(messages)
-        @whatIsASmallProducer(form)(messages)
-        @saveAndContinueButton(messages)
+        @lowAndHighBandInputs(form)(using messages)
+        @whatIsASmallProducer(form)(using messages)
+        @saveAndContinueButton(using messages)
     }
 }

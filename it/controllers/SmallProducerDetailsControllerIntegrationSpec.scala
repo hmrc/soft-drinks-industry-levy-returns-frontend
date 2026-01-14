@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import models.SmallProducer
@@ -19,7 +35,8 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
         .commonPreconditionChangeSubscription(aSubscription)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl/small-producer-details")
+        val result1 = client
+          .url(s"$baseUrl/small-producer-details")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -33,13 +50,16 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
     "Not pre populate the radio buttons" when {
       "user selected yes previously" in {
         val userAnswers = smallProducerDetaisPartialAnswers.success.value
-          .set(SmallProducerDetailsPage, true).success.value
+          .set(SmallProducerDetailsPage, true)
+          .success
+          .value
         setUpData(userAnswers)
         build
           .commonPreconditionChangeSubscription(aSubscription)
 
         WsTestClient.withClient { client =>
-          val result1 = client.url(s"$baseUrl/small-producer-details")
+          val result1 = client
+            .url(s"$baseUrl/small-producer-details")
             .withFollowRedirects(false)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
             .get()
@@ -54,123 +74,125 @@ class SmallProducerDetailsControllerIntegrationSpec extends ControllerITTestHelp
       }
     }
 
+    "Post the exemption for small producer " when {
+      "user selected yes " in {
 
-      "Post the exemption for small producer " when {
-        "user selected yes " in {
+        val expectedResult: Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands"                   -> true,
+            "brandsPackagedAtOwnSites"    -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "packagedContractPacker"      -> true,
+            "howManyAsAContractPacker"    -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> true,
+            "addASmallProducer"           -> Json
+              .obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> 1000, "highBand" -> 1000),
+            "smallProducerDetails" -> true
+          )
+        )
 
-          val expectedResult: Some[JsObject] = Some(
-            Json.obj(
-              "ownBrands" -> true,
-              "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-              "packagedContractPacker" -> true,
-              "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-              "exemptionsForSmallProducers" -> true,
-              "addASmallProducer" -> Json.obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> 1000, "highBand" -> 1000),
-              "smallProducerDetails" -> true
-            ))
+        build
+          .commonPreconditionChangeSubscription(aSubscription)
 
-          build
-            .commonPreconditionChangeSubscription(aSubscription)
+        val userAnswers = addASmallProducerFullAnswers.success.value
+        setUpData(userAnswers)
 
-          val userAnswers = addASmallProducerFullAnswers.success.value
-          setUpData(userAnswers)
+        WsTestClient.withClient { client =>
+          val result =
+            client
+              .url(s"$baseUrl/small-producer-details")
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
+              .withFollowRedirects(false)
+              .post(Json.obj("value" -> "true"))
 
-          WsTestClient.withClient { client =>
-            val result =
-              client.url(s"$baseUrl/small-producer-details")
-                .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-                .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                  "Csrf-Token" -> "nocheck")
-                .withFollowRedirects(false)
-                .post(Json.obj("value" -> "true"))
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/add-small-producer-next")
-              getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
-            }
-
-          }
-        }
-
-        "user selected no with 0 small producers on the list" in {
-
-          val expectedResult: Some[JsObject] = Some(
-            Json.obj(
-              "ownBrands" -> true,
-              "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-              "packagedContractPacker" -> true,
-              "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-              "exemptionsForSmallProducers" -> true,
-              "smallProducerDetails" -> false
-            ))
-
-          build
-            .commonPreconditionChangeSubscription(aSubscription)
-
-          val userAnswers = smallProducerDetaisNoProducerAnswers
-          setUpData(userAnswers)
-
-          WsTestClient.withClient { client =>
-            val result =
-              client.url(s"$baseUrl/small-producer-details")
-                .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-                .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                  "Csrf-Token" -> "nocheck")
-                .withFollowRedirects(false)
-                .post(Json.obj("value" -> "false"))
-
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers")
-              getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
-            }
-
-          }
-
-        }
-
-        "user selected no with at least one small producer on the list" in {
-
-          val expectedResult: Some[JsObject] = Some(
-            Json.obj(
-              "ownBrands" -> true,
-              "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-              "packagedContractPacker" -> true,
-              "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
-              "exemptionsForSmallProducers" -> true,
-              "addASmallProducer" -> Json.obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> 1000, "highBand" -> 1000),
-              "smallProducerDetails" -> false
-            ))
-
-          build
-            .commonPreconditionChangeSubscription(aSubscription)
-
-          val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("", "", (1L, 1L))))
-          setUpData(userAnswers)
-
-          WsTestClient.withClient { client =>
-            val result =
-              client.url(s"$baseUrl/small-producer-details")
-                .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-                .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-                  "Csrf-Token" -> "nocheck")
-                .withFollowRedirects(false)
-                .post(Json.obj("value" -> "false"))
-
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/brought-into-uk")
-              getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
-            }
-
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/add-small-producer-next")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
           }
 
         }
       }
-      testUnauthorisedUser(baseUrl + "/small-producer-details")
+
+      "user selected no with 0 small producers on the list" in {
+
+        val expectedResult: Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands"                   -> true,
+            "brandsPackagedAtOwnSites"    -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "packagedContractPacker"      -> true,
+            "howManyAsAContractPacker"    -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> true,
+            "smallProducerDetails"        -> false
+          )
+        )
+
+        build
+          .commonPreconditionChangeSubscription(aSubscription)
+
+        val userAnswers = smallProducerDetaisNoProducerAnswers
+        setUpData(userAnswers)
+
+        WsTestClient.withClient { client =>
+          val result =
+            client
+              .url(s"$baseUrl/small-producer-details")
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
+              .withFollowRedirects(false)
+              .post(Json.obj("value" -> "false"))
+
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/exemptions-for-small-producers")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
+          }
+
+        }
+
+      }
+
+      "user selected no with at least one small producer on the list" in {
+
+        val expectedResult: Some[JsObject] = Some(
+          Json.obj(
+            "ownBrands"                   -> true,
+            "brandsPackagedAtOwnSites"    -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "packagedContractPacker"      -> true,
+            "howManyAsAContractPacker"    -> Json.obj("lowBand" -> 1000, "highBand" -> 1000),
+            "exemptionsForSmallProducers" -> true,
+            "addASmallProducer"           -> Json
+              .obj("producerName" -> "Super Cola Ltd", "referenceNumber" -> "XZSDIL000000234", "lowBand" -> 1000, "highBand" -> 1000),
+            "smallProducerDetails" -> false
+          )
+        )
+
+        build
+          .commonPreconditionChangeSubscription(aSubscription)
+
+        val userAnswers = addASmallProducerFullAnswers.success.value.copy(smallProducerList = List(SmallProducer("", "", (1L, 1L))))
+        setUpData(userAnswers)
+
+        WsTestClient.withClient { client =>
+          val result =
+            client
+              .url(s"$baseUrl/small-producer-details")
+              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+              .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
+              .withFollowRedirects(false)
+              .post(Json.obj("value" -> "false"))
+
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(s"/soft-drinks-industry-levy-returns-frontend/brought-into-uk")
+            getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResult
+          }
+
+        }
+
+      }
     }
+    testUnauthorisedUser(baseUrl + "/small-producer-details")
+  }
 
 }

@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{ Json, OFormat }
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
@@ -25,7 +25,7 @@ case class ReturnPeriod(year: Int, quarter: Int) {
   require(year >= 2018)
 
   def start: LocalDate = {
-    val dayOfWeek = if (year == 2018 && quarter == 1) {
+    val dayOfWeek = if year == 2018 && quarter == 1 then {
       5
     } else {
       1
@@ -39,7 +39,7 @@ case class ReturnPeriod(year: Int, quarter: Int) {
 
   def next: ReturnPeriod = {
     val nextReturnQuarter = (quarter + 1) % 4
-    val nextReturnYear = if (nextReturnQuarter < quarter) {
+    val nextReturnYear    = if nextReturnQuarter < quarter then {
       year + 1
     } else {
       year
@@ -49,7 +49,7 @@ case class ReturnPeriod(year: Int, quarter: Int) {
 }
 
 object ReturnPeriod {
-  def apply(date: LocalDate): ReturnPeriod = ReturnPeriod(date.getYear, quarter(date))
-  def quarter(date: LocalDate): Int = { date.getMonthValue - 1 } / 3
-  implicit val format: OFormat[ReturnPeriod] = Json.format[ReturnPeriod]
+  def apply(date:   LocalDate): ReturnPeriod          = ReturnPeriod(date.getYear, quarter(date))
+  def quarter(date: LocalDate): Int                   = { date.getMonthValue - 1 } / 3
+  implicit val format:          OFormat[ReturnPeriod] = Json.format[ReturnPeriod]
 }

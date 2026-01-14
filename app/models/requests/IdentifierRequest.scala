@@ -17,9 +17,6 @@
 package models.requests
 
 import models.retrieved.RetrievedSubscription
-import play.api.mvc.{ Request, WrappedRequest }
+import play.api.mvc.{Request, WrappedRequest}
 
-case class IdentifierRequest[A](
-  request: Request[A],
-  sdilEnrolment: String,
-  subscription: RetrievedSubscription) extends WrappedRequest[A](request)
+case class IdentifierRequest[A](request: Request[A], sdilEnrolment: String, subscription: RetrievedSubscription) extends WrappedRequest[A](request)

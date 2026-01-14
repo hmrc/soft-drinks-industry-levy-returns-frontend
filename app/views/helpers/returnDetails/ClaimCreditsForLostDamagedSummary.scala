@@ -17,16 +17,16 @@
 package views.helpers.returnDetails
 
 import controllers.routes
-import models.{ CheckMode, LitresInBands }
-import pages.{ ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, QuestionPage }
+import models.{CheckMode, LitresInBands}
+import pages.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, QuestionPage}
 
 object ClaimCreditsForLostDamagedSummary extends ReturnDetailsSummaryListWithLitres {
 
-  override val page: QuestionPage[Boolean] = ClaimCreditsForLostDamagedPage
+  override val page:          QuestionPage[Boolean]               = ClaimCreditsForLostDamagedPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyCreditsForLostDamagedPage)
-  override val summaryLitres: SummaryListRowLitresHelper = HowManyCreditsForLostDamagedSummary
-  override val key: String = "claimingCreditForLostOrDestroyedLiableDrinks"
-  override val action: String = routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
-  override val actionId: String = "change-credits-lost-damaged"
-  override val hiddenText: String = "claimCreditsForLostDamaged"
+  override val summaryLitres: SummaryListRowLitresHelper          = HowManyCreditsForLostDamagedSummary
+  override val key:           String                              = "claimingCreditForLostOrDestroyedLiableDrinks"
+  override val action:        String                              = routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+  override val actionId:      String                              = "change-credits-lost-damaged"
+  override val hiddenText:    String                              = "claimCreditsForLostDamaged"
 }

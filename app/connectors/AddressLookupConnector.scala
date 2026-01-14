@@ -17,46 +17,41 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.httpParsers.AddressLookupHttpParser._
+import connectors.httpParsers.AddressLookupHttpParser.*
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import models.alf.AlfResponse
 import models.alf.init.JourneyConfig
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{ HeaderCarrier, StringContextOps }
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddressLookupConnector @Inject() (
-  val http: HttpClientV2,
-  implicit val config: FrontendAppConfig) {
-  private[connectors] def getAddressUrl(id: String, addressLookupFrontendTestEnabled: Boolean): String = {
-    if (addressLookupFrontendTestEnabled) {
+class AddressLookupConnector @Inject() (val http: HttpClientV2, implicit val config: FrontendAppConfig) {
+  private[connectors] def getAddressUrl(id: String, addressLookupFrontendTestEnabled: Boolean): String =
+    if addressLookupFrontendTestEnabled then {
       s"${config.returnsFrontendBaseUrl}${controllers.test.routes.AddressFrontendStubController.addresses(id).url}"
     } else {
       s"${config.addressLookupService}/api/confirmed?id=$id"
     }
-  }
-  private[connectors] def initJourneyUrl(addressLookupFrontendTestEnabled: Boolean): String = {
-    if (addressLookupFrontendTestEnabled) {
+  private[connectors] def initJourneyUrl(addressLookupFrontendTestEnabled: Boolean): String =
+    if addressLookupFrontendTestEnabled then {
       s"${config.returnsFrontendBaseUrl}${controllers.test.routes.AddressFrontendStubController.initialise().url}"
     } else {
       s"${config.addressLookupService}/api/init"
     }
 
-  }
-
-  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] = {
-    http.get(url"${getAddressUrl(id, config.addressLookUpFrontendTestEnabled)}")
+  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[AlfResponse]] =
+    http
+      .get(url"${getAddressUrl(id, config.addressLookUpFrontendTestEnabled)}")
       .execute[HttpResult[AlfResponse]]
-  }
 
-  def initJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[String]] = {
-    http.post(url"${initJourneyUrl(config.addressLookUpFrontendTestEnabled)}")
+  def initJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[String]] =
+    http
+      .post(url"${initJourneyUrl(config.addressLookUpFrontendTestEnabled)}")
       .withBody(Json.toJson(journeyConfig))
       .execute[HttpResult[String]]
-  }
 }

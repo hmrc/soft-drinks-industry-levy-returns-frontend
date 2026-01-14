@@ -21,6 +21,6 @@ import scala.concurrent.Future
 
 package object service {
 
-  type EitherF[A, B] = EitherT[Future, A, B]
+  type EitherF[A, B]   = EitherT[Future, A, B]
   type ReturnResult[T] = EitherF[ReturnsErrors, T]
 }

@@ -16,58 +16,59 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.PackagedContractPackerFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation.Navigator
-import pages.{ HowManyAsAContractPackerPage, PackagedContractPackerPage }
+import pages.{HowManyAsAContractPackerPage, PackagedContractPackerPage}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import util.GenericLogger
 import views.html.PackagedContractPackerView
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class PackagedContractPackerController @Inject() (
   override val messagesApi: MessagesApi,
-  val sessionRepository: SessionRepository,
-  val navigator: Navigator,
-  val errorHandler: ErrorHandler,
-  val genericLogger: GenericLogger,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  checkReturnSubmission: CheckingSubmissionAction,
-  formProvider: PackagedContractPackerFormProvider,
+  val sessionRepository:    SessionRepository,
+  val navigator:            Navigator,
+  val errorHandler:         ErrorHandler,
+  val genericLogger:        GenericLogger,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  checkReturnSubmission:    CheckingSubmissionAction,
+  formProvider:             PackagedContractPackerFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: PackagedContractPackerView)(implicit ec: ExecutionContext) extends ControllerHelper {
+  view:                     PackagedContractPackerView
+)(implicit ec: ExecutionContext)
+    extends ControllerHelper {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+    val preparedForm = request.userAnswers.get(PackagedContractPackerPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      val preparedForm = request.userAnswers.get(PackagedContractPackerPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedContractPackerPage, HowManyAsAContractPackerPage, value)
-          updateDatabaseAndRedirect(updatedUserAnswers, PackagedContractPackerPage, mode)
-        })
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedUserAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedContractPackerPage, HowManyAsAContractPackerPage, value)
+            updateDatabaseAndRedirect(updatedUserAnswers, PackagedContractPackerPage, mode)
+          }
+        )
   }
 }

@@ -21,12 +21,11 @@ import play.api.i18n.Messages
 
 object ReturnPeriodQuarter {
 
-  def formatted(returnPeriod: ReturnPeriod)(implicit messages: Messages): String = {
+  def formatted(returnPeriod: ReturnPeriod)(implicit messages: Messages): String =
     returnPeriod.quarter match {
       case 0 => s"${Messages("firstQuarter")} ${returnPeriod.year}"
       case 1 => s"${Messages("secondQuarter")} ${returnPeriod.year}"
       case 2 => s"${Messages("thirdQuarter")} ${returnPeriod.year}"
       case 3 => s"${Messages("fourthQuarter")} ${returnPeriod.year}"
     }
-  }
 }

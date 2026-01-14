@@ -24,6 +24,5 @@ import play.api.data.Form
 class SmallProducerDetailsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("smallProducerDetails.error.required"))
+    Form("value" -> boolean("smallProducerDetails.error.required"))
 }

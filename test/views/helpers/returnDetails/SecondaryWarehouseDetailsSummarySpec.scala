@@ -16,19 +16,32 @@
 
 package views.helpers.returnDetails
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
-import models.backend.{ Site, UkAddress }
+import models.backend.{Site, UkAddress}
 
 class SecondaryWarehouseDetailsSummarySpec extends SpecBase {
 
-  val warehouseAddressMapWith3AddressLines: Map[String, Site] = Map(("2", Site(
-    address = UkAddress(List("The house", "The Road", "ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg"), "NW88 8II"),
-    tradingName = Some("Warehouse Group"))))
+  val warehouseAddressMapWith3AddressLines: Map[String, Site] = Map(
+    (
+      "2",
+      Site(
+        address = UkAddress(List("The house", "The Road", "ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg"), "NW88 8II"),
+        tradingName = Some("Warehouse Group")
+      )
+    )
+  )
 
-  val warehouseMap: Map[String, Site] = Map(("1", Site(
-    tradingName = Some("Warehouse Group"),
-    address = UkAddress(List("The house", "The Road", "ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg"), "NW88 8II"))), ("24", WarehouseSite1))
+  val warehouseMap: Map[String, Site] = Map(
+    (
+      "1",
+      Site(
+        tradingName = Some("Warehouse Group"),
+        address = UkAddress(List("The house", "The Road", "ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg"), "NW88 8II")
+      )
+    ),
+    ("24", WarehouseSite1)
+  )
 
   "warehouse detail row " - {
 
@@ -47,7 +60,8 @@ class SecondaryWarehouseDetailsSummarySpec extends SpecBase {
     "must include Correct elements in list with 2 elements" in {
 
       val warehouseSummaryRowList = SecondaryWarehouseDetailsSummary.warehouseDetailRow(warehouseMap)
-      warehouseSummaryRowList.head.key.content.asHtml.toString() mustBe "Warehouse Group<br>The house, The Road, ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg, NW88 8II"
+      warehouseSummaryRowList.head.key.content.asHtml
+        .toString() mustBe "Warehouse Group<br>The house, The Road, ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg, NW88 8II"
       warehouseSummaryRowList.head.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
       warehouseSummaryRowList.head.actions.toList.head.items.last.href mustBe controllers.routes.RemoveWarehouseConfirmController.onPageLoad("1").url
 

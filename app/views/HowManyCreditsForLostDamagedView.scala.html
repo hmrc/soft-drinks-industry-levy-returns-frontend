@@ -29,7 +29,7 @@
         creditClaimsInset: creditClaimsInset
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = title(form, messages("howManyCreditsForLostDamaged.title"))) {
 
@@ -40,9 +40,9 @@
         }
 
         <h1 class="govuk-heading-l">@messages("howManyCreditsForLostDamaged.title")</h1>
-        @creditClaimsInset(messages)
-        @lowAndHighBandInputs(form)(messages)
-        @claimCreditsForLostDamaged(form)(messages)
-        @saveAndContinueButton(messages)
+        @creditClaimsInset(using messages)
+        @lowAndHighBandInputs(form)(using messages)
+        @claimCreditsForLostDamaged(form)(using messages)
+        @saveAndContinueButton(using messages)
     }
 }

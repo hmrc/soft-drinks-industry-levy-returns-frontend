@@ -16,14 +16,14 @@
 
 package controllers
 
-import base.ReturnsTestData._
+import base.ReturnsTestData.*
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.RemoveWarehouseConfirmFormProvider
 import helpers.LoggerHelper
 import models.backend.UkAddress
-import models.{ NormalMode, UserAnswers }
-import navigation.{ FakeNavigator, Navigator }
+import models.{NormalMode, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -32,10 +32,10 @@ import pages.RemoveWarehouseConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.{ JsObject, Json }
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import util.GenericLogger
@@ -53,9 +53,9 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
   val testUkAddress: Html = Html("Wild Lemonade Group<br>33, Rhes, Priordy, East London, E73 2RP")
 
   val userAnswersData: JsObject = Json.obj(
-    RemoveWarehouseConfirmPage.toString -> Json.obj(
-      "tradingName" -> "Wild Lemonade Group",
-      "address" -> UkAddress(List("33", "Rhes", "Priordy", "East London"), "E73 2RP")))
+    RemoveWarehouseConfirmPage.toString -> Json
+      .obj("tradingName" -> "Wild Lemonade Group", "address" -> UkAddress(List("33", "Rhes", "Priordy", "East London"), "E73 2RP"))
+  )
 
   val userAnswers: UserAnswers = emptyUserAnswers.copy(data = userAnswersData, warehouseList = warehouseMap)
 
@@ -68,7 +68,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
       running(application) {
         val request = FakeRequest(GET, removePackingSiteRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.ReturnSentController.onPageLoad.url
@@ -96,14 +96,14 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
       running(application) {
         val request = FakeRequest(GET, removePackingSiteRoute)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[RemoveWarehouseConfirmView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[RemoveWarehouseConfirmView]
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.title() must include(Messages("removeWarehouseConfirm.title"))
+        page.title()                       must include(Messages("removeWarehouseConfirm.title"))
         page.getElementsByTag("h1").text() must include(Messages("removeWarehouseConfirm.title"))
-        contentAsString(result) mustEqual view(form, NormalMode, testUkAddress, testIndex)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, testUkAddress, testIndex)(using request, messages(application)).toString
       }
     }
 
@@ -111,13 +111,11 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -136,13 +134,11 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -173,7 +169,7 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, testUkAddress, testIndex)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, testUkAddress, testIndex)(using request, messages(application)).toString
       }
     }
 
@@ -210,13 +206,11 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
     "must fail and return an Internal Server Error if the getting(Try) of userAnswers fails" in {
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(Some(failingUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -234,24 +228,23 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
     "should log an error message when internal server error is returned when getting user answers is not resolved" in {
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(Some(failingUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, removePackingSiteRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to resolve user answers while on removeWarehouse"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }
@@ -259,24 +252,23 @@ class RemoveWarehouseConfirmControllerSpec extends SpecBase with MockitoSugar wi
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(warehouseList = warehouseMap)))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)), bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(POST, removePackingSiteRoute).withFormUrlEncodedBody(("value", "false"))
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustEqual "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on removeWarehouse"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

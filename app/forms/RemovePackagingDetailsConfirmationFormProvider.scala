@@ -24,6 +24,5 @@ import play.api.data.Form
 class RemovePackagingDetailsConfirmationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("removePackagingDetailsConfirmation.error.required"))
+    Form("value" -> boolean("removePackagingDetailsConfirmation.error.required"))
 }

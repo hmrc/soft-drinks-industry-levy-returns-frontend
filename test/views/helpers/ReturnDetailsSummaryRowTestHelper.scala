@@ -17,66 +17,65 @@
 package views.helpers
 
 import base.UserAnswersTestData
-import models.{ ReturnPeriod, UserAnswers }
+import models.{ReturnPeriod, UserAnswers}
 import org.jsoup.nodes.Element
 import play.api.i18n.Messages
 
 trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetailsExpectedResults {
 
   object Selectors {
-    val heading = "govuk-heading-l"
-    val subHeading = "govuk-heading-m"
-    val insetSubHeading = "govuk-inset-text govuk-!-margin-top-0"
-    val caption = "govuk-caption-l"
-    val bodyMargin5 = "govuk-body govuk-!-margin-bottom-5"
-    val summaryList = "govuk-summary-list"
-    val summaryListRow = "govuk-summary-list__row"
-    val summaryListKey = "govuk-summary-list__key"
+    val heading          = "govuk-heading-l"
+    val subHeading       = "govuk-heading-m"
+    val insetSubHeading  = "govuk-inset-text govuk-!-margin-top-0"
+    val caption          = "govuk-caption-l"
+    val bodyMargin5      = "govuk-body govuk-!-margin-bottom-5"
+    val summaryList      = "govuk-summary-list"
+    val summaryListRow   = "govuk-summary-list__row"
+    val summaryListKey   = "govuk-summary-list__key"
     val summaryListValue = "govuk-summary-list__value  sdil-right-align--desktop"
-    val hidden = "govuk-visually-hidden"
-    val link = "govuk-link"
-    val panel = "govuk-panel govuk-panel--confirmation"
-    val panel_title = "govuk-panel__title"
-    val panel_body = "govuk-panel__body"
-    val bulletList = "govuk-list govuk-list--bullet"
-    val details = "govuk-details"
-    val detailsText = "govuk-details__summary-text"
-    val bodyM = "govuk-body-m"
-    val body = "govuk-body"
-    val button = "govuk-button"
+    val hidden           = "govuk-visually-hidden"
+    val link             = "govuk-link"
+    val panel            = "govuk-panel govuk-panel--confirmation"
+    val panel_title      = "govuk-panel__title"
+    val panel_body       = "govuk-panel__body"
+    val bulletList       = "govuk-list govuk-list--bullet"
+    val details          = "govuk-details"
+    val detailsText      = "govuk-details__summary-text"
+    val bodyM            = "govuk-body-m"
+    val body             = "govuk-body"
+    val button           = "govuk-button"
   }
 
   def testSummaryLists(key: String, element: Element, userAnswers: UserAnswers, isCheckAnswers: Boolean) = {
     val summaryLists = element.getElementsByClass(Selectors.summaryList)
 
-    returnDetailsSummaryListsWithListNames.foreach {
-      case (subHeaderId, listName) =>
+    returnDetailsSummaryListsWithListNames.foreach { case (subHeaderId, listName) =>
 
-        if (!(subHeaderId == SummaryHeadingIds.registeredSites && userAnswers.packagingSiteList.isEmpty)) {
+      if !(subHeaderId == SummaryHeadingIds.registeredSites && userAnswers.packagingSiteList.isEmpty) then {
 
-          val arrayElementNumber = returnDetailsSummaryListsWithArrayElement(subHeaderId)
-          val summaryList: Element = summaryLists.get(arrayElementNumber)
-          s"should include an $listName section" - {
-            testSummaryHeading(subHeaderId, element)
-            if (subHeaderId == SummaryHeadingIds.registeredSites) {
-              testRegisteredSites(subHeaderId, summaryList, isCheckAnswers)
-            } else if (subHeaderId == SummaryHeadingIds.amountToPay) {
-              testAmountToPay(summaryList)
-            } else if (UserAnswersTestData.questionFieldsAllTrue(key) && UserAnswersTestData.includesNoLitres(key)) {
-              testSummaryListWithYesNoAndNoLitres(subHeaderId, summaryList, "Yes", isCheckAnswers)
-            } else if (UserAnswersTestData.questionFieldsAllTrue(key)) {
-              testSummaryListWithYesNoAndLitres(subHeaderId, key, summaryList, userAnswers, isCheckAnswers)
-            } else {
-              testSummaryListWithYesNoAndNoLitres(subHeaderId, summaryList, "No", isCheckAnswers)
-            }
+        val arrayElementNumber = returnDetailsSummaryListsWithArrayElement(subHeaderId)
+        val summaryList: Element = summaryLists.get(arrayElementNumber)
+        s"should include an $listName section" - {
+          testSummaryHeading(subHeaderId, element)
+          if subHeaderId == SummaryHeadingIds.registeredSites then {
+            testRegisteredSites(subHeaderId, summaryList, isCheckAnswers)
+          } else if subHeaderId == SummaryHeadingIds.amountToPay then {
+            testAmountToPay(summaryList)
+          } else if UserAnswersTestData.questionFieldsAllTrue(key) && UserAnswersTestData.includesNoLitres(key) then {
+            testSummaryListWithYesNoAndNoLitres(subHeaderId, summaryList, "Yes", isCheckAnswers)
+          } else if UserAnswersTestData.questionFieldsAllTrue(key) then {
+            testSummaryListWithYesNoAndLitres(subHeaderId, key, summaryList, userAnswers, isCheckAnswers)
+          } else {
+            testSummaryListWithYesNoAndNoLitres(subHeaderId, summaryList, "No", isCheckAnswers)
           }
         }
+      }
     }
   }
 
-  def testSummaryHeading(subHeadingId: String, element: Element) = {
+  def testSummaryHeading(subHeadingId: String, element: Element) =
     "that has the correct subheading" in {
-      val expectedHeading = if (subHeadingId == SummaryHeadingIds.amountToPay) {
+      val expectedHeading = if subHeadingId == SummaryHeadingIds.amountToPay then {
         "summary"
       } else {
         subHeadingId
@@ -85,7 +84,6 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
       elementSubHeading.className() mustEqual Selectors.subHeading
       elementSubHeading.text() mustEqual Messages(expectedHeading)
     }
-  }
 
   def testAmountToPay(summaryList: Element) = {
     val summaryRows = summaryList.getElementsByClass(Selectors.summaryListRow)
@@ -139,7 +137,13 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     testSummaryRowBooleanSection(summarySubHeaderId, summaryRows.get(0), yesNo, isCheckAnswers)
   }
 
-  def testSummaryListWithYesNoAndLitres(summarySubHeaderId: String, key: String, summaryList: Element, userAnswers: UserAnswers, isCheckAnswers: Boolean) = {
+  def testSummaryListWithYesNoAndLitres(
+    summarySubHeaderId: String,
+    key:                String,
+    summaryList:        Element,
+    userAnswers:        UserAnswers,
+    isCheckAnswers:     Boolean
+  ) = {
     val summaryRows = summaryList.getElementsByClass(Selectors.summaryListRow)
     "that contains a summary list with 5 rows" in {
       summaryRows.size() mustEqual 5
@@ -154,10 +158,10 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
       "that has the correct value" in {
         summaryRow.getElementsByClass(Selectors.summaryListValue).text() mustEqual lowLitresValue(key, summarySubHeaderId, userAnswers)
       }
-      if (isCheckAnswers) {
+      if isCheckAnswers then {
         "that contains the correct change link" in {
           val actionId = s"change-lowband-litreage-${returnDetailsSummaryListsWithLitresActionId(summarySubHeaderId)}"
-          val element = summaryRow.getElementById(actionId)
+          val element  = summaryRow.getElementById(actionId)
           element.className() mustEqual Selectors.link
           val expectedHiddenKey = Messages(s"${returnDetailsSummaryListsWithLitresHiddenKey(summarySubHeaderId)}.lowband.litres.hidden")
           element.text() mustEqual s"Change $expectedHiddenKey"
@@ -189,10 +193,10 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
       "that has the correct value" in {
         summaryRow.getElementsByClass(Selectors.summaryListValue).text() mustEqual highLitresValue(key, summarySubHeaderId, userAnswers)
       }
-      if (isCheckAnswers) {
+      if isCheckAnswers then {
         "that contains the correct change link" in {
           val actionId = s"change-highband-litreage-${returnDetailsSummaryListsWithLitresActionId(summarySubHeaderId)}"
-          val element = summaryRow.getElementById(actionId)
+          val element  = summaryRow.getElementById(actionId)
           element.className() mustBe Selectors.link
           val expectedHiddenKey = Messages(s"${returnDetailsSummaryListsWithLitresHiddenKey(summarySubHeaderId)}.highband.litres.hidden")
           element.text() mustEqual s"Change $expectedHiddenKey"
@@ -216,19 +220,17 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     }
   }
 
-  private def testSummaryRowBooleanSection(
-    summarySubHeaderId: String,
-    summaryRow: Element,
-    expectedValue: String,
-    isCheckAnswers: Boolean) = {
+  private def testSummaryRowBooleanSection(summarySubHeaderId: String, summaryRow: Element, expectedValue: String, isCheckAnswers: Boolean) =
     s"which includes a summary row for ${returnDetailsSummaryListsWithListNames(summarySubHeaderId)}" - {
       "that has the correct key" in {
-        summaryRow.getElementsByClass(Selectors.summaryListKey).text() mustEqual Messages(returnDetailsSummaryListsWithQuestionKey(summarySubHeaderId))
+        summaryRow.getElementsByClass(Selectors.summaryListKey).text() mustEqual Messages(
+          returnDetailsSummaryListsWithQuestionKey(summarySubHeaderId)
+        )
       }
       "that has the correct value" in {
         summaryRow.getElementsByClass(Selectors.summaryListValue).text() mustEqual expectedValue
       }
-      if (isCheckAnswers) {
+      if isCheckAnswers then {
         "that contains the correct change link" in {
           val element = summaryRow.getElementById(returnDetailsSummaryListsWithActionIds(summarySubHeaderId))
           element.className() mustEqual Selectors.link
@@ -242,57 +244,50 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         }
       }
     }
-  }
 
-  private def lowLitresValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
-    if (UserAnswersTestData.litresDefaultToZero(key, "lowband")) {
+  private def lowLitresValue(key: String, summaryId: String, userAnswers: UserAnswers): String =
+    if UserAnswersTestData.litresDefaultToZero(key, "lowband") then {
       "0"
-    } else if (summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers) {
+    } else if summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers then {
       userAnswers.smallProducerList.map(_.litreage._1).sum.toString
     } else {
       "1000"
     }
-  }
 
-  private def highLitresValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
-    if (UserAnswersTestData.litresDefaultToZero(key, "highband")) {
+  private def highLitresValue(key: String, summaryId: String, userAnswers: UserAnswers): String =
+    if UserAnswersTestData.litresDefaultToZero(key, "highband") then {
       "0"
-    } else if (summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers) {
+    } else if summaryId == SummaryHeadingIds.contractPackedForRegisteredSmallProducers then {
       userAnswers.smallProducerList.map(_.litreage._2).sum.toString
     } else {
       "1000"
     }
-  }
 
-  private def lowLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
-    if (UserAnswersTestData.litresDefaultToZero(key, "lowband") ||
-      List(
-        SummaryHeadingIds.broughtIntoTheUKFromSmallProducers,
-        SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
-      .contains(summaryId)) {
+  private def lowLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String =
+    if UserAnswersTestData.litresDefaultToZero(key, "lowband") ||
+      List(SummaryHeadingIds.broughtIntoTheUKFromSmallProducers, SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
+        .contains(summaryId)
+    then {
       "£0.00"
     } else {
       val levyTotal = userAnswers.returnPeriod match {
         case ReturnPeriod(2025, 0) => "£180.00"
         case ReturnPeriod(2026, 0) => "£194.00"
       }
-      s"${if (isNegativeLevy(summaryId)) "−" else ""}$levyTotal"
+      s"${if isNegativeLevy(summaryId) then "−" else ""}$levyTotal"
     }
-  }
 
-  private def highLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String = {
-    if (UserAnswersTestData.litresDefaultToZero(key, "highband") ||
-      List(
-        SummaryHeadingIds.broughtIntoTheUKFromSmallProducers,
-        SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
-      .contains(summaryId)) {
+  private def highLevyValue(key: String, summaryId: String, userAnswers: UserAnswers): String =
+    if UserAnswersTestData.litresDefaultToZero(key, "highband") ||
+      List(SummaryHeadingIds.broughtIntoTheUKFromSmallProducers, SummaryHeadingIds.contractPackedForRegisteredSmallProducers)
+        .contains(summaryId)
+    then {
       "£0.00"
     } else {
       val levyTotal = userAnswers.returnPeriod match {
         case ReturnPeriod(2025, 0) => "£240.00"
         case ReturnPeriod(2026, 0) => "£259.00"
       }
-      s"${if (isNegativeLevy(summaryId)) "−" else ""}$levyTotal"
+      s"${if isNegativeLevy(summaryId) then "−" else ""}$levyTotal"
     }
-  }
 }

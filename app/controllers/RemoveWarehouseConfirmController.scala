@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.{ CheckingSubmissionAction, DataRequiredAction, DataRetrievalAction, IdentifierAction }
+import controllers.actions.{CheckingSubmissionAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.RemoveWarehouseConfirmFormProvider
 import handlers.ErrorHandler
 import models.Mode
@@ -24,65 +24,68 @@ import models.backend.Site
 import navigation.Navigator
 import pages.RemoveWarehouseConfirmPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import util.GenericLogger
 import viewmodels.AddressFormattingHelper
 import views.html.RemoveWarehouseConfirmView
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveWarehouseConfirmController @Inject() (
   override val messagesApi: MessagesApi,
-  val sessionRepository: SessionRepository,
-  val navigator: Navigator,
-  val errorHandler: ErrorHandler,
-  val genericLogger: GenericLogger,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  checkReturnSubmission: CheckingSubmissionAction,
-  formProvider: RemoveWarehouseConfirmFormProvider,
+  val sessionRepository:    SessionRepository,
+  val navigator:            Navigator,
+  val errorHandler:         ErrorHandler,
+  val genericLogger:        GenericLogger,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  checkReturnSubmission:    CheckingSubmissionAction,
+  formProvider:             RemoveWarehouseConfirmFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: RemoveWarehouseConfirmView)(implicit ec: ExecutionContext) extends ControllerHelper {
+  view:                     RemoveWarehouseConfirmView
+)(implicit ec: ExecutionContext)
+    extends ControllerHelper {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData andThen checkReturnSubmission) {
-      implicit request =>
-
-        request.userAnswers.warehouseList.get(index) match {
-          case Some(warehouse) =>
-            val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
-            Ok(view(form, mode, formattedAddress, index))
-          case _ =>
-            genericLogger.logger.warn(s"Warehouse index $index doesn't exist ${request.userAnswers.id} warehouse list length:" +
-              s"${request.userAnswers.warehouseList.size}")
-            Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
-        }
+    (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
+      request.userAnswers.warehouseList.get(index) match {
+        case Some(warehouse) =>
+          val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
+          Ok(view(form, mode, formattedAddress, index))
+        case _ =>
+          genericLogger.logger.warn(
+            s"Warehouse index $index doesn't exist ${request.userAnswers.id} warehouse list length:" +
+              s"${request.userAnswers.warehouseList.size}"
+          )
+          Redirect(routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
+      }
     }
 
   def onSubmit(mode: Mode, ref: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
-      implicit request =>
-        val warehouseList: Map[String, Site] = request.userAnswers.warehouseList
-        val warehouseToRemove: Site = warehouseList(ref)
-        val formattedAddress = AddressFormattingHelper.addressFormatting(warehouseToRemove.address, warehouseToRemove.tradingName)
+    (identify andThen getData andThen requireData andThen checkReturnSubmission).async { implicit request =>
+      val warehouseList:     Map[String, Site] = request.userAnswers.warehouseList
+      val warehouseToRemove: Site              = warehouseList(ref)
+      val formattedAddress = AddressFormattingHelper.addressFormatting(warehouseToRemove.address, warehouseToRemove.tradingName)
 
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress, ref))),
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress, ref))),
           value =>
-            if (value) {
-              val updatedAnswers = request.userAnswers
+            if value then {
+              val updatedAnswers       = request.userAnswers
               val modifiedWarehouseMap = warehouseList.removed(ref)
-              val updatedAnswersFinal = updatedAnswers.copy(warehouseList = modifiedWarehouseMap)
+              val updatedAnswersFinal  = updatedAnswers.copy(warehouseList = modifiedWarehouseMap)
               setAndRedirect(updatedAnswersFinal, RemoveWarehouseConfirmPage, mode)
             } else {
               val updatedAnswers = request.userAnswers.set(RemoveWarehouseConfirmPage, value)
               updateDatabaseAndRedirect(updatedAnswers, RemoveWarehouseConfirmPage, mode)
-            })
+            }
+        )
     }
 }

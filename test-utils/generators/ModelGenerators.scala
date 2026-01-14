@@ -16,26 +16,26 @@
 
 package generators
 
-import models._
+import models.*
 import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary._
+import org.scalacheck.Arbitrary.*
 
 trait ModelGenerators {
 
   implicit lazy val arbitraryAddASmallProducer: Arbitrary[AddASmallProducer] =
     Arbitrary {
       for {
-        producerName <- arbitrary[Option[String]]
+        producerName    <- arbitrary[Option[String]]
         referenceNumber <- arbitrary[String]
-        lowBand <- arbitrary[Long]
-        highBand <- arbitrary[Long]
+        lowBand         <- arbitrary[Long]
+        highBand        <- arbitrary[Long]
       } yield AddASmallProducer(producerName, referenceNumber, lowBand, highBand)
     }
 
   implicit lazy val arbitraryLitresInBands: Arbitrary[LitresInBands] =
     Arbitrary {
       for {
-        lowBand <- arbitrary[Long]
+        lowBand  <- arbitrary[Long]
         highBand <- arbitrary[Long]
       } yield LitresInBands(lowBand, highBand)
     }

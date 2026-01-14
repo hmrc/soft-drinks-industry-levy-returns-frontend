@@ -33,8 +33,8 @@
 package controllers.addressLookupFrontend
 import base.ReturnsTestData.*
 import base.SpecBase
-import models.alf.{ AlfAddress, AlfResponse }
-import models.{ NormalMode, UserAnswers }
+import models.alf.{AlfAddress, AlfResponse}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -43,35 +43,36 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{ AddressLookupService, PackingDetails, WarehouseDetails }
+import services.{AddressLookupService, PackingDetails, WarehouseDetails}
 
 import scala.concurrent.Future
 
 class RampOffControllerSpec extends SpecBase with MockitoSugar {
   class Setup {
     val mockAddressLookupService: AddressLookupService = mock[AddressLookupService]
-    val mockSessionRepository: SessionRepository = mock[SessionRepository]
+    val mockSessionRepository:    SessionRepository    = mock[SessionRepository]
   }
   s"$WarehouseDetails off ramp" - {
     "should Redirect to the next page when ALF returns address successfully" in new Setup {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val sdilId: String = "foo"
-      val alfId: String = "bar"
+      val sdilId:                 String      = "foo"
+      val alfId:                  String      = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
-      val updatedUserAnswers: UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
+      val updatedUserAnswers:     UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
 
-      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(responseFromGetAddress))
-      when(mockAddressLookupService.addAddressUserAnswers(
-        ArgumentMatchers.eq(WarehouseDetails),
-        ArgumentMatchers.eq(responseFromGetAddress.address),
-        ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(sdilId),
-        ArgumentMatchers.eq(alfId)))
+      when(
+        mockAddressLookupService.addAddressUserAnswers(
+          ArgumentMatchers.eq(WarehouseDetails),
+          ArgumentMatchers.eq(responseFromGetAddress.address),
+          ArgumentMatchers.eq(emptyUserAnswers),
+          ArgumentMatchers.eq(sdilId),
+          ArgumentMatchers.eq(alfId)
+        )
+      )
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
         .thenReturn(Future.successful(Right(true)))
@@ -86,14 +87,12 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
     }
     s"should return exception to the next page when ALF doesnt return Address successfully" in new Setup {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
-      val alfId: String = "bar"
+      val alfId:  String = "bar"
 
-      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.failed(new Exception("woopsie")))
 
       running(application) {
@@ -104,22 +103,23 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
     }
     s"should return exception to the next page when ALF returns address, but it can't be converted" in new Setup {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val siteId: String = "foo"
-      val alfId: String = "bar"
+      val siteId:                 String      = "foo"
+      val alfId:                  String      = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
 
-      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(responseFromGetAddress))
-      when(mockAddressLookupService.addAddressUserAnswers(
-        ArgumentMatchers.eq(WarehouseDetails),
-        ArgumentMatchers.eq(responseFromGetAddress.address),
-        ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(siteId),
-        ArgumentMatchers.eq(alfId)))
+      when(
+        mockAddressLookupService.addAddressUserAnswers(
+          ArgumentMatchers.eq(WarehouseDetails),
+          ArgumentMatchers.eq(responseFromGetAddress.address),
+          ArgumentMatchers.eq(emptyUserAnswers),
+          ArgumentMatchers.eq(siteId),
+          ArgumentMatchers.eq(alfId)
+        )
+      )
         .thenThrow(new RuntimeException("foo"))
 
       running(application) {
@@ -130,23 +130,24 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
     }
     s"should return exception to the next page when ALF returns address, it can be converted but fails to update db" in new Setup {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val siteId: String = "foo"
-      val alfId: String = "bar"
+      val siteId:                 String      = "foo"
+      val alfId:                  String      = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
-      val updatedUserAnswers: UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
+      val updatedUserAnswers:     UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
 
-      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(responseFromGetAddress))
-      when(mockAddressLookupService.addAddressUserAnswers(
-        ArgumentMatchers.eq(WarehouseDetails),
-        ArgumentMatchers.eq(responseFromGetAddress.address),
-        ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(siteId),
-        ArgumentMatchers.eq(alfId)))
+      when(
+        mockAddressLookupService.addAddressUserAnswers(
+          ArgumentMatchers.eq(WarehouseDetails),
+          ArgumentMatchers.eq(responseFromGetAddress.address),
+          ArgumentMatchers.eq(emptyUserAnswers),
+          ArgumentMatchers.eq(siteId),
+          ArgumentMatchers.eq(alfId)
+        )
+      )
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
         .thenReturn(Future.failed(new Exception("woopsie")))
@@ -160,23 +161,24 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
   s"$PackingDetails off ramp" - {
     "should Redirect to the next page when ALF returns address successfully" in new Setup {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val siteId: String = "foo"
-      val alfId: String = "bar"
+      val siteId:                 String      = "foo"
+      val alfId:                  String      = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
-      val updatedUserAnswers: UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
+      val updatedUserAnswers:     UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
 
-      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(responseFromGetAddress))
-      when(mockAddressLookupService.addAddressUserAnswers(
-        ArgumentMatchers.eq(PackingDetails),
-        ArgumentMatchers.eq(responseFromGetAddress.address),
-        ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(siteId),
-        ArgumentMatchers.eq(alfId)))
+      when(
+        mockAddressLookupService.addAddressUserAnswers(
+          ArgumentMatchers.eq(PackingDetails),
+          ArgumentMatchers.eq(responseFromGetAddress.address),
+          ArgumentMatchers.eq(emptyUserAnswers),
+          ArgumentMatchers.eq(siteId),
+          ArgumentMatchers.eq(alfId)
+        )
+      )
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
         .thenReturn(Future.successful(Right(true)))
@@ -191,14 +193,12 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
     }
     s"should return exception to the next page when ALF doesnt return Address successfully" in new Setup {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val siteId: String = "foo"
-      val alfId: String = "bar"
+      val alfId:  String = "bar"
 
-      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.failed(new Exception("woopsie")))
 
       running(application) {
@@ -209,22 +209,23 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
     }
     s"should return exception to the next page when ALF returns address, but it can't be converted" in new Setup {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val siteId: String = "foo"
-      val alfId: String = "bar"
+      val siteId:                 String      = "foo"
+      val alfId:                  String      = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
 
-      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(responseFromGetAddress))
-      when(mockAddressLookupService.addAddressUserAnswers(
-        ArgumentMatchers.eq(PackingDetails),
-        ArgumentMatchers.eq(responseFromGetAddress.address),
-        ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(siteId),
-        ArgumentMatchers.eq(alfId)))
+      when(
+        mockAddressLookupService.addAddressUserAnswers(
+          ArgumentMatchers.eq(PackingDetails),
+          ArgumentMatchers.eq(responseFromGetAddress.address),
+          ArgumentMatchers.eq(emptyUserAnswers),
+          ArgumentMatchers.eq(siteId),
+          ArgumentMatchers.eq(alfId)
+        )
+      )
         .thenThrow(new RuntimeException("foo"))
 
       running(application) {
@@ -235,23 +236,24 @@ class RampOffControllerSpec extends SpecBase with MockitoSugar {
     }
     s"should return exception to the next page when ALF returns address, it can be converted but fails to update db" in new Setup {
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService),
-          bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      val siteId: String = "foo"
-      val alfId: String = "bar"
+      val siteId:                 String      = "foo"
+      val alfId:                  String      = "bar"
       val responseFromGetAddress: AlfResponse = AlfResponse(AlfAddress(Some("foo"), List.empty, None, None))
-      val updatedUserAnswers: UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
+      val updatedUserAnswers:     UserAnswers = emptyUserAnswers.copy(id = "foobarwizz")
 
-      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockAddressLookupService.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(responseFromGetAddress))
-      when(mockAddressLookupService.addAddressUserAnswers(
-        ArgumentMatchers.eq(PackingDetails),
-        ArgumentMatchers.eq(responseFromGetAddress.address),
-        ArgumentMatchers.eq(emptyUserAnswers),
-        ArgumentMatchers.eq(siteId),
-        ArgumentMatchers.eq(alfId)))
+      when(
+        mockAddressLookupService.addAddressUserAnswers(
+          ArgumentMatchers.eq(PackingDetails),
+          ArgumentMatchers.eq(responseFromGetAddress.address),
+          ArgumentMatchers.eq(emptyUserAnswers),
+          ArgumentMatchers.eq(siteId),
+          ArgumentMatchers.eq(alfId)
+        )
+      )
         .thenReturn(updatedUserAnswers)
       when(mockSessionRepository.set(ArgumentMatchers.eq(updatedUserAnswers)))
         .thenReturn(Future.failed(new Exception("woopsie")))
