@@ -20,7 +20,7 @@ import base.ReturnsTestData.*
 import base.{SpecBase, UserAnswersTestData}
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.{ReturnPeriod, SdilReturn}
+import models.{ReturnPeriod, SdilReturn, TaxRateUtil}
 import org.mockito.ArgumentMatchers.*
 import org.mockito.Mockito.{reset, when}
 import play.api.test.Helpers.*
@@ -43,8 +43,7 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
     reset(mockSdilConnector)
   }
 
-  when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-  when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+  TaxRateUtil.stubBandRates(mockConfig, returnPeriod)
 
   "getPendingReturns" - {
     "return a list of return periods" in {

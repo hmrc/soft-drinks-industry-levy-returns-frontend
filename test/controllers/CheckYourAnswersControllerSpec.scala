@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions.RequiredUserAnswers
 import helpers.LoggerHelper
 import models.requests.DataRequest
-import models.{Amounts, ReturnPeriod, SmallProducer}
+import models.{Amounts, ReturnPeriod, SmallProducer, TaxRateUtil}
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -235,8 +235,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application     =
@@ -279,8 +278,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show own brands packaged at own site row containing calculation when yes is selected - 2025 tax year rates" in {
 
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
       val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 10001, "highBand" -> 20002))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
       val application     =
@@ -323,8 +321,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show own brands packaged at own site row containing small calculations when yes is selected - pre April 2025 rates" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application     =
@@ -347,8 +344,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show own brands packaged at own site row containing small calculations when yes is selected - 2025 tax year rates" in {
 
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
       val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 5, "highBand" -> 3))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
       val application     =
@@ -390,8 +386,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show packaged contract packer row containing calculation when yes is selected - pre April 2025 rates" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData =
         Json.obj("packagedContractPacker" -> true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
@@ -433,8 +428,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show packaged contract packer row containing calculation when yes is selected - 2025 tax year rates" in {
 
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData =
         Json.obj("packagedContractPacker" -> true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 10001, "highBand" -> 20002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
@@ -498,8 +492,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show exemption for small producers row when yes is selected - pre April 2025 rates" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
 
       val superCola   = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
@@ -543,8 +536,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show exemption for small producers row when yes is selected - 2025 tax year rates" in {
 
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
 
       val superCola   = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
@@ -607,8 +599,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show brought into the UK row containing calculation when yes is selected - pre April 2025 rates" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData = Json.obj("broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application     =
@@ -643,8 +634,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show brought into the UK row containing calculation when yes is selected - 2025 tax year rates" in {
 
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
       val userAnswersData = Json.obj("broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10001, "highBand" -> 20002))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
       val application     =
@@ -701,8 +691,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show brought into the UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers"           -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000)
@@ -749,8 +738,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show brought into the UK from small producers row containing calculation when yes is selected - 2025 tax year rates" in {
 
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers"           -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 10001, "highBand" -> 20002)
@@ -816,8 +804,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData = Json.obj("claimCreditsForExports" -> true, "howManyCreditsForExport" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
       val application     =
@@ -858,8 +845,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
 
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
       val userAnswersData = Json.obj("claimCreditsForExports" -> true, "howManyCreditsForExport" -> Json.obj("lowBand" -> 10001, "highBand" -> 20002))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)
       val application     =
@@ -919,8 +905,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
 
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
       val userAnswersData =
         Json.obj("claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10000, "highBand" -> 20000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = preApril2025ReturnPeriod)
@@ -962,8 +947,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     "must show lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
 
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
       val userAnswersData =
         Json.obj("claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 10001, "highBand" -> 20002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, returnPeriod = taxYear2025ReturnPeriod)

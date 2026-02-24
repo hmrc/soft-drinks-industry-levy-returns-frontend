@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import config.FrontendAppConfig
+import config.{BandRates, FrontendAppConfig}
 import models.LevyCalculator.*
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -32,47 +32,47 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
   "getTaxYear" - {
 
     (2018 to 2024).foreach { year =>
-      s"return Pre2025 when in April - December $year" in
+      s"return $year when in April - December $year" in
         forAll(aprToDecInt) { month =>
           val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          getTaxYear(returnPeriod) mustBe Pre2025
+          getTaxYear(returnPeriod) mustBe year
         }
 
-      s"return Pre2025 when in January - March ${year + 1}" in
+      s"return $year when in January - March ${year + 1}" in
         forAll(janToMarInt) { month =>
           val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          getTaxYear(returnPeriod) mustBe Pre2025
+          getTaxYear(returnPeriod) mustBe year
         }
     }
 
-    "return Year2025 when in April - December 2025" in
+    "return 2025 when in April - December 2025" in
       forAll(aprToDecInt) { month =>
         val returnPeriod = ReturnPeriod(LocalDate.of(2025, month, 1))
-        getTaxYear(returnPeriod) mustBe Year2025
+        getTaxYear(returnPeriod) mustBe 2025
       }
 
-    "return Year2025 when in January - March 2026" in
+    "return 2025 when in January - March 2026" in
       forAll(janToMarInt) { month =>
         val returnPeriod = ReturnPeriod(LocalDate.of(2026, month, 1))
-        getTaxYear(returnPeriod) mustBe Year2025
+        getTaxYear(returnPeriod) mustBe 2025
       }
 
-    "return Year2026 when in April - December 2026" in
+    "return 2026 when in April - December 2026" in
       forAll(aprToDecInt) { month =>
         val returnPeriod = ReturnPeriod(LocalDate.of(2026, month, 1))
-        getTaxYear(returnPeriod) mustBe Year2026
+        getTaxYear(returnPeriod) mustBe 2026
       }
 
-    "return Year2026 when in January - March 2027" in
+    "return 2026 when in January - March 2027" in
       forAll(janToMarInt) { month =>
         val returnPeriod = ReturnPeriod(LocalDate.of(2027, month, 1))
-        getTaxYear(returnPeriod) mustBe Year2026
+        getTaxYear(returnPeriod) mustBe 2026
       }
   }
 
   "getBandRates" - {
     (2018 to 2024).foreach { taxYear =>
-      val bandRates: BandRates = getBandRates(TaxYear.fromYear(taxYear))(using frontendAppConfig)
+      val bandRates: BandRates = getBandRates(taxYear)(using frontendAppConfig)
 
       s"return 0.18 for lower band when tax year is $taxYear" in {
         bandRates.lowerBandCostPerLitre mustBe BigDecimal("0.18")
@@ -84,12 +84,12 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
     }
 
     "return 0.194 for lower band when tax year is 2025" in {
-      val bandRates: BandRates = getBandRates(TaxYear.fromYear(2025))(using frontendAppConfig)
+      val bandRates: BandRates = getBandRates(2025)(using frontendAppConfig)
       bandRates.lowerBandCostPerLitre mustBe BigDecimal("0.194")
     }
 
     "return 0.259 for higher band when tax year is 2025" in {
-      val bandRates: BandRates = getBandRates(TaxYear.fromYear(2025))(using frontendAppConfig)
+      val bandRates: BandRates = getBandRates(2025)(using frontendAppConfig)
       bandRates.higherBandCostPerLitre mustBe BigDecimal("0.259")
     }
   }

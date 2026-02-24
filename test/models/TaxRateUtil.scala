@@ -16,6 +16,8 @@
 
 package models
 
+import config.BandRates
+import org.mockito.Mockito.when
 import org.scalacheck.Gen
 
 object TaxRateUtil {
@@ -27,5 +29,18 @@ object TaxRateUtil {
 
   val lowerBandCostPerLitreMap:  Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
   val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
+
+  def bandRatesForTaxYear(taxYear: Int): BandRates = {
+    val lower  = lowerBandCostPerLitreMap.getOrElse(taxYear, lowerBandCostPerLitre)
+    val higher = higherBandCostPerLitreMap.getOrElse(taxYear, higherBandCostPerLitre)
+
+    BandRates(lower, higher)
+  }
+
+  def stubBandRates(mockConfig: config.FrontendAppConfig, returnPeriod: ReturnPeriod): Unit = {
+    val taxYear: Int = LevyCalculator.getTaxYear(returnPeriod)
+    when(mockConfig.bandRatesForTaxYear(taxYear))
+      .thenReturn(bandRatesForTaxYear(taxYear))
+  }
 
 }
