@@ -24,6 +24,7 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.net.URLEncoder
+import java.time.LocalDate
 
 @Singleton
 class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
@@ -60,11 +61,12 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val cacheTtl:     Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
   val sdilCacheTTL: Int = servicesConfig.getInt("mongodb.short-lived.timeToLiveInSeconds")
 
-  val lowerBandCostPerLitre:  BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitre"))
-  val higherBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))
+  private val sdilBandRatesConfig = new SdilBandRatesConfig(configuration)
 
-  val lowerBandCostPerLitrePostApril2025:  BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitrePostApril2025"))
-  val higherBandCostPerLitrePostApril2025: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitrePostApril2025"))
+  def bandRatesForTaxYear(taxYear: Int): BandRates = {
+    val taxYearStart: LocalDate = LocalDate.of(taxYear, 4, 1)
+    sdilBandRatesConfig.bandRatesFor(taxYearStart)
+  }
 
   val balanceAllEnabled:                Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
