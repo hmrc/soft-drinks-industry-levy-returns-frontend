@@ -19,11 +19,10 @@ package models
 import config.{BandRates, FrontendAppConfig}
 import play.api.Logging
 
-
 case class LevyCalculation(low: BigDecimal, high: BigDecimal) {
-  lazy val lowLevy = low.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-  lazy val highLevy = high.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-  lazy val total = (low + high).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+  lazy val lowLevy          = low.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+  lazy val highLevy         = high.setScale(2, BigDecimal.RoundingMode.HALF_UP)
+  lazy val total            = (low + high).setScale(2, BigDecimal.RoundingMode.HALF_UP)
   lazy val totalRoundedDown = (low + high).setScale(2, BigDecimal.RoundingMode.DOWN)
 }
 
@@ -39,11 +38,11 @@ object LevyCalculator extends Logging {
     frontendAppConfig.bandRatesForTaxYear(taxYear)
 
   def getLevyCalculation(lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit
-                                                                                        frontendAppConfig: FrontendAppConfig
+    frontendAppConfig: FrontendAppConfig
   ): LevyCalculation = {
-    val taxYear: Int = getTaxYear(returnPeriod)
+    val taxYear:   Int       = getTaxYear(returnPeriod)
     val bandRates: BandRates = getBandRates(taxYear)
-    val lowLevy = lowLitres * bandRates.lowerBandCostPerLitre
+    val lowLevy  = lowLitres * bandRates.lowerBandCostPerLitre
     val highLevy = highLitres * bandRates.higherBandCostPerLitre
     logger.info(
       s"getLevyCalculation called with returnPeriod year ${returnPeriod.year} quarter ${returnPeriod.quarter} using bandRates lower ${bandRates.lowerBandCostPerLitre} higher ${bandRates.higherBandCostPerLitre}"

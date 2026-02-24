@@ -24,44 +24,44 @@ import java.time.format.DateTimeParseException
 case class BandRates(lowerBandCostPerLitre: BigDecimal, higherBandCostPerLitre: BigDecimal)
 
 final case class BandRatePeriod(
-                                 startDate: LocalDate,
-                                 endDate: Option[LocalDate],
-                                 rates: BandRates
-                               )
+  startDate: LocalDate,
+  endDate:   Option[LocalDate],
+  rates:     BandRates
+)
 
 final class SdilBandRatesConfig(configuration: Configuration) {
 
   private val periods: Seq[BandRatePeriod] = {
     val cfgs = configuration.get[Seq[Configuration]]("sdil.bandRates")
 
-    val parsed = cfgs.map { c =>
-      val start = readLocalDate(c, "startDate")
-      val end = readOptionalLocalDate(c, "endDate")
+    val parsed = cfgs
+      .map { c =>
+        val start = readLocalDate(c, "startDate")
+        val end   = readOptionalLocalDate(c, "endDate")
 
-      val lower = BigDecimal(c.get[String]("lowerBandCostPerLitre"))
-      val higher = BigDecimal(c.get[String]("higherBandCostPerLitre"))
+        val lower  = BigDecimal(c.get[String]("lowerBandCostPerLitre"))
+        val higher = BigDecimal(c.get[String]("higherBandCostPerLitre"))
 
-      val period = BandRatePeriod(
-        startDate = start,
-        endDate = end,
-        rates = BandRates(lower, higher)
-      )
+        val period = BandRatePeriod(
+          startDate = start,
+          endDate = end,
+          rates = BandRates(lower, higher)
+        )
 
-      // Validate date range if endDate is present
-      end.foreach { e =>
-        require(!e.isBefore(start), s"sdil.bandRates endDate $e is before startDate $start")
+        // Validate date range if endDate is present
+        end.foreach { e =>
+          require(!e.isBefore(start), s"sdil.bandRates endDate $e is before startDate $start")
+        }
+
+        period
       }
-
-      period
-    }.sortBy(_.startDate)
+      .sortBy(_.startDate)
 
     parsed
   }
 
-  /**
-   * Find rates for a given date:
-   * startDate <= date AND (endDate absent OR date <= endDate)
-   */
+  /** Find rates for a given date: startDate <= date AND (endDate absent OR date <= endDate)
+    */
   def bandRatesFor(date: LocalDate): BandRates =
     periods
       .find(p => !date.isBefore(p.startDate) && p.endDate.forall(e => !date.isAfter(e)))
