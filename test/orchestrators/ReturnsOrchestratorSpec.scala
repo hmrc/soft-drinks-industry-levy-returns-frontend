@@ -20,7 +20,7 @@ import base.ReturnsTestData.*
 import base.SpecBase
 import errors.NoPendingReturnForGivenPeriod
 import models.requests.{DataRequest, OptionalDataRequest}
-import models.{Amounts, ReturnPeriod}
+import models.{Amounts, LevyCalculation, ReturnPeriod}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -176,6 +176,20 @@ class ReturnsOrchestratorSpec extends SpecBase with MockitoSugar {
 
       whenReady(res) { result =>
         result mustBe amounts
+      }
+    }
+  }
+
+  "calculateLevyCalculations" - {
+    "should delegate to returnService" in {
+      val levyCalcMap = Map((1000L, 2000L) -> LevyCalculation.zero)
+      when(mockReturnService.calculateLevyCalculations(sdilReference, emptyUserAnswers)(using hc, ec))
+        .thenReturn(Future.successful(levyCalcMap))
+
+      val res = orchestrator.calculateLevyCalculations(sdilReference, emptyUserAnswers)
+
+      whenReady(res) { result =>
+        result mustBe levyCalcMap
       }
     }
   }

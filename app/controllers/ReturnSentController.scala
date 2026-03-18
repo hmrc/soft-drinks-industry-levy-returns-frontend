@@ -49,15 +49,16 @@ class ReturnSentController @Inject() (
       val userAnswers  = request.userAnswers
       val returnPeriod = request.returnPeriod
 
-      returnsOrchestrator.getCalculatedAmountsForReturnSent(sdilRef, userAnswers, returnPeriod).map { amounts =>
-        Ok(
-          view(returnPeriod, userAnswers, amounts, subscription, CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total))(using
-            implicitly,
-            implicitly,
-            config
-          )
+      for {
+        amounts          <- returnsOrchestrator.getCalculatedAmountsForReturnSent(sdilRef, userAnswers, returnPeriod)
+        levyCalculations <- returnsOrchestrator.calculateLevyCalculations(sdilRef, userAnswers)
+      } yield Ok(
+        view(returnPeriod, userAnswers, amounts, subscription, CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total), levyCalculations)(
+          using implicitly,
+          implicitly,
+          config
         )
-      }
+      )
     } else {
       Future.successful(Redirect(routes.ReturnsController.onPageLoad(returnPeriod.year, returnPeriod.quarter, false)))
     }

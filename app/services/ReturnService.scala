@@ -20,7 +20,7 @@ import cats.implicits.*
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import models.retrieved.RetrievedSubscription
-import models.{Amounts, ReturnPeriod, ReturnsVariation, SdilReturn, UserAnswers}
+import models.{Amounts, LevyCalculation, ReturnPeriod, ReturnsVariation, SdilReturn, UserAnswers}
 import pages.*
 import play.api.Logger
 import play.api.http.Status.{NO_CONTENT, OK}
@@ -50,11 +50,10 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
     ec: ExecutionContext
   ): Future[Unit] = {
     val sdilReturn = returnToBeSubmitted(userAnswers).copy(submittedOn = Some(getCurrentDateTime))
-    implicit val rp: ReturnPeriod = returnPeriod
-    val sdilVariation = returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers)
     for {
-      _         <- submitReturn(subscription, returnPeriod, sdilReturn)
-      variation <- submitReturnVariation(subscription.sdilRef, sdilVariation)
+      sdilVariation <- returnVariationToBeSubmitted(subscription, sdilReturn, userAnswers, returnPeriod)
+      _             <- submitReturn(subscription, returnPeriod, sdilReturn)
+      variation     <- submitReturnVariation(subscription.sdilRef, sdilVariation)
     } yield variation
   }
 
@@ -65,7 +64,11 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
     for {
       isSmallProducer       <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
       balanceBroughtForward <- getBalanceBroughtForward(sdilRef)
-    } yield getAmounts(userAnswers, balanceBroughtForward, isSmallProducer.getOrElse(false))
+      totalForQuarter       <- TotalForQuarter.calculateTotal(sdilRef, userAnswers, isSmallProducer.getOrElse(false), sdilConnector)
+    } yield {
+      val total = totalForQuarter - balanceBroughtForward
+      Amounts(totalForQuarter, balanceBroughtForward, total)
+    }
 
   def getBalanceBroughtForward(sdilRef: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[BigDecimal] =
     if config.balanceAllEnabled then {
@@ -76,11 +79,40 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
       sdilConnector.balance(sdilRef, withAssessment = false)
     }
 
-  def getAmounts(userAnswers: UserAnswers, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean): Amounts = {
-    val totalForQuarter = TotalForQuarter.calculateTotal(userAnswers, isSmallProducer)(config)
-    val total           = totalForQuarter - balanceBroughtForward
-    Amounts(totalForQuarter, balanceBroughtForward, total)
+  def calculateLevyCalculations(sdilRef: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Map[(Long, Long), LevyCalculation]] = {
+    val returnPeriod = userAnswers.returnPeriod
+
+    val litresPairs: Set[(Long, Long)] = Set(
+      userAnswers.get(BrandsPackagedAtOwnSitesPage).map(l => (l.lowBand, l.highBand)),
+      userAnswers.get(HowManyAsAContractPackerPage).map(l => (l.lowBand, l.highBand)),
+      userAnswers.get(HowManyBroughtIntoUkPage).map(l => (l.lowBand, l.highBand)),
+      userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(l => (l.lowBand, l.highBand)),
+      userAnswers.get(HowManyCreditsForExportPage).map(l => (l.lowBand, l.highBand)),
+      userAnswers.get(HowManyCreditsForLostDamagedPage).map(l => (l.lowBand, l.highBand)),
+      {
+        val smallProducerList = userAnswers.smallProducerList
+        if smallProducerList.nonEmpty then {
+          val low  = smallProducerList.map(_.litreage._1).sum
+          val high = smallProducerList.map(_.litreage._2).sum
+          Some((low, high))
+        } else {
+          None
+        }
+      }
+    ).flatten
+
+    Future
+      .sequence(
+        litresPairs.map { case (low, high) =>
+          sdilConnector.calculateLevy(sdilRef, low, high, returnPeriod).map(calc => (low, high) -> calc)
+        }
+      )
+      .map(_.toMap)
   }
+
   private def submitReturn(subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, sdilReturn: SdilReturn)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
@@ -103,24 +135,27 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
         throw new RuntimeException(s"Failed to submit return variation $sdilRef")
     }
 
-  private def returnVariationToBeSubmitted(subscription: RetrievedSubscription, sdilReturn: SdilReturn, userAnswers: UserAnswers)(implicit
+  private def returnVariationToBeSubmitted(
+    subscription: RetrievedSubscription,
+    sdilReturn:   SdilReturn,
+    userAnswers:  UserAnswers,
     returnPeriod: ReturnPeriod
-  ): ReturnsVariation = {
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ReturnsVariation] = {
     val isNewImporter = UserTypeCheck.isNewImporter(sdilReturn, subscription)
     val isNewPacker   = UserTypeCheck.isNewPacker(sdilReturn, subscription)
-    implicit val conf: FrontendAppConfig = config
-    val taxEstimation = sdilReturn.taxEstimation
-    ReturnsVariation(
-      orgName = subscription.orgName,
-      ppobAddress = subscription.address,
-      importer = (isNewImporter, sdilReturn.totalImported.combineN(4)),
-      packer = (isNewPacker, sdilReturn.totalPacked.combineN(4)),
-      warehouses = userAnswers.warehouseList.values.toList,
-      packingSites = userAnswers.packagingSiteList.values.toList,
-      phoneNumber = subscription.contact.phoneNumber,
-      email = subscription.contact.email,
-      taxEstimation = taxEstimation
-    )
+    sdilReturn.taxEstimation(subscription.sdilRef, sdilConnector, returnPeriod).map { taxEstimation =>
+      ReturnsVariation(
+        orgName = subscription.orgName,
+        ppobAddress = subscription.address,
+        importer = (isNewImporter, sdilReturn.totalImported.combineN(4)),
+        packer = (isNewPacker, sdilReturn.totalPacked.combineN(4)),
+        warehouses = userAnswers.warehouseList.values.toList,
+        packingSites = userAnswers.packagingSiteList.values.toList,
+        phoneNumber = subscription.contact.phoneNumber,
+        email = subscription.contact.email,
+        taxEstimation = taxEstimation
+      )
+    }
   }
 
   private def returnToBeSubmitted(userAnswers: UserAnswers): SdilReturn =

@@ -16,9 +16,10 @@
 
 package connectors
 
+import base.LevyCalculationTestHelper.levyCalculation
 import base.ReturnsTestData.*
 import models.retrieved.{OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription}
-import models.{FinancialLineItem, ReturnPeriod, ReturnsVariation, SdilReturn}
+import models.{FinancialLineItem, LevyCalculation, ReturnPeriod, ReturnsVariation, SdilReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
@@ -164,6 +165,34 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
 
       whenReady(res) { response =>
         response mustBe Some(OK)
+      }
+    }
+
+    "return levy calculation when not in cache" in {
+      val period = ReturnPeriod(year = 2024, quarter = 1)
+      val expectedCalculation = levyCalculation(BigDecimal("180"), BigDecimal("240"))
+
+      when(mockSDILSessionCache.fetchEntry[LevyCalculation](any(), any())(using any())).thenReturn(Future.successful(None))
+      when(requestBuilderExecute[LevyCalculation]).thenReturn(Future.successful(expectedCalculation))
+      when(mockSDILSessionCache.save[LevyCalculation](any(), any(), any())(using any())).thenReturn(Future.successful(true))
+
+      val res = softDrinksIndustryLevyConnector.calculateLevy(sdilNumber, 1000L, 1000L, period)
+
+      whenReady(res) { response =>
+        response mustBe expectedCalculation
+      }
+    }
+
+    "return levy calculation from cache" in {
+      val period = ReturnPeriod(year = 2024, quarter = 1)
+      val cachedCalculation = levyCalculation(BigDecimal("180"), BigDecimal("240"))
+
+      when(mockSDILSessionCache.fetchEntry[LevyCalculation](any(), any())(using any())).thenReturn(Future.successful(Some(cachedCalculation)))
+
+      val res = softDrinksIndustryLevyConnector.calculateLevy(sdilNumber, 1000L, 1000L, period)
+
+      whenReady(res) { response =>
+        response mustBe cachedCalculation
       }
     }
 

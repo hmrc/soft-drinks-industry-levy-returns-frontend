@@ -16,18 +16,26 @@
 
 package models
 
+import base.LevyCalculationTestHelper.levyCalculation
+import base.ReturnsTestData.sdilNumber
 import base.SpecBase
 import cats.implicits.catsSyntaxSemigroup
-import config.FrontendAppConfig
+import connectors.SoftDrinksIndustryLevyConnector
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import models.TaxRateUtil.*
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper with ScalaCheckPropertyChecks {
-  override implicit lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+  implicit override lazy val hc: HeaderCarrier = HeaderCarrier()
+  val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
 
   private def getRandomLitres:              Long         = Math.floor(Math.random() * 1000000).toLong
   private def getRandomLitreage:            (Long, Long) = (getRandomLitres, getRandomLitres)
@@ -50,627 +58,89 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
   private val zero: (Long, Long) = (0L, 0L)
 
   "SdilReturn" - {
-    val posLitresInts = Gen.choose(1000, 10000000)
+    val posLitresInts  = Gen.choose(1000, 10000000)
+    val returnPeriod   = ReturnPeriod(2024, 1)
+    val expectedResult = BigDecimal("500.00")
+    val levyCalc       = levyCalculation(BigDecimal("200"), BigDecimal("300"))
 
-    (2018 to 2024).foreach { year =>
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Apr - Dec $year" in
+    "totalPacked" - {
+      "should sum packLarge and packSmall litres" in {
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(ownBrand = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
+            val sdilReturn         = getSdilReturn(packLarge = (lowLitres, highLitres), packSmall = List((100L, 200L)))
+            val expectedPacked     = (lowLitres + 100L, highLitres + 200L)
+            sdilReturn.totalPacked mustBe expectedPacked
           }
         }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres contract packed using original rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(packLarge = (lowLitres, highLitres))
-              val expectedTotalPacked   = (lowLitres, highLitres)
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with exemptions for small producers using original rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(packSmall = List((lowLitres, highLitres)))
-              val expectedTotalPacked   = (lowLitres, highLitres)
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres brought into the uk using original rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(importLarge = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = (lowLitres, highLitres)
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using original rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(importSmall = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = (lowLitres, highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres exported using original rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(`export` = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using original rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(wastage = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is 0 using original rates for Apr - Dec $year" in
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val sdilReturn            = getSdilReturn()
-          val expectedTotalPacked   = zero
-          val expectedTotalImported = zero
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount to pay using original rates for Apr - Dec $year" in
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val ownBrandLitres        = getRandomLitreage
-          val packLargeLitres       = getRandomLitreage
-          val importLargeLitres     = getRandomLitreage
-          val sdilReturn            = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          val expectedTotalPacked   = packLargeLitres
-          val expectedTotalImported = importLargeLitres
-          val liableLitres: (Long, Long) = ownBrandLitres |+| packLargeLitres |+| importLargeLitres
-          val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * liableLitres._1 + higherBandCostPerLitre * liableLitres._2)
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is negative using original rates for Apr - Dec $year" in
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val exportLitres          = getRandomLitreage
-          val wastageLitres         = getRandomLitreage
-          val sdilReturn            = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          val expectedTotalPacked   = zero
-          val expectedTotalImported = zero
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(ownBrand = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres contract packed using original rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(packLarge = (lowLitres, highLitres))
-              val expectedTotalPacked   = (lowLitres, highLitres)
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with exemptions for small producers using original rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(packSmall = List((lowLitres, highLitres)))
-              val expectedTotalPacked   = (lowLitres, highLitres)
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres brought into the uk using original rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(importLarge = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = (lowLitres, highLitres)
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using original rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(importSmall = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = (lowLitres, highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres exported using original rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(`export` = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using original rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(wastage = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is 0 using original rates for Jan - Mar ${year + 1}" in
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val sdilReturn            = getSdilReturn()
-          val expectedTotalPacked   = zero
-          val expectedTotalImported = zero
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount to pay using original rates for Jan - Mar ${year + 1}" in
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val ownBrandLitres        = getRandomLitreage
-          val packLargeLitres       = getRandomLitreage
-          val importLargeLitres     = getRandomLitreage
-          val sdilReturn            = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          val expectedTotalPacked   = packLargeLitres
-          val expectedTotalImported = importLargeLitres
-          val liableLitres: (Long, Long) = ownBrandLitres |+| packLargeLitres |+| importLargeLitres
-          val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * liableLitres._1 + higherBandCostPerLitre * liableLitres._2)
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is negative using original rates for Jan - Mar ${year + 1}" in
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val exportLitres          = getRandomLitreage
-          val wastageLitres         = getRandomLitreage
-          val sdilReturn            = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          val expectedTotalPacked   = zero
-          val expectedTotalImported = zero
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
+      }
     }
 
-    (2025 to 2025).foreach { year =>
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres packed at own site using $year rates for Apr - Dec $year" in
+    "totalImported" - {
+      "should sum importLarge and importSmall litres" in {
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(ownBrand = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
+            val sdilReturn           = getSdilReturn(importLarge = (lowLitres, highLitres), importSmall = (100L, 200L))
+            val expectedImported     = (lowLitres + 100L, highLitres + 200L)
+            sdilReturn.totalImported mustBe expectedImported
           }
         }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres contract packed using $year rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(packLarge = (lowLitres, highLitres))
-              val expectedTotalPacked   = (lowLitres, highLitres)
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with exemptions for small producers using $year rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(packSmall = List((lowLitres, highLitres)))
-              val expectedTotalPacked   = (lowLitres, highLitres)
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres brought into the uk using $year rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(importLarge = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = (lowLitres, highLitres)
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using $year rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(importSmall = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = (lowLitres, highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres exported using $year rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(`export` = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using $year rates for Apr - Dec $year" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn            = getSdilReturn(wastage = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is 0 using $year rates for Apr - Dec $year" in
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val sdilReturn            = getSdilReturn()
-          val expectedTotalPacked   = zero
-          val expectedTotalImported = zero
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount to pay using $year rates for Apr - Dec $year" in
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val ownBrandLitres        = getRandomLitreage
-          val packLargeLitres       = getRandomLitreage
-          val importLargeLitres     = getRandomLitreage
-          val sdilReturn            = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          val expectedTotalPacked   = packLargeLitres
-          val expectedTotalImported = importLargeLitres
-          val liableLitres: (Long, Long) = ownBrandLitres |+| packLargeLitres |+| importLargeLitres
-          val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * liableLitres._1 + higherBandCostPerLitreMap(year) * liableLitres._2)
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is negative using $year rates for Apr - Dec $year" in
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val exportLitres          = getRandomLitreage
-          val wastageLitres         = getRandomLitreage
-          val sdilReturn            = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          val expectedTotalPacked   = zero
-          val expectedTotalImported = zero
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn            = getSdilReturn(ownBrand = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres contract packed using $year rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn            = getSdilReturn(packLarge = (lowLitres, highLitres))
-              val expectedTotalPacked   = (lowLitres, highLitres)
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with exemptions for small producers using $year rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn            = getSdilReturn(packSmall = List((lowLitres, highLitres)))
-              val expectedTotalPacked   = (lowLitres, highLitres)
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres brought into the uk using $year rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn            = getSdilReturn(importLarge = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = (lowLitres, highLitres)
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using $year rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn            = getSdilReturn(importSmall = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = (lowLitres, highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres exported using $year rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn            = getSdilReturn(`export` = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using $year rates for Jan - Mar ${year + 1}" in
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn            = getSdilReturn(wastage = (lowLitres, highLitres))
-              val expectedTotalPacked   = zero
-              val expectedTotalImported = zero
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.totalPacked mustBe expectedTotalPacked
-              sdilReturn.totalImported mustBe expectedTotalImported
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val sdilReturn            = getSdilReturn()
-          val expectedTotalPacked   = zero
-          val expectedTotalImported = zero
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount to pay using $year rates for Jan - Mar ${year + 1}" in
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val ownBrandLitres        = getRandomLitreage
-          val packLargeLitres       = getRandomLitreage
-          val importLargeLitres     = getRandomLitreage
-          val sdilReturn            = getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          val expectedTotalPacked   = packLargeLitres
-          val expectedTotalImported = importLargeLitres
-          val liableLitres: (Long, Long) = ownBrandLitres |+| packLargeLitres |+| importLargeLitres
-          val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(year) * liableLitres._1 + higherBandCostPerLitreMap(year) * liableLitres._2)
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
-
-      s"calculate total packed, total imported, and tax estimation correctly with non-zero litres totals when return amount is negative using $year rates for Jan - Mar ${year + 1}" in
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val exportLitres          = getRandomLitreage
-          val wastageLitres         = getRandomLitreage
-          val sdilReturn            = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          val expectedTotalPacked   = zero
-          val expectedTotalImported = zero
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.totalPacked mustBe expectedTotalPacked
-          sdilReturn.totalImported mustBe expectedTotalImported
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
+      }
     }
 
+    "taxEstimation" - {
+
+      "should call connector with 4x the levied litreage for ownBrand only" in {
+        reset(mockConnector)
+        val sdilReturn = getSdilReturn(ownBrand = (1000L, 2000L))
+        val expectedLow  = 4 * 1000L
+        val expectedHigh = 4 * 2000L
+
+        when(mockConnector.calculateLevy(any(), eqTo(expectedLow), eqTo(expectedHigh), eqTo(returnPeriod))(using any()))
+          .thenReturn(Future.successful(levyCalc))
+
+        val result = sdilReturn.taxEstimation(sdilNumber, mockConnector, returnPeriod)
+
+        whenReady(result) { total =>
+          total mustBe levyCalc.totalRoundedDown
+          verify(mockConnector).calculateLevy(any(), eqTo(expectedLow), eqTo(expectedHigh), eqTo(returnPeriod))(using any())
+        }
+      }
+
+      "should call connector with 4x the levied litreage for packLarge + importLarge + ownBrand" in {
+        reset(mockConnector)
+        val sdilReturn = getSdilReturn(ownBrand = (100L, 200L), packLarge = (300L, 400L), importLarge = (500L, 600L))
+        val liableLitres: (Long, Long) = (100L, 200L) |+| (300L, 400L) |+| (500L, 600L)
+        val expectedLow  = 4 * liableLitres._1
+        val expectedHigh = 4 * liableLitres._2
+
+        when(mockConnector.calculateLevy(any(), eqTo(expectedLow), eqTo(expectedHigh), eqTo(returnPeriod))(using any()))
+          .thenReturn(Future.successful(levyCalc))
+
+        val result = sdilReturn.taxEstimation(sdilNumber, mockConnector, returnPeriod)
+
+        whenReady(result) { total =>
+          total mustBe levyCalc.totalRoundedDown
+        }
+      }
+
+      "should exclude packSmall, importSmall, export, and wastage from estimation" in {
+        reset(mockConnector)
+        val sdilReturn = getSdilReturn(
+          packSmall = List((1000L, 2000L)),
+          importSmall = (3000L, 4000L),
+          `export` = (5000L, 6000L),
+          wastage = (7000L, 8000L)
+        )
+        // Only packLarge + importLarge + ownBrand contribute, all are zero
+        when(mockConnector.calculateLevy(any(), eqTo(0L), eqTo(0L), eqTo(returnPeriod))(using any()))
+          .thenReturn(Future.successful(LevyCalculation.zero))
+
+        val result = sdilReturn.taxEstimation(sdilNumber, mockConnector, returnPeriod)
+
+        whenReady(result) { total =>
+          total mustBe BigDecimal("0.00")
+        }
+      }
+    }
   }
 }
