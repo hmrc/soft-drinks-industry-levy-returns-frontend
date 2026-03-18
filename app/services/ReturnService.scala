@@ -91,8 +91,7 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
       userAnswers.get(HowManyBroughtIntoUkPage).map(l => (l.lowBand, l.highBand)),
       userAnswers.get(HowManyBroughtIntoTheUKFromSmallProducersPage).map(l => (l.lowBand, l.highBand)),
       userAnswers.get(HowManyCreditsForExportPage).map(l => (l.lowBand, l.highBand)),
-      userAnswers.get(HowManyCreditsForLostDamagedPage).map(l => (l.lowBand, l.highBand)),
-      {
+      userAnswers.get(HowManyCreditsForLostDamagedPage).map(l => (l.lowBand, l.highBand)), {
         val smallProducerList = userAnswers.smallProducerList
         if smallProducerList.nonEmpty then {
           val low  = smallProducerList.map(_.litreage._1).sum

@@ -118,7 +118,9 @@ class SoftDrinksIndustryLevyConnector @Inject() (val http: HttpClientV2, fronten
       }
   }
 
-  def calculateLevy(sdilRef: String, lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit hc: HeaderCarrier): Future[LevyCalculation] = {
+  def calculateLevy(sdilRef: String, lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit
+    hc: HeaderCarrier
+  ): Future[LevyCalculation] = {
     val cacheKey = SDILSessionKeys.levyCalculation(lowLitres, highLitres, returnPeriod)
     sdilSessionCache.fetchEntry[LevyCalculation](sdilRef, cacheKey).flatMap {
       case Some(calc) => Future.successful(calc)

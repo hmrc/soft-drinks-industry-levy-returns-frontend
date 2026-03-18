@@ -36,8 +36,8 @@ import scala.concurrent.Future
 
 class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks with MockitoSugar {
 
-  implicit override lazy val hc: HeaderCarrier = HeaderCarrier()
-  val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  implicit override lazy val hc: HeaderCarrier                   = HeaderCarrier()
+  val mockConnector:             SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
 
   val janToMarInt: Gen[Int] = Gen.choose(1, 3)
   val aprToDecInt: Gen[Int] = Gen.choose(4, 12)
@@ -102,49 +102,43 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks with Mo
 
     "getTotalLowBandLitres" - {
 
-      "should include own brands litres when not small producer" in {
+      "should include own brands litres when not small producer" in
         forAll(posLitresInts) { lowLitres =>
           val userAnswers = userAnswersData(ownBrandsLitres = Some((lowLitres, 0L)), returnPeriod = returnPeriod)
           getTotalLowBandLitres(userAnswers, smallProducer = false) mustBe lowLitres
         }
-      }
 
-      "should exclude own brands litres when small producer" in {
+      "should exclude own brands litres when small producer" in
         forAll(posLitresInts) { lowLitres =>
           val userAnswers = userAnswersData(ownBrandsLitres = Some((lowLitres, 0L)), returnPeriod = returnPeriod)
           getTotalLowBandLitres(userAnswers, smallProducer = true) mustBe 0L
         }
-      }
 
-      "should include contract packer litres" in {
+      "should include contract packer litres" in
         forAll(posLitresInts) { lowLitres =>
           val userAnswers = userAnswersData(contractPackerLitres = Some((lowLitres, 0L)), returnPeriod = returnPeriod)
           getTotalLowBandLitres(userAnswers, smallProducer = false) mustBe lowLitres
         }
-      }
 
-      "should include brought into UK litres" in {
+      "should include brought into UK litres" in
         forAll(posLitresInts) { lowLitres =>
           val userAnswers = userAnswersData(broughtIntoUKLitres = Some((lowLitres, 0L)), returnPeriod = returnPeriod)
           getTotalLowBandLitres(userAnswers, smallProducer = false) mustBe lowLitres
         }
-      }
 
-      "should subtract export credits" in {
+      "should subtract export credits" in
         forAll(posLitresInts) { lowLitres =>
           val userAnswers = userAnswersData(claimCreditsForExportsLitres = Some((lowLitres, 0L)), returnPeriod = returnPeriod)
           getTotalLowBandLitres(userAnswers, smallProducer = false) mustBe -lowLitres
         }
-      }
 
-      "should subtract lost/damaged credits" in {
+      "should subtract lost/damaged credits" in
         forAll(posLitresInts) { lowLitres =>
           val userAnswers = userAnswersData(claimCreditsForLostDamagedLitres = Some((lowLitres, 0L)), returnPeriod = returnPeriod)
           getTotalLowBandLitres(userAnswers, smallProducer = false) mustBe -lowLitres
         }
-      }
 
-      "should not include small producers litres or brought into UK from small producers litres" in {
+      "should not include small producers litres or brought into UK from small producers litres" in
         forAll(posLitresInts) { lowLitres =>
           val userAnswers = userAnswersData(
             broughtIntoUkFromSmallProducersLitres = Some((lowLitres, 0L)),
@@ -152,32 +146,29 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks with Mo
           )
           getTotalLowBandLitres(userAnswers, smallProducer = false) mustBe 0L
         }
-      }
     }
 
     "getTotalHighBandLitres" - {
 
-      "should include own brands litres when not small producer" in {
+      "should include own brands litres when not small producer" in
         forAll(posLitresInts) { highLitres =>
           val userAnswers = userAnswersData(ownBrandsLitres = Some((0L, highLitres)), returnPeriod = returnPeriod)
           getTotalHighBandLitres(userAnswers, smallProducer = false) mustBe highLitres
         }
-      }
 
-      "should exclude own brands litres when small producer" in {
+      "should exclude own brands litres when small producer" in
         forAll(posLitresInts) { highLitres =>
           val userAnswers = userAnswersData(ownBrandsLitres = Some((0L, highLitres)), returnPeriod = returnPeriod)
           getTotalHighBandLitres(userAnswers, smallProducer = true) mustBe 0L
         }
-      }
     }
 
     "calculateTotal" - {
 
       "should call connector with aggregated litres and return totalRoundedDown" in {
         reset(mockConnector)
-        val lowLitres  = 5000L
-        val highLitres = 3000L
+        val lowLitres   = 5000L
+        val highLitres  = 3000L
         val userAnswers = userAnswersData(
           contractPackerLitres = Some((lowLitres, highLitres)),
           returnPeriod = returnPeriod
@@ -196,8 +187,8 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks with Mo
 
       "should pass zero litres for own brands when small producer" in {
         reset(mockConnector)
-        val lowLitres  = 5000L
-        val highLitres = 3000L
+        val lowLitres   = 5000L
+        val highLitres  = 3000L
         val userAnswers = userAnswersData(
           ownBrandsLitres = Some((lowLitres, highLitres)),
           returnPeriod = returnPeriod
@@ -216,12 +207,12 @@ class TotalForQuarterSpec extends SpecBase with ScalaCheckPropertyChecks with Mo
 
       "should aggregate multiple sources correctly" in {
         reset(mockConnector)
-        val ownLow = 1000L; val ownHigh = 2000L
-        val packLow = 500L; val packHigh = 600L
+        val ownLow    = 1000L; val ownHigh   = 2000L
+        val packLow   = 500L; val packHigh   = 600L
         val importLow = 300L; val importHigh = 400L
         val exportLow = 200L; val exportHigh = 100L
 
-        val expectedLow  = packLow + importLow - exportLow + ownLow  // 500 + 300 - 200 + 1000 = 1600
+        val expectedLow  = packLow + importLow - exportLow + ownLow // 500 + 300 - 200 + 1000 = 1600
         val expectedHigh = packHigh + importHigh - exportHigh + ownHigh // 600 + 400 - 100 + 2000 = 2900
 
         val userAnswers = userAnswersData(

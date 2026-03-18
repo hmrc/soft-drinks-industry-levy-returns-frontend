@@ -34,8 +34,8 @@ import scala.concurrent.Future
 
 class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper with ScalaCheckPropertyChecks {
 
-  implicit override lazy val hc: HeaderCarrier = HeaderCarrier()
-  val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  implicit override lazy val hc: HeaderCarrier                   = HeaderCarrier()
+  val mockConnector:             SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
 
   private def getRandomLitres:              Long         = Math.floor(Math.random() * 1000000).toLong
   private def getRandomLitreage:            (Long, Long) = (getRandomLitres, getRandomLitres)
@@ -64,34 +64,32 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
     val levyCalc       = levyCalculation(BigDecimal("200"), BigDecimal("300"))
 
     "totalPacked" - {
-      "should sum packLarge and packSmall litres" in {
+      "should sum packLarge and packSmall litres" in
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
-            val sdilReturn         = getSdilReturn(packLarge = (lowLitres, highLitres), packSmall = List((100L, 200L)))
-            val expectedPacked     = (lowLitres + 100L, highLitres + 200L)
+            val sdilReturn     = getSdilReturn(packLarge = (lowLitres, highLitres), packSmall = List((100L, 200L)))
+            val expectedPacked = (lowLitres + 100L, highLitres + 200L)
             sdilReturn.totalPacked mustBe expectedPacked
           }
         }
-      }
     }
 
     "totalImported" - {
-      "should sum importLarge and importSmall litres" in {
+      "should sum importLarge and importSmall litres" in
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
-            val sdilReturn           = getSdilReturn(importLarge = (lowLitres, highLitres), importSmall = (100L, 200L))
-            val expectedImported     = (lowLitres + 100L, highLitres + 200L)
+            val sdilReturn       = getSdilReturn(importLarge = (lowLitres, highLitres), importSmall = (100L, 200L))
+            val expectedImported = (lowLitres + 100L, highLitres + 200L)
             sdilReturn.totalImported mustBe expectedImported
           }
         }
-      }
     }
 
     "taxEstimation" - {
 
       "should call connector with 4x the levied litreage for ownBrand only" in {
         reset(mockConnector)
-        val sdilReturn = getSdilReturn(ownBrand = (1000L, 2000L))
+        val sdilReturn   = getSdilReturn(ownBrand = (1000L, 2000L))
         val expectedLow  = 4 * 1000L
         val expectedHigh = 4 * 2000L
 

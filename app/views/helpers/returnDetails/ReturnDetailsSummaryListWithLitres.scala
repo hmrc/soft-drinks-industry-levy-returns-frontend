@@ -54,7 +54,7 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper w
   )(implicit messages: Messages): Seq[SummaryListRow] =
     (userAnswers.get(page), userAnswers.get(litresPage)) match {
       case (Some(true), Some(litresInBands)) =>
-        val litresKey = (litresInBands.lowBand, litresInBands.highBand)
+        val litresKey       = (litresInBands.lowBand, litresInBands.highBand)
         val levyCalculation = levyCalculations.getOrElse(
           litresKey, {
             logger.warn(s"Missing levy calculation for litres $litresKey, using zero")
@@ -72,10 +72,10 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper w
   )(implicit messages: Messages): Seq[SummaryListRow] = {
     val smallProducerList = userAnswers.smallProducerList
     if userAnswers.get(page).contains(true) && smallProducerList.nonEmpty then {
-      val lowBandLitres  = smallProducerList.map(_.litreage._1).sum
-      val highBandLitres = smallProducerList.map(_.litreage._2).sum
-      val litresInBands  = LitresInBands(lowBandLitres, highBandLitres)
-      val litresKey = (lowBandLitres, highBandLitres)
+      val lowBandLitres   = smallProducerList.map(_.litreage._1).sum
+      val highBandLitres  = smallProducerList.map(_.litreage._2).sum
+      val litresInBands   = LitresInBands(lowBandLitres, highBandLitres)
+      val litresKey       = (lowBandLitres, highBandLitres)
       val levyCalculation = levyCalculations.getOrElse(
         litresKey, {
           logger.warn(s"Missing levy calculation for small producer litres $litresKey, using zero")

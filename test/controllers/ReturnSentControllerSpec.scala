@@ -72,7 +72,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -92,7 +93,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -122,7 +124,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -152,7 +155,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -172,7 +176,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -202,7 +207,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -232,7 +238,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -260,7 +267,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("720"), BigDecimal("1440")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("720"), BigDecimal("1440")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -298,7 +306,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("776"), BigDecimal("1554")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("776"), BigDecimal("1554")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -328,7 +337,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -348,7 +358,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -378,7 +389,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -408,7 +420,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -431,7 +444,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -464,7 +478,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -494,7 +509,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -514,7 +530,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -544,7 +561,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -574,7 +592,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -595,7 +614,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result  = route(application, request).value
@@ -625,7 +645,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result  = route(application, request).value
@@ -653,7 +674,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amountsZero))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result  = route(application, request).value
@@ -673,7 +695,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -695,7 +718,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -716,7 +740,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -737,7 +762,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -759,7 +785,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -783,7 +810,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         .build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)

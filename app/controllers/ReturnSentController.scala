@@ -54,7 +54,8 @@ class ReturnSentController @Inject() (
         levyCalculations <- returnsOrchestrator.calculateLevyCalculations(sdilRef, userAnswers)
       } yield Ok(
         view(returnPeriod, userAnswers, amounts, subscription, CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total), levyCalculations)(
-          using implicitly,
+          using
+          implicitly,
           implicitly,
           config
         )

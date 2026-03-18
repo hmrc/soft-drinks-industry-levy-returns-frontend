@@ -169,7 +169,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
     }
 
     "return levy calculation when not in cache" in {
-      val period = ReturnPeriod(year = 2024, quarter = 1)
+      val period              = ReturnPeriod(year = 2024, quarter = 1)
       val expectedCalculation = levyCalculation(BigDecimal("180"), BigDecimal("240"))
 
       when(mockSDILSessionCache.fetchEntry[LevyCalculation](any(), any())(using any())).thenReturn(Future.successful(None))
@@ -184,7 +184,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
     }
 
     "return levy calculation from cache" in {
-      val period = ReturnPeriod(year = 2024, quarter = 1)
+      val period            = ReturnPeriod(year = 2024, quarter = 1)
       val cachedCalculation = levyCalculation(BigDecimal("180"), BigDecimal("240"))
 
       when(mockSDILSessionCache.fetchEntry[LevyCalculation](any(), any())(using any())).thenReturn(Future.successful(Some(cachedCalculation)))

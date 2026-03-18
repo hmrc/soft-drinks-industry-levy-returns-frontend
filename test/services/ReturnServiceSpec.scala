@@ -240,7 +240,7 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
         "ownBrands"                -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
         "packagedContractPacker"   -> true,
-        "howManyAsAContractPacker"  -> Json.obj("lowBand" -> 3000, "highBand" -> 4000)
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 3000, "highBand" -> 4000)
       )
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
 
@@ -264,7 +264,7 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
         "ownBrands"                -> true,
         "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000),
         "packagedContractPacker"   -> true,
-        "howManyAsAContractPacker"  -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
+        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
       )
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData)
 
@@ -322,19 +322,19 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
     "should collect litres from all pages with different values per page" in {
       reset(mockSdilConnector)
       val userAnswersData = Json.obj(
-        "ownBrands"                              -> true,
-        "brandsPackagedAtOwnSites"               -> Json.obj("lowBand" -> 100, "highBand" -> 200),
-        "packagedContractPacker"                  -> true,
-        "howManyAsAContractPacker"                -> Json.obj("lowBand" -> 300, "highBand" -> 400),
-        "broughtIntoUK"                          -> true,
-        "HowManyBroughtIntoUk"                   -> Json.obj("lowBand" -> 500, "highBand" -> 600),
-        "broughtIntoUkFromSmallProducers"         -> true,
+        "ownBrands"                                 -> true,
+        "brandsPackagedAtOwnSites"                  -> Json.obj("lowBand" -> 100, "highBand" -> 200),
+        "packagedContractPacker"                    -> true,
+        "howManyAsAContractPacker"                  -> Json.obj("lowBand" -> 300, "highBand" -> 400),
+        "broughtIntoUK"                             -> true,
+        "HowManyBroughtIntoUk"                      -> Json.obj("lowBand" -> 500, "highBand" -> 600),
+        "broughtIntoUkFromSmallProducers"           -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 700, "highBand" -> 800),
-        "claimCreditsForExports"                  -> true,
-        "howManyCreditsForExport"                 -> Json.obj("lowBand" -> 900, "highBand" -> 1000),
-        "claimCreditsForLostDamaged"              -> true,
-        "howManyCreditsForLostDamaged"            -> Json.obj("lowBand" -> 1100, "highBand" -> 1200),
-        "exemptionsForSmallProducers"             -> true
+        "claimCreditsForExports"                    -> true,
+        "howManyCreditsForExport"                   -> Json.obj("lowBand" -> 900, "highBand" -> 1000),
+        "claimCreditsForLostDamaged"                -> true,
+        "howManyCreditsForLostDamaged"              -> Json.obj("lowBand" -> 1100, "highBand" -> 1200),
+        "exemptionsForSmallProducers"               -> true
       )
       val smallProducers = List(
         SmallProducer("A", "XCSDIL000000069", (1300L, 1400L))

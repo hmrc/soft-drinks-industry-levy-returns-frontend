@@ -188,7 +188,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
             List(("pre April 2025 rates", preApril2025ReturnPeriod), ("2025 tax year rates", taxYear2025ReturnPeriod)).foreach(returnPeriodWithKey =>
               s"when the $key - ${returnPeriodWithKey._1}" - {
                 val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
-                val levyCalcs = if (returnPeriodWithKey._2 == preApril2025ReturnPeriod) preApril2025LevyCalcs else taxYear2025LevyCalcs
+                val levyCalcs = if returnPeriodWithKey._2 == preApril2025ReturnPeriod then preApril2025LevyCalcs else taxYear2025LevyCalcs
                 val html1: HtmlFormat.Appendable =
                   returnSentView(returnPeriod, userAnswersWithReturnPeriod, amounts, aSubscription, amountOwed, levyCalcs)
                 val document1: Document = doc(html1)

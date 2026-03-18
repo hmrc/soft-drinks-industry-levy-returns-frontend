@@ -94,7 +94,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         .build()
 
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("firstQuarter")} 2022"
 
@@ -118,7 +119,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       ).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("secondQuarter")} 2021"
 
@@ -143,7 +145,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       ).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("thirdQuarter")} 2020"
 
@@ -167,7 +170,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         )
       ).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("fourthQuarter")} 2019"
 
@@ -200,7 +204,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         applicationBuilder(Some(emptyUserAnswers), Some(ReturnPeriod(year = 2019, quarter = 3)), Some(subscriptionWithSmallProducerActivity))
       ).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
@@ -222,7 +227,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
@@ -247,7 +253,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -290,7 +297,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -333,7 +341,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((5L, 3L) -> levyCalculation(BigDecimal("0.90"), BigDecimal("0.72")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((5L, 3L) -> levyCalculation(BigDecimal("0.90"), BigDecimal("0.72")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -356,7 +365,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((5L, 3L) -> levyCalculation(BigDecimal("0.97"), BigDecimal("0.777")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((5L, 3L) -> levyCalculation(BigDecimal("0.97"), BigDecimal("0.777")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -378,7 +388,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -399,7 +410,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -441,7 +453,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -482,7 +495,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -510,7 +524,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("0"), BigDecimal("0")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("0"), BigDecimal("0")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -554,7 +569,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("0"), BigDecimal("0")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("0"), BigDecimal("0")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -593,7 +609,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -613,7 +630,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -648,7 +666,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -683,7 +702,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -709,7 +729,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("0"), BigDecimal("0")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("0"), BigDecimal("0")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -756,7 +777,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("0"), BigDecimal("0")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("0"), BigDecimal("0")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -800,7 +822,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -820,7 +843,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -861,7 +885,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -902,7 +927,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -923,7 +949,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10000L, 20000L) -> levyCalculation(BigDecimal("1800"), BigDecimal("4800")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -965,7 +992,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map((10001L, 20002L) -> levyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518")))))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1025,7 +1053,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(Amounts(0.01, 0.03, 0.02)))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1051,7 +1080,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1092,7 +1122,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amountsZero))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1137,7 +1168,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts1))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1182,7 +1214,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts1))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1211,7 +1244,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
         running(application) {
           when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-          when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+          when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+            .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
           val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
 
@@ -1234,7 +1268,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1255,7 +1290,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1278,7 +1314,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1300,7 +1337,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1318,7 +1356,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         withRequiredAnswersComplete(applicationBuilder(Some(userAnswers))).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1337,7 +1376,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val expectedPreHeader = s"This return is for ${aSubscription.orgName} for ${Messages("thirdQuarter")} 2018"
       running(application) {
         when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amountsZero))
-        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+        when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+          .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -1356,7 +1396,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           when(mockOrchestrator.calculateAmounts(any(), any(), any())(using any(), any())).thenReturn(Future.failed(new RuntimeException("ERROR")))
-          when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())).thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
+          when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+            .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
           val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad.url)
           await(route(application, request).value)
           events
