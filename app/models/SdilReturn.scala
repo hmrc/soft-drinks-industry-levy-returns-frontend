@@ -17,14 +17,15 @@
 package models
 
 import cats.implicits.*
-import config.FrontendAppConfig
-import models.LevyCalculator.getLevyCalculation
+import connectors.SoftDrinksIndustryLevyConnector
 import models.SdilReturn.*
 import pages.*
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDateTime
+import scala.concurrent.{ExecutionContext, Future}
 
 case class SdilReturn(
   ownBrand:    (Long, Long),
@@ -40,12 +41,14 @@ case class SdilReturn(
   def totalPacked:   (Long, Long) = packLarge |+| packSmall.total
   def totalImported: (Long, Long) = importLarge |+| importSmall
 
-  def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
+  def taxEstimation(sdilRef: String, connector: SoftDrinksIndustryLevyConnector, returnPeriod: ReturnPeriod)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[BigDecimal] = {
     val leviedLitreageForQuarter:     (Long, Long) = packLarge |+| importLarge |+| ownBrand
     val estimatedLowLitreageForYear:  Long         = 4 * leviedLitreageForQuarter._1
     val estimatedHighLitreageForYear: Long         = 4 * leviedLitreageForQuarter._2
-    val levyCalculation: LevyCalculation = getLevyCalculation(estimatedLowLitreageForYear, estimatedHighLitreageForYear, returnPeriod)(using config)
-    levyCalculation.totalRoundedDown
+    connector.calculateLevy(sdilRef, estimatedLowLitreageForYear, estimatedHighLitreageForYear, returnPeriod).map(_.totalRoundedDown)
   }
 }
 

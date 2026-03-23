@@ -60,12 +60,6 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val cacheTtl:     Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
   val sdilCacheTTL: Int = servicesConfig.getInt("mongodb.short-lived.timeToLiveInSeconds")
 
-  val lowerBandCostPerLitre:  BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitre"))
-  val higherBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))
-
-  val lowerBandCostPerLitrePostApril2025:  BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitrePostApril2025"))
-  val higherBandCostPerLitrePostApril2025: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitrePostApril2025"))
-
   val balanceAllEnabled:                Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
   val addressLookupService:             String  = servicesConfig.baseUrl("address-lookup-frontend")

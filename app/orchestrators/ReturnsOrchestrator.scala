@@ -22,7 +22,7 @@ import com.google.inject.{Inject, Singleton}
 import errors.NoPendingReturnForGivenPeriod
 import models.requests.{DataRequest, OptionalDataRequest}
 import models.retrieved.RetrievedSubscription
-import models.{Amounts, ReturnPeriod, UserAnswers}
+import models.{Amounts, LevyCalculation, ReturnPeriod, UserAnswers}
 import play.api.mvc.AnyContent
 import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
 import service.ReturnResult
@@ -90,6 +90,12 @@ class ReturnsOrchestrator @Inject() (returnService: ReturnService, sdilSessionCa
     ec: ExecutionContext
   ): Future[Amounts] =
     returnService.calculateAmounts(sdilRef, userAnswers, returnPeriod)
+
+  def calculateLevyCalculations(sdilRef: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Map[(Long, Long), LevyCalculation]] =
+    returnService.calculateLevyCalculations(sdilRef, userAnswers)
 
   def completeReturnAndUpdateUserAnswers()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val subscription = request.subscription

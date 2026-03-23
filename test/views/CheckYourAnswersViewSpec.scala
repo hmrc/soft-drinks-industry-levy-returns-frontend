@@ -16,12 +16,13 @@
 
 package views
 
+import base.LevyCalculationTestHelper.levyCalculation
 import base.ReturnsTestData.*
 import base.UserAnswersTestData
 import base.UserAnswersTestData.userIsSmallProducer
 import config.FrontendAppConfig
 import controllers.routes
-import models.{Amounts, ReturnPeriod}
+import models.{Amounts, LevyCalculation, ReturnPeriod}
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.{Call, Request}
@@ -43,11 +44,32 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
   val amounts:         Amounts = Amounts(1000, 100, 1100)
   val isSmallProducer: Boolean = false
 
+  val preApril2025LevyCalcs: Map[(Long, Long), LevyCalculation] = Map(
+    (1000L, 1000L) -> levyCalculation(BigDecimal("180"), BigDecimal("240")),
+    (1000L, 0L)    -> levyCalculation(BigDecimal("180"), BigDecimal("0")),
+    (0L, 1000L)    -> levyCalculation(BigDecimal("0"), BigDecimal("240")),
+    (0L, 0L)       -> LevyCalculation.zero
+  )
+  val taxYear2025LevyCalcs: Map[(Long, Long), LevyCalculation] = Map(
+    (1000L, 1000L) -> levyCalculation(BigDecimal("194"), BigDecimal("259")),
+    (1000L, 0L)    -> levyCalculation(BigDecimal("194"), BigDecimal("0")),
+    (0L, 1000L)    -> levyCalculation(BigDecimal("0"), BigDecimal("259")),
+    (0L, 0L)       -> LevyCalculation.zero
+  )
+
   val call: Call = routes.CheckYourAnswersController.onSubmit
 
   "checkYourAnswersView" - {
     val html: HtmlFormat.Appendable =
-      checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
+      checkYourAnswersView(
+        baseAlias,
+        returnPeriod,
+        UserAnswersTestData.emptyUserDetails,
+        amounts,
+        call,
+        isSmallProducer,
+        Map.empty[(Long, Long), LevyCalculation]
+      )
     val document: Document = doc(html)
 
     "should have the expected title" in {
@@ -62,7 +84,15 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       List(0, 1, 2, 3).foreach { quarter =>
         val returnPeriodWithQuarter = ReturnPeriod(2022, quarter)
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriodWithQuarter, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
+          checkYourAnswersView(
+            baseAlias,
+            returnPeriodWithQuarter,
+            UserAnswersTestData.emptyUserDetails,
+            amounts,
+            call,
+            isSmallProducer,
+            Map.empty[(Long, Long), LevyCalculation]
+          )
         val document1: Document = doc(html1)
 
         s"when in return period is in quarter $quarter" in {
@@ -74,7 +104,15 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
     "should include the amount to pay sub header" - {
       "when the amount total is positive" in {
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, call, isSmallProducer)
+          checkYourAnswersView(
+            baseAlias,
+            returnPeriod,
+            UserAnswersTestData.emptyUserDetails,
+            amounts,
+            call,
+            isSmallProducer,
+            Map.empty[(Long, Long), LevyCalculation]
+          )
         val document1: Document = doc(html1)
         val expectedResult = Messages("youNeedToPay", CurrencyFormatter.formatAmountOfMoneyWithPoundSign(amounts.total))
 
@@ -86,7 +124,15 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       "when the amount total is negative" in {
         val amountsWithNegativeTotal = amounts.copy(total = -1000)
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amountsWithNegativeTotal, call, isSmallProducer)
+          checkYourAnswersView(
+            baseAlias,
+            returnPeriod,
+            UserAnswersTestData.emptyUserDetails,
+            amountsWithNegativeTotal,
+            call,
+            isSmallProducer,
+            Map.empty[(Long, Long), LevyCalculation]
+          )
         val document1: Document = doc(html1)
         val expectedResult =
           Messages(
@@ -104,7 +150,15 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       "when the total amount is 0" in {
         val amountsWith0Total = amounts.copy(total = 0)
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, UserAnswersTestData.emptyUserDetails, amountsWith0Total, call, isSmallProducer)
+          checkYourAnswersView(
+            baseAlias,
+            returnPeriod,
+            UserAnswersTestData.emptyUserDetails,
+            amountsWith0Total,
+            call,
+            isSmallProducer,
+            Map.empty[(Long, Long), LevyCalculation]
+          )
         val document1: Document = doc(html1)
         document1.getElementById("cya-sub-header") mustBe null
       }
@@ -114,7 +168,15 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       "when the user is a small producer" in {
         val amountsWith0Total = amounts.copy(total = 0)
         val html1: HtmlFormat.Appendable =
-          checkYourAnswersView(baseAlias, returnPeriod, userIsSmallProducer, amountsWith0Total, call, isSmallProducer = true)
+          checkYourAnswersView(
+            baseAlias,
+            returnPeriod,
+            userIsSmallProducer,
+            amountsWith0Total,
+            call,
+            isSmallProducer = true,
+            Map.empty[(Long, Long), LevyCalculation]
+          )
         val document1: Document = doc(html1)
         document1.getElementById("ownBrandsPackagedAtYourOwnSite") mustBe null
       }
@@ -126,8 +188,9 @@ class CheckYourAnswersViewSpec extends ReturnDetailsSummaryRowTestHelper {
       List(("pre April 2025 rates", preApril2025ReturnPeriod), ("2025 tax year rates", taxYear2025ReturnPeriod)).foreach(returnPeriodWithKey =>
         s"when the $key - ${returnPeriodWithKey._1}" - {
           val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
+          val levyCalcs                   = if returnPeriodWithKey._2 == preApril2025ReturnPeriod then preApril2025LevyCalcs else taxYear2025LevyCalcs
           val html1: HtmlFormat.Appendable =
-            checkYourAnswersView(baseAlias, returnPeriod, userAnswersWithReturnPeriod, amounts, call, isSmallProducer)
+            checkYourAnswersView(baseAlias, returnPeriod, userAnswersWithReturnPeriod, amounts, call, isSmallProducer, levyCalcs)
           val document1: Document = doc(html1)
           testSummaryLists(key, document1, userAnswersWithReturnPeriod, isCheckAnswers = true)
         }

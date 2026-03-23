@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.retrieved.{OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription}
-import models.{FinancialLineItem, ReturnPeriod, ReturnsVariation, SdilReturn}
+import models.{FinancialLineItem, LevyCalculation, LevyCalculationRequest, ReturnPeriod, ReturnsVariation, SdilReturn}
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
 import repositories.{SDILSessionCache, SDILSessionKeys}
@@ -116,6 +116,25 @@ class SoftDrinksIndustryLevyConnector @Inject() (val http: HttpClientV2, fronten
       .map { response =>
         Some(response.status)
       }
+  }
+
+  def calculateLevy(sdilRef: String, lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit
+    hc: HeaderCarrier
+  ): Future[LevyCalculation] = {
+    val cacheKey = SDILSessionKeys.levyCalculation(lowLitres, highLitres, returnPeriod)
+    sdilSessionCache.fetchEntry[LevyCalculation](sdilRef, cacheKey).flatMap {
+      case Some(calc) => Future.successful(calc)
+      case None       =>
+        http
+          .post(url"$sdilUrl/levy/calculate")
+          .withBody(Json.toJson(LevyCalculationRequest(lowLitres, highLitres, returnPeriod)))
+          .execute[LevyCalculation]
+          .flatMap { calc =>
+            sdilSessionCache
+              .save[LevyCalculation](sdilRef, cacheKey, calc)
+              .map(_ => calc)
+          }
+    }
   }
 
   def returns_variation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier): Future[Option[Int]] = {

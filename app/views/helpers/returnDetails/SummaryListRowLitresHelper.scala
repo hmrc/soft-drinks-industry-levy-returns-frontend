@@ -16,9 +16,7 @@
 
 package views.helpers.returnDetails
 
-import config.FrontendAppConfig
-import models.LevyCalculator.getLevyCalculation
-import models.{LevyCalculation, LitresInBands, ReturnPeriod}
+import models.{LevyCalculation, LitresInBands}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -38,18 +36,15 @@ trait SummaryListRowLitresHelper {
   val lowBand  = "lowband"
   val highBand = "highband"
 
-  def rows(litresInBands: LitresInBands, returnPeriod: ReturnPeriod, isCheckAnswers: Boolean)(implicit
-    messages: Messages,
-    config:   FrontendAppConfig
-  ): Seq[SummaryListRow] = {
-    val levyCalculation: LevyCalculation = getLevyCalculation(litresInBands.lowBand, litresInBands.highBand, returnPeriod)
+  def rows(litresInBands: LitresInBands, levyCalculation: LevyCalculation, isCheckAnswers: Boolean)(implicit
+    messages: Messages
+  ): Seq[SummaryListRow] =
     Seq(
       bandRow(litresInBands.lowBand, lowBand, isCheckAnswers),
       bandLevyRow(levyCalculation.lowLevy, lowBand),
       bandRow(litresInBands.highBand, highBand, isCheckAnswers),
       bandLevyRow(levyCalculation.highLevy, highBand)
     )
-  }
 
   private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
     val key = if band == lowBand then {
@@ -86,9 +81,9 @@ trait SummaryListRowLitresHelper {
     if hasZeroLevy then {
       0
     } else if isNegativeLevy then {
-      levyAmount.toDouble * -1
+      levyAmount * -1
     } else {
-      levyAmount.toDouble
+      levyAmount
     }
 
   def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if isCheckAnswers then {

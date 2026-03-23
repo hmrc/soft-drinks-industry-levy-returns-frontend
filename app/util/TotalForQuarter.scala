@@ -16,18 +16,22 @@
 
 package util
 
-import config.FrontendAppConfig
-import models.LevyCalculator.getLevyCalculation
-import models.{LevyCalculation, UserAnswers}
+import connectors.SoftDrinksIndustryLevyConnector
+import models.UserAnswers
 import pages.*
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object TotalForQuarter {
 
-  def calculateTotal(userAnswers: UserAnswers, smallProducer: Boolean)(config: FrontendAppConfig) = {
+  def calculateTotal(sdilRef: String, userAnswers: UserAnswers, smallProducer: Boolean, connector: SoftDrinksIndustryLevyConnector)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[BigDecimal] = {
     val totalLowBandLitres  = getTotalLowBandLitres(userAnswers, smallProducer)
     val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
-    val levyCalculation: LevyCalculation = getLevyCalculation(totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod)(using config)
-    levyCalculation.totalRoundedDown
+    connector.calculateLevy(sdilRef, totalLowBandLitres, totalHighBandLitres, userAnswers.returnPeriod).map(_.totalRoundedDown)
   }
 
   private[util] def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {

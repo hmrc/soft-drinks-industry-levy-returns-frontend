@@ -16,10 +16,11 @@
 
 package views
 
+import base.LevyCalculationTestHelper.levyCalculation
 import base.ReturnsTestData.*
 import base.UserAnswersTestData
 import config.FrontendAppConfig
-import models.{Amounts, ReturnPeriod}
+import models.{Amounts, LevyCalculation, ReturnPeriod}
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -44,11 +45,24 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
     "total owed for this quarter is negative" -> amounts.copy(total = -1000)
   )
 
+  val preApril2025LevyCalcs: Map[(Long, Long), LevyCalculation] = Map(
+    (1000L, 1000L) -> levyCalculation(BigDecimal("180"), BigDecimal("240")),
+    (1000L, 0L)    -> levyCalculation(BigDecimal("180"), BigDecimal("0")),
+    (0L, 1000L)    -> levyCalculation(BigDecimal("0"), BigDecimal("240")),
+    (0L, 0L)       -> LevyCalculation.zero
+  )
+  val taxYear2025LevyCalcs: Map[(Long, Long), LevyCalculation] = Map(
+    (1000L, 1000L) -> levyCalculation(BigDecimal("194"), BigDecimal("259")),
+    (1000L, 0L)    -> levyCalculation(BigDecimal("194"), BigDecimal("0")),
+    (0L, 1000L)    -> levyCalculation(BigDecimal("0"), BigDecimal("259")),
+    (0L, 0L)       -> LevyCalculation.zero
+  )
+
   val amountOwed = "£100"
 
   "returnSentView" - {
     val html: HtmlFormat.Appendable =
-      returnSentView(returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, aSubscription, amountOwed)
+      returnSentView(returnPeriod, UserAnswersTestData.emptyUserDetails, amounts, aSubscription, amountOwed, Map.empty[(Long, Long), LevyCalculation])
     val document: Document = doc(html)
 
     "should have the expected title" in {
@@ -71,7 +85,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
 
     amountsLists.foreach { case (key, amount) =>
       val html1: HtmlFormat.Appendable =
-        returnSentView(returnPeriod, emptyUserAnswers, amount, aSubscription, amountOwed)
+        returnSentView(returnPeriod, emptyUserAnswers, amount, aSubscription, amountOwed, Map.empty[(Long, Long), LevyCalculation])
       val document1: Document = doc(html1)
       s"when the $key" - {
         "should include a what to do next section" - {
@@ -174,8 +188,9 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
             List(("pre April 2025 rates", preApril2025ReturnPeriod), ("2025 tax year rates", taxYear2025ReturnPeriod)).foreach(returnPeriodWithKey =>
               s"when the $key - ${returnPeriodWithKey._1}" - {
                 val userAnswersWithReturnPeriod = userAnswers.copy(returnPeriod = returnPeriodWithKey._2)
+                val levyCalcs = if returnPeriodWithKey._2 == preApril2025ReturnPeriod then preApril2025LevyCalcs else taxYear2025LevyCalcs
                 val html1: HtmlFormat.Appendable =
-                  returnSentView(returnPeriod, userAnswersWithReturnPeriod, amounts, aSubscription, amountOwed)
+                  returnSentView(returnPeriod, userAnswersWithReturnPeriod, amounts, aSubscription, amountOwed, levyCalcs)
                 val document1: Document = doc(html1)
                 val details = document1.getElementsByClass(Selectors.details).get(0)
                 testSummaryLists(key, details, userAnswersWithReturnPeriod, false)

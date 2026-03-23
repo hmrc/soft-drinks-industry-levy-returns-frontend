@@ -58,22 +58,22 @@ class CheckYourAnswersController @Inject() (
       val isSmallProducer = request.subscription.activity.smallProducer
 
       sanitiseUserAnswers(request.userAnswers, request.subscription).flatMap { userAnswers =>
-        returnsOrchestrator
-          .calculateAmounts(sdilRef, userAnswers, returnPeriod)
-          .map { amounts =>
-            val submitUrl: Call = routes.CheckYourAnswersController.onSubmit
-            Ok(
-              checkYourAnswersView(request.subscription.orgName, returnPeriod, userAnswers, amounts, submitUrl, isSmallProducer)(using
-                implicitly,
-                implicitly,
-                config
-              )
+        (for {
+          amounts          <- returnsOrchestrator.calculateAmounts(sdilRef, userAnswers, returnPeriod)
+          levyCalculations <- returnsOrchestrator.calculateLevyCalculations(sdilRef, userAnswers)
+        } yield {
+          val submitUrl: Call = routes.CheckYourAnswersController.onSubmit
+          Ok(
+            checkYourAnswersView(request.subscription.orgName, returnPeriod, userAnswers, amounts, submitUrl, isSmallProducer, levyCalculations)(using
+              implicitly,
+              implicitly,
+              config
             )
-          }
-          .recoverWith { case t: Throwable =>
-            genericLogger.logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
-            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-          }
+          )
+        }).recoverWith { case t: Throwable =>
+          genericLogger.logger.error(s"Exception occurred while retrieving SDIL data for $sdilRef", t)
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        }
       }
     }
   }

@@ -38,4 +38,7 @@ object SDILSessionKeys {
   def smallProducerForPeriod(returnPeriod: ReturnPeriod) =
     s"SMALL_PRODUCER_YEAR_${returnPeriod.year}_QUARTER_${returnPeriod.quarter}"
 
+  def levyCalculation(lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod) =
+    s"LEVY_CALC_${lowLitres}_${highLitres}_YEAR_${returnPeriod.year}_QUARTER_${returnPeriod.quarter}"
+
 }
