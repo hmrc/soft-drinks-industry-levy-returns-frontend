@@ -374,7 +374,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
 
     "preserve correlation ids and strip custom headers in outbound POST HeaderCarrier for returns_update" in {
       val incomingHc = correlationHeaderCarrier("request-id-returns-post-1", "session-id-returns-post-1")
-      val period = ReturnPeriod(year = 2022, quarter = 3)
+      val period     = ReturnPeriod(year = 2022, quarter = 3)
       val sdilReturn: SdilReturn = SdilReturn(
         ownBrand = (1L, 1L),
         packLarge = (1L, 1L),

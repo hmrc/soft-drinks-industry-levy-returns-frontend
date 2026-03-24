@@ -32,12 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 class SoftDrinksIndustryLevyConnector @Inject() (
-  val http: HttpClientV2,
+  val http:          HttpClientV2,
   frontendAppConfig: FrontendAppConfig,
-  sdilSessionCache: SDILSessionCache,
-  genericLogger: GenericLogger
-)(
-  implicit ec: ExecutionContext
+  sdilSessionCache:  SDILSessionCache,
+  genericLogger:     GenericLogger
+)(implicit
+  ec: ExecutionContext
 ) {
 
   lazy val sdilUrl: String = frontendAppConfig.sdilBaseUrl
@@ -56,8 +56,8 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     )
 
   private def sdilContext(
-    path: String,
-    status: Option[Int] = None,
+    path:      String,
+    status:    Option[Int] = None,
     startTime: Option[Long] = None
   ): String =
     Seq(
@@ -90,7 +90,7 @@ class SoftDrinksIndustryLevyConnector @Inject() (
       }
 
   private def executePost[A](operation: String, path: String, body: play.api.libs.json.JsValue)(using
-    hc: HeaderCarrier,
+    hc:  HeaderCarrier,
     rds: HttpReads[A]
   ): Future[A] =
     val urlString = s"$sdilUrl$path"
@@ -145,12 +145,11 @@ class SoftDrinksIndustryLevyConnector @Inject() (
           }
     }
 
-  def getPendingReturnPeriods(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] = {
+  def getPendingReturnPeriods(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
     executeGet[List[ReturnPeriod]](
       operation = "getPendingReturnPeriods",
       path = s"/returns/$utr/pending"
     )
-  }
 
   def balance(sdilRef: String, withAssessment: Boolean)(implicit hc: HeaderCarrier): Future[BigDecimal] =
     sdilSessionCache.fetchEntry[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment)).flatMap {
@@ -184,7 +183,7 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     }
   }
 
-  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] =
     executePost[HttpResponse](
       operation = "returns_update",
       path = s"/returns/$utr/year/${period.year}/quarter/${period.quarter}",
@@ -193,7 +192,6 @@ class SoftDrinksIndustryLevyConnector @Inject() (
       .map { response =>
         Some(response.status)
       }
-  }
 
   def calculateLevy(sdilRef: String, lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit
     hc: HeaderCarrier
@@ -214,7 +212,7 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     }
   }
 
-  def returns_variation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+  def returns_variation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier): Future[Option[Int]] =
     executePost[HttpResponse](
       operation = "returns_variation",
       path = s"/returns/variation/sdil/$sdilRef",
@@ -223,6 +221,5 @@ class SoftDrinksIndustryLevyConnector @Inject() (
       .map { response =>
         Some(response.status)
       }
-  }
 
 }
