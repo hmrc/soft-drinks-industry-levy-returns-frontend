@@ -29,6 +29,10 @@ trait PreconditionHelpers {
       .retrieveSubscriptionToModify("utr", UTR, retrievedSubscription)
       .sdilBackend
       .pendingReturnPeriod("0000001611")
+      .sdilBackend
+      .calculateLevyDefault()
+      .sdilBackend
+      .calculateLevy(BigDecimal("180"), BigDecimal("240"), 1000L, 1000L)
 
   def commonPreconditionBoth: PreconditionBuilder =
     builder.user.isAuthorisedAndEnrolledBoth.sdilBackend.retrieveSubscription("sdil", sdilNumber).sdilBackend.pendingReturnPeriod("0000001611")

@@ -16,11 +16,12 @@
 
 package controllers
 
+import base.LevyCalculationTestHelper.levyCalculation
 import base.ReturnsTestData.*
 import base.SpecBase
 import config.FrontendAppConfig
 import models.retrieved.RetrievedActivity
-import models.{Amounts, ReturnPeriod, SmallProducer}
+import models.{Amounts, LevyCalculation, ReturnPeriod, SmallProducer}
 import orchestrators.ReturnsOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -71,6 +72,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -84,14 +87,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show own brands row with answer yes, with calculation when answered - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application     =
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -115,14 +118,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show own brands row with answer yes, with calculation when answered - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj("ownBrands" -> true, "brandsPackagedAtOwnSites" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application     =
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -152,6 +155,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -165,14 +170,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show Contract packed at your own sites row with answer yes, with calculation when answered - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj("packagedContractPacker" -> true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application     =
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -196,14 +201,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show Contract packed at your own sites row with answer yes, with calculation when answered - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj("packagedContractPacker" -> true, "howManyAsAContractPacker" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application     =
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -233,6 +238,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -246,8 +253,6 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show Exemptions For Small Producers row has been added - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
       val superCola       = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice     = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
@@ -262,6 +267,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("720"), BigDecimal("1440")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -285,8 +292,6 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show Exemptions For Small Producers row has been added - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj("exemptionsForSmallProducers" -> true)
       val superCola       = SmallProducer("Super Cola Ltd", "XCSDIL000000069", (1000L, 2000L))
       val sparkyJuice     = SmallProducer("Sparky Juice Co", "XCSDIL000000070", (3000L, 4000L))
@@ -301,6 +306,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((4000L, 6000L) -> levyCalculation(BigDecimal("776"), BigDecimal("1554")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -330,6 +337,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -343,14 +352,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show brought into uk row with answer yes, with calculation when answered - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj("broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application     =
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -374,14 +383,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show brought into uk row with answer yes, with calculation when answered - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj("broughtIntoUK" -> true, "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application     =
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -411,6 +420,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -424,8 +435,6 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show brought into uk small producer row with answer yes, with calculation when answered - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers"           -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000)
@@ -435,6 +444,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -458,8 +469,6 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show brought into uk small producer row with answer yes, with calculation when answered - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj(
         "broughtIntoUkFromSmallProducers"           -> true,
         "howManyBroughtIntoTheUKFromSmallProducers" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002)
@@ -469,6 +478,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -498,6 +509,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -511,14 +524,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData = Json.obj("claimCreditsForExports" -> true, "howManyCreditsForExport" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
       val application     =
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -542,14 +555,14 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData = Json.obj("claimCreditsForExports" -> true, "howManyCreditsForExport" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers     = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
       val application     =
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -579,6 +592,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -592,8 +607,6 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
       val userAnswersData =
         Json.obj("claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 1000, "highBand" -> 2000))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = preApril2025ReturnPeriod)
@@ -601,6 +614,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1000L, 2000L) -> levyCalculation(BigDecimal("180"), BigDecimal("480")))))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result  = route(application, request).value
@@ -623,8 +638,6 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
     }
 
     "must show lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
       val userAnswersData =
         Json.obj("claimCreditsForLostDamaged" -> true, "howManyCreditsForLostDamaged" -> Json.obj("lowBand" -> 1001, "highBand" -> 2002))
       val userAnswers = emptyUserAnswers.copy(data = userAnswersData, submitted = true, returnPeriod = taxYear2025ReturnPeriod)
@@ -632,6 +645,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map((1001L, 2002L) -> levyCalculation(BigDecimal("194.194"), BigDecimal("518.518")))))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result  = route(application, request).value
@@ -659,6 +674,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amountsZero))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
         val result  = route(application, request).value
@@ -678,6 +695,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -699,6 +718,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -719,6 +740,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -739,6 +762,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -760,6 +785,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         applicationBuilder(Some(userAnswers), Some(returnPeriod)).overrides(bind[ReturnsOrchestrator].toInstance(mockOrchestrator)).build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)
@@ -783,6 +810,8 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
         .build()
 
       when(mockOrchestrator.getCalculatedAmountsForReturnSent(any(), any(), any())(using any(), any())).thenReturn(Future.successful(amounts))
+      when(mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any()))
+        .thenReturn(Future.successful(Map.empty[(Long, Long), LevyCalculation]))
 
       running(application) {
         val request = FakeRequest(GET, routes.ReturnSentController.onPageLoad.url)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package base
 
-import org.scalacheck.Gen
+import models.LevyCalculation
 
-object TaxRateUtil {
-  val janToMarInt: Gen[Int] = Gen.choose(1, 3)
-  val aprToDecInt: Gen[Int] = Gen.choose(4, 12)
+object LevyCalculationTestHelper {
 
-  val lowerBandCostPerLitre:  BigDecimal = BigDecimal("0.18")
-  val higherBandCostPerLitre: BigDecimal = BigDecimal("0.24")
-
-  val lowerBandCostPerLitreMap:  Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
-  val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
-
+  def levyCalculation(low: BigDecimal, high: BigDecimal): LevyCalculation =
+    LevyCalculation(low, high, (low + high).setScale(2, BigDecimal.RoundingMode.HALF_UP), (low + high).setScale(2, BigDecimal.RoundingMode.DOWN))
 }

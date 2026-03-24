@@ -18,6 +18,7 @@
 @import models.Amounts
 @import models.UserAnswers
 @import models.ReturnPeriod
+@import models.LevyCalculation
 @import config.FrontendAppConfig
 
 @this(
@@ -28,30 +29,31 @@ govukSummaryList: GovukSummaryList
   userAnswers: UserAnswers,
   amounts: Amounts,
   isCheckAnswers: Boolean,
-  isSmallProducer: Boolean)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+  isSmallProducer: Boolean,
+  levyCalculations: Map[(Long, Long), LevyCalculation])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
  @if(!isSmallProducer) {
   <h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
-  @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers))
+  @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
  }
 
 <h2 class="govuk-heading-m" id="contractPackedAtYourOwnSite">@messages("contractPackedAtYourOwnSite")</h2>
-@govukSummaryList(PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers))
+@govukSummaryList(PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
 <h2 class="govuk-heading-m" id="contractPackedForRegisteredSmallProducers">@messages("contractPackedForRegisteredSmallProducers")</h2>
-@govukSummaryList(ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers))
+@govukSummaryList(ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
 <h2 class="govuk-heading-m" id="broughtIntoUK">@messages("broughtIntoUK")</h2>
-@govukSummaryList(BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers))
+@govukSummaryList(BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
 <h2 class="govuk-heading-m" id="broughtIntoTheUKFromSmallProducers">@messages("broughtIntoTheUKFromSmallProducers")</h2>
-@govukSummaryList(BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers, isCheckAnswers))
+@govukSummaryList(BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
 <h2 class="govuk-heading-m" id="exported">@messages("exported")</h2>
-@govukSummaryList(ClaimCreditsForExportsSummary.summaryList(userAnswers, isCheckAnswers))
+@govukSummaryList(ClaimCreditsForExportsSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
 <h2 class="govuk-heading-m" id="lostOrDestroyed">@messages("lostOrDestroyed")</h2>
-@govukSummaryList(ClaimCreditsForLostDamagedSummary.summaryList(userAnswers, isCheckAnswers))
+@govukSummaryList(ClaimCreditsForLostDamagedSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
 <h2 class="govuk-heading-m" id="amount-to-pay-title">@messages("summary")</h2>
 @govukSummaryList(AmountToPaySummary.amountToPaySummary(amounts))
