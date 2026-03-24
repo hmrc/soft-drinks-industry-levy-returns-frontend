@@ -21,7 +21,9 @@ import base.ReturnsTestData.*
 import models.retrieved.{OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription}
 import models.{FinancialLineItem, LevyCalculation, ReturnPeriod, ReturnsVariation, SdilReturn}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.ArgumentMatchers.eq as eqTo
+import org.mockito.{ArgumentCaptor, Mockito}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsValue, Json}
 import repositories.{SDILSessionCache, SDILSessionKeys}
