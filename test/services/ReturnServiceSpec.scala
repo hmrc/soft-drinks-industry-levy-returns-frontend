@@ -83,10 +83,10 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
               sdilReturn.submittedOn.isDefined
             }
           )(using any[HeaderCarrier])
-        ).thenReturn(Future.successful(Some(200)))
+        ).thenReturn(Future.successful(200))
 
         when(mockSdilConnector.returns_variation(eqTo(aSubscription.sdilRef), eqTo(returnVariationForNilReturn))(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(Some(204)))
+          .thenReturn(Future.successful(204))
 
         val res = service.sendReturn(aSubscription, returnPeriod, emptyUserAnswers)
 
@@ -121,10 +121,10 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
               sdilReturn.submittedOn.isDefined
             }
           )(using any[HeaderCarrier])
-        ).thenReturn(Future.successful(Some(200)))
+        ).thenReturn(Future.successful(200))
 
         when(mockSdilConnector.returns_variation(eqTo(aSubscription.sdilRef), eqTo(returnVariation))(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(Some(204)))
+          .thenReturn(Future.successful(204))
 
         val res = service.sendReturn(aSubscription, returnPeriod, userAnswers)
 
@@ -151,10 +151,10 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
               sdilReturn.submittedOn.isDefined
             }
           )(using any[HeaderCarrier])
-        ).thenReturn(Future.successful(Some(200)))
+        ).thenReturn(Future.successful(200))
 
         when(mockSdilConnector.returns_variation(eqTo(aSubscription.sdilRef), eqTo(returnVariationForNilReturn))(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(Some(204)))
+          .thenReturn(Future.successful(204))
 
         val res = service.sendReturn(aSubscription, returnPeriod, userAnswers)
 
@@ -168,7 +168,7 @@ class ReturnServiceSpec extends SpecBase with BeforeAndAfterEach {
       val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0))
 
       when(mockSdilConnector.returns_update(eqTo(aSubscription.utr), eqTo(returnPeriod), eqTo(emptyReturn))(using any[HeaderCarrier]))
-        .thenReturn(Future.successful(None))
+        .thenReturn(Future.successful(500))
 
       lazy val res = service.sendReturn(aSubscription, returnPeriod, emptyUserAnswers)
 

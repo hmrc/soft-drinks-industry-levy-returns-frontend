@@ -118,7 +118,7 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
   ): Future[Unit] = {
     val returnWithDate = sdilReturn.copy(submittedOn = sdilReturn.submittedOn.orElse(Some(getCurrentDateTime)))
     sdilConnector.returns_update(subscription.utr, returnPeriod, returnWithDate).map {
-      case Some(OK) =>
+      case OK =>
         logger.info(s"Return submitted for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
       case _ =>
         logger.error(s"Failed to submit return for ${subscription.sdilRef} year ${returnPeriod.year} quarter ${returnPeriod.quarter}")
@@ -128,7 +128,7 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
 
   private def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     sdilConnector.returns_variation(sdilRef, variation).map {
-      case Some(NO_CONTENT) => logger.info(s"Return variation submitted for $sdilRef")
+      case NO_CONTENT => logger.info(s"Return variation submitted for $sdilRef")
       case _                =>
         logger.error(s"Failed to submit return variation for $sdilRef")
         throw new RuntimeException(s"Failed to submit return variation $sdilRef")

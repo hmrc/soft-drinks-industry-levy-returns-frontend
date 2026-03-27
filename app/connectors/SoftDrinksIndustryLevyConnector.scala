@@ -183,15 +183,13 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     }
   }
 
-  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] =
+  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Int] =
     executePost[HttpResponse](
       operation = "returns_update",
       path = s"/returns/$utr/year/${period.year}/quarter/${period.quarter}",
       body = Json.toJson(sdilReturn)
     )(using hc, rawHttpReads)
-      .map { response =>
-        Some(response.status)
-      }
+      .map(_.status)
 
   def calculateLevy(sdilRef: String, lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit
     hc: HeaderCarrier
@@ -212,14 +210,12 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     }
   }
 
-  def returns_variation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier): Future[Option[Int]] =
+  def returns_variation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier): Future[Int] =
     executePost[HttpResponse](
       operation = "returns_variation",
       path = s"/returns/variation/sdil/$sdilRef",
       body = Json.toJson(variation)
     )(using hc, rawHttpReads)
-      .map { response =>
-        Some(response.status)
-      }
+      .map(_.status)
 
 }

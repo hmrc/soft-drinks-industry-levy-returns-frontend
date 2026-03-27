@@ -190,7 +190,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper {
       val res = softDrinksIndustryLevyConnector.returns_update(utr, period, sdilReturn)
 
       whenReady(res) { response =>
-        response mustBe Some(OK)
+        response mustBe OK
       }
     }
 
