@@ -129,7 +129,7 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
   private def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     sdilConnector.returns_variation(sdilRef, variation).map {
       case NO_CONTENT => logger.info(s"Return variation submitted for $sdilRef")
-      case _                =>
+      case _          =>
         logger.error(s"Failed to submit return variation for $sdilRef")
         throw new RuntimeException(s"Failed to submit return variation $sdilRef")
     }
