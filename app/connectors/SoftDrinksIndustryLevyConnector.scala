@@ -51,6 +51,7 @@ class SoftDrinksIndustryLevyConnector @Inject() (
 
   private def outboundHeaderCarrier(hc: HeaderCarrier): HeaderCarrier =
     HeaderCarrier(
+      authorization = hc.authorization,
       requestId = hc.requestId,
       sessionId = hc.sessionId
     )
