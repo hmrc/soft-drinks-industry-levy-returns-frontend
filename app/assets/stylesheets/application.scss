@@ -11,3 +11,9 @@
     padding-right: 0px !important;
   }
 }
+
+@media print {
+    .govuk-summary-list__row--no-actions::after {
+        display: none !important
+    }
+}
