@@ -70,7 +70,7 @@
     @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
         @govukButton(ButtonViewModel(messages("confirmDetailsAndSendReturn")))
     }
-    <p class = "govuk-body-m" id="printPage">
-        <a href="#" data-module="hmrc-print-link" class="govuk-link" id="print-page-cya">@messages("site.print")</a>
+    <p class = "govuk-body-m " id="printPage">
+        <a href="#" data-module="hmrc-print-link" class="js-enabled js-visible govuk-link" id="print-page-cya">@messages("site.print")</a>
     </p>
 }
