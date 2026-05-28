@@ -58,6 +58,8 @@
         )
         .withWidth(Fixed10)
         .withHint(Hint(content = Text(messages("addASmallProducer.hint2"))))
+        .withSpellcheck(on = false)
+        .withCssClass("govuk-input--extra-letter-spacing")
         )
 
         @lowAndHighBandInputs(form)(using messages)
