@@ -20,17 +20,15 @@ import models.NormalMode
 import models.retrieved.RetrievedSubscription
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import uk.gov.hmrc.auth.core.{EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.Enrolments
 
 trait ActionHelpers {
-  protected def getSdilEnrolment(enrolments: Enrolments): Option[EnrolmentIdentifier] = {
-    val sdil = for {
+  def getAllSdilEnrolments(enrolments: Enrolments): Seq[String] =
+    (for {
       enrolment <- enrolments.enrolments if enrolment.key.equalsIgnoreCase("HMRC-OBTDS-ORG")
-      sdil      <- enrolment.getIdentifier("EtmpRegistrationNumber") if sdil.value.slice(2, 4) == "SD"
-    } yield sdil
-
-    sdil.headOption
-  }
+      sdil      <- enrolment.getIdentifier("EtmpRegistrationNumber")
+      if sdil.value.slice(2, 4) == "SD"
+    } yield sdil.value).toSeq
 
   protected def getUtr(enrolments: Enrolments): Option[String] =
     enrolments

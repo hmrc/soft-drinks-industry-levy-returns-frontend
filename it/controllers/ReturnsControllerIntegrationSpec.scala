@@ -16,6 +16,7 @@
 
 package controllers
 
+import com.github.tomakehurst.wiremock.client.WireMock.{getRequestedFor, urlPathEqualTo, verify as verifyRequest}
 import models.{DefaultUserAnswersData, NormalMode}
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
@@ -26,6 +27,49 @@ class ReturnsControllerIntegrationSpec extends ControllerITTestHelper {
   def url(nilReturn: Boolean) = s"/submit-return/year/2018/quarter/1/nil-return/$nilReturn"
 
   val urlsForNilReturnValues = Map(true -> s"${url(true)}", false -> s"${url(false)}")
+
+  s"GET ${url(false)}" should {
+    "select the active subscription when auth has active and inactive SDIL enrolments" in {
+      build.user.isAuthorisedAndEnrolledWithInactiveAndActiveSdilRefs.sdilBackend
+        .retrieveSubscription("sdil", inactiveSdilNumber, aSubscriptionWithInactiveSdilRefAndDeRegDate)
+        .sdilBackend
+        .retrieveSubscription("sdil", sdilNumber, aSubscription)
+        .sdilBackend
+        .pendingReturnPeriod("0000001611")
+
+      WsTestClient.withClient { client =>
+        val result1 = createClientRequestGet(client, baseUrl + url(false))
+
+        whenReady(result1) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION).value mustBe routes.OwnBrandsController.onPageLoad(NormalMode).url
+          verifyRequest(1, getRequestedFor(urlPathEqualTo(s"/subscription/sdil/$inactiveSdilNumber")))
+          verifyRequest(2, getRequestedFor(urlPathEqualTo(s"/subscription/sdil/$sdilNumber")))
+        }
+      }
+    }
+
+    "select the active subscription when auth has UTR, active and inactive SDIL enrolments" in {
+      build.user.isAuthorisedAndEnrolledWithUtrInactiveAndActiveSdilRefs.sdilBackend
+        .retrieveSubscription("sdil", inactiveSdilNumber, aSubscriptionWithInactiveSdilRefAndDeRegDate)
+        .sdilBackend
+        .retrieveSubscription("sdil", sdilNumber, aSubscription)
+        .sdilBackend
+        .pendingReturnPeriod("0000001611")
+
+      WsTestClient.withClient { client =>
+        val result1 = createClientRequestGet(client, baseUrl + url(false))
+
+        whenReady(result1) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION).value mustBe routes.OwnBrandsController.onPageLoad(NormalMode).url
+          verifyRequest(1, getRequestedFor(urlPathEqualTo(s"/subscription/sdil/$inactiveSdilNumber")))
+          verifyRequest(2, getRequestedFor(urlPathEqualTo(s"/subscription/sdil/$sdilNumber")))
+          verifyRequest(0, getRequestedFor(urlPathEqualTo("/subscription/utr/0000001611")))
+        }
+      }
+    }
+  }
 
   urlsForNilReturnValues.foreach { case (isNilReturn, path) =>
     s"GET $path" should {

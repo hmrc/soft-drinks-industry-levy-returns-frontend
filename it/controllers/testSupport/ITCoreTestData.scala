@@ -30,11 +30,13 @@ import scala.util.Failure
 object ITCoreTestData extends ITCoreTestData
 
 trait ITCoreTestData extends TryValues {
-  val lowBand      = 1000L
-  val highBand     = 1000L
-  val sdilNumber   = "XKSDIL000000022"
-  val producerName = Some("Super Cola Ltd")
-  val refNumber    = "XZSDIL000000234"
+  val lowBand            = 1000L
+  val highBand           = 1000L
+  val sdilNumber         = "XKSDIL000000022"
+  val inactiveSdilNumber = "XKSDIL000000026"
+  val producerName       = Some("Super Cola Ltd")
+  val refNumber          = "XZSDIL000000234"
+  val deregDate          = LocalDate.now.minusMonths(6)
 
   val aSubscription = RetrievedSubscription(
     utr = "0000001611",
@@ -75,6 +77,9 @@ trait ITCoreTestData extends TryValues {
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
   )
+  val aSubscriptionWithInactiveSdilRefAndDeRegDate: RetrievedSubscription =
+    aSubscription.copy(sdilRef = inactiveSdilNumber, deregDate = Some(deregDate))
+
   val PackagingSite1 = Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), None, Some("Wild Lemonade Group"), None)
 
   val smallProducerListOnlySuperCola: List[SmallProducer] = List(SmallProducer(producerName.get, refNumber, (lowBand, highBand)))
