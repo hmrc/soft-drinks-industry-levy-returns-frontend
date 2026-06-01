@@ -81,7 +81,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.ownBrands"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.ownBrands"))
         page.getElementsByTag("dt").text() must include(Messages("ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel"))
       }
     }
@@ -102,7 +102,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.ownBrands"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.ownBrands"))
         page.getElementsByTag("dt").text() must include(Messages("ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -133,7 +133,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.ownBrands"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.ownBrands"))
         page.getElementsByTag("dt").text() must include(Messages("ReportingOwnBrandsPackagedAtYourOwnSite.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -164,7 +164,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.packagedContractPacker"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.packagedContractPacker"))
         page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite.checkYourAnswersLabel"))
       }
     }
@@ -185,7 +185,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.packagedContractPacker"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.packagedContractPacker"))
         page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -216,7 +216,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.packagedContractPacker"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.packagedContractPacker"))
         page.getElementsByTag("dt").text() must include(Messages("reportingContractPackedAtYourOwnSite.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -247,7 +247,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
       }
     }
@@ -276,7 +276,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -315,7 +315,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.exemptionsForSmallProducers"))
         page.getElementsByTag("dt").text() must include(Messages("exemptionForRegisteredSmallProducers"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -346,7 +346,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUk"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.broughtIntoUk"))
         page.getElementsByTag("dt").text() must include(Messages("broughtIntoUK.checkYourAnswersLabel"))
       }
     }
@@ -367,7 +367,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUk"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.broughtIntoUk"))
         page.getElementsByTag("dt").text() must include(Messages("broughtIntoUK.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -398,7 +398,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUk"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.broughtIntoUk"))
         page.getElementsByTag("dt").text() must include(Messages("broughtIntoUK.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -429,7 +429,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUkSmallProducer"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.broughtIntoUkSmallProducer"))
         page.getElementsByTag("dt").text() must include(Messages("broughtIntoUKFromSmallProducers.checkYourAnswersLabel"))
       }
     }
@@ -453,7 +453,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUkSmallProducer"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.broughtIntoUkSmallProducer"))
         page.getElementsByTag("dt").text() must include(Messages("broughtIntoUKFromSmallProducers.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -487,7 +487,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.broughtIntoUkSmallProducer"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.broughtIntoUkSmallProducer"))
         page.getElementsByTag("dt").text() must include(Messages("broughtIntoUKFromSmallProducers.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -518,7 +518,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.exported"))
         page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
       }
     }
@@ -539,7 +539,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.exported"))
         page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -570,7 +570,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.exported"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.exported"))
         page.getElementsByTag("dt").text() must include(Messages("claimingCreditForExportedLiableDrinks"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -601,7 +601,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.lostDestroyed"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.lostDestroyed"))
         page.getElementsByTag("dt").text() must include(Messages("claimCreditsForLostDamaged.checkYourAnswersLabel"))
       }
     }
@@ -622,7 +622,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.lostDestroyed"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.lostDestroyed"))
         page.getElementsByTag("dt").text() must include(Messages("claimCreditsForLostDamaged.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))
@@ -653,7 +653,7 @@ class ReturnSentControllerSpec extends SpecBase with SummaryListFluency with Bef
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text() must include(Messages("returnSent.lostDestroyed"))
+        page.getElementsByTag("h3").text() must include(Messages("returnSent.lostDestroyed"))
         page.getElementsByTag("dt").text() must include(Messages("claimCreditsForLostDamaged.checkYourAnswersLabel"))
 
         page.getElementsByTag("dt").text() must include(Messages("litresInTheLowBand"))

@@ -30,36 +30,45 @@ govukSummaryList: GovukSummaryList
   amounts: Amounts,
   isCheckAnswers: Boolean,
   isSmallProducer: Boolean,
-  levyCalculations: Map[(Long, Long), LevyCalculation])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+  levyCalculations: Map[(Long, Long), LevyCalculation],
+  headingLevel: Int = 2)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+
+@sectionHeading(id: String, msgKey: String) = {
+  @if(headingLevel == 3) {
+   <h3 class="govuk-heading-m" id="@id">@messages(msgKey)</h3>
+  } else {
+   <h2 class="govuk-heading-m" id="@id">@messages(msgKey)</h2>
+  }
+}
 
  @if(!isSmallProducer) {
-  <h2 class="govuk-heading-m" id="ownBrandsPackagedAtYourOwnSite">@messages("ownBrandsPackagedAtYourOwnSite")</h2>
+  @sectionHeading("ownBrandsPackagedAtYourOwnSite", "ownBrandsPackagedAtYourOwnSite")
   @govukSummaryList(OwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
  }
 
-<h2 class="govuk-heading-m" id="contractPackedAtYourOwnSite">@messages("contractPackedAtYourOwnSite")</h2>
+@sectionHeading("contractPackedAtYourOwnSite", "contractPackedAtYourOwnSite")
 @govukSummaryList(PackagedContractPackerSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
-<h2 class="govuk-heading-m" id="contractPackedForRegisteredSmallProducers">@messages("contractPackedForRegisteredSmallProducers")</h2>
+@sectionHeading("contractPackedForRegisteredSmallProducers", "contractPackedForRegisteredSmallProducers")
 @govukSummaryList(ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
-<h2 class="govuk-heading-m" id="broughtIntoUK">@messages("broughtIntoUK")</h2>
+@sectionHeading("broughtIntoUK", "broughtIntoUK")
 @govukSummaryList(BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
-<h2 class="govuk-heading-m" id="broughtIntoTheUKFromSmallProducers">@messages("broughtIntoTheUKFromSmallProducers")</h2>
+@sectionHeading("broughtIntoTheUKFromSmallProducers", "broughtIntoTheUKFromSmallProducers")
 @govukSummaryList(BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
-<h2 class="govuk-heading-m" id="exported">@messages("exported")</h2>
+@sectionHeading("exported", "exported")
 @govukSummaryList(ClaimCreditsForExportsSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
-<h2 class="govuk-heading-m" id="lostOrDestroyed">@messages("lostOrDestroyed")</h2>
+@sectionHeading("lostOrDestroyed", "lostOrDestroyed")
 @govukSummaryList(ClaimCreditsForLostDamagedSummary.summaryList(userAnswers, isCheckAnswers, levyCalculations))
 
-<h2 class="govuk-heading-m" id="amount-to-pay-title">@messages("summary")</h2>
+@sectionHeading("amount-to-pay-title", "summary")
 @govukSummaryList(AmountToPaySummary.amountToPaySummary(amounts))
 
 @if(userAnswers.packagingSiteList.nonEmpty || userAnswers.warehouseList.nonEmpty){
- <h2 class="govuk-heading-m" id="registeredUkSites">@messages("registeredUkSites")</h2>
+ @sectionHeading("registeredUkSites", "registeredUkSites")
 }
 
 @PackAtBusinessAddressSummary.summaryList(userAnswers, isCheckAnswers) match {
