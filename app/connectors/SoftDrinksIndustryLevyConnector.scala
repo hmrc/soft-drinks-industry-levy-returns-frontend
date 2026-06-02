@@ -131,6 +131,15 @@ class SoftDrinksIndustryLevyConnector @Inject() (
               .map(_ => optRetrievedSubscription)
           }
     }
+
+  def retrieveSubscriptionNoCache(identifierValue: String, identifierType: String)(implicit
+    hc: HeaderCarrier
+  ): Future[Option[RetrievedSubscription]] =
+    executeGet[Option[RetrievedSubscription]](
+      operation = "retrieveSubscription",
+      path = s"/subscription/$identifierType/$identifierValue"
+    )
+
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     sdilSessionCache.fetchEntry[OptSmallProducer](sdilRef, SDILSessionKeys.smallProducerForPeriod(period)).flatMap {
       case Some(optSP) => Future.successful(optSP.optSmallProducer)

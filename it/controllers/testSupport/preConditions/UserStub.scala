@@ -20,9 +20,10 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 
 case class UserStub()(implicit builder: PreconditionBuilder) {
 
-  val identifier = "some-id"
-  val UTR        = "0000001611"
-  val sdilNumber = "XKSDIL000000022"
+  val identifier         = "some-id"
+  val UTR                = "0000001611"
+  val sdilNumber         = "XKSDIL000000022"
+  val inactiveSdilNumber = "XKSDIL000000026"
 
   def isAuthorised: PreconditionBuilder = {
     stubFor(
@@ -122,6 +123,82 @@ case class UserStub()(implicit builder: PreconditionBuilder) {
                |  "internalId": "$identifier",
                |  "email": "test@test.com",
                |  "allEnrolments": [{
+               |     "key": "HMRC-OBTDS-ORG",
+               |     "identifiers": [{
+               |       "key":"EtmpRegistrationNumber",
+               |       "value": "$sdilNumber"
+               |     }]
+               |  }],
+               |  "affinityGroup" : "Organisation",
+               |  "loginTimes": {
+               |     "currentLogin": "2018-03-27T09:00:00.000Z",
+               |     "previousLogin": "2018-03-01T12:00:00.000Z"
+               |  }
+               |}
+             """.stripMargin
+          )
+        )
+    )
+    builder
+  }
+
+  def isAuthorisedAndEnrolledWithInactiveAndActiveSdilRefs: PreconditionBuilder = {
+    stubFor(
+      post(urlPathEqualTo("/auth/authorise"))
+        .willReturn(
+          ok(
+            s"""
+               |{
+               |  "internalId": "$identifier",
+               |  "email": "test@test.com",
+               |  "allEnrolments": [{
+               |     "key": "HMRC-OBTDS-ORG",
+               |     "identifiers": [{
+               |       "key":"EtmpRegistrationNumber",
+               |       "value": "$inactiveSdilNumber"
+               |     }]
+               |  }, {
+               |     "key": "HMRC-OBTDS-ORG",
+               |     "identifiers": [{
+               |       "key":"EtmpRegistrationNumber",
+               |       "value": "$sdilNumber"
+               |     }]
+               |  }],
+               |  "affinityGroup" : "Organisation",
+               |  "loginTimes": {
+               |     "currentLogin": "2018-03-27T09:00:00.000Z",
+               |     "previousLogin": "2018-03-01T12:00:00.000Z"
+               |  }
+               |}
+             """.stripMargin
+          )
+        )
+    )
+    builder
+  }
+
+  def isAuthorisedAndEnrolledWithUtrInactiveAndActiveSdilRefs: PreconditionBuilder = {
+    stubFor(
+      post(urlPathEqualTo("/auth/authorise"))
+        .willReturn(
+          ok(
+            s"""
+               |{
+               |  "internalId": "$identifier",
+               |  "email": "test@test.com",
+               |  "allEnrolments": [{
+               |     "key": "IR-CT",
+               |     "identifiers": [{
+               |       "key":"UTR",
+               |       "value": "$UTR"
+               |     }]
+               |  }, {
+               |     "key": "HMRC-OBTDS-ORG",
+               |     "identifiers": [{
+               |       "key":"EtmpRegistrationNumber",
+               |       "value": "$inactiveSdilNumber"
+               |     }]
+               |  }, {
                |     "key": "HMRC-OBTDS-ORG",
                |     "identifiers": [{
                |       "key":"EtmpRegistrationNumber",

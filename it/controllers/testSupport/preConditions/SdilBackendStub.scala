@@ -69,10 +69,14 @@ case class SdilBackendStub()(implicit builder: PreconditionBuilder) {
 
   val returnPeriod: ReturnPeriod = ReturnPeriod(2018, 1)
 
-  def retrieveSubscription(identifier: String, refNum: String): PreconditionBuilder = {
+  def retrieveSubscription(
+    identifier:   String,
+    refNum:       String,
+    subscription: RetrievedSubscription = aReceivedSubscription
+  ): PreconditionBuilder = {
     stubFor(
       get(urlPathMatching(s"/subscription/$identifier/$refNum"))
-        .willReturn(ok(Json.toJson(aReceivedSubscription).toString()))
+        .willReturn(ok(Json.toJson(subscription).toString()))
     )
     builder
   }

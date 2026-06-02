@@ -23,6 +23,7 @@ import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.mvc.Results.*
 import play.api.mvc.*
+import services.SdilSubscriptionService
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
@@ -37,7 +38,8 @@ class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
   val parser:                 BodyParsers.Default,
-  sdilConnector:              SoftDrinksIndustryLevyConnector
+  sdilConnector:              SoftDrinksIndustryLevyConnector,
+  sdilSubscriptionService:    SdilSubscriptionService
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
@@ -48,24 +50,26 @@ class AuthenticatedIdentifierAction @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
-      val maybeUtr  = getUtr(enrolments)
-      val maybeSdil = getSdilEnrolment(enrolments)
-      (maybeSdil, maybeUtr) match {
-        case (None, None) =>
-          Future.successful(Redirect(config.sdilHomeUrl))
-        case (Some(sdil), _) =>
-          sdilConnector.retrieveSubscription(sdil.value, "sdil").flatMap {
-            case Some(sub) =>
-              block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
-            case None =>
-              Future.successful(Redirect(config.sdilHomeUrl))
-          }
-        case (None, Some(utr)) =>
-          sdilConnector.retrieveSubscription(utr, "utr").flatMap {
-            case Some(sub) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
-            case None      =>
-              Future.successful(Redirect(config.sdilHomeUrl))
-          }
+      val maybeUtr = getUtr(enrolments)
+      val sdilRefs = getAllSdilEnrolments(enrolments)
+      sdilSubscriptionService.resolveActiveSdilRef(sdilRefs).flatMap { maybeSdil =>
+        (maybeSdil, maybeUtr) match {
+          case (None, None) =>
+            Future.successful(Redirect(config.sdilHomeUrl))
+          case (Some(sdilRef), _) =>
+            sdilConnector.retrieveSubscription(sdilRef, "sdil").flatMap {
+              case Some(sub) =>
+                block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
+              case None =>
+                Future.successful(Redirect(config.sdilHomeUrl))
+            }
+          case (None, Some(utr)) =>
+            sdilConnector.retrieveSubscription(utr, "utr").flatMap {
+              case Some(sub) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
+              case None      =>
+                Future.successful(Redirect(config.sdilHomeUrl))
+            }
+        }
       }
     } recover {
       case _: NoActiveSession =>
