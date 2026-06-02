@@ -42,6 +42,11 @@
   amountOwed:String,
   levyCalculations: Map[(Long, Long), LevyCalculation])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
+@detailsContent = {
+    <h2 class="govuk-visually-hidden" id="returnDetailsHeading">@messages("returnSent.details")</h2>
+    @returnDetailsSummary(returnPeriod, userAnswers, amounts, false, subscription.activity.smallProducer, levyCalculations, headingLevel = 3)
+}
+
 @layout(pageTitle = titleNoForm(messages("returnSent.title")), showBackLink = false){
 
 @govukPanel(Panel(
@@ -118,7 +123,7 @@
 
     @govukDetails(Details(
         summary = Text(Messages("returnSent.details")),
-        content = HtmlContent(Html(s"${returnDetailsSummary(returnPeriod, userAnswers, amounts, false, subscription.activity.smallProducer, levyCalculations)}"))
+        content = HtmlContent(detailsContent)
     ))
 
 }

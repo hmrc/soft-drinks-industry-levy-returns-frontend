@@ -181,6 +181,12 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
           val details = document.getElementsByClass(Selectors.details).get(0)
           details.getElementsByClass(Selectors.detailsText).text() mustEqual "View the details of your return"
         }
+        "that has a visually hidden heading for the details content" in {
+          val detailsHeading = document.getElementById("returnDetailsHeading")
+          detailsHeading.tagName() mustEqual "h2"
+          detailsHeading.className() mustEqual "govuk-visually-hidden"
+          detailsHeading.text() mustEqual Messages("returnSent.details")
+        }
         "has contains the expected content" -
           UserAnswersTestData.userAnswersModels.foreach { case (key, userAnswers) =>
             val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
@@ -193,7 +199,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
                   returnSentView(returnPeriod, userAnswersWithReturnPeriod, amounts, aSubscription, amountOwed, levyCalcs)
                 val document1: Document = doc(html1)
                 val details = document1.getElementsByClass(Selectors.details).get(0)
-                testSummaryLists(key, details, userAnswersWithReturnPeriod, false)
+                testSummaryLists(key, details, userAnswersWithReturnPeriod, false, expectedHeadingLevel = 3)
               }
             )
           }
