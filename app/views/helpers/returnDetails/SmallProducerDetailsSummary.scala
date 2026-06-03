@@ -20,7 +20,9 @@ import controllers.routes
 import models.{CheckMode, EditMode, Mode, NormalMode, SmallProducer}
 import pages.{QuestionPage, SmallProducerDetailsPage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Text}
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
@@ -38,10 +40,9 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
 
   def producerList(mode: Mode, smallProducersList: List[SmallProducer])(implicit messages: Messages): SummaryList = {
     val rows = smallProducersList.map { smallProducer =>
-      val value = ValueViewModel(Text(smallProducer.alias))
       SummaryListRowViewModel(
-        key = smallProducer.sdilRef,
-        value = value,
+        key = KeyViewModel(HtmlContent(producerDetails(smallProducer))),
+        value = Value(),
         actions = Seq(
           ActionItemViewModel(
             "site.edit",
@@ -55,6 +56,15 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper with Retur
     }
 
     SummaryListViewModel(rows)
+  }
+
+  private def producerDetails(smallProducer: SmallProducer): String = {
+    val escapedAlias   = HtmlFormat.escape(smallProducer.alias).toString
+    val escapedSdilRef = HtmlFormat.escape(smallProducer.sdilRef).toString
+
+    val reference = s"""<span class="sdil-small-producer-reference">$escapedSdilRef</span>"""
+
+    if escapedAlias.isEmpty then reference else s"$escapedAlias<br>$reference"
   }
 
 }
