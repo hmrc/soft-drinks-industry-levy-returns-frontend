@@ -45,11 +45,22 @@ class SmallProducerDetailsSummarySpec extends SpecBase {
       val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWithSmallProducers.smallProducerList)
       val rowActionListItems             = smallProducerDetailsSummaryRow.rows.head.actions.toList.head.items
 
-      smallProducerDetailsSummaryRow.rows.head.key.content.asHtml.toString mustBe "XCSDIL000000069"
-      smallProducerDetailsSummaryRow.rows.head.value.content.asHtml.toString mustBe "Super Cola Plc"
+      smallProducerDetailsSummaryRow.rows.head.key.content.asHtml.toString mustBe
+        """Super Cola Plc<br><span class="sdil-small-producer-reference">XCSDIL000000069</span>"""
+      smallProducerDetailsSummaryRow.rows.head.value.content.asHtml.toString mustBe ""
       rowActionListItems.size mustBe 2
       rowActionListItems.head.content.asHtml.toString mustBe "Edit"
       rowActionListItems.last.content.asHtml.toString mustBe "Remove"
+    }
+
+    "should show the SDIL reference when the producer name is blank" in {
+      val userAnswersWithSmallProducers = emptyUserAnswers.copy(smallProducerList = List(SmallProducer("", "XMSDIL000000159", (15, 800))))
+
+      val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWithSmallProducers.smallProducerList)
+
+      smallProducerDetailsSummaryRow.rows.head.key.content.asHtml.toString mustBe
+        """<span class="sdil-small-producer-reference">XMSDIL000000159</span>"""
+      smallProducerDetailsSummaryRow.rows.head.value.content.asHtml.toString mustBe ""
     }
   }
 
