@@ -46,7 +46,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     val button           = "govuk-button"
   }
 
-  def testSummaryLists(key: String, element: Element, userAnswers: UserAnswers, isCheckAnswers: Boolean) = {
+  def testSummaryLists(key: String, element: Element, userAnswers: UserAnswers, isCheckAnswers: Boolean, expectedHeadingLevel: Int = 2) = {
     val summaryLists = element.getElementsByClass(Selectors.summaryList)
 
     returnDetailsSummaryListsWithListNames.foreach { case (subHeaderId, listName) =>
@@ -56,7 +56,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
         val arrayElementNumber = returnDetailsSummaryListsWithArrayElement(subHeaderId)
         val summaryList: Element = summaryLists.get(arrayElementNumber)
         s"should include an $listName section" - {
-          testSummaryHeading(subHeaderId, element)
+          testSummaryHeading(subHeaderId, element, expectedHeadingLevel)
           if subHeaderId == SummaryHeadingIds.registeredSites then {
             testRegisteredSites(subHeaderId, summaryList, isCheckAnswers)
           } else if subHeaderId == SummaryHeadingIds.amountToPay then {
@@ -73,7 +73,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
     }
   }
 
-  def testSummaryHeading(subHeadingId: String, element: Element) =
+  def testSummaryHeading(subHeadingId: String, element: Element, expectedHeadingLevel: Int = 2) =
     "that has the correct subheading" in {
       val expectedHeading = if subHeadingId == SummaryHeadingIds.amountToPay then {
         "summary"
@@ -82,6 +82,7 @@ trait ReturnDetailsSummaryRowTestHelper extends ViewSpecHelper with ReturnDetail
       }
       val elementSubHeading = element.getElementById(subHeadingId)
       elementSubHeading.className() mustEqual Selectors.subHeading
+      elementSubHeading.tagName() mustEqual s"h$expectedHeadingLevel"
       elementSubHeading.text() mustEqual Messages(expectedHeading)
     }
 
