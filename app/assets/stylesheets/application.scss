@@ -12,6 +12,10 @@
   }
 }
 
+.govuk-summary-list__row--no-actions::after {
+  display: none !important;
+}
+
 .sdil-small-producer-reference {
   white-space: nowrap;
 }
