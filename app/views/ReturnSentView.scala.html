@@ -42,11 +42,6 @@
   amountOwed:String,
   levyCalculations: Map[(Long, Long), LevyCalculation])(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
 
-@detailsContent = {
-    <h2 class="govuk-visually-hidden" id="returnDetailsHeading">@messages("returnSent.details")</h2>
-    @returnDetailsSummary(returnPeriod, userAnswers, amounts, false, subscription.activity.smallProducer, levyCalculations, headingLevel = 3)
-}
-
 @layout(pageTitle = titleNoForm(messages("returnSent.title")), showBackLink = false){
 
 @govukPanel(Panel(
@@ -54,7 +49,7 @@
         content = HtmlContent(messages("returnSent.panel.returnMessage", returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.end.format(DateTimeFormatter.ofPattern("MMMM")), returnPeriod.start.getYear.toString, subscription.orgName))
     ))
     <p class="govuk-body-m" id="printPage">
-        <a href="#" data-module="hmrc-print-link" class="govuk-link">@messages("site.print")</a>
+        <a href="#" data-module="hmrc-print-link" class="govuk-link hmrc-!-js-visible">@messages("site.print")</a>
     </p>
 
     <p class="govuk-body" id="returnDone">
@@ -123,7 +118,7 @@
 
     @govukDetails(Details(
         summary = Text(Messages("returnSent.details")),
-        content = HtmlContent(detailsContent)
+        content = HtmlContent(Html(s"${returnDetailsSummary(returnPeriod, userAnswers, amounts, false, subscription.activity.smallProducer, levyCalculations)}"))
     ))
 
 }
