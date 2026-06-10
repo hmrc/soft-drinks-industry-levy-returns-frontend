@@ -81,6 +81,7 @@ class ReturnSentViewSpec extends ReturnDetailsSummaryRowTestHelper {
       val link = printPageElements.getElementsByClass(Selectors.link)
       link.text() mustEqual Messages("site.print")
       link.attr("data-module") mustEqual "hmrc-print-link"
+      link.get(0).attr("class") must include("hmrc-!-js-visible")
     }
 
     amountsLists.foreach { case (key, amount) =>

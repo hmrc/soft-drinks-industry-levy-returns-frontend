@@ -94,6 +94,7 @@ trait ViewSpecHelper extends SpecBase {
       val backLink = doc.getElementsByClass(bLink)
       backLink.text mustBe Messages("site.back")
       backLink.get(0).attr("href") mustBe href
+      backLink.get(0).attr("class") must include("hmrc-!-js-visible")
     }
   }
 
