@@ -32,15 +32,15 @@ journeyRecovery.title = Sorry, there is a problem with the service
 journeyRecovery.guidance = [Add content to explain how to proceed.]
 
 error.browser.title.prefix = Error:
-error.boolean = Please give an answer
-error.invalid_date = Give a correct date
+error.boolean = Enter an answer
+error.invalid_date = Enter a date
 error.date.day_blank = Enter a day
-error.date.day_invalid = Give a correct day using numbers 1 to 31
+error.date.day_invalid = Enter a day using numbers 1 to 31
 error.date.month_blank = Enter a month
-error.date.month_invalid = Give a correct month using numbers 1 to 12
+error.date.month_invalid = Enter a month using numbers 1 to 12
 error.date.year_blank = Enter a year
-error.date.year_invalid = Give a correct year
-error.required = Please enter a value
+error.date.year_invalid = Enter a year
+error.required = Enter a value
 error.summary.title = There is a problem
 
 litres.text = Litres
