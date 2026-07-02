@@ -20,14 +20,12 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    hmrcListWithActions: HmrcListWithActions,
-    govukSummaryList: GovukSummaryList,
-    govukTable : GovukTable
+    hmrcListWithActions: HmrcListWithActions
 )
 
-@(form: Form[?], mode: Mode, warehouseList: SummaryList)(implicit request: Request[?], messages: Messages)
+@(form: Form[?], mode: Mode, warehouseList: uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.ListWithActions)(implicit request: Request[?], messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryWarehouseDetails.heading", warehouseList.rows.size, if(warehouseList.rows.size == 1) "" else "s"))) {
+@layout(pageTitle = title(form, messages("secondaryWarehouseDetails.heading", warehouseList.items.size, if(warehouseList.items.size == 1) "" else "s"))) {
 
     @formHelper(action = routes.SecondaryWarehouseDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -35,9 +33,9 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-l">@messages("secondaryWarehouseDetails.heading", warehouseList.rows.size, if(warehouseList.rows.size == 1) "" else "s")</h1>
+        <h1 class="govuk-heading-l">@messages("secondaryWarehouseDetails.heading", warehouseList.items.size, if(warehouseList.items.size == 1) "" else "s")</h1>
 
-        @govukSummaryList(warehouseList)
+        @hmrcListWithActions(warehouseList)
 
         @govukRadios(
             RadiosViewModel.yesNo(
