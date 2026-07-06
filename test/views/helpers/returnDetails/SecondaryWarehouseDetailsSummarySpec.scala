@@ -48,26 +48,28 @@ class SecondaryWarehouseDetailsSummarySpec extends SpecBase {
     "should return an empty list of summaryListRows when no warehouse list is passed in" in {
       val warehouseSummaryRowList = SecondaryWarehouseDetailsSummary.warehouseDetailRow(Map.empty)
 
-      warehouseSummaryRowList mustBe List()
+      warehouseSummaryRowList.items mustBe empty
     }
 
     "must return a remove action when at least 1 site is passed in" in {
       val warehouseSummaryRowList = SecondaryWarehouseDetailsSummary.warehouseDetailRow(warehouseAddressMapWith3AddressLines)
 
-      warehouseSummaryRowList.mkString must include("Remove")
+      warehouseSummaryRowList.items.head.actions.head.content.asHtml.toString() mustBe "Remove"
     }
 
     "must include Correct elements in list with 2 elements" in {
 
       val warehouseSummaryRowList = SecondaryWarehouseDetailsSummary.warehouseDetailRow(warehouseMap)
-      warehouseSummaryRowList.head.key.content.asHtml
+      warehouseSummaryRowList.items.head.name.asHtml
         .toString() mustBe "Warehouse Group<br>The house, The Road, ugzhkxcajkcjfrqsgkjruzlmsxytwhg vdg, NW88 8II"
-      warehouseSummaryRowList.head.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
-      warehouseSummaryRowList.head.actions.toList.head.items.last.href mustBe controllers.routes.RemoveWarehouseConfirmController.onPageLoad("1").url
+      warehouseSummaryRowList.items.head.actions.last.content.asHtml.toString() mustBe "Remove"
+      warehouseSummaryRowList.items.head.actions.last.href mustBe controllers.routes.RemoveWarehouseConfirmController.onPageLoad("1").url
+      warehouseSummaryRowList.items.head.actions.last.visuallyHiddenText.value mustBe "Remove warehouse Warehouse Group at The house"
 
-      warehouseSummaryRowList.last.key.content.asHtml.toString() mustBe "Wild Lemonade Group<br>33 Rhes Priordy, East London, E73 2RP"
-      warehouseSummaryRowList.last.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
-      warehouseSummaryRowList.last.actions.toList.head.items.last.href mustBe controllers.routes.RemoveWarehouseConfirmController.onPageLoad("24").url
+      warehouseSummaryRowList.items.last.name.asHtml.toString() mustBe "Wild Lemonade Group<br>33 Rhes Priordy, East London, E73 2RP"
+      warehouseSummaryRowList.items.last.actions.last.content.asHtml.toString() mustBe "Remove"
+      warehouseSummaryRowList.items.last.actions.last.href mustBe controllers.routes.RemoveWarehouseConfirmController.onPageLoad("24").url
+      warehouseSummaryRowList.items.last.actions.last.visuallyHiddenText.value mustBe "Remove warehouse Wild Lemonade Group at 33 Rhes Priordy"
     }
   }
 

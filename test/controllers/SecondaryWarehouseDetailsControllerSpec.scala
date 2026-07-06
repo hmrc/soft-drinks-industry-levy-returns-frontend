@@ -38,15 +38,13 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.{AddressLookupService, WarehouseDetails}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import util.GenericLogger
-import viewmodels.govuk.SummaryListFluency
 import views.helpers.returnDetails.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
 
 import scala.concurrent.Future
 
-class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency with LoggerHelper {
+class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
   def onwardRoute:         Call     = Call("GET", "/foo")
   def doc(result: String): Document = Jsoup.parse(result)
@@ -108,10 +106,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
             "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), tradingName = Some("Super Cola Ltd"))
           )
 
-        val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.warehouseDetailRow(WarhouseMap)(using messages(application))
-
-        val summaryList: SummaryList = SummaryListViewModel(rows = warehouseSummaryList)
+        val warehouseSummaryList = SecondaryWarehouseDetailsSummary.warehouseDetailRow(WarhouseMap)(using messages(application))
 
         status(result) mustEqual OK
 
@@ -127,6 +122,9 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         summaryActions.first.text() must include("Remove")
         summaryActions.last.text()  must include("Remove")
 
+        val summaryValues = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__value")
+        summaryValues.size() mustEqual 0
+
         val removeLink = doc(contentAsString(result))
           .getElementsByClass("govuk-summary-list__actions")
           .tagName("ul")
@@ -135,7 +133,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           .getElementsByClass("govuk-link")
           .last()
         removeLink.attr("href") mustEqual "/soft-drinks-industry-levy-returns-frontend/remove-warehouse-details/2"
-        contentAsString(result) mustEqual view(form, NormalMode, summaryList)(using request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, warehouseSummaryList)(using request, messages(application)).toString
       }
     }
 
@@ -211,13 +209,10 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
             "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), tradingName = Some("Super Cola Ltd"))
           )
 
-        val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.warehouseDetailRow(warehouseMap)(using messages(application))
-
-        val summaryList: SummaryList = SummaryListViewModel(rows = warehouseSummaryList)
+        val warehouseSummaryList = SecondaryWarehouseDetailsSummary.warehouseDetailRow(warehouseMap)(using messages(application))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summaryList)(using request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, warehouseSummaryList)(using request, messages(application)).toString
       }
     }
 
@@ -357,13 +352,10 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
             "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), tradingName = Some("Super Cola Ltd"))
           )
 
-        val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.warehouseDetailRow(WarehouseMap)(using messages(application))
-
-        val summaryList: SummaryList = SummaryListViewModel(rows = warehouseSummaryList)
+        val warehouseSummaryList = SecondaryWarehouseDetailsSummary.warehouseDetailRow(WarehouseMap)(using messages(application))
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, summaryList)(using request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, warehouseSummaryList)(using request, messages(application)).toString
       }
     }
 

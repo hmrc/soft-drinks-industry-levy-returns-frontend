@@ -26,9 +26,8 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, WarehouseDetails}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.ListWithActions
 import util.GenericLogger
-import viewmodels.govuk.summarylist.*
 import views.helpers.returnDetails.SecondaryWarehouseDetailsSummary
 import views.html.SecondaryWarehouseDetailsView
 
@@ -60,7 +59,7 @@ class SecondaryWarehouseDetailsController @Inject() (
       case Some(value) => form.fill(value)
     }
 
-    val siteList: SummaryList = SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList))
+    val siteList: ListWithActions = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList)
 
     Ok(view(preparedForm, mode, siteList))
 
@@ -68,7 +67,7 @@ class SecondaryWarehouseDetailsController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
     implicit request =>
-      val siteList: SummaryList = SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList))
+      val siteList: ListWithActions = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList)
       form
         .bindFromRequest()
         .fold(
