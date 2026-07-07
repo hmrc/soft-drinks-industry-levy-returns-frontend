@@ -52,20 +52,32 @@ class PackagingSiteDetailsController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
-    val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+  def onPageLoad(mode: Mode, ref: Option[String]): Action[AnyContent] =
+    (identify andThen getData andThen requireData andThen checkReturnSubmission).async { implicit request =>
+      val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+
+      val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
+
+      ref match {
+        case Some(siteRef) =>
+          siteList.get(siteRef) match {
+            case Some(site) =>
+              addressLookupService
+                .initJourneyOrReturnToEditPage(PackingDetails, siteId = siteRef, alfId = site.address.alfId, mode = mode)
+                .map(onwardUrl => Redirect(onwardUrl))
+            case None => Future.successful(Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode)))
+          }
+        case None =>
+          Future.successful(Ok(view(preparedForm, mode, siteList)))
+      }
+
     }
 
-    val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
-
-    Ok(view(preparedForm, mode, siteList))
-
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission).async {
-    implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen getData andThen requireData andThen checkReturnSubmission).async { implicit request =>
       val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
 
       form
@@ -95,5 +107,5 @@ class PackagingSiteDetailsController @Inject() (
                                    }
             } yield Redirect(onwardUrl)
         )
-  }
+    }
 }

@@ -25,6 +25,7 @@ import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Site, UkAddress}
 import models.{Mode, NormalMode, UserAnswers}
 import play.api.Logger
+import play.api.http.Status.NOT_FOUND
 import play.api.i18n.Messages
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
@@ -87,6 +88,23 @@ class AddressLookupService @Inject() (addressLookupConnector: AddressLookupConne
       case Left(error)      => throw new Exception(s"Failed to init ALF ${error.message} with status ${error.status} for ${hc.requestId}")
     }
   }
+
+  def initJourneyOrReturnToEditPage(state: AddressLookupState, siteId: String, alfId: Option[String], mode: Mode = NormalMode)(implicit
+    hc:            HeaderCarrier,
+    ec:            ExecutionContext,
+    messages:      Messages,
+    requestHeader: RequestHeader
+  ): Future[String] =
+    alfId match {
+      case Some(id) =>
+        addressLookupConnector.getAddress(id).flatMap {
+          case Right(_)                                 => Future.successful(s"${frontendAppConfig.addressLookupService}/lookup-address/$id/edit")
+          case Left(error) if error.status == NOT_FOUND => initJourneyAndReturnOnRampUrl(state, siteId, mode)
+          case Left(error) => throw new Exception(s"Error returned from ALF for $id ${error.status} ${error.message} for ${hc.requestId}")
+        }
+      case None =>
+        initJourneyAndReturnOnRampUrl(state, siteId, mode)
+    }
 
   def createJourneyConfig(state: AddressLookupState, siteId: String, mode: Mode = NormalMode)(implicit
     requestHeader: RequestHeader,

@@ -62,22 +62,45 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
       packagingSiteSummaryRowList mustBe List()
     }
 
-    "must not return a remove action if only 1 packaging site is passed in" in {
+    "must return a change action and not a remove action if only 1 packaging site is passed in" in {
       val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(packagingSiteListWith1)
 
+      packagingSiteSummaryRowList.mkString must include("Change")
       packagingSiteSummaryRowList.mkString mustNot include("Remove")
+      packagingSiteSummaryRowList.head.actions.toList.head.items.head.href mustBe controllers.routes.PackagingSiteDetailsController
+        .onPageLoad(NormalMode, Some(packagingSiteListWith1.head._1))
+        .url
     }
+
+    "must return a change action when the packaging site has no address lines" in {
+      val site                        = Site(UkAddress(List.empty, "AA1 1AA"), None, None, None)
+      val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map("ref1" -> site))
+
+      packagingSiteSummaryRowList.head.actions.toList.head.items.head.content.asHtml.toString() mustBe "Change"
+      packagingSiteSummaryRowList.head.actions.toList.head.items.head.href mustBe controllers.routes.PackagingSiteDetailsController
+        .onPageLoad(NormalMode, Some("ref1"))
+        .url
+    }
+
     "must include Correct elements in list with 2 elements" in {
       val site1                       = Site(UkAddress(List("foo2", "bar2"), "wizz2"), None, Some("trade2"), None)
       val site2                       = Site(UkAddress(List("foo", "bar"), "wizz"), None, Some("trade"), None)
       val packagingSiteSummaryRowList = PackagingSiteDetailsSummary.row2(Map("ref1" -> site1, "ref2" -> site2))
       packagingSiteSummaryRowList.head.key.content.asHtml.toString() mustBe "trade2<br>foo2, bar2, wizz2"
+      packagingSiteSummaryRowList.head.actions.toList.head.items.head.content.asHtml.toString() mustBe "Change"
+      packagingSiteSummaryRowList.head.actions.toList.head.items.head.href mustBe controllers.routes.PackagingSiteDetailsController
+        .onPageLoad(NormalMode, Some("ref1"))
+        .url
       packagingSiteSummaryRowList.head.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
       packagingSiteSummaryRowList.head.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController
         .onPageLoad(NormalMode, "ref1")
         .url
 
       packagingSiteSummaryRowList.last.key.content.asHtml.toString() mustBe "trade<br>foo, bar, wizz"
+      packagingSiteSummaryRowList.last.actions.toList.head.items.head.content.asHtml.toString() mustBe "Change"
+      packagingSiteSummaryRowList.last.actions.toList.head.items.head.href mustBe controllers.routes.PackagingSiteDetailsController
+        .onPageLoad(NormalMode, Some("ref2"))
+        .url
       packagingSiteSummaryRowList.last.actions.toList.head.items.last.content.asHtml.toString() mustBe "Remove"
       packagingSiteSummaryRowList.last.actions.toList.head.items.last.href mustBe controllers.routes.RemovePackagingDetailsConfirmationController
         .onPageLoad(NormalMode, "ref2")
