@@ -139,27 +139,30 @@ class PackagingSiteDetailsPageSpec extends SpecBase with MockitoSugar with Summa
     summaryListContents.last.text()  should include("29 Station Place")
   }
 
-  "show the remove link when there are 2 packaging sites" in {
+  "show the change and remove links when there are 2 packaging sites" in {
     val html =
       view(form.apply(), NormalMode, packagingSiteListWith2)(using FakeRequest(), messages(application))
 
     val summaryActions = doc(html).getElementsByClass("govuk-summary-list__actions")
     summaryActions.size()     shouldBe 2
+    summaryActions.first.text() should include("Change")
     summaryActions.first.text() should include("Remove")
+    summaryActions.last.text()  should include("Change")
     summaryActions.last.text()  should include("Remove")
   }
 
-  "remove link should go to proper url" in {
+  "change and remove links should go to proper urls" in {
     val html =
       view(form.apply(), NormalMode, packagingSiteListWith2)(using FakeRequest(), messages(application))
 
-    val removeLink = doc(html)
+    val actionLinks = doc(html)
       .getElementsByClass("govuk-summary-list__actions")
-      .tagName("ul")
-      .tagName("li")
       .last()
       .getElementsByClass("govuk-link")
-    removeLink.attr("href") shouldBe
+
+    actionLinks.first().attr("href") shouldBe
+      "/soft-drinks-industry-levy-returns-frontend/packaging-site-details?ref=45541277"
+    actionLinks.last().attr("href") shouldBe
       "/soft-drinks-industry-levy-returns-frontend/remove-packaging-site-details/45541277"
   }
 

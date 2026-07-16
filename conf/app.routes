@@ -121,9 +121,9 @@ POST       /pack-at-business-address-in-return                  controllers.Pack
 GET        /change-pack-at-business-address-in-return           controllers.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-pack-at-business-address-in-return           controllers.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /packaging-site-details                              controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode)
+GET        /packaging-site-details                              controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode, ref: Option[String] ?= None)
 POST       /packaging-site-details                              controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
+GET        /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode, ref: Option[String] ?= None)
 POST       /change-packaging-site-details                       controllers.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
 
 GET        /submit-return/year/:year/quarter/:quarter/nil-return/:nilReturn  controllers.ReturnsController.onPageLoad(year: Int, quarter: Int, nilReturn: Boolean)

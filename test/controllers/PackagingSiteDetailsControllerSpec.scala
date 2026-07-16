@@ -135,6 +135,105 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
+    "must ramp onto ALF with the existing site ref when a site ref is provided" in {
+      val ref                      = userAnswersWith1PackagingSite.packagingSiteList.head._1
+      val editPageRoute            = routes.PackagingSiteDetailsController.onPageLoad(NormalMode, Some(ref)).url
+      val mockAddressLookupService = mock[AddressLookupService]
+      val onwardUrlForALF          = "foobarwizz"
+
+      when(
+        mockAddressLookupService
+          .initJourneyOrReturnToEditPage(
+            ArgumentMatchers.eq(PackingDetails),
+            ArgumentMatchers.eq(ref),
+            ArgumentMatchers.eq(None),
+            ArgumentMatchers.eq(NormalMode)
+          )(using
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any()
+          )
+      )
+        .thenReturn(Future.successful(onwardUrlForALF))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWith1PackagingSite))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, editPageRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardUrlForALF
+        verify(mockAddressLookupService, times(1)).initJourneyOrReturnToEditPage(
+          ArgumentMatchers.eq(PackingDetails),
+          ArgumentMatchers.eq(ref),
+          ArgumentMatchers.eq(None),
+          ArgumentMatchers.eq(NormalMode)
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      }
+    }
+
+    "must pass the existing ALF id when editing a packaging site that has one" in {
+      val ref                      = "78941132"
+      val alfId                    = "existing-alf-id"
+      val siteWithAlfId            = PackagingSite1.copy(address = PackagingSite1.address.copy(alfId = Some(alfId)))
+      val userAnswers              = emptyUserAnswers.copy(packagingSiteList = Map(ref -> siteWithAlfId))
+      val editPageRoute            = routes.PackagingSiteDetailsController.onPageLoad(NormalMode, Some(ref)).url
+      val mockAddressLookupService = mock[AddressLookupService]
+      val onwardUrlForALF          = "http://localhost:9028/lookup-address/existing-alf-id/edit"
+
+      when(
+        mockAddressLookupService
+          .initJourneyOrReturnToEditPage(
+            ArgumentMatchers.eq(PackingDetails),
+            ArgumentMatchers.eq(ref),
+            ArgumentMatchers.eq(Some(alfId)),
+            ArgumentMatchers.eq(NormalMode)
+          )(using
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any()
+          )
+      )
+        .thenReturn(Future.successful(onwardUrlForALF))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[AddressLookupService].toInstance(mockAddressLookupService))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, editPageRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardUrlForALF
+        verify(mockAddressLookupService, times(1)).initJourneyOrReturnToEditPage(
+          ArgumentMatchers.eq(PackingDetails),
+          ArgumentMatchers.eq(ref),
+          ArgumentMatchers.eq(Some(alfId)),
+          ArgumentMatchers.eq(NormalMode)
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      }
+    }
+
+    "must redirect to the packaging site details page when the edit ref does not exist on GET" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWith1PackagingSite)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.PackagingSiteDetailsController.onPageLoad(NormalMode, Some("missing-ref")).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+      }
+    }
+
     "must redirect to the next page when valid data is submitted (true with subscription)" in {
       val mockSessionRepository    = mock[SessionRepository]
       val mockAddressLookupService = mock[AddressLookupService]

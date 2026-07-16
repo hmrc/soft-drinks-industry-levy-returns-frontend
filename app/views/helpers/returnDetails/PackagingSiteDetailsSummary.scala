@@ -32,6 +32,9 @@ object PackagingSiteDetailsSummary {
   def summaryList(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): SummaryList =
     SummaryListViewModel(rows = row2(packagingSiteList, mode))
 
+  private def hiddenText(site: Site)(implicit messages: Messages): String =
+    messages("packagingSiteDetails.hidden", site.tradingName.getOrElse(""), site.address.lines.headOption.getOrElse(site.address.postCode))
+
   def row2(packagingSiteList: Map[String, Site], mode: Mode = NormalMode)(implicit messages: Messages): List[SummaryListRow] =
     packagingSiteList.map { site =>
       SummaryListRow(
@@ -42,13 +45,23 @@ object PackagingSiteDetailsSummary {
             Actions(
               "",
               Seq(
+                ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(mode, Some(site._1)).url)
+                  .withVisuallyHiddenText(hiddenText(site._2)),
                 ActionItemViewModel("site.remove", routes.RemovePackagingDetailsConfirmationController.onPageLoad(mode, site._1).url)
-                  .withVisuallyHiddenText(messages("packagingSiteDetails.hidden", site._2.tradingName.getOrElse(""), site._2.address.lines.head))
+                  .withVisuallyHiddenText(hiddenText(site._2))
               )
             )
           )
         } else {
-          None
+          Some(
+            Actions(
+              "",
+              Seq(
+                ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(mode, Some(site._1)).url)
+                  .withVisuallyHiddenText(hiddenText(site._2))
+              )
+            )
+          )
         }
       )
     }.toList

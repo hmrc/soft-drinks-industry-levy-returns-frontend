@@ -26,8 +26,9 @@ import models.alf.init.*
 import models.backend.{Site, UkAddress}
 import models.core.ErrorModel
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{clearInvocations, never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 
 import scala.concurrent.Future
@@ -256,6 +257,84 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
 
       whenReady(service.initJourney(journeyConfig)) { res =>
         res mustBe Right("foo")
+      }
+    }
+  }
+
+  "initJourneyOrReturnToEditPage" - {
+    "should return the ALF edit page when the existing ALF journey is still available" in {
+      val alfId  = "existing-alf-id"
+      val siteId = "site-ref"
+
+      when(mockSdilConnector.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Right(customerAddressMax)))
+
+      whenReady(
+        service.initJourneyOrReturnToEditPage(PackingDetails, siteId, Some(alfId))(using
+          implicitly,
+          implicitly,
+          implicitly,
+          FakeRequest("foo", "bar")
+        )
+      ) { res =>
+        res mustBe s"${frontendAppConfig.addressLookupService}/lookup-address/$alfId/edit"
+      }
+    }
+
+    "should initialise a new ALF journey when the existing ALF journey has expired" in {
+      val alfId  = "expired-alf-id"
+      val siteId = "site-ref"
+
+      when(mockSdilConnector.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Left(ErrorModel(NOT_FOUND, "not found"))))
+      when(mockSdilConnector.initJourney(ArgumentMatchers.any())(using ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Right("new-alf-journey-url")))
+
+      whenReady(
+        service.initJourneyOrReturnToEditPage(PackingDetails, siteId, Some(alfId))(using
+          implicitly,
+          implicitly,
+          implicitly,
+          FakeRequest("foo", "bar")
+        )
+      ) { res =>
+        res mustBe "new-alf-journey-url"
+      }
+    }
+
+    "should not initialise a new ALF journey when the existing ALF journey check returns an unexpected error" in {
+      val alfId  = "existing-alf-id"
+      val siteId = "site-ref"
+
+      when(mockSdilConnector.getAddress(ArgumentMatchers.eq(alfId))(using ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, "server error"))))
+      clearInvocations(mockSdilConnector)
+
+      val res = intercept[Exception](
+        await(
+          service.initJourneyOrReturnToEditPage(PackingDetails, siteId, Some(alfId))(using
+            implicitly,
+            implicitly,
+            implicitly,
+            FakeRequest("foo", "bar")
+          )
+        )
+      )
+
+      res.getMessage mustBe s"Error returned from ALF for $alfId $INTERNAL_SERVER_ERROR server error for None"
+      verify(mockSdilConnector, never()).initJourney(ArgumentMatchers.any())(using ArgumentMatchers.any(), ArgumentMatchers.any())
+    }
+
+    "should initialise a new ALF journey when there is no existing ALF id" in {
+      val siteId = "site-ref"
+
+      when(mockSdilConnector.initJourney(ArgumentMatchers.any())(using ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(Right("new-alf-journey-url")))
+
+      whenReady(
+        service.initJourneyOrReturnToEditPage(PackingDetails, siteId, None)(using implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))
+      ) { res =>
+        res mustBe "new-alf-journey-url"
       }
     }
   }
