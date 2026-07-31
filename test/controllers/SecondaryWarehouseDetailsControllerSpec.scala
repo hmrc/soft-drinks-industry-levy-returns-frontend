@@ -187,7 +187,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must not populate the view on a GET when the question has previously been answered" in {
       val userAnswers: UserAnswers = emptyUserAnswers
         .copy(warehouseList = twoWarehouses)
         .set(SecondaryWarehouseDetailsPage, true)
@@ -212,7 +212,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val warehouseSummaryList = SecondaryWarehouseDetailsSummary.warehouseDetailRow(warehouseMap)(using messages(application))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, warehouseSummaryList)(using request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, warehouseSummaryList)(using request, messages(application)).toString
       }
     }
 

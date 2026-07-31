@@ -54,10 +54,7 @@ class SecondaryWarehouseDetailsController @Inject() (
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkReturnSubmission) { implicit request =>
-    val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
+    val preparedForm = form
 
     val siteList: ListWithActions = SecondaryWarehouseDetailsSummary.warehouseDetailRow(request.userAnswers.warehouseList)
 
