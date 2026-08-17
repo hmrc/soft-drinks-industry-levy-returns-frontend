@@ -54,10 +54,7 @@ class PackagingSiteDetailsController @Inject() (
 
   def onPageLoad(mode: Mode, ref: Option[String]): Action[AnyContent] =
     (identify andThen getData andThen requireData andThen checkReturnSubmission).async { implicit request =>
-      val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm = form
 
       val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
 
