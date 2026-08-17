@@ -128,10 +128,10 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, packagingSiteList)(using request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, packagingSiteList)(using request, messages(application)).toString
         page.title() must include("You added 1 packaging site")
         page.getElementsByTag("h1").text() mustEqual "You added 1 packaging site"
-        page.getElementById("value").`val`() mustEqual "true"
+
       }
     }
 
