@@ -79,32 +79,34 @@ class PackagingSiteDetailsController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData andThen checkReturnSubmission).async { implicit request =>
       val siteList: Map[String, Site] = request.userAnswers.packagingSiteList
-
       form
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
-              onwardUrl: String <- if value then {
-                                     updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage)
-                                       .flatMap(_ => addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
+              updatedAnswers <- Future.fromTry(
+                                  if value then request.userAnswers.remove(PackagingSiteDetailsPage)
+                                  else request.userAnswers.set(PackagingSiteDetailsPage, value)
+                                )
+              onwardUrl <- if value then {
+                             updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage)
+                               .flatMap(_ => addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
+                           } else {
+                             updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
+                               (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
+                                 case (Some(sdilReturn), Some(subscription)) =>
+                                   if UserTypeCheck.isNewImporter(sdilReturn, subscription) && mode == NormalMode then {
+                                     Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
                                    } else {
-                                     updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
-                                       (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
-                                         case (Some(sdilReturn), Some(subscription)) =>
-                                           if UserTypeCheck.isNewImporter(sdilReturn, subscription) && mode == NormalMode then {
-                                             Future.successful(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
-                                           } else {
-                                             Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
-                                           }
-                                         case null =>
-                                           genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
-                                           Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
-                                       }
-                                     )
+                                     Future.successful(routes.CheckYourAnswersController.onPageLoad.url)
                                    }
+                                 case null =>
+                                   genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
+                                   Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                               }
+                             )
+                           }
             } yield Redirect(onwardUrl)
         )
     }

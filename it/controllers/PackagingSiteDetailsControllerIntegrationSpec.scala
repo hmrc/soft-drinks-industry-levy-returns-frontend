@@ -117,8 +117,7 @@ class PackagingSiteDetailsControllerIntegrationSpec extends ControllerITTestHelp
         )
         val expectedResultInDB: Some[JsObject] = Some(
           Json.obj(
-            "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10),
-            "packagingSiteDetails" -> true
+            "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 10, "highBand" -> 10)
           )
         )
         val alfOnRampURL: String = "http://onramp.com"
