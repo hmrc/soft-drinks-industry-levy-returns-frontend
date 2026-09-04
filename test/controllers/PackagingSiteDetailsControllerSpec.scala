@@ -41,6 +41,7 @@ import services.{AddressLookupService, PackingDetails}
 import util.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.PackagingSiteDetailsView
+import org.mockito.ArgumentCaptor
 
 import scala.concurrent.Future
 
@@ -477,6 +478,38 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
             .getOrElse(fail("No logging captured"))
         }
       }
+    }
+    "must remove PackagingSiteDetailsPage from UserAnswers, update session repository, and redirect to ALF" in {
+      val mockAddressLookupService = mock[AddressLookupService]
+      val mockSessionRepository    = mock[SessionRepository]
+
+      val initialUserAnswers = emptyUserAnswers.set(PackagingSiteDetailsPage, true).success.value
+
+      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(any(), any(), any())(using any(), any(), any(), any()))
+        .thenReturn(Future.successful("http://onramp-url.com"))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(Right(true)))
+
+      val application = applicationBuilder(userAnswers = Some(initialUserAnswers))
+        .overrides(
+          bind[AddressLookupService].toInstance(mockAddressLookupService),
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, packagingSiteDetailsRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "http://onramp-url.com"
+
+        val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(captor.capture())
+        captor.getValue.get(PackagingSiteDetailsPage) mustEqual None
+      }
+
     }
 
   }
