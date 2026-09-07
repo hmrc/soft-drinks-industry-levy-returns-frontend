@@ -241,7 +241,7 @@ trait LitresSpecHelper extends ViewSpecHelper {
     "should contain the correct credit claim note" in {
       insetText.size() mustBe 1
       insetText.get(0).text() mustBe claimCreditNote
-      claimCreditLink mustBe "https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2"
+      claimCreditLink mustBe "https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2#claiming-credits-following-1-april-2025-rate-change"
     }
   }
 
