@@ -277,7 +277,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           FakeRequest("foo", "bar")
         )
       ) { res =>
-        res mustBe s"${frontendAppConfig.addressLookupService}/lookup-address/$alfId/edit"
+        res mustBe s"${frontendAppConfig.addressLookupExternalHost}/lookup-address/$alfId/edit"
       }
     }
 

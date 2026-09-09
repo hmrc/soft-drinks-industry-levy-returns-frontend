@@ -63,6 +63,7 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val balanceAllEnabled:                Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
   val addressLookupService:             String  = servicesConfig.baseUrl("address-lookup-frontend")
+  val addressLookupExternalHost:        String  = servicesConfig.getString("address-lookup.external-host")
   val addressLookupOffRampUrl:          String  = servicesConfig.getString("addressLookupOffRampUrl")
 
   object AddressLookupConfig {
