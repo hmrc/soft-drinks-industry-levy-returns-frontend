@@ -98,7 +98,7 @@ class AddressLookupService @Inject() (addressLookupConnector: AddressLookupConne
     alfId match {
       case Some(id) =>
         addressLookupConnector.getAddress(id).flatMap {
-          case Right(_)                                 => Future.successful(s"${frontendAppConfig.addressLookupService}/lookup-address/$id/edit")
+          case Right(_) => Future.successful(s"${frontendAppConfig.addressLookupExternalHost}/lookup-address/$id/edit")
           case Left(error) if error.status == NOT_FOUND => initJourneyAndReturnOnRampUrl(state, siteId, mode)
           case Left(error) => throw new Exception(s"Error returned from ALF for $id ${error.status} ${error.message} for ${hc.requestId}")
         }
